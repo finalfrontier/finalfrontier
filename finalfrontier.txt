@@ -1,0 +1,12 @@
+"finalfrontier"
+{
+	"base"		"base"
+	"title"		"Final Frontier - Space Adventures in Space"
+	"maps"		"^ff_"
+	"menusystem"	"1"
+
+	"settings"
+	{
+		
+	}
+}
