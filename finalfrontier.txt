@@ -1,7 +1,7 @@
 "finalfrontier"
 {
 	"base"		"base"
-	"title"		"Final Frontier - Space Adventures in Space"
+	"title"		"Final Frontier"
 	"maps"		"^ff_"
 	"menusystem"	"1"
 
