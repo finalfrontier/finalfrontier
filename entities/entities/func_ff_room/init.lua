@@ -16,7 +16,7 @@ ENT.Doors = nil
 ENT._lastupdate = 0
 
 ENT._temperature = 298
-ENT._pressure = 100000
+ENT._pressure = 1
 ENT._maxshield = 20
 
 function ENT:KeyValue( key, value )
@@ -64,7 +64,7 @@ function ENT:InitPostEntity()
 		end
 	end
 	
-	self._pressure = math.random() * 100000 + 50000
+	self._pressure = math.random()
 	self._lastupdate = CurTime()
 end
 
@@ -95,10 +95,9 @@ end
 function ENT:TransmitPressure( room, delta )
 	if delta < 0 then room:TransmitPressure( self, delta ) return end
 
-	delta = delta / self.Volume
-	if delta > self._pressure then delta = self_pressure end
-	self._pressure = self._pressure - delta
-	room._pressure = room._pressure + delta
+	if delta / self.Volume > self._pressure then delta = self_pressure * self.Volume end
+	self._pressure = self._pressure - delta / self.Volume
+	room._pressure = room._pressure + delta / room.Volume
 end
 
 function ENT:GetMaxShield()
