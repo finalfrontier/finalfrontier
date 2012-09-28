@@ -9,6 +9,7 @@ ENT.System = nil
 ENT.Volume = 1000
 ENT.SurfaceArea = 60
 
+ENT.Corners = nil
 ENT.Screens = nil
 ENT.DoorNames = nil
 ENT.Doors = nil
@@ -16,7 +17,7 @@ ENT.Doors = nil
 ENT._lastupdate = 0
 
 ENT._temperature = 298
-ENT._pressure = 1
+ENT._airvolume = 1000
 ENT._maxshield = 20
 
 function ENT:KeyValue( key, value )
@@ -34,6 +35,7 @@ function ENT:KeyValue( key, value )
 end
 
 function ENT:InitPostEntity()
+	self.Corners = {}
 	self.Doors = {}
 	self.Screens = {}
 	
@@ -64,7 +66,8 @@ function ENT:InitPostEntity()
 		end
 	end
 	
-	self._pressure = math.random()
+	self._airvolume = math.random() * self.Volume
+	self._temperature = math.random() * 300 + 300
 	self._lastupdate = CurTime()
 end
 
@@ -76,6 +79,11 @@ function ENT:Think()
 	self._temperature = self._temperature * ( 1 - TEMPERATURE_LOSS_RATE * self.SurfaceArea * dt )
 end
 
+function ENT:AddCorner( index, x, y )
+	local shipPos = self.Ship:GetPos()
+	self.Corners[ index ] = { x = y - shipPos.y + 384, y = x - shipPos.x }
+end
+
 function ENT:AddDoor( door )
 	table.insert( self.Doors, door )
 end
@@ -85,19 +93,33 @@ function ENT:AddScreen( screen )
 end
 
 function ENT:GetTemperature()
-	return self._temperature
+	return self._temperature * self:GetAtmosphere()
 end
 
-function ENT:GetPressure()
-	return self._pressure
+function ENT:GetAirVolume()
+	return self._airvolume
 end
 
-function ENT:TransmitPressure( room, delta )
-	if delta < 0 then room:TransmitPressure( self, delta ) return end
+function ENT:GetAtmosphere()
+	return self._airvolume / self.Volume
+end
 
-	if delta / self.Volume > self._pressure then delta = self_pressure * self.Volume end
-	self._pressure = self._pressure - delta / self.Volume
-	room._pressure = room._pressure + delta / room.Volume
+function ENT:TransmitTemperature( room, delta )
+	if delta < 0 then room:TransmitTemperature( self, delta ) return end
+
+	if delta > self._temperature then delta = self._temperature end
+	
+	self._temperature = self._temperature - delta
+	room._temperature = room._temperature + delta
+end
+
+function ENT:TransmitAir( room, delta )
+	if delta < 0 then room:TransmitAir( self, delta ) return end
+
+	if delta > self._airvolume then delta = self._airvolume end
+	
+	self._airvolume = self._airvolume - delta
+	room._airvolume = room._airvolume + delta
 end
 
 function ENT:GetMaxShield()

@@ -1,5 +1,5 @@
 local TEMPERATURE_TRANSMIT_RATE = 0.01
-local PRESSURE_TRANSMIT_RATE = 50
+local ATMOSPHERE_TRANSMIT_RATE = 20.0
 
 ENT.Type = "point"
 ENT.Base = "base_point"
@@ -38,15 +38,28 @@ function ENT:Think()
 	if #self.Rooms < 2 then return end
 	
 	if self:IsOpen() then
+		-- Temperature transfer
 		local roomA = self.Rooms[ 1 ]
 		local roomB = self.Rooms[ 2 ]
-		if roomA:GetPressure() < roomB:GetPressure() then
+		if roomA:GetTemperature() < roomB:GetTemperature() then
 			roomA = self.Rooms[ 2 ]
 			roomB = self.Rooms[ 1 ]
 		end
-		local delta = ( roomA:GetPressure() - roomB:GetPressure() ) * self.Area * PRESSURE_TRANSMIT_RATE * dt
+		local delta = ( roomA:GetTemperature() - roomB:GetTemperature() ) * self.Area * TEMPERATURE_TRANSMIT_RATE * dt
 		if delta > 0 then
-			roomA:TransmitPressure( roomB, delta )
+			roomA:TransmitTemperature( roomB, delta )
+		end
+		
+		-- Atmosphere transfer
+		roomA = self.Rooms[ 1 ]
+		roomB = self.Rooms[ 2 ]
+		if roomA:GetAtmosphere() < roomB:GetAtmosphere() then
+			roomA = self.Rooms[ 2 ]
+			roomB = self.Rooms[ 1 ]
+		end
+		delta = ( roomA:GetAtmosphere() - roomB:GetAtmosphere() ) * self.Area * ATMOSPHERE_TRANSMIT_RATE * dt
+		if delta > 0 then
+			roomA:TransmitAir( roomB, delta )
 		end
 	end
 end

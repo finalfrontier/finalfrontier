@@ -1,6 +1,7 @@
 -- Client Initialization
 -- Includes
 
+include( "cl_ships.lua" )
 include( "sh_systems.lua" )
 
 -- Global Functions
@@ -49,8 +50,8 @@ function CreateCircle( x, y, radius )
 end
 
 function CreateHollowCircle( x, y, innerRadius, outerRadius, startAngle, rotation )
+	rotation = math.min( rotation or ( math.pi * 2 ), math.pi * 2 )
 	startAngle = startAngle or 0
-	rotation = rotation or ( math.pi * 2 )
 	local quality = math.min( 256, 4 * math.sqrt( outerRadius ) + 8 )
 	local verts = {}
 	local angA, angB

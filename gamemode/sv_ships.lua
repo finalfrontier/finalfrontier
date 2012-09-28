@@ -15,11 +15,17 @@ function Ships.FindByName( name )
 end
 
 function Ships.InitPostEntity()
-	local classOrder = { "info_ff_ship", "func_ff_room", "info_ff_door", "info_ff_screen" }
+	local classOrder = { "info_ff_ship", "func_ff_room", "info_ff_roomcorner", "info_ff_door", "info_ff_screen" }
 
 	for _1, class in ipairs( classOrder ) do
 		for _2, ent in ipairs( ents.FindByClass( class ) ) do
 			ent:InitPostEntity()
 		end
+	end
+end
+
+function Ships.SendShipsData( ply )
+	for _, ship in pairs( Ships._dict ) do
+		ship:SendShipData( ply )
 	end
 end
