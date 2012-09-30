@@ -129,6 +129,9 @@ elseif CLIENT then
 	
 	ENT._using = false
 	
+	ENT._mousex = 0
+	ENT._mousey = 0
+	
 	function ENT:Think()
 		if ( CurTime() - self._lastupdate ) > UPDATE_FREQ then
 			self:UpdateDisplay()
@@ -212,22 +215,122 @@ elseif CLIENT then
 		end
 	end
 	
-	function ENT:DrawRoom()
-		local ship = Ships.FindByName( self:GetNWString( "ship" ) )
+	function ENT:DrawShip( name )
+		local ship = Ships.FindByName( name )
 		if not ship then return end
 		
-		for k, room in pairs( ship.Rooms ) do		
+		if not ship.Transform then
+			local width, height = self:GetNWFloat( "width" ) * DRAWSCALE,
+								  self:GetNWFloat( "height" ) * DRAWSCALE
+								  
+			local margin = 16
+			ship.Transform = FindBestTransform( ship.Bounds,
+				Bounds( -width / 2 + margin, -height / 2 + margin,
+					width - margin * 2, height - margin * 2 ),
+				true, true )
+		end
+		
+		local thisRoomName = self:GetNWString( "room" )
+		
+		for k, room in pairs( ship.Rooms ) do
+			if not room.ShipTrans then
+				room.ShipTrans = {}
+				room.ShipTrans.Corners = {}
+				for i, v in ipairs( room.Corners ) do
+					local x, y = ship.Transform:Transform( v.x, v.y )
+					room.ShipTrans.Corners[ i ] = { x = x, y = y }
+				end
+				room.ShipTrans.ConvexPolys = {}
+				for j, poly in ipairs( room.ConvexPolys ) do
+					room.ShipTrans.ConvexPolys[ j ] = {}
+					for i, v in ipairs( poly ) do
+						local x, y = ship.Transform:Transform( v.x, v.y )
+						room.ShipTrans.ConvexPolys[ j ][ i ] = { x = x, y = y }
+					end
+				end
+			end
+			
+			local color = Color( 32, 32, 32, 255 )			
+			local mousePos = { x = self._mousex * DRAWSCALE, y = self._mousey * DRAWSCALE }
+			
+			if IsPointInsidePolyGroup( room.ShipTrans.ConvexPolys, mousePos ) then
+				color = Color( 64, 64, 64, 255 )
+			end
+			
+			if room.Name == thisRoomName then
+				local add = math.sin( CurTime() * math.pi * 2 ) / 2 + 0.5
+				color = Color( color.r + add * 32, color.g + add * 64, color.b, color.a )
+			end
+			
+			-- local polyclrs = { Color( 255, 0, 0, 64 ), Color( 0, 255, 0, 64 ), Color( 0, 0, 255, 64 ) }
+			
+			local last, lx, ly = nil, 0, 0
+			for i, poly in ipairs( room.ShipTrans.ConvexPolys ) do
+				surface.SetDrawColor( color )
+				surface.DrawPoly( poly )
+				
+				--[[
+				last = poly[ #poly ]
+				lx, ly = last.x, last.y
+				surface.SetDrawColor( polyclrs[ i ] )
+				for __, v in ipairs( poly ) do
+					surface.DrawLine( lx, ly, v.x, v.y )
+					lx, ly = v.x, v.y
+				end
+				]]--
+			end
+			
 			surface.SetDrawColor( Color( 255, 255, 255, 255 ) )
-			local last = room.Corners[ #room.Corners ]
-			local lx, ly = last.x, last.y
-			for _, v in ipairs( room.Corners ) do
-				surface.DrawLine( lx / 4, ly / 4, v.x / 4, v.y / 4 )
+			last = room.ShipTrans.Corners[ #room.ShipTrans.Corners ]
+			lx, ly = last.x, last.y
+			for _, v in ipairs( room.ShipTrans.Corners ) do
+				surface.DrawLine( lx, ly, v.x, v.y )
 				lx, ly = v.x, v.y
 			end
 		end
 	end
 	
+	function ENT:DrawCursor()
+		local halfwidth = self:GetNWFloat( "width" ) * DRAWSCALE * 0.5
+		local halfheight = self:GetNWFloat( "height" ) * DRAWSCALE * 0.5
+		
+		local x = self._mousex * DRAWSCALE
+		local y = self._mousey * DRAWSCALE
+		
+		if x >= -halfwidth and x < halfwidth and y >= - halfheight and y < halfheight then
+			surface.SetDrawColor( Color( 255, 255, 255, 64 ) )
+			surface.DrawLine( x, -halfheight, x, halfheight )
+			surface.DrawLine( -halfwidth, y, halfwidth, y )
+			
+			surface.SetDrawColor( Color( 255, 255, 255, 127 ) )
+			surface.DrawOutlinedRect( x - DRAWSCALE * 0.5, y - DRAWSCALE * 0.5, DRAWSCALE, DRAWSCALE )
+		end
+	end
+	
+	function ENT:FindCursorPosition()
+		local ply = LocalPlayer()
+		local trace = {}
+		trace.start = ply:GetShootPos()
+		trace.endpos = trace.start + ply:GetAimVector() * 80
+		trace.mask = MASK_SOLID_BRUSHONLY
+		
+		local result = util.TraceLine( trace )
+		if result.Hit then
+			local hitpos = result.HitPos - self:GetPos()
+			local ang = self:GetAngles()
+			local xvec = ang:Right()
+			local yvec = ang:Up()
+			
+			self._mousex = -hitpos:DotProduct( xvec )
+			self._mousey = -hitpos:DotProduct( yvec )
+		end
+	end
+	
 	function ENT:Draw()
+		if self._using then
+			self:FindCursorPosition()
+		end
+	
 		local ang = self:GetAngles()
 		ang:RotateAroundAxis( ang:Up(), 90 )
 		ang:RotateAroundAxis( ang:Forward(), 90 )
@@ -236,7 +339,9 @@ elseif CLIENT then
 				self:DrawStatusDial( 0, 0, 192 )
 			else
 				self:DrawStatusDial( -320, -160, 48 )
-				self:DrawRoom()
+				self:DrawShip( self:GetNWString( "ship" ) )
+				
+				self:DrawCursor()
 			end
 		cam.End3D2D()
 	end

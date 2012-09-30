@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5439"
-	"mapversion" "38"
+	"mapversion" "40"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -14,13 +14,13 @@ viewsettings
 	"bSnapToGrid" "1"
 	"bShowGrid" "1"
 	"bShowLogicalGrid" "0"
-	"nGridSpacing" "2"
+	"nGridSpacing" "4"
 	"bShow3DGrid" "0"
 }
 world
 {
 	"id" "1"
-	"mapversion" "38"
+	"mapversion" "40"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -33,7 +33,7 @@ entity
 	"classname" "info_ff_screen"
 	"angles" "315 270 0"
 	"room" "room"
-	"size" "48 24"
+	"size" "48 28"
 	"targetname" "screen"
 	"origin" "0 -2 46"
 	editor
@@ -772,7 +772,7 @@ entity
 		{
 			"id" "376"
 			"plane" "(24 12 56) (24 8 56) (-24 8 56)"
-			"material" "TOOLS/TOOLSCLIP"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 -1 0 0] 0.25"
 			"rotation" "0"
@@ -783,7 +783,7 @@ entity
 		{
 			"id" "375"
 			"plane" "(24 -12 36) (24 -8 36) (-24 -8 36)"
-			"material" "TOOLS/TOOLSCLIP"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 -1 0 0] 0.25"
 			"rotation" "0"
@@ -794,7 +794,7 @@ entity
 		{
 			"id" "374"
 			"plane" "(-24 8 56) (-24 -12 36) (-24 -8 36)"
-			"material" "TOOLS/TOOLSCLIP"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -805,7 +805,7 @@ entity
 		{
 			"id" "373"
 			"plane" "(24 -12 36) (24 8 56) (24 12 56)"
-			"material" "TOOLS/TOOLSCLIP"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -816,7 +816,7 @@ entity
 		{
 			"id" "372"
 			"plane" "(-24 12 56) (-24 -8 36) (24 -8 36)"
-			"material" "TOOLS/TOOLSCLIP"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -827,7 +827,7 @@ entity
 		{
 			"id" "371"
 			"plane" "(-24 -12 36) (-24 8 56) (24 8 56)"
-			"material" "TOOLS/TOOLSCLIP"
+			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -854,8 +854,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-4.80686 -38.3653 78.4561]"
-		"look" "[-2.82878 3.38961 44.9874]"
+		"position" "[-1.41384 -34.8379 87.1089]"
+		"look" "[0.44401 -0.670227 45.9184]"
 	}
 }
 cordon

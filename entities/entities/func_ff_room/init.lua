@@ -14,6 +14,8 @@ ENT.Screens = nil
 ENT.DoorNames = nil
 ENT.Doors = nil
 
+ENT.Bounds = nil
+
 ENT._lastupdate = 0
 
 ENT._temperature = 298
@@ -38,6 +40,7 @@ function ENT:InitPostEntity()
 	self.Corners = {}
 	self.Doors = {}
 	self.Screens = {}
+	self.Bounds = Bounds()
 	
 	if not self.DoorNames then
 		MsgN( self:GetName() .. " has no doors!" )
@@ -80,8 +83,8 @@ function ENT:Think()
 end
 
 function ENT:AddCorner( index, x, y )
-	local shipPos = self.Ship:GetPos()
-	self.Corners[ index ] = { x = y - shipPos.y + 384, y = x - shipPos.x }
+	self.Corners[ index ] = { x = x, y = y }
+	self.Bounds:AddPoint( x, y )
 end
 
 function ENT:AddDoor( door )

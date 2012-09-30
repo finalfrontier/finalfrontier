@@ -12,20 +12,28 @@ net.Receive( "ShipData", function( len )
 	
 	local ship = {}
 	ship.Rooms = {}
+	ship.Bounds = Bounds()
 	
 	for rNum = 1, roomCount do
-		local roomName = net.ReadString()
+		local room = {}
+		room.Name = net.ReadString()
+		room.Bounds = Bounds()
+		room.Doors = {}
+		
+		room.Corners = {}
 		local cornerCount = net.ReadInt( 8 )
-		
-		ship.Rooms[ roomName ] = {}
-		ship.Rooms[ roomName ].Corners = {}
-		
 		for cNum = 1, cornerCount do
 			local index = net.ReadInt( 8 )
 			local pos = { x = net.ReadFloat(), y = net.ReadFloat() }
 			
-			ship.Rooms[ roomName ].Corners[ index ] = pos
+			room.Corners[ index ] = pos
+			room.Bounds:AddPoint( pos.x, pos.y )
 		end
+		
+		room.ConvexPolys = FindConvexPolygons( room.Corners )
+		
+		ship.Rooms[ room.Name ] = room
+		ship.Bounds:AddBounds( room.Bounds )
 	end
 	
 	Ships._dict[ name ] = ship

@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5439"
-	"mapversion" "15"
+	"mapversion" "16"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "15"
+	"mapversion" "16"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -921,8 +921,9 @@ entity
 {
 	"id" "129"
 	"classname" "info_ff_door"
+	"angles" "0 90 0"
 	"targetname" "door_info"
-	"origin" "0 -24 64"
+	"origin" "0 0 64"
 	editor
 	{
 		"color" "220 30 220"
@@ -972,8 +973,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-7.5936 128.138 106.611]"
-		"look" "[-7.47745 127.218 106.236]"
+		"position" "[2.95687 -4.63865 93.2874]"
+		"look" "[2.95689 -4.35655 92.3278]"
 	}
 }
 cordon
