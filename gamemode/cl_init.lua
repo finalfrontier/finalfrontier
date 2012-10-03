@@ -79,6 +79,12 @@ function WrapAngle( ang )
 	return ang - math.floor( ang / ( math.pi * 2 ) ) * math.pi * 2
 end
 
+function surface.DrawCentredText( x, y, text )
+	local wid, hei = surface.GetTextSize( text )
+	surface.SetTextPos( x - wid / 2, y - hei / 2 )
+	surface.DrawText( text )
+end
+
 -- TODO: Add check to avoid complex polys in output
 function FindConvexPolygons( poly, output )
 	output = output or {}
@@ -149,4 +155,17 @@ function GM:Initialize()
 	MsgN( "Final Frontier client-side is initializing..." )
 	
 	self.BaseClass:Initialize()
+end
+
+function GM:HUDWeaponPickedUp( weapon )
+	if weapon:GetClass() == "weapon_ff_unarmed" then return end
+	
+	self.BaseClass:HUDWeaponPickedUp( weapon )
+end
+
+function GM:PlayerBindPress( ply, bind, pressed )
+	if bind == "+attack" and ply:GetNWBool( "usingScreen" ) then
+		local screen = ply:GetNWEntity( "screen" )
+		if screen then screen:Click( ply ) end
+	end
 end

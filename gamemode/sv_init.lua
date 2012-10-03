@@ -18,7 +18,7 @@ end
 function GM:InitPostEntity()
 	MsgN( "Final Frontier server-side is initializing post-entity..." )
 	
-	Ships.InitPostEntity()
+	ships.InitPostEntity()
 end
 
 function GM:PlayerNoClip( ply )
@@ -29,9 +29,15 @@ function GM:PlayerInitialSpawn( ply )
 	local num = math.random( 1, 9 )
 	ply:SetModel( "models/player/group03/male_0" .. num .. ".mdl" )
 	
-	Ships.SendShipsData( ply )
+	ships.SendInitShipsData( ply )
 end
 
 function GM:PlayerSpawn( ply )
-	ply:Give( "weapon_ff_unarmed" )
+	ply:Give( "weapon_crowbar" )
+end
+
+function GM:Think()
+	for _, ply in ipairs( player.GetAll() ) do
+		ships.SendRoomStatesUpdate( ply )
+	end
 end

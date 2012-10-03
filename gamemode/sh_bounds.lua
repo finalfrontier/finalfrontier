@@ -37,6 +37,10 @@ function _boundsIndex:AddBounds( bounds )
 	end
 end
 
+function _boundsIndex:Equals( bounds )
+	return self.l == bounds.l and self.t == bounds.t and self.r == bounds.r and self.b == bounds.b
+end
+
 function Bounds( x, y, width, height )
 	local bounds = {}
 	if x then

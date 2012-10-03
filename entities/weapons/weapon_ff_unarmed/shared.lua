@@ -28,7 +28,7 @@ SWEP.AllowDelete = false
 SWEP.AllowDrop = false
 
 function SWEP:Initialize()
-	self:SetWeaponHoldType( "normal" )
+	self:SetWeaponHoldType( "pistol" )
 end
 
 function SWEP:GetClass()
@@ -44,6 +44,7 @@ function SWEP:ShouldDropOnDie()
 end
 
 function SWEP:PrimaryAttack()
+   self.Owner:SetAnimation( PLAYER_ATTACK1 )
 end
 
 function SWEP:SecondaryAttack()
@@ -60,7 +61,11 @@ function SWEP:Deploy()
 end
 
 function SWEP:Holster()
-   return true
+   return not self.Owner:GetNWBool( "usingScreen" )
+end
+
+function SWEP:HUDShouldDraw()
+	return element ~= "CHudWeaponSelection"
 end
 
 function SWEP:DrawWorldModel()

@@ -1,17 +1,20 @@
 if SERVER then AddCSLuaFile( "shared.lua" ) end
 
 local UPDATE_FREQ = 0.5
+local CURSOR_UPDATE_FREQ = 0.25
 local MAX_USE_DISTANCE = 64
 
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 	
-ENT._lastupdate = 0
+ENT.Ship = nil
+ENT.Room = nil
 
 if SERVER then
-	ENT.RoomName = nil
-	ENT.Room = nil
+	util.AddNetworkString( "CursorPos" )
 	
+	ENT.RoomName = nil
+
 	function ENT:KeyValue( key, value )
 		if key == "room" then
 			self.RoomName = tostring( value )
@@ -40,26 +43,13 @@ if SERVER then
 			return
 		end
 		
-		self:UpdateRoomProperties()
 		self:SetNWBool( "used", false )
 		self:SetNWEntity( "user", nil )
 		self:SetNWString( "ship", self.Room.ShipName )
 		self:SetNWString( "room", self.RoomName )
 	end
 	
-	function ENT:UpdateRoomProperties()
-		self:SetNWFloat( "temp", self.Room:GetTemperature() )
-		self:SetNWFloat( "atmo", self.Room:GetAtmosphere() )
-		self:SetNWFloat( "shld", self.Room:GetMaxShield() )
-		
-		self._lastupdate = CurTime()
-	end
-	
 	function ENT:Think()
-		if ( CurTime() - self._lastupdate ) > UPDATE_FREQ then
-			self:UpdateRoomProperties()
-		end
-		
 		if self:GetNWBool( "used" ) then
 			local ply = self:GetNWEntity( "user" )
 			if not ply:IsValid() or self:GetPos():Distance( ply:EyePos() ) > MAX_USE_DISTANCE then
@@ -81,11 +71,15 @@ if SERVER then
 	function ENT:StartUsing( ply )
 		self:SetNWBool( "used", true )
 		self:SetNWEntity( "user", ply )
+		ply:SetNWBool( "usingScreen", true )
+		ply:SetNWEntity( "screen", self )
+		ply:SetNWEntity( "oldWep", ply:GetActiveWeapon() )
 		
 		ply:SetWalkSpeed( 50 )
 		ply:SetCanWalk( false )
+		ply:CrosshairDisable()
+		ply:Give( "weapon_ff_unarmed" )
 		ply:SelectWeapon( "weapon_ff_unarmed" )
-		ply:GetWeapon( "weapon_ff_unarmed" ):SetWeaponHoldType( "pistol" )
 	end
 	
 	function ENT:StopUsing()
@@ -93,48 +87,69 @@ if SERVER then
 		
 		local ply = self:GetNWEntity( "user" )
 		if ply:IsValid() then
+			ply:SetNWBool( "usingScreen", false )
+			local oldWep = ply:GetNWEntity( "oldWep" )
+			
+			ply:StripWeapon( "weapon_ff_unarmed" )
+			if oldWep and oldWep:IsValid() then
+				ply:SetActiveWeapon( oldWep )
+			end
+			
 			ply:SetWalkSpeed( 250 )
 			ply:SetCanWalk( true )
+			ply:CrosshairEnable()
 		end
 	end
+	
+	net.Receive( "CursorPos", function( len )
+		local screen = net.ReadEntity()		
+		screen:SetNWFloat( "curx", net.ReadFloat() )
+		screen:SetNWFloat( "cury", net.ReadFloat() )
+	end )
 elseif CLIENT then
-	local DRAWSCALE = 16
+	SCREEN_DRAWSCALE = 16
 
 	surface.CreateFont( "CTextSmall", {
 		font = "consolas",
 		size = 32,
 		weight = 400,
-		scanlines = 2,
-		antialias = false
+		antialias = true
 	} )
 	
 	surface.CreateFont( "CTextLarge", {
 		font = "consolas",
-		size = 32,
+		size = 64,
 		weight = 400,
-		scanlines = 2,
-		antialias = false
+		antialias = true
 	} )
 	
+	ENT.Width = nil
+	ENT.Height = nil
+	
 	ENT._dialRadius = 0
-	ENT._tempOld = 0
-	ENT._tempNew = 0
-	ENT._atmoOld = 0
-	ENT._atmoNew = 0
 	ENT._atmoCircle = nil
-	ENT._shldOld = 0
-	ENT._shldNew = 0
 	ENT._shldCircle = nil
 	ENT._innerCircle = nil
 	
 	ENT._using = false
 	
-	ENT._mousex = 0
-	ENT._mousey = 0
+	ENT._lastCursorUpdate = 0
+	ENT._cursorx = 0
+	ENT._cursory = 0
+	ENT._lastCursorx = 0
+	ENT._lastCursory = 0
 	
 	function ENT:Think()
-		if ( CurTime() - self._lastupdate ) > UPDATE_FREQ then
-			self:UpdateDisplay()
+		if not self.Ship and self:GetNWString( "ship" ) then
+			self.Ship = ships.FindByName( self:GetNWString( "ship" ) )
+			if self.Ship then
+				self.Room = self.Ship.Rooms[ self:GetNWString( "room" ) ]
+			end
+		end
+		
+		if not self.Width and self:GetNWFloat( "width" ) then
+			self.Width = self:GetNWFloat( "width" ) * SCREEN_DRAWSCALE
+			self.Height = self:GetNWFloat( "height" ) * SCREEN_DRAWSCALE
 		end
 		
 		if not self._using and self:GetNWBool( "used" ) and self:GetNWEntity( "user" ) == LocalPlayer() then
@@ -143,31 +158,14 @@ elseif CLIENT then
 			self._using = false
 		end
 	end
-	
-	function ENT:UpdateDisplay()
-		self._tempOld = self._tempNew
-		self._tempNew = math.min( self:GetNWFloat( "temp" ) / 600, 1 )
-		self._atmoOld = self._atmoNew
-		self._atmoNew = self:GetNWFloat( "atmo" )
-		self._shldOld = self._shldNew
-		self._shldNew = self:GetNWFloat( "shld" )
-		
-		if ( CurTime() - self._lastupdate ) > UPDATE_FREQ * 2 then
-			self._tempOld = self._tempNew
-			self._atmoOld = self._atmoNew
-			self._shldOld = self._shldNew
-			self._lastupdate = CurTime()
-		elseif self._tempOld ~= self._tempNew or self._atmoOld ~= self._atmoNew or self._shldOld ~= self._shldNew then
-			self._lastupdate = CurTime()
-		end
-	end
 
 	function ENT:DrawStatusDial( x, y, radius )
-		local t = ( CurTime() - self._lastupdate ) / UPDATE_FREQ
-		
-		local atmo = self._atmoOld + ( self._atmoNew - self._atmoOld ) * t
-		local temp = self._tempOld + ( self._tempNew - self._tempOld ) * t
-		local shld = self._shldOld + ( self._shldNew - self._shldOld ) * t
+		local atmo, temp, shld = 0, 0, 0
+		if self.Room then
+			atmo = self.Room:GetAtmosphere()
+			temp = self.Room:GetTemperature() / 600
+			shld = self.Room:GetShields()
+		end
 		
 		local scale = radius / 192
 		
@@ -215,22 +213,22 @@ elseif CLIENT then
 		end
 	end
 	
-	function ENT:DrawShip( name )
-		local ship = Ships.FindByName( name )
+	function ENT:TransformShip( ship, x, y, width, height )
+		local bounds = Bounds( x, y, width, height )
+		if not ship.Transform or not ship.TransformBounds:Equals( bounds ) then
+			ship.TransformBounds = bounds
+			ship.Transform = FindBestTransform( ship.Bounds, bounds, true, true )
+		end
+	end
+	
+	function ENT:DrawShip( ship, x, y, width, height )
 		if not ship then return end
 		
-		if not ship.Transform then
-			local width, height = self:GetNWFloat( "width" ) * DRAWSCALE,
-								  self:GetNWFloat( "height" ) * DRAWSCALE
-								  
-			local margin = 16
-			ship.Transform = FindBestTransform( ship.Bounds,
-				Bounds( -width / 2 + margin, -height / 2 + margin,
-					width - margin * 2, height - margin * 2 ),
-				true, true )
-		end
+		local margin = 16
+		self:TransformShip( ship, x, y, width, height )
 		
-		local thisRoomName = self:GetNWString( "room" )
+		local mousePos = { x = self._cursorx * SCREEN_DRAWSCALE, y = self._cursory * SCREEN_DRAWSCALE }
+		local last, lx, ly = nil, 0, 0
 		
 		for k, room in pairs( ship.Rooms ) do
 			if not room.ShipTrans then
@@ -250,21 +248,12 @@ elseif CLIENT then
 				end
 			end
 			
-			local color = Color( 32, 32, 32, 255 )			
-			local mousePos = { x = self._mousex * DRAWSCALE, y = self._mousey * DRAWSCALE }
-			
-			if IsPointInsidePolyGroup( room.ShipTrans.ConvexPolys, mousePos ) then
-				color = Color( 64, 64, 64, 255 )
-			end
-			
-			if room.Name == thisRoomName then
-				local add = math.sin( CurTime() * math.pi * 2 ) / 2 + 0.5
-				color = Color( color.r + add * 32, color.g + add * 64, color.b, color.a )
-			end
+			local color = self.Room.System:GetRoomColor( self, room,
+				self.Room.System and self.Room.System.CanClickRooms and
+				IsPointInsidePolyGroup( room.ShipTrans.ConvexPolys, mousePos ) )
 			
 			-- local polyclrs = { Color( 255, 0, 0, 64 ), Color( 0, 255, 0, 64 ), Color( 0, 0, 255, 64 ) }
 			
-			local last, lx, ly = nil, 0, 0
 			for i, poly in ipairs( room.ShipTrans.ConvexPolys ) do
 				surface.SetDrawColor( color )
 				surface.DrawPoly( poly )
@@ -288,61 +277,151 @@ elseif CLIENT then
 				lx, ly = v.x, v.y
 			end
 		end
-	end
-	
-	function ENT:DrawCursor()
-		local halfwidth = self:GetNWFloat( "width" ) * DRAWSCALE * 0.5
-		local halfheight = self:GetNWFloat( "height" ) * DRAWSCALE * 0.5
 		
-		local x = self._mousex * DRAWSCALE
-		local y = self._mousey * DRAWSCALE
-		
-		if x >= -halfwidth and x < halfwidth and y >= - halfheight and y < halfheight then
-			surface.SetDrawColor( Color( 255, 255, 255, 64 ) )
-			surface.DrawLine( x, -halfheight, x, halfheight )
-			surface.DrawLine( -halfwidth, y, halfwidth, y )
+		for k, door in ipairs( ship.Doors ) do
+			if not door.ShipTrans then
+				door.ShipTrans = {}
+				local coords = {
+					{ x = -32, y = -64 },
+					{ x = -32, y =  64 },
+					{ x =  32, y =  64 },
+					{ x =  32, y = -64 }
+				}
+				local trans = Transform2D()
+				trans:Rotate( door.angle * math.pi / 180 )
+				trans:Translate( door.x, door.y )
+				for i, v in ipairs( coords ) do
+					local x, y = ship.Transform:Transform( trans:Transform( v.x, v.y ) )
+					door.ShipTrans[ i ] = { x = x, y = y }
+				end
+			end
 			
-			surface.SetDrawColor( Color( 255, 255, 255, 127 ) )
-			surface.DrawOutlinedRect( x - DRAWSCALE * 0.5, y - DRAWSCALE * 0.5, DRAWSCALE, DRAWSCALE )
+			local color = Color( 16, 16, 16, 255 )
+			if self.Room.System and self.Room.System.CanClickDoors and
+				IsPointInsidePoly( door.ShipTrans, mousePos ) then
+				color = Color( 48, 48, 48, 255 )
+			end
+			
+			surface.SetDrawColor( color )
+			surface.DrawPoly( door.ShipTrans )
+			
+			surface.SetDrawColor( Color( 255, 255, 255, 255 ) )
+			last = door.ShipTrans[ #door.ShipTrans ]
+			lx, ly = last.x, last.y
+			for _, v in ipairs( door.ShipTrans ) do
+				surface.DrawLine( lx, ly, v.x, v.y )
+				lx, ly = v.x, v.y
+			end
 		end
 	end
 	
 	function ENT:FindCursorPosition()
-		local ply = LocalPlayer()
-		local trace = {}
-		trace.start = ply:GetShootPos()
-		trace.endpos = trace.start + ply:GetAimVector() * 80
-		trace.mask = MASK_SOLID_BRUSHONLY
-		
-		local result = util.TraceLine( trace )
-		if result.Hit then
-			local hitpos = result.HitPos - self:GetPos()
+		if self._using then
 			local ang = self:GetAngles()
+			local ply = LocalPlayer()
+			local p0 = self:GetPos()
+			local n = ang:Forward()
+			local l0 = ply:GetShootPos()
+			local l = ply:GetAimVector()
+			
+			local d = ( p0 - l0 ):Dot( n ) / l:Dot( n )
+		
+			local hitpos = ( l0 + l * d ) - p0
 			local xvec = ang:Right()
 			local yvec = ang:Up()
 			
-			self._mousex = -hitpos:DotProduct( xvec )
-			self._mousey = -hitpos:DotProduct( yvec )
+			self._cursorx = -hitpos:DotProduct( xvec )
+			self._cursory = -hitpos:DotProduct( yvec )
+			
+			local curTime = CurTime()
+			if ( curTime - self._lastCursorUpdate ) > CURSOR_UPDATE_FREQ then
+				net.Start( "CursorPos" )
+					net.WriteEntity( self )
+					net.WriteFloat( self._cursorx )
+					net.WriteFloat( self._cursory )
+				net.SendToServer()
+				self._lastCursorUpdate = curTime
+			end
+		else
+			local cx = self:GetNWFloat( "curx" )
+			local cy = self:GetNWFloat( "cury" )
+			
+			if cx ~= self._lastCursorx or cy ~= self._lastCursory then
+				local t = ( CurTime() - self._lastCursorUpdate ) / CURSOR_UPDATE_FREQ
+				
+				if t >= 1 then
+					self._lastCursorx = cx
+					self._lastCursory = cy
+					self._lastCursorUpdate = CurTime()
+				else
+					self._cursorx = self._lastCursorx + ( cx - self._lastCursorx ) * t
+					self._cursory = self._lastCursory + ( cy - self._lastCursory ) * t
+				end
+			end
 		end
 	end
 	
-	function ENT:Draw()
-		if self._using then
-			self:FindCursorPosition()
-		end
+	function ENT:DrawCursor()
+		local halfwidth = self.Width * 0.5
+		local halfheight = self.Height * 0.5
+		
+		local boxSize = SCREEN_DRAWSCALE
+		
+		local x = self._cursorx * SCREEN_DRAWSCALE
+		local y = self._cursory * SCREEN_DRAWSCALE
+		
+		x = math.Clamp( x, -halfwidth + boxSize * 0.5, halfwidth - boxSize * 0.5 )
+		y = math.Clamp( y, -halfheight + boxSize * 0.5, halfheight - boxSize * 0.5 )
+		
+		surface.SetDrawColor( Color( 255, 255, 255, 64 ) )
+		surface.DrawLine( x, -halfheight, x, halfheight )
+		surface.DrawLine( -halfwidth, y, halfwidth, y )
+		
+		surface.SetDrawColor( Color( 255, 255, 255, 127 ) )
+		surface.DrawOutlinedRect( x - boxSize * 0.5, y - boxSize * 0.5, boxSize, boxSize )
+	end
 	
+	function ENT:Draw()
 		local ang = self:GetAngles()
 		ang:RotateAroundAxis( ang:Up(), 90 )
 		ang:RotateAroundAxis( ang:Forward(), 90 )
-		cam.Start3D2D( self:GetPos(), ang, 1 / DRAWSCALE )
+		cam.Start3D2D( self:GetPos(), ang, 1 / SCREEN_DRAWSCALE )
 			if not self:GetNWBool( "used" ) then
 				self:DrawStatusDial( 0, 0, 192 )
 			else
-				self:DrawStatusDial( -320, -160, 48 )
-				self:DrawShip( self:GetNWString( "ship" ) )
-				
-				self:DrawCursor()
+				self:FindCursorPosition()
+				if self.Room and self.Room.System then
+					self.Room.System:DrawGUI( self )
+				else
+					surface.SetTextColor( Color( 64, 64, 64, 255 ) )
+					surface.SetFont( "CTextLarge" )
+					surface.DrawCentredText( 0, 0, "NO SYSTEM INSTALLED" )
+				end
 			end
 		cam.End3D2D()
+	end
+	
+	function ENT:Click( ply )
+		local mousePos = { x = self._cursorx * SCREEN_DRAWSCALE, y = self._cursory * SCREEN_DRAWSCALE }
+		if self.Room and self.Room.System then
+			local sys = self.Room.System
+			if sys.CanClickRooms then
+				for k, room in pairs( self.Ship.Rooms ) do
+					if IsPointInsidePolyGroup( room.ShipTrans.ConvexPolys, mousePos ) then
+						sys:ClickRoom( self, room )
+						return
+					end
+				end
+			end
+			
+			if sys.CanClickDoors then
+				for k, door in pairs( self.Ship.Doors ) do
+					if IsPointInsidePoly( door.ShipTrans, mousePos ) then
+						sys:ClickDoor( self, door )
+						return
+					end
+				end
+			end
+		end
 	end
 end

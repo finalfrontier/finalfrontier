@@ -1,5 +1,0 @@
-System = {}
-
-System.weapons = {
-	
-}

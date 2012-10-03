@@ -20,7 +20,7 @@ ENT._lastupdate = 0
 
 ENT._temperature = 298
 ENT._airvolume = 1000
-ENT._maxshield = 20
+ENT._shields = 1
 
 function ENT:KeyValue( key, value )
 	if key == "ship" then
@@ -47,9 +47,8 @@ function ENT:InitPostEntity()
 	end
 	
 	self.DoorNames = self.DoorNames or {}
-
 	if self.ShipName then
-		self.Ship = Ships.FindByName( self.ShipName )
+		self.Ship = ships.FindByName( self.ShipName )
 		if self.Ship then
 			self.Ship:AddRoom( self )
 		end
@@ -66,11 +65,18 @@ function ENT:InitPostEntity()
 			local door = doors[ 1 ]
 			door:AddRoom( self )
 			self:AddDoor( door )
+			
+			self.Ship:AddDoor( door )
 		end
+	end
+	
+	if self.System then
+		self.System = sys.Create( self.System, self )
 	end
 	
 	self._airvolume = math.random() * self.Volume
 	self._temperature = math.random() * 300 + 300
+	self._shields = math.random()
 	self._lastupdate = CurTime()
 end
 
@@ -79,6 +85,8 @@ function ENT:Think()
 	local dt = curTime - self._lastupdate
 	self._lastupdate = curTime
 
+	if self.System then self.System:Think( dt ) end
+	
 	self._temperature = self._temperature * ( 1 - TEMPERATURE_LOSS_RATE * self.SurfaceArea * dt )
 end
 
@@ -107,6 +115,10 @@ function ENT:GetAtmosphere()
 	return self._airvolume / self.Volume
 end
 
+function ENT:GetShields()
+	return self._shields
+end
+
 function ENT:TransmitTemperature( room, delta )
 	if delta < 0 then room:TransmitTemperature( self, delta ) return end
 
@@ -123,8 +135,4 @@ function ENT:TransmitAir( room, delta )
 	
 	self._airvolume = self._airvolume - delta
 	room._airvolume = room._airvolume + delta
-end
-
-function ENT:GetMaxShield()
-	return self._maxshield
 end

@@ -1,20 +1,22 @@
-Ships = {}
+local ROOM_UPDATE_FREQ = 1
 
-Ships._dict = {}
+ships = {}
 
-function Ships.Add( ship )
+ships._dict = {}
+
+function ships.Add( ship )
 	local name = ship:GetName()
 	if not name then return end
 	
-	Ships._dict[ name ] = ship
+	ships._dict[ name ] = ship
 	MsgN( "Ship added at " .. tostring( ship:GetPos() ) .. " (" .. name .. ")" )
 end
 
-function Ships.FindByName( name )
-	return Ships._dict[ name ]
+function ships.FindByName( name )
+	return ships._dict[ name ]
 end
 
-function Ships.InitPostEntity()
+function ships.InitPostEntity()
 	local classOrder = { "info_ff_ship", "func_ff_room", "info_ff_roomcorner", "info_ff_door", "info_ff_screen" }
 
 	for _1, class in ipairs( classOrder ) do
@@ -24,8 +26,19 @@ function Ships.InitPostEntity()
 	end
 end
 
-function Ships.SendShipsData( ply )
-	for _, ship in pairs( Ships._dict ) do
-		ship:SendShipData( ply )
+function ships.SendInitShipsData( ply )
+	for _, ship in pairs( ships._dict ) do
+		ship:SendInitShipData( ply )
+	end
+end
+
+function ships.SendRoomStatesUpdate( ply )
+	local curTime = CurTime()
+	if ( curTime - ply:GetNWFloat( "lastRoomUpdate" ) ) > ROOM_UPDATE_FREQ then
+		ply:SetNWFloat( "lastRoomUpdate", curTime )
+		
+		for _, ship in pairs( ships._dict ) do
+			ship:SendShipRoomStates( ply )
+		end
 	end
 end
