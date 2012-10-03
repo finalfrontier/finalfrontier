@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5439"
-	"mapversion" "77"
+	"mapversion" "78"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "77"
+	"mapversion" "78"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -18644,6 +18644,7 @@ entity
 	"door01" "door_info_6"
 	"door02" "door_info_13"
 	"ship" "ship_default"
+	"system" "doorcontrol"
 	"targetname" "room_hallway2"
 	"volume" "180"
 	solid
@@ -21543,8 +21544,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-266.292 -153.204 88.9118]"
-		"look" "[-267.103 -153.037 88.3384]"
+		"position" "[-751.763 -755.69 188.791]"
+		"look" "[-750.839 -755.768 188.396]"
 	}
 }
 cordon

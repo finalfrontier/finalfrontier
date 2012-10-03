@@ -5,6 +5,11 @@ function SYS:Initialize()
 end
 
 if SERVER then
+	function SYS:ClickRoom( screen, ply, room )
+		room._shields = math.random()
+		room.Ship:SendShipRoomStates( ply )
+	end
+	
 	function SYS:Think( dt )
 		
 	end

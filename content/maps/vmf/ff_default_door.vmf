@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5439"
-	"mapversion" "16"
+	"mapversion" "18"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "16"
+	"mapversion" "18"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -38,10 +38,10 @@ entity
 	"wait" "0.5"
 	connections
 	{
-		"OnStartTouchAll" "door_opencompare,Compare,,0,-1"
-		"OnEndTouchAll" "door_closecompare,Compare,,0,-1"
-		"OnTouching" "door_opencompare,Compare,,0,-1"
-		"OnNotTouching" "door_closecompare,Compare,,0,-1"
+		"OnStartTouchAll" "door_info,Open,,0,-1"
+		"OnEndTouchAll" "door_info,Close,,0,-1"
+		"OnTouching" "door_info,Open,,0,-1"
+		"OnNotTouching" "door_info,Close,,0,-1"
 	}
 	solid
 	{
@@ -150,7 +150,7 @@ entity
 	"wait" "1"
 	connections
 	{
-		"OnPressed" "door_lockcompare,Compare,,0,-1"
+		"OnPressed" "door_info,ToggleLock,,0,-1"
 	}
 	solid
 	{
@@ -265,8 +265,8 @@ entity
 	"wait" "-1"
 	connections
 	{
-		"OnFullyClosed" "door_info,Close,,0,-1"
-		"OnOpen" "door_info,Open,,0,-1"
+		"OnFullyClosed" "door_info,Closed,,0,-1"
+		"OnOpen" "door_info,Opened,,0,-1"
 	}
 	solid
 	{
@@ -381,8 +381,8 @@ entity
 	"wait" "-1"
 	connections
 	{
-		"OnFullyClosed" "door_info,Close,,0,-1"
-		"OnOpen" "door_info,Open,,0,-1"
+		"OnFullyClosed" "door_info,Closed,,0,-1"
+		"OnOpen" "door_info,Opened,,0,-1"
 	}
 	solid
 	{
@@ -807,7 +807,7 @@ entity
 	"wait" "1"
 	connections
 	{
-		"OnPressed" "door_lockcompare,Compare,,0,-1"
+		"OnPressed" "door_info,ToggleLock,,0,-1"
 	}
 	solid
 	{
@@ -895,30 +895,6 @@ entity
 }
 entity
 {
-	"id" "23"
-	"classname" "logic_compare"
-	"targetname" "door_lockcompare"
-	connections
-	{
-		"OnEqualTo" "door_lockcompare,SetValue,1,0,-1"
-		"OnNotEqualTo" "door_lockcompare,SetValue,0,0,-1"
-		"OnNotEqualTo" "door_trigger,TouchTest,,0,-1"
-		"OnEqualTo" "door_opencompare,SetValue,1,0,-1"
-		"OnNotEqualTo" "door_opencompare,SetValue,0,0,-1"
-		"OnEqualTo" "door_closecompare,SetValue,1,0,-1"
-		"OnNotEqualTo" "door_closecompare,SetValue,0,0,-1"
-	}
-	"origin" "-16 24 64"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[500 2500]"
-	}
-}
-entity
-{
 	"id" "129"
 	"classname" "info_ff_door"
 	"angles" "0 90 0"
@@ -932,49 +908,13 @@ entity
 		"logicalpos" "[0 0]"
 	}
 }
-entity
-{
-	"id" "204"
-	"classname" "logic_compare"
-	"targetname" "door_opencompare"
-	connections
-	{
-		"OnEqualTo" "door,Open,,0,-1"
-	}
-	"origin" "16 24 48"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 0]"
-	}
-}
-entity
-{
-	"id" "230"
-	"classname" "logic_compare"
-	"targetname" "door_closecompare"
-	connections
-	{
-		"OnEqualTo" "door,Close,,0,-1"
-	}
-	"origin" "16 24 80"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 0]"
-	}
-}
 cameras
 {
 	"activecamera" "0"
 	camera
 	{
-		"position" "[2.95687 -4.63865 93.2874]"
-		"look" "[2.95689 -4.35655 92.3278]"
+		"position" "[-5.95373 -43.7898 113.453]"
+		"look" "[-5.82341 -43.2343 112.632]"
 	}
 }
 cordon

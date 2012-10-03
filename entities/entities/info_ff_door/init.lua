@@ -7,7 +7,11 @@ ENT.Base = "base_point"
 ENT.Area = 4
 ENT.Rooms = nil
 
+ENT._doorEnts = nil
+ENT._triggerEnt = nil
+
 ENT._open = false
+ENT._locked = false
 ENT._lastupdate = 0
 
 function ENT:Initialize()
@@ -16,6 +20,13 @@ end
 
 function ENT:InitPostEntity()
 	self._lastupdate = CurTime()
+	
+	local name = self:GetName()
+	local doorName = string.Replace( name, "_info_", "_" )
+	local triggerName = string.Replace( name, "_info_", "_trigger_" )
+	
+	self._doorEnts = ents.FindByName( doorName )
+	self._triggerEnt = ents.FindByName( triggerName )[ 1 ]
 end
 
 function ENT:AddRoom( room )
@@ -23,11 +34,61 @@ function ENT:AddRoom( room )
 end
 
 function ENT:AcceptInput( name, activator, caller, data )
-	if name == "Open" then
+	if name == "Opened" then
 		self._open = true
-	elseif name == "Close" then
+	elseif name == "Closed" then
 		self._open = false
+	elseif name == "Open" then
+		self:Open()
+	elseif name == "Close" then
+		self:Close()
+	elseif name == "ToggleLock" then
+		self:ToggleLock()
 	end
+end
+
+function ENT:Open()
+	if not self._locked and not self._open then
+		for _, ent in ipairs( self._doorEnts ) do
+			ent:Fire( "Open", "", 0 )
+		end
+	end
+end
+
+function ENT:Close()
+	if not self._locked and self._open then
+		for _, ent in ipairs( self._doorEnts ) do
+			ent:Fire( "Close", "", 0 )
+		end
+	end
+end
+
+function ENT:Lock()
+	self._locked = true
+end
+
+function ENT:Unlock()
+	self._locked = false
+	self._triggerEnt:Fire( "TouchTest", "", 0 )
+end
+
+function ENT:ToggleLock()
+	if self._locked then
+		self:Unlock()
+	else
+		self:Lock()
+	end
+end
+
+function ENT:LockOpen()
+	self:Unlock()
+	self:Open()
+	self:Lock()
+end
+
+function ENT:UnlockClose()
+	self:Unlock()
+	self:Close()
 end
 
 function ENT:Think()
@@ -66,4 +127,16 @@ end
 
 function ENT:IsOpen()
 	return self._open
+end
+
+function ENT:IsClosed()
+	return not self._open
+end
+
+function ENT:IsLocked()
+	return self._locked
+end
+
+function ENT:IsUnlocked()
+	return not self._locked
 end

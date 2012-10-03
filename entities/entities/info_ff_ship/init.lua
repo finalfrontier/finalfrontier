@@ -50,8 +50,6 @@ function ENT:SendInitShipData( ply )
 		net.WriteString( self:GetName() )		
 		net.WriteInt( table.Count( self.Rooms ), 8 )
 		
-		local doors = {}
-		
 		for name, room in pairs( self.Rooms ) do
 		
 			net.WriteString( name )
@@ -67,16 +65,10 @@ function ENT:SendInitShipData( ply )
 				net.WriteFloat( v.x )
 				net.WriteFloat( v.y )
 			end
-			
-			for _, door in ipairs( room.Doors ) do
-				if not table.HasValue( doors, door ) then
-					table.insert( doors, door )
-				end
-			end
 		end
 		
-		net.WriteInt( #doors, 8 )
-		for _, door in ipairs( doors ) do
+		net.WriteInt( #self.Doors, 8 )
+		for _, door in ipairs( self.Doors ) do
 			local pos = door:GetPos()
 			net.WriteFloat( pos.x )
 			net.WriteFloat( pos.y )

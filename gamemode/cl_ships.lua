@@ -58,8 +58,6 @@ net.Receive( "InitShipData", function( len )
 		room.Bounds = Bounds()
 		room.Doors = {}
 		
-		MsgN( room.Name .. ": " .. room.Index )
-		
 		room.Corners = {}
 		local cornerCount = net.ReadInt( 8 )
 		for cNum = 1, cornerCount do

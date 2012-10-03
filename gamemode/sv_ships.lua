@@ -16,6 +16,14 @@ function ships.FindByName( name )
 	return ships._dict[ name ]
 end
 
+function ships.FindRoomByName( name )
+	for _, ship in pairs( ships._dict ) do
+		if ship.Rooms[ name ] then return ship.Rooms[ name ] end
+	end
+	
+	return nil
+end
+
 function ships.InitPostEntity()
 	local classOrder = { "info_ff_ship", "func_ff_room", "info_ff_roomcorner", "info_ff_door", "info_ff_screen" }
 

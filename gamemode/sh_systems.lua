@@ -5,21 +5,6 @@ local _sysIndex = {}
 _sysIndex.Name = "unnamed"
 _sysIndex.Room = nil
 
-if CLIENT then
-	_sysIndex.DrawWholeShip = false
-
-	_sysIndex.CanClickRooms = false
-	_sysIndex.CanClickDoors = false
-	
-	function _sysIndex:ClickRoom( room )
-		return
-	end
-	
-	function _sysIndex:ClickDoor( door )
-		return
-	end
-end
-
 function _sysIndex:Initialize()
 	return
 end
@@ -29,15 +14,13 @@ function _sysIndex:GetShip()
 end
 
 if SERVER then
-	util.AddNetworkString( "SysSelectRoom" )
-	util.AddNetworkString( "SysSelectDoor" )
+	function _sysIndex:ClickRoom( screen, ply, room )
+		return
+	end
 	
-	net.Receive( "SysSelectRoom", function( len )
-		local screen = net.ReadEntity()
-		local roomName = net.ReadString()
-		
-		MsgN( roomName )
-	end )
+	function _sysIndex:ClickDoor( screen, ply, door )
+		return
+	end
 	
 	function _sysIndex:GetScreens()
 		return self.Room.Screens
@@ -47,9 +30,15 @@ if SERVER then
 		return
 	end
 elseif CLIENT then
+	_sysIndex.DrawWholeShip = false
+
+	_sysIndex.CanClickRooms = false
+	_sysIndex.CanClickDoors = false
+	
 	function _sysIndex:ClickRoom( screen, room )
 		net.Start( "SysSelectRoom" )
 			net.WriteEntity( screen )
+			net.WriteEntity( LocalPlayer() )
 			net.WriteString( room:GetName() )
 		net.SendToServer()
 	end
@@ -57,7 +46,8 @@ elseif CLIENT then
 	function _sysIndex:ClickDoor( screen, door )
 		net.Start( "SysSelectDoor" )
 			net.WriteEntity( screen )
-			net.WriteInt( table.KeyFromValue( ship.Doors, door ), 8 )
+			net.WriteEntity( LocalPlayer() )
+			net.WriteInt( table.KeyFromValue( screen.Ship.Doors, door ), 8 )
 		net.SendToServer()
 	end
 	
@@ -87,6 +77,31 @@ elseif CLIENT then
 		
 		screen:DrawCursor()
 	end
+end
+
+if SERVER then
+	util.AddNetworkString( "SysSelectRoom" )
+	util.AddNetworkString( "SysSelectDoor" )
+	
+	net.Receive( "SysSelectRoom", function( len )
+		local screen = net.ReadEntity()
+		local ply = net.ReadEntity()
+		local roomName = net.ReadString()
+		
+		if screen.Room.System then
+			screen.Room.System:ClickRoom( screen, ply, ships.FindRoomByName( roomName ) )
+		end
+	end )
+	
+	net.Receive( "SysSelectDoor", function( len )
+		local screen = net.ReadEntity()
+		local ply = net.ReadEntity()
+		local doorId = net.ReadInt( 8 )
+		
+		if screen.Room.System then
+			screen.Room.System:ClickDoor( screen, ply, screen.Room.Ship.Doors[ doorId ] )
+		end
+	end )
 end
 
 MsgN( "Loading systems..." )
