@@ -78,7 +78,7 @@ net.Receive( "InitShipData", function( len )
 	
 	local doorCount = net.ReadInt( 8 )
 	for dNum = 1, doorCount do
-		local door = {}
+		local door = { _lastUpdate = 0 }
 		door.x = net.ReadFloat()
 		door.y = net.ReadFloat()
 		door.angle = net.ReadFloat()
@@ -86,6 +86,7 @@ net.Receive( "InitShipData", function( len )
 		door.Bounds = Bounds()
 		local roomai = net.ReadInt( 8 )
 		local roombi = net.ReadInt( 8 )
+		door.Open = false
 		door.Rooms = { ship._roomlist[ roomai ], ship._roomlist[ roombi ] }
 		
 		table.insert( door.Rooms[ 1 ].Doors, door )
@@ -114,6 +115,15 @@ net.Receive( "ShipRoomStates", function( len )
 			room._shields = net.ReadFloat()
 			
 			room._lastUpdate = timestamp
+		end
+	end
+	while true do
+		local index = net.ReadInt( 8 )
+		if index == 0 then break end
+		local door = ship.Doors[ index ]
+		if timestamp > door._lastUpdate then
+			if net.ReadInt( 8 ) == 1 then door.Open = true else door.Open = false end
+			door._lastUpdate = timestamp
 		end
 	end
 end )

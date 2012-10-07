@@ -5,6 +5,8 @@ ENT.Base = "base_brush"
 
 ENT.Ship = nil
 ENT.ShipName = nil
+ENT.Index = 0
+
 ENT.System = nil
 ENT.Volume = 1000
 ENT.SurfaceArea = 60

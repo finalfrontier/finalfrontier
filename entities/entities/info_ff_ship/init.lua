@@ -72,7 +72,7 @@ function ENT:SendInitShipData( ply )
 			local pos = door:GetPos()
 			net.WriteFloat( pos.x )
 			net.WriteFloat( pos.y )
-			net.WriteFloat( door:GetAngles().y )		
+			net.WriteFloat( door:GetAngles().y )
 			net.WriteInt( door.Rooms[ 1 ].Index, 8 )
 			net.WriteInt( door.Rooms[ 2 ].Index, 8 )
 		end
@@ -88,14 +88,18 @@ end
 function ENT:SendShipRoomStates( ply )
 	local name = self:GetName()
 
-	ply.RoomStateCache = ply.RoomStateCache or {}
-	ply.RoomStateCache[ name ] = ply.RoomStateCache[ name ] or {}
+	ply.ShipCaches = ply.ShipCaches or {}
+	ply.ShipCaches[ name ] = ply.ShipCaches[ name ] or {}
 	
-	local shipCache = ply.RoomStateCache[ name ]
+	local shipCache = ply.ShipCaches[ name ]
+	local send = false
 
 	net.Start( "ShipRoomStates" )
 		net.WriteFloat( CurTime() )
 		net.WriteString( self:GetName() )
+		
+		shipCache.Rooms = shipCache.Rooms or {}
+		local roomCache = shipCache.Rooms
 		for index, room in ipairs( self._roomlist ) do
 			shipCache[ index ] = shipCache[ index ] or { temp = 0, atmo = 0, shld = 0 }
 			local cache = shipCache[ index ]
@@ -115,8 +119,24 @@ function ENT:SendShipRoomStates( ply )
 				cache.temp = temp
 				cache.atmo = atmo
 				cache.shld = shld
+				
+				send = true
 			end
 		end
 		net.WriteInt( 0, 8 )
-	net.Send( ply )
+		
+		shipCache.Doors = shipCache.Doors or {}
+		local doorCache = shipCache.Doors
+		for index, door in ipairs( self.Doors ) do
+			if doorCache[ index ] ~= door:IsOpen() then
+				net.WriteInt( index, 8 )
+				if door:IsOpen() then net.WriteInt( 1, 8 ) else net.WriteInt( 0, 8 ) end
+				
+				doorCache[ index ] = door:IsOpen()
+				
+				send = true
+			end
+		end
+		net.WriteInt( 0, 8 )
+	if send then net.Send( ply ) end
 end

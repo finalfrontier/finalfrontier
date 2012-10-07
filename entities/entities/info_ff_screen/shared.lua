@@ -80,6 +80,10 @@ if SERVER then
 		ply:CrosshairDisable()
 		ply:Give( "weapon_ff_unarmed" )
 		ply:SelectWeapon( "weapon_ff_unarmed" )
+		
+		if self.Room.System then
+			self.Room.System:StartControlling( self, ply )
+		end
 	end
 	
 	function ENT:StopUsing()
@@ -98,6 +102,10 @@ if SERVER then
 			ply:SetWalkSpeed( 250 )
 			ply:SetCanWalk( true )
 			ply:CrosshairEnable()
+		end
+		
+		if self.Room.System then
+			self.Room.System:StopControlling( self, ply )
 		end
 	end
 	
@@ -249,7 +257,7 @@ elseif CLIENT then
 			end
 			
 			local color = self.Room.System:GetRoomColor( self, room,
-				self.Room.System and self.Room.System.CanClickRooms and
+				self.Room.System.CanClickRooms and
 				IsPointInsidePolyGroup( room.ShipTrans.ConvexPolys, mousePos ) )
 			
 			-- local polyclrs = { Color( 255, 0, 0, 64 ), Color( 0, 255, 0, 64 ), Color( 0, 0, 255, 64 ) }
@@ -296,11 +304,9 @@ elseif CLIENT then
 				end
 			end
 			
-			local color = Color( 16, 16, 16, 255 )
-			if self.Room.System and self.Room.System.CanClickDoors and
-				IsPointInsidePoly( door.ShipTrans, mousePos ) then
-				color = Color( 48, 48, 48, 255 )
-			end
+			local color = self.Room.System:GetDoorColor( self, door,
+				self.Room.System.CanClickDoors and
+				IsPointInsidePoly( door.ShipTrans, mousePos ) )
 			
 			surface.SetDrawColor( color )
 			surface.DrawPoly( door.ShipTrans )
@@ -422,6 +428,8 @@ elseif CLIENT then
 					end
 				end
 			end
+			
+			sys:Click( self, mousePos.x, mousePos.y )
 		end
 	end
 end

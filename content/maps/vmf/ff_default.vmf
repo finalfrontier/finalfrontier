@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5439"
-	"mapversion" "78"
+	"mapversion" "79"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "78"
+	"mapversion" "79"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -18072,7 +18072,7 @@ entity
 	"angles" "-0 90 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
-	"targetname" "_hallway2"
+	"targetname" "_doorcontrol"
 	"origin" "-752 -736 64"
 	editor
 	{
@@ -18089,7 +18089,7 @@ entity
 	"angles" "-0 -90 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
-	"targetname" "_hallway3"
+	"targetname" "_lifesupport"
 	"origin" "368 -736 64"
 	editor
 	{
@@ -18123,7 +18123,7 @@ entity
 	"angles" "-0 -180 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
-	"targetname" "_lifesupport"
+	"targetname" "_reactor"
 	"origin" "-192 -1200 -96"
 	editor
 	{
@@ -18550,8 +18550,8 @@ entity
 	"door01" "door_info_8"
 	"door02" "door_info_9"
 	"ship" "ship_default"
-	"system" "lifesupport"
-	"targetname" "room_lifesupport"
+	"system" "reactor"
+	"targetname" "room_reactor"
 	"volume" "450"
 	solid
 	{
@@ -18645,7 +18645,7 @@ entity
 	"door02" "door_info_13"
 	"ship" "ship_default"
 	"system" "doorcontrol"
-	"targetname" "room_hallway2"
+	"targetname" "room_doorcontrol"
 	"volume" "180"
 	solid
 	{
@@ -18738,7 +18738,8 @@ entity
 	"door01" "door_info_10"
 	"door02" "door_info_12"
 	"ship" "ship_default"
-	"targetname" "room_hallway3"
+	"system" "lifesupport"
+	"targetname" "room_lifesupport"
 	"volume" "180"
 	solid
 	{
@@ -20494,7 +20495,7 @@ entity
 	"id" "9102"
 	"classname" "info_ff_roomcorner"
 	"index" "1"
-	"room" "room_lifesupport"
+	"room" "room_reactor"
 	"origin" "96 -960 0"
 	editor
 	{
@@ -20509,7 +20510,7 @@ entity
 	"id" "9104"
 	"classname" "info_ff_roomcorner"
 	"index" "2"
-	"room" "room_lifesupport"
+	"room" "room_reactor"
 	"origin" "96 -1120 0"
 	editor
 	{
@@ -20524,7 +20525,7 @@ entity
 	"id" "9106"
 	"classname" "info_ff_roomcorner"
 	"index" "3"
-	"room" "room_lifesupport"
+	"room" "room_reactor"
 	"origin" "0 -1216 0"
 	editor
 	{
@@ -20539,7 +20540,7 @@ entity
 	"id" "9108"
 	"classname" "info_ff_roomcorner"
 	"index" "4"
-	"room" "room_lifesupport"
+	"room" "room_reactor"
 	"origin" "-384 -1216 0"
 	editor
 	{
@@ -20554,7 +20555,7 @@ entity
 	"id" "9110"
 	"classname" "info_ff_roomcorner"
 	"index" "5"
-	"room" "room_lifesupport"
+	"room" "room_reactor"
 	"origin" "-480 -1120 0"
 	editor
 	{
@@ -20569,7 +20570,7 @@ entity
 	"id" "9112"
 	"classname" "info_ff_roomcorner"
 	"index" "6"
-	"room" "room_lifesupport"
+	"room" "room_reactor"
 	"origin" "-480 -960 0"
 	editor
 	{
@@ -20584,7 +20585,7 @@ entity
 	"id" "9191"
 	"classname" "info_ff_roomcorner"
 	"index" "7"
-	"room" "room_hallway3"
+	"room" "room_lifesupport"
 	"origin" "128 -608 128"
 	editor
 	{
@@ -20599,7 +20600,7 @@ entity
 	"id" "9193"
 	"classname" "info_ff_roomcorner"
 	"index" "1"
-	"room" "room_hallway3"
+	"room" "room_lifesupport"
 	"origin" "320 -608 128"
 	editor
 	{
@@ -20614,7 +20615,7 @@ entity
 	"id" "9195"
 	"classname" "info_ff_roomcorner"
 	"index" "2"
-	"room" "room_hallway3"
+	"room" "room_lifesupport"
 	"origin" "384 -672 128"
 	editor
 	{
@@ -20629,7 +20630,7 @@ entity
 	"id" "9197"
 	"classname" "info_ff_roomcorner"
 	"index" "3"
-	"room" "room_hallway3"
+	"room" "room_lifesupport"
 	"origin" "384 -896 128"
 	editor
 	{
@@ -20644,7 +20645,7 @@ entity
 	"id" "9199"
 	"classname" "info_ff_roomcorner"
 	"index" "4"
-	"room" "room_hallway3"
+	"room" "room_lifesupport"
 	"origin" "192 -896 128"
 	editor
 	{
@@ -20659,7 +20660,7 @@ entity
 	"id" "9201"
 	"classname" "info_ff_roomcorner"
 	"index" "5"
-	"room" "room_hallway3"
+	"room" "room_lifesupport"
 	"origin" "192 -864 128"
 	editor
 	{
@@ -20674,7 +20675,7 @@ entity
 	"id" "9203"
 	"classname" "info_ff_roomcorner"
 	"index" "6"
-	"room" "room_hallway3"
+	"room" "room_lifesupport"
 	"origin" "128 -800 128"
 	editor
 	{
@@ -21064,7 +21065,7 @@ entity
 	"id" "9339"
 	"classname" "info_ff_roomcorner"
 	"index" "6"
-	"room" "room_hallway2"
+	"room" "room_doorcontrol"
 	"origin" "-768 -672 128"
 	editor
 	{
@@ -21079,7 +21080,7 @@ entity
 	"id" "9341"
 	"classname" "info_ff_roomcorner"
 	"index" "4"
-	"room" "room_hallway2"
+	"room" "room_doorcontrol"
 	"origin" "-576 -896 128"
 	editor
 	{
@@ -21094,7 +21095,7 @@ entity
 	"id" "9343"
 	"classname" "info_ff_roomcorner"
 	"index" "2"
-	"room" "room_hallway2"
+	"room" "room_doorcontrol"
 	"origin" "-512 -800 128"
 	editor
 	{
@@ -21484,7 +21485,7 @@ entity
 	"id" "9403"
 	"classname" "info_ff_roomcorner"
 	"index" "3"
-	"room" "room_hallway2"
+	"room" "room_doorcontrol"
 	"origin" "-576 -864 128"
 	editor
 	{
@@ -21499,7 +21500,7 @@ entity
 	"id" "9405"
 	"classname" "info_ff_roomcorner"
 	"index" "5"
-	"room" "room_hallway2"
+	"room" "room_doorcontrol"
 	"origin" "-768 -896 128"
 	editor
 	{
@@ -21514,7 +21515,7 @@ entity
 	"id" "9407"
 	"classname" "info_ff_roomcorner"
 	"index" "7"
-	"room" "room_hallway2"
+	"room" "room_doorcontrol"
 	"origin" "-704 -608 128"
 	editor
 	{
@@ -21529,7 +21530,7 @@ entity
 	"id" "9409"
 	"classname" "info_ff_roomcorner"
 	"index" "1"
-	"room" "room_hallway2"
+	"room" "room_doorcontrol"
 	"origin" "-512 -608 128"
 	editor
 	{
@@ -21544,8 +21545,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-751.763 -755.69 188.791]"
-		"look" "[-750.839 -755.768 188.396]"
+		"position" "[193.819 -1304.77 193.243]"
+		"look" "[194.582 -1305.4 193.036]"
 	}
 }
 cordon

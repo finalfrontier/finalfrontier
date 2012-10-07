@@ -4,6 +4,7 @@ sys._dict = {}
 local _sysIndex = {}
 _sysIndex.Name = "unnamed"
 _sysIndex.Room = nil
+_sysIndex.Ship = nil
 
 function _sysIndex:Initialize()
 	return
@@ -14,6 +15,14 @@ function _sysIndex:GetShip()
 end
 
 if SERVER then
+	function _sysIndex:StartControlling( screen, ply )
+		return
+	end
+	
+	function _sysIndex:StopControlling( screen, ply )
+		return
+	end
+	
 	function _sysIndex:ClickRoom( screen, ply, room )
 		return
 	end
@@ -35,11 +44,19 @@ elseif CLIENT then
 	_sysIndex.CanClickRooms = false
 	_sysIndex.CanClickDoors = false
 	
+	function _sysIndex:Click( screen, x, y )
+		return
+	end
+	
 	function _sysIndex:ClickRoom( screen, room )
 		net.Start( "SysSelectRoom" )
 			net.WriteEntity( screen )
 			net.WriteEntity( LocalPlayer() )
-			net.WriteString( room:GetName() )
+			if room then
+				net.WriteString( room:GetName() )
+			else
+				net.WriteString( "" )
+			end
 		net.SendToServer()
 	end
 	
@@ -52,19 +69,29 @@ elseif CLIENT then
 	end
 	
 	function _sysIndex:GetRoomColor( screen, room, mouseOver )
-		local color = Color( 32, 32, 32, 255 )
+		local r, g, b = 32, 32, 32
 		if mouseOver then
-			color = Color( 64, 64, 64, 255 )
+			r, g, b = r + 32, g + 32, b + 32
 		end
 		if room == screen.Room then
 			local add = math.sin( CurTime() * math.pi * 2 ) / 2 + 0.5
-			color = Color( color.r + add * 32, color.g + add * 64, color.b, color.a )
+			r, g, b = r + add * 32, g + add * 64, b
 		end
-		
-		return color
+		return Color( r, g, b, 255 )
+	end
+	
+	function _sysIndex:GetDoorColor( screen, door, mouseOver )
+		local c = 32
+		if mouseOver then
+			c = c + 32
+		end
+		if not door.Open then
+			c = c + 128
+		end
+		return Color( c, c, c, 255 )
 	end
 
-	function _sysIndex:DrawGUI( screen )		
+	function _sysIndex:DrawGUI( screen )
 		surface.SetTextColor( Color( 255, 255, 255, 255 ) )
 		surface.SetFont( "CTextLarge" )
 		surface.DrawCentredText( 0, -screen.Height / 2 + 32, string.upper( self.FullName ) )
@@ -89,7 +116,11 @@ if SERVER then
 		local roomName = net.ReadString()
 		
 		if screen.Room.System then
-			screen.Room.System:ClickRoom( screen, ply, ships.FindRoomByName( roomName ) )
+			if string.len( roomName ) > 0 then
+				screen.Room.System:ClickRoom( screen, ply, ships.FindRoomByName( roomName ) )
+			else
+				screen.Room.System:ClickRoom( screen, ply, nil )
+			end
 		end
 	end )
 	
@@ -123,7 +154,7 @@ end
 function sys.Create( name, room )
 	if string.len( name ) == 0 then return nil end
 	if sys._dict[ name ] then
-		local system = { Room = room, Base = _sysIndex }
+		local system = { Room = room, Ship = room.Ship, Base = _sysIndex }
 		setmetatable( system, { __index = sys._dict[ name ] } )
 		system:Initialize()
 		return system

@@ -3,6 +3,7 @@
 
 include( "sh_bounds.lua" )
 include( "cl_transform2d.lua" )
+include( "cl_slider.lua" )
 include( "sh_systems.lua" )
 include( "cl_ships.lua" )
 

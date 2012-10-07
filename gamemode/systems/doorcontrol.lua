@@ -19,8 +19,4 @@ if SERVER then
 elseif CLIENT then
 	SYS.DrawWholeShip = true
 	SYS.CanClickDoors = true
-	
-	function SYS:GetRoomColor( screen, room, mouseOver )
-		return Color( 32, 32, 32, 255 )
-	end
 end
