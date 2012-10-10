@@ -128,12 +128,13 @@ function ENT:SendShipRoomStates( ply )
 		shipCache.Doors = shipCache.Doors or {}
 		local doorCache = shipCache.Doors
 		for index, door in ipairs( self.Doors ) do
-			if doorCache[ index ] ~= door:IsOpen() then
+			local flags = 0
+			if door:IsOpen() then flags = flags + 1 end
+			if door:IsLocked() then flags = flags + 2 end
+			if doorCache[ index ] ~= flags then
 				net.WriteInt( index, 8 )
-				if door:IsOpen() then net.WriteInt( 1, 8 ) else net.WriteInt( 0, 8 ) end
-				
-				doorCache[ index ] = door:IsOpen()
-				
+				net.WriteInt( flags, 8 )
+				doorCache[ index ] = flags
 				send = true
 			end
 		end

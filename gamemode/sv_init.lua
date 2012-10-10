@@ -28,6 +28,9 @@ end
 function GM:PlayerInitialSpawn( ply )
 	local num = math.random( 1, 9 )
 	ply:SetModel( "models/player/group03/male_0" .. num .. ".mdl" )
+	ply:SetCanWalk( true )
+	
+	GAMEMODE:SetPlayerSpeed( ply, 175, 250 )
 	
 	ships.SendInitShipsData( ply )
 end

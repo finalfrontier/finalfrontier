@@ -86,7 +86,13 @@ elseif CLIENT then
 			c = c + 32
 		end
 		if not door.Open then
-			c = c + 128
+			c = c + 127
+			
+			if door.Locked then
+				return Color( c + 64, c - 64, c - 64, 255 )
+			end
+		elseif door.Locked then
+			return Color( c, c + 64, c, 255 )
 		end
 		return Color( c, c, c, 255 )
 	end

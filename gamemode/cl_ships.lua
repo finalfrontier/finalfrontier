@@ -87,6 +87,7 @@ net.Receive( "InitShipData", function( len )
 		local roomai = net.ReadInt( 8 )
 		local roombi = net.ReadInt( 8 )
 		door.Open = false
+		door.Locked = false
 		door.Rooms = { ship._roomlist[ roomai ], ship._roomlist[ roombi ] }
 		
 		table.insert( door.Rooms[ 1 ].Doors, door )
@@ -122,7 +123,9 @@ net.Receive( "ShipRoomStates", function( len )
 		if index == 0 then break end
 		local door = ship.Doors[ index ]
 		if timestamp > door._lastUpdate then
-			if net.ReadInt( 8 ) == 1 then door.Open = true else door.Open = false end
+			local flags = net.ReadInt( 8 )
+			if flags % 2 >= 1 then door.Open = true else door.Open = false end
+			if flags % 4 >= 2 then door.Locked = true else door.Locked = false end
 			door._lastUpdate = timestamp
 		end
 	end

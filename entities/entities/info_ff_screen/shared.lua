@@ -99,7 +99,7 @@ if SERVER then
 				ply:SetActiveWeapon( oldWep )
 			end
 			
-			ply:SetWalkSpeed( 250 )
+			ply:SetWalkSpeed( 175 )
 			ply:SetCanWalk( true )
 			ply:CrosshairEnable()
 		end
@@ -235,7 +235,7 @@ elseif CLIENT then
 		local margin = 16
 		self:TransformShip( ship, x, y, width, height )
 		
-		local mousePos = { x = self._cursorx * SCREEN_DRAWSCALE, y = self._cursory * SCREEN_DRAWSCALE }
+		local mousePos = { x = self._cursorx, y = self._cursory }
 		local last, lx, ly = nil, 0, 0
 		
 		for k, room in pairs( ship.Rooms ) do
@@ -336,8 +336,8 @@ elseif CLIENT then
 			local xvec = ang:Right()
 			local yvec = ang:Up()
 			
-			self._cursorx = -hitpos:DotProduct( xvec )
-			self._cursory = -hitpos:DotProduct( yvec )
+			self._cursorx = -hitpos:DotProduct( xvec ) * SCREEN_DRAWSCALE
+			self._cursory = -hitpos:DotProduct( yvec ) * SCREEN_DRAWSCALE
 			
 			local curTime = CurTime()
 			if ( curTime - self._lastCursorUpdate ) > CURSOR_UPDATE_FREQ then
@@ -373,8 +373,8 @@ elseif CLIENT then
 		
 		local boxSize = SCREEN_DRAWSCALE
 		
-		local x = self._cursorx * SCREEN_DRAWSCALE
-		local y = self._cursory * SCREEN_DRAWSCALE
+		local x = self._cursorx
+		local y = self._cursory
 		
 		x = math.Clamp( x, -halfwidth + boxSize * 0.5, halfwidth - boxSize * 0.5 )
 		y = math.Clamp( y, -halfheight + boxSize * 0.5, halfheight - boxSize * 0.5 )
@@ -408,7 +408,7 @@ elseif CLIENT then
 	end
 	
 	function ENT:Click( ply )
-		local mousePos = { x = self._cursorx * SCREEN_DRAWSCALE, y = self._cursory * SCREEN_DRAWSCALE }
+		local mousePos = { x = self._cursorx, y = self._cursory }
 		if self.Room and self.Room.System then
 			local sys = self.Room.System
 			if sys.CanClickRooms then

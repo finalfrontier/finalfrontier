@@ -152,9 +152,9 @@ elseif CLIENT then
 				"POWER USAGE (" .. FormatNum( usage * 100, 3, 1 ) .. "%)" )
 			
 			if usage < 1 then
-				screen.UsageBar.Color = Color( 0, usage * 255, ( 1 - usage ) * 255, 255 )
+				screen.UsageBar.Color = Color( 32, 32 + ( usage * ( 255 - 64 ) ), 32, 255 )
 			else
-				screen.UsageBar.Color = Color( math.min( usage - 1, 1 ) * 255, math.max( 2 - usage, 0 ) * 255, 0, 255 )
+				screen.UsageBar.Color = Color( 32 + math.min( usage - 1, 1 ) * ( 255 - 64 ), 32 + math.max( 2 - usage, 0 ) * ( 255 - 64 ), 32, 255 )
 			end
 			
 			screen.UsageBar:Draw( screen )

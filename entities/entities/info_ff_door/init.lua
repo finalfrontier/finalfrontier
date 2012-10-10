@@ -1,6 +1,8 @@
 local TEMPERATURE_TRANSMIT_RATE = 0.05
 local ATMOSPHERE_TRANSMIT_RATE = 20.0
 
+local OPEN_DISTANCE = 160
+
 ENT.Type = "point"
 ENT.Base = "base_point"
 
@@ -8,7 +10,6 @@ ENT.Area = 4
 ENT.Rooms = nil
 
 ENT._doorEnts = nil
-ENT._triggerEnt = nil
 
 ENT._open = false
 ENT._locked = false
@@ -23,10 +24,8 @@ function ENT:InitPostEntity()
 	
 	local name = self:GetName()
 	local doorName = string.Replace( name, "_info_", "_" )
-	local triggerName = string.Replace( name, "_info_", "_trigger_" )
 	
 	self._doorEnts = ents.FindByName( doorName )
-	self._triggerEnt = ents.FindByName( triggerName )[ 1 ]
 end
 
 function ENT:AddRoom( room )
@@ -38,12 +37,6 @@ function ENT:AcceptInput( name, activator, caller, data )
 		self._open = true
 	elseif name == "Closed" then
 		self._open = false
-	elseif name == "Open" then
-		self:Open()
-	elseif name == "Close" then
-		self:Close()
-	elseif name == "ToggleLock" then
-		self:ToggleLock()
 	end
 end
 
@@ -69,7 +62,6 @@ end
 
 function ENT:Unlock()
 	self._locked = false
-	self._triggerEnt:Fire( "TouchTest", "", 0 )
 end
 
 function ENT:ToggleLock()
@@ -121,6 +113,34 @@ function ENT:Think()
 		delta = ( roomA:GetAtmosphere() - roomB:GetAtmosphere() ) * self.Area * ATMOSPHERE_TRANSMIT_RATE * dt
 		if delta > 0 then
 			roomA:TransmitAir( roomB, delta )
+		end
+		
+		if self:IsUnlocked() then
+			local shouldClose = true
+			local pos = self:GetPos()
+			for _, ply in ipairs( player.GetAll() ) do
+				if ply:GetPos():Distance( pos ) <= OPEN_DISTANCE then
+					shouldClose = false
+					break
+				end
+			end
+			
+			if shouldClose then
+				self:Close()
+			end
+		end
+	elseif self:IsUnlocked() then
+		local shouldOpen = false
+		local pos = self:GetPos()
+		for _, ply in ipairs( player.GetAll() ) do
+			if ply:GetPos():Distance( pos ) <= OPEN_DISTANCE then
+				shouldOpen = true
+				break
+			end
+		end
+		
+		if shouldOpen then
+			self:Open()
 		end
 	end
 end
