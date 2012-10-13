@@ -20,6 +20,8 @@ if SERVER then
 				door:UnlockClose()
 			end
 		end
+		
+		timer.Simple( 0.1, function() screen.Room.Ship:SendShipRoomStates( ply ) end )
 	end )
 	
 	net.Receive( "SysDoorOpenAll", function( len )
@@ -35,6 +37,8 @@ if SERVER then
 				end
 			end
 		end
+		
+		timer.Simple( 0.1, function() screen.Room.Ship:SendShipRoomStates( ply ) end )
 	end )
 	
 	net.Receive( "SysDoorToggle", function( len )
@@ -62,6 +66,8 @@ if SERVER then
 				door:UnlockClose()
 			end
 		end
+		
+		timer.Simple( 0.1, function() screen.Room.Ship:SendShipRoomStates( ply ) end )
 	end
 	
 	function SYS:Think( dt )
