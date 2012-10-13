@@ -1,7 +1,7 @@
 local TEMPERATURE_LOSS_RATE = 0.00000382
 
-ENT.Type = "brush"
-ENT.Base = "base_brush"
+ENT.Type = "point"
+ENT.Base = "base_point"
 
 ENT.Ship = nil
 ENT.ShipName = nil

@@ -25,7 +25,7 @@ function ships.FindRoomByName( name )
 end
 
 function ships.InitPostEntity()
-	local classOrder = { "info_ff_ship", "func_ff_room", "info_ff_roomcorner", "info_ff_door", "info_ff_screen" }
+	local classOrder = { "info_ff_ship", "info_ff_room", "info_ff_roomcorner", "info_ff_door", "info_ff_screen" }
 
 	for _1, class in ipairs( classOrder ) do
 		for _2, ent in ipairs( ents.FindByClass( class ) ) do
