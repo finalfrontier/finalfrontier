@@ -44,11 +44,11 @@ elseif CLIENT then
 	_sysIndex.CanClickRooms = false
 	_sysIndex.CanClickDoors = false
 	
-	function _sysIndex:Click( screen, x, y )
+	function _sysIndex:Click( screen, x, y, button )
 		return
 	end
 	
-	function _sysIndex:ClickRoom( screen, room )
+	function _sysIndex:ClickRoom( screen, room, button )
 		net.Start( "SysSelectRoom" )
 			net.WriteEntity( screen )
 			net.WriteEntity( LocalPlayer() )
@@ -57,14 +57,16 @@ elseif CLIENT then
 			else
 				net.WriteString( "" )
 			end
+			net.WriteInt( button, 8 )
 		net.SendToServer()
 	end
 	
-	function _sysIndex:ClickDoor( screen, door )
+	function _sysIndex:ClickDoor( screen, door, button )
 		net.Start( "SysSelectDoor" )
 			net.WriteEntity( screen )
 			net.WriteEntity( LocalPlayer() )
 			net.WriteInt( table.KeyFromValue( screen.Ship.Doors, door ), 8 )
+			net.WriteInt( button, 8 )
 		net.SendToServer()
 	end
 	

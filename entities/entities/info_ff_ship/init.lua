@@ -80,7 +80,7 @@ function ENT:SendInitShipData( ply )
 end
 
 local function IsDifferent( valA, valB, err )
-	err = err or 0.01
+	err = err or 0.001
 	local diff = math.abs( ( valA - valB ) / valA )
 	return diff > err
 end

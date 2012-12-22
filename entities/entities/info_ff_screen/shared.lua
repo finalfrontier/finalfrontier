@@ -219,6 +219,12 @@ elseif CLIENT then
 				surface.DrawRect( x - 24 * scale, y + i * 16 * scale - 2 * scale, 48 * scale, 4 * scale )
 			end
 		end
+		
+		surface.SetTextColor( Color( 255, 255, 255, 255 ) )
+		surface.SetFont( "CTextSmall" )
+		
+		surface.DrawCentredText( -256, -32, FormatNum( temp * 600, 3, 2 ) .. "K" )
+		surface.DrawCentredText( -256, 32, FormatNum( atmo * 100, 3, 2 ) .. "kPa" )
 	end
 	
 	function ENT:TransformShip( ship, x, y, width, height )
@@ -407,14 +413,14 @@ elseif CLIENT then
 		cam.End3D2D()
 	end
 	
-	function ENT:Click( ply )
+	function ENT:Click( ply, button )
 		local mousePos = { x = self._cursorx, y = self._cursory }
 		if self.Room and self.Room.System then
 			local sys = self.Room.System
 			if sys.CanClickRooms then
 				for k, room in pairs( self.Ship.Rooms ) do
 					if IsPointInsidePolyGroup( room.ShipTrans.ConvexPolys, mousePos ) then
-						sys:ClickRoom( self, room )
+						sys:ClickRoom( self, room, button )
 						return
 					end
 				end
@@ -423,13 +429,13 @@ elseif CLIENT then
 			if sys.CanClickDoors then
 				for k, door in pairs( self.Ship.Doors ) do
 					if IsPointInsidePoly( door.ShipTrans, mousePos ) then
-						sys:ClickDoor( self, door )
+						sys:ClickDoor( self, door, button )
 						return
 					end
 				end
 			end
 			
-			sys:Click( self, mousePos.x, mousePos.y )
+			sys:Click( self, mousePos.x, mousePos.y, button )
 		end
 	end
 end

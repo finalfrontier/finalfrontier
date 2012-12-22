@@ -1,5 +1,5 @@
-local TEMPERATURE_TRANSMIT_RATE = 0.05
 local ATMOSPHERE_TRANSMIT_RATE = 20.0
+local THERMAL_DIFFUSIVITY = 0.019
 
 local OPEN_DISTANCE = 160
 
@@ -91,6 +91,17 @@ function ENT:Think()
 	if #self.Rooms < 2 then return end
 	
 	if self:IsOpen() then
+		-- TODO: Mass_Flow=2*Door_Area*Mass_Flow_Const*(Pressure1-Pressure2)*((Temp1+Temp2)/2)^(3/2)) / ((Volume1+Volume2)^(1/3))
+	
+		--[[
+		Lawton27: I may be afk a bit tonight so I'll send the final pressure equations. I found pressure changes so fast it's easier & more accurate to just set the pressures equal when a door opens or a pressure changes in an open door. Also whenever there is a pressure equlization I have a temperature equation to represent the movement of different temperature gasses in the equilization.
+		Lawton27: New_Pressure_For_Both_Rooms = (Pressure_1*Volume_1 + Pressure_2*Volume_2) / (Volume_1 + Volume_2)
+		Lawton27: ^ To be called whenever two rooms of different pressure are connected
+		Lawton27: Also the tempurature function should be called with that. It reffers to both the old and new pressures and is different for each room, so should be called twice and before the new pressures are assigned (or temperatures for that matter since they reffer eachother)
+		Lawton27: New_Temp_1 = ( Pressure_1*Volume_1*Old_Temp_1 + ( New_Pressure_For_Both_Rooms*(Volume_1 + Volume_2) - Pressure_1*Volume_1)*Old_Temp_2 ) / ( New_Pressure_For_Both_Rooms*(Volume_1 + Volume_2) )
+		Lawton27: And obviously just switch the 1s and 2s arround for the equation for room 2
+		]]--
+	
 		-- Temperature transfer
 		local roomA = self.Rooms[ 1 ]
 		local roomB = self.Rooms[ 2 ]
@@ -98,7 +109,7 @@ function ENT:Think()
 			roomA = self.Rooms[ 2 ]
 			roomB = self.Rooms[ 1 ]
 		end
-		local delta = ( roomA:GetTemperature() - roomB:GetTemperature() ) * self.Area * TEMPERATURE_TRANSMIT_RATE * dt
+		local delta = 8 * ( roomA:GetTemperature() - roomB:GetTemperature() ) / ( math.pow( roomA.Volume + roomB.Volume, 2 / 3 ) * ( roomA:GetAtmosphere() + roomB:GetAtmosphere() ) ) * self.Area * THERMAL_DIFFUSIVITY * dt
 		if delta > 0 then
 			roomA:TransmitTemperature( roomB, delta )
 		end

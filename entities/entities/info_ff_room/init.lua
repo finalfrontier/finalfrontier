@@ -72,12 +72,17 @@ function ENT:InitPostEntity()
 		end
 	end
 	
+	if self.System == "medical" then
+		self._temperature = 600
+	else
+		self._temperature = 300
+	end
+	
 	if self.System then
 		self.System = sys.Create( self.System, self )
 	end
 	
-	self._airvolume = math.random() * self.Volume
-	self._temperature = math.random() * 300 + 300
+	self._airvolume = self.Volume -- * math.random()
 	self._shields = math.random()
 	self._lastupdate = CurTime()
 end
@@ -89,7 +94,7 @@ function ENT:Think()
 
 	if self.System then self.System:Think( dt ) end
 	
-	self._temperature = self._temperature * ( 1 - TEMPERATURE_LOSS_RATE * self.SurfaceArea * dt )
+	-- self._temperature = self._temperature * ( 1 - TEMPERATURE_LOSS_RATE * self.SurfaceArea * dt )
 end
 
 function ENT:AddCorner( index, x, y )
@@ -107,6 +112,10 @@ end
 
 function ENT:GetTemperature()
 	return self._temperature * self:GetAtmosphere()
+end
+
+function ENT:SetTemperature( temp )
+	self._temperature = math.Clamp( temp / self:GetAtmosphere(), 0, 600 )
 end
 
 function ENT:GetAirVolume()
