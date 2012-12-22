@@ -4,8 +4,8 @@ ships = {}
 
 ships._dict = {}
 
-function ships.FindByName( name )
-	return ships._dict[ name ]
+function ships.FindByName(name)
+	return ships._dict[name]
 end
 
 local _roomIndex = {}
@@ -23,24 +23,24 @@ function _roomIndex:GetName()
 end
 
 function _roomIndex:GetStatusLerp()
-	return math.Clamp( ( CurTime() - self._lastUpdate ) / ROOM_UPDATE_FREQ, 0, 1 )
+	return math.Clamp((CurTime() - self._lastUpdate) / ROOM_UPDATE_FREQ, 0, 1)
 end
 
 function _roomIndex:GetTemperature()
-	return self._oldTemp + ( self._temperature - self._oldTemp ) * self:GetStatusLerp()
+	return self._oldTemp + (self._temperature - self._oldTemp) * self:GetStatusLerp()
 end
 
 function _roomIndex:GetAtmosphere()
-	return self._oldAtmo + ( self._atmosphere - self._oldAtmo ) * self:GetStatusLerp()
+	return self._oldAtmo + (self._atmosphere - self._oldAtmo) * self:GetStatusLerp()
 end
 
 function _roomIndex:GetShields()
-	return self._oldShld + ( self._shields - self._oldShld ) * self:GetStatusLerp()
+	return self._oldShld + (self._shields - self._oldShld) * self:GetStatusLerp()
 end
 
-net.Receive( "InitShipData", function( len )
+net.Receive("InitShipData", function(len)
 	local name = net.ReadString()
-	local roomCount = net.ReadInt( 8 )
+	local roomCount = net.ReadInt(8)
 	
 	local ship = {}
 	ship.Rooms = {}
@@ -50,33 +50,33 @@ net.Receive( "InitShipData", function( len )
 	
 	for rNum = 1, roomCount do
 		local room = {}
-		setmetatable( room, { __index = _roomIndex } )
+		setmetatable(room, { __index = _roomIndex })
 		room.Ship = ship
 		room.Name = net.ReadString()
-		room.Index = net.ReadInt( 8 )
-		room.System = sys.Create( net.ReadString(), room )
+		room.Index = net.ReadInt(8)
+		room.System = sys.Create(net.ReadString(), room)
 		room.Bounds = Bounds()
 		room.Doors = {}
 		
 		room.Corners = {}
-		local cornerCount = net.ReadInt( 8 )
+		local cornerCount = net.ReadInt(8)
 		for cNum = 1, cornerCount do
-			local index = net.ReadInt( 8 )
+			local index = net.ReadInt(8)
 			local pos = { x = net.ReadFloat(), y = net.ReadFloat() }
 			
-			room.Corners[ index ] = pos
-			room.Bounds:AddPoint( pos.x, pos.y )
+			room.Corners[index] = pos
+			room.Bounds:AddPoint(pos.x, pos.y)
 		end
 		
-		room.ConvexPolys = FindConvexPolygons( room.Corners )
+		room.ConvexPolys = FindConvexPolygons(room.Corners)
 		
-		ship.Rooms[ room.Name ] = room
-		ship.Bounds:AddBounds( room.Bounds )
+		ship.Rooms[room.Name] = room
+		ship.Bounds:AddBounds(room.Bounds)
 	
-		ship._roomlist[ room.Index ] = room
+		ship._roomlist[room.Index] = room
 	end
 	
-	local doorCount = net.ReadInt( 8 )
+	local doorCount = net.ReadInt(8)
 	for dNum = 1, doorCount do
 		local door = { _lastUpdate = 0 }
 		door.x = net.ReadFloat()
@@ -84,28 +84,28 @@ net.Receive( "InitShipData", function( len )
 		door.angle = net.ReadFloat()
 		
 		door.Bounds = Bounds()
-		local roomai = net.ReadInt( 8 )
-		local roombi = net.ReadInt( 8 )
+		local roomai = net.ReadInt(8)
+		local roombi = net.ReadInt(8)
 		door.Open = false
 		door.Locked = false
-		door.Rooms = { ship._roomlist[ roomai ], ship._roomlist[ roombi ] }
+		door.Rooms = { ship._roomlist[roomai], ship._roomlist[roombi] }
 		
-		table.insert( door.Rooms[ 1 ].Doors, door )
-		table.insert( door.Rooms[ 2 ].Doors, door )
-		table.insert( ship.Doors, door )
+		table.insert(door.Rooms[1].Doors, door)
+		table.insert(door.Rooms[2].Doors, door)
+		table.insert(ship.Doors, door)
 	end
 	
-	ships._dict[ name ] = ship
-end )
+	ships._dict[name] = ship
+end)
 
-net.Receive( "ShipRoomStates", function( len )
+net.Receive("ShipRoomStates", function(len)
 	local timestamp = net.ReadFloat()
 	local name = net.ReadString()
-	local ship = ships.FindByName( name )
+	local ship = ships.FindByName(name)
 	while true do
-		local index = net.ReadInt( 8 )
+		local index = net.ReadInt(8)
 		if index == 0 then break end
-		local room = ship._roomlist[ index ]
+		local room = ship._roomlist[index]
 		if timestamp > room._lastUpdate then
 			room._oldTemp = room._temperature
 			room._oldAtmo = room._atmosphere
@@ -119,14 +119,14 @@ net.Receive( "ShipRoomStates", function( len )
 		end
 	end
 	while true do
-		local index = net.ReadInt( 8 )
+		local index = net.ReadInt(8)
 		if index == 0 then break end
-		local door = ship.Doors[ index ]
+		local door = ship.Doors[index]
 		if timestamp > door._lastUpdate then
-			local flags = net.ReadInt( 8 )
+			local flags = net.ReadInt(8)
 			if flags % 2 >= 1 then door.Open = true else door.Open = false end
 			if flags % 4 >= 2 then door.Locked = true else door.Locked = false end
 			door._lastUpdate = timestamp
 		end
 	end
-end )
+end)

@@ -5,32 +5,32 @@ function SYS:Initialize()
 end
 
 if SERVER then
-	util.AddNetworkString( "SysDoorCloseAll" )
-	util.AddNetworkString( "SysDoorOpenAll" )
-	util.AddNetworkString( "SysDoorToggle" )
+	util.AddNetworkString("SysDoorCloseAll")
+	util.AddNetworkString("SysDoorOpenAll")
+	util.AddNetworkString("SysDoorToggle")
 	
-	net.Receive( "SysDoorCloseAll", function( len )
+	net.Receive("SysDoorCloseAll", function(len)
 		local screen = net.ReadEntity()
 		local ply = net.ReadEntity()
 		
-		for _, door in ipairs( screen.Room.Ship.Doors ) do
-			if screen:GetNWBool( "lockMode" ) then
+		for _, door in ipairs(screen.Room.Ship.Doors) do
+			if screen:GetNWBool("lockMode") then
 				door:Lock()
 			elseif door:IsOpen() then
 				door:UnlockClose()
 			end
 		end
 		
-		timer.Simple( 0.1, function() screen.Room.Ship:SendShipRoomStates( ply ) end )
-	end )
+		timer.Simple(0.1, function() screen.Room.Ship:SendShipRoomStates(ply) end)
+	end)
 	
-	net.Receive( "SysDoorOpenAll", function( len )
+	net.Receive("SysDoorOpenAll", function(len)
 		local screen = net.ReadEntity()
 		local ply = net.ReadEntity()
 		
-		for _, door in ipairs( screen.Room.Ship.Doors ) do
+		for _, door in ipairs(screen.Room.Ship.Doors) do
 			if door:IsClosed() then
-				if screen:GetNWBool( "lockMode" ) then
+				if screen:GetNWBool("lockMode") then
 					door:Unlock()
 				elseif not door:IsLocked() then
 					door:LockOpen()
@@ -38,22 +38,22 @@ if SERVER then
 			end
 		end
 		
-		timer.Simple( 0.1, function() screen.Room.Ship:SendShipRoomStates( ply ) end )
-	end )
+		timer.Simple(0.1, function() screen.Room.Ship:SendShipRoomStates(ply) end)
+	end)
 	
-	net.Receive( "SysDoorToggle", function( len )
+	net.Receive("SysDoorToggle", function(len)
 		local screen = net.ReadEntity()
 		local ply = net.ReadEntity()
 		
-		screen:SetNWBool( "lockMode", not screen:GetNWBool( "lockMode" ) )
-	end )
+		screen:SetNWBool("lockMode", not screen:GetNWBool("lockMode"))
+	end)
 	
-	function SYS:StartControlling( screen, ply )
-		screen:SetNWBool( "lockMode", false )
+	function SYS:StartControlling(screen, ply)
+		screen:SetNWBool("lockMode", false)
 	end
 	
-	function SYS:ClickDoor( screen, ply, door )
-		if screen:GetNWBool( "lockMode" ) then
+	function SYS:ClickDoor(screen, ply, door)
+		if screen:GetNWBool("lockMode") then
 			if door:IsLocked() then
 				door:Unlock()
 			else
@@ -67,40 +67,40 @@ if SERVER then
 			end
 		end
 		
-		timer.Simple( 0.1, function() screen.Room.Ship:SendShipRoomStates( ply ) end )
+		timer.Simple(0.1, function() screen.Room.Ship:SendShipRoomStates(ply) end)
 	end
 	
-	function SYS:Think( dt )
+	function SYS:Think(dt)
 		
 	end
 elseif CLIENT then
 	SYS.DrawWholeShip = true
 	SYS.CanClickDoors = true
 	
-	function SYS:Click( screen, x, y )
+	function SYS:Click(screen, x, y)
 		if screen.Buttons then
-			if screen.Buttons.CloseAll:Click( x, y ) then
-				net.Start( "SysDoorCloseAll" )
-					net.WriteEntity( screen )
-					net.WriteEntity( LocalPlayer() )
+			if screen.Buttons.CloseAll:Click(x, y) then
+				net.Start("SysDoorCloseAll")
+					net.WriteEntity(screen)
+					net.WriteEntity(LocalPlayer())
 				net.SendToServer()
 			end
-			if screen.Buttons.OpenAll:Click( x, y ) then
-				net.Start( "SysDoorOpenAll" )
-					net.WriteEntity( screen )
-					net.WriteEntity( LocalPlayer() )
+			if screen.Buttons.OpenAll:Click(x, y) then
+				net.Start("SysDoorOpenAll")
+					net.WriteEntity(screen)
+					net.WriteEntity(LocalPlayer())
 				net.SendToServer()
 			end
-			if screen.Buttons.Mode:Click( x, y ) then
-				net.Start( "SysDoorToggle" )
-					net.WriteEntity( screen )
-					net.WriteEntity( LocalPlayer() )
+			if screen.Buttons.Mode:Click(x, y) then
+				net.Start("SysDoorToggle")
+					net.WriteEntity(screen)
+					net.WriteEntity(LocalPlayer())
 				net.SendToServer()
 			end
 		end
 	end
 	
-	function SYS:DrawGUI( screen )
+	function SYS:DrawGUI(screen)
 		if not screen.Buttons then
 			screen.Buttons = {}
 			screen.Buttons.CloseAll = Button()
@@ -122,7 +122,7 @@ elseif CLIENT then
 			screen.Buttons.Mode.Height = 48
 		end
 		
-		if screen:GetNWBool( "lockMode" ) then
+		if screen:GetNWBool("lockMode") then
 			screen.Buttons.CloseAll.Text = "LOCK ALL"
 			screen.Buttons.OpenAll.Text = "UNLOCK ALL"
 			screen.Buttons.Mode.Text = "LOCK/UNLOCK"
@@ -132,20 +132,20 @@ elseif CLIENT then
 			screen.Buttons.Mode.Text = "OPEN/CLOSE"
 		end
 		
-		surface.SetTextColor( Color( 127, 127, 127, 255 ) )
-		surface.SetFont( "CTextSmall" )
+		surface.SetTextColor(Color(127, 127, 127, 255))
+		surface.SetFont("CTextSmall")
 		
-		surface.DrawCentredText( ( screen.Buttons.CloseAll.X + screen.Buttons.CloseAll.Width + screen.Buttons.OpenAll.X ) / 2,
+		surface.DrawCentredText((screen.Buttons.CloseAll.X + screen.Buttons.CloseAll.Width + screen.Buttons.OpenAll.X) / 2,
 			screen.Height / 2 - 104,
-			"GLOBAL CONTROLS" )
+			"GLOBAL CONTROLS")
 			
-		surface.DrawCentredText( screen.Width / 2 - 64 - 96, screen.Height / 2 - 104,
-			"CLICK MODE" )
+		surface.DrawCentredText(screen.Width / 2 - 64 - 96, screen.Height / 2 - 104,
+			"CLICK MODE")
 		
-		for _, btn in pairs( screen.Buttons ) do
-			btn:Draw( screen )
+		for _, btn in pairs(screen.Buttons) do
+			btn:Draw(screen)
 		end
 		
-		self.Base.DrawGUI( self, screen )
+		self.Base.DrawGUI(self, screen)
 	end
 end

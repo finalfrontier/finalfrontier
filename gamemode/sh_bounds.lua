@@ -10,10 +10,10 @@ function _boundsIndex:GetSize()
 end
 
 function _boundsIndex:GetCentre()
-	return { x = ( self.r + self.l ) / 2, y = ( self.b + self.t ) / 2 }
+	return { x = (self.r + self.l) / 2, y = (self.b + self.t) / 2 }
 end
 
-function _boundsIndex:AddPoint( x, y )
+function _boundsIndex:AddPoint(x, y)
 	if not self._set then
 		self.l, self.t, self.r, self.b = x, y, x, y
 		self._set = true
@@ -25,7 +25,7 @@ function _boundsIndex:AddPoint( x, y )
 	end
 end
 
-function _boundsIndex:AddBounds( bounds )
+function _boundsIndex:AddBounds(bounds)
 	if not self._set then
 		self.l, self.t, self.r, self.b = bounds.l, bounds.t, bounds.r, bounds.b
 		self._set = true
@@ -37,16 +37,16 @@ function _boundsIndex:AddBounds( bounds )
 	end
 end
 
-function _boundsIndex:Equals( bounds )
+function _boundsIndex:Equals(bounds)
 	return self.l == bounds.l and self.t == bounds.t and self.r == bounds.r and self.b == bounds.b
 end
 
-function Bounds( x, y, width, height )
+function Bounds(x, y, width, height)
 	local bounds = {}
 	if x then
 		bounds.l, bounds.t, bounds.r, bounds.b = x, y, x + width, y + height
 		bounds._set = true
 	end
-	setmetatable( bounds, { __index = _boundsIndex } )
+	setmetatable(bounds, { __index = _boundsIndex })
 	return bounds
 end

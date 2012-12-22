@@ -15,19 +15,19 @@ function _sysIndex:GetShip()
 end
 
 if SERVER then
-	function _sysIndex:StartControlling( screen, ply )
+	function _sysIndex:StartControlling(screen, ply)
 		return
 	end
 	
-	function _sysIndex:StopControlling( screen, ply )
+	function _sysIndex:StopControlling(screen, ply)
 		return
 	end
 	
-	function _sysIndex:ClickRoom( screen, ply, room )
+	function _sysIndex:ClickRoom(screen, ply, room)
 		return
 	end
 	
-	function _sysIndex:ClickDoor( screen, ply, door )
+	function _sysIndex:ClickDoor(screen, ply, door)
 		return
 	end
 	
@@ -35,7 +35,7 @@ if SERVER then
 		return self.Room.Screens
 	end
 	
-	function _sysIndex:Think( dt )
+	function _sysIndex:Think(dt)
 		return
 	end
 elseif CLIENT then
@@ -44,45 +44,45 @@ elseif CLIENT then
 	_sysIndex.CanClickRooms = false
 	_sysIndex.CanClickDoors = false
 	
-	function _sysIndex:Click( screen, x, y, button )
+	function _sysIndex:Click(screen, x, y, button)
 		return
 	end
 	
-	function _sysIndex:ClickRoom( screen, room, button )
-		net.Start( "SysSelectRoom" )
-			net.WriteEntity( screen )
-			net.WriteEntity( LocalPlayer() )
+	function _sysIndex:ClickRoom(screen, room, button)
+		net.Start("SysSelectRoom")
+			net.WriteEntity(screen)
+			net.WriteEntity(LocalPlayer())
 			if room then
-				net.WriteString( room:GetName() )
+				net.WriteString(room:GetName())
 			else
-				net.WriteString( "" )
+				net.WriteString("")
 			end
-			net.WriteInt( button, 8 )
+			net.WriteInt(button, 8)
 		net.SendToServer()
 	end
 	
-	function _sysIndex:ClickDoor( screen, door, button )
-		net.Start( "SysSelectDoor" )
-			net.WriteEntity( screen )
-			net.WriteEntity( LocalPlayer() )
-			net.WriteInt( table.KeyFromValue( screen.Ship.Doors, door ), 8 )
-			net.WriteInt( button, 8 )
+	function _sysIndex:ClickDoor(screen, door, button)
+		net.Start("SysSelectDoor")
+			net.WriteEntity(screen)
+			net.WriteEntity(LocalPlayer())
+			net.WriteInt(table.KeyFromValue(screen.Ship.Doors, door), 8)
+			net.WriteInt(button, 8)
 		net.SendToServer()
 	end
 	
-	function _sysIndex:GetRoomColor( screen, room, mouseOver )
+	function _sysIndex:GetRoomColor(screen, room, mouseOver)
 		local r, g, b = 32, 32, 32
 		if mouseOver then
 			r, g, b = r + 32, g + 32, b + 32
 		end
 		if room == screen.Room then
-			local add = math.sin( CurTime() * math.pi * 2 ) / 2 + 0.5
+			local add = math.sin(CurTime() * math.pi * 2) / 2 + 0.5
 			r, g, b = r + add * 32, g + add * 64, b
 		end
-		return Color( r, g, b, 255 )
+		return Color(r, g, b, 255)
 	end
 	
-	function _sysIndex:GetDoorColor( screen, door, mouseOver )
+	function _sysIndex:GetDoorColor(screen, door, mouseOver)
 		local c = 32
 		if mouseOver then
 			c = c + 32
@@ -91,23 +91,23 @@ elseif CLIENT then
 			c = c + 127
 			
 			if door.Locked then
-				return Color( c + 64, c - 64, c - 64, 255 )
+				return Color(c + 64, c - 64, c - 64, 255)
 			end
 		elseif door.Locked then
-			return Color( c, c + 64, c, 255 )
+			return Color(c, c + 64, c, 255)
 		end
-		return Color( c, c, c, 255 )
+		return Color(c, c, c, 255)
 	end
 
-	function _sysIndex:DrawGUI( screen )
-		surface.SetTextColor( Color( 255, 255, 255, 255 ) )
-		surface.SetFont( "CTextLarge" )
-		surface.DrawCentredText( 0, -screen.Height / 2 + 32, string.upper( self.FullName ) )
+	function _sysIndex:DrawGUI(screen)
+		surface.SetTextColor(Color(255, 255, 255, 255))
+		surface.SetFont("CTextLarge")
+		surface.DrawCentredText(0, -screen.Height / 2 + 32, string.upper(self.FullName))
 		
 		if self.DrawWholeShip then		  
 			local margin = 16
-			screen:DrawShip( screen.Ship, -screen.Width / 2 + margin + 128, -screen.Height / 2 + margin + 64,
-				512 - margin * 2, 256 - margin * 2 )
+			screen:DrawShip(screen.Ship, -screen.Width / 2 + margin + 128, -screen.Height / 2 + margin + 64,
+				512 - margin * 2, 256 - margin * 2)
 		end
 		
 		screen:DrawCursor()
@@ -115,55 +115,55 @@ elseif CLIENT then
 end
 
 if SERVER then
-	util.AddNetworkString( "SysSelectRoom" )
-	util.AddNetworkString( "SysSelectDoor" )
+	util.AddNetworkString("SysSelectRoom")
+	util.AddNetworkString("SysSelectDoor")
 	
-	net.Receive( "SysSelectRoom", function( len )
+	net.Receive("SysSelectRoom", function(len)
 		local screen = net.ReadEntity()
 		local ply = net.ReadEntity()
 		local roomName = net.ReadString()
 		
 		if screen.Room.System then
-			if string.len( roomName ) > 0 then
-				screen.Room.System:ClickRoom( screen, ply, ships.FindRoomByName( roomName ) )
+			if string.len(roomName) > 0 then
+				screen.Room.System:ClickRoom(screen, ply, ships.FindRoomByName(roomName))
 			else
-				screen.Room.System:ClickRoom( screen, ply, nil )
+				screen.Room.System:ClickRoom(screen, ply, nil)
 			end
 		end
-	end )
+	end)
 	
-	net.Receive( "SysSelectDoor", function( len )
+	net.Receive("SysSelectDoor", function(len)
 		local screen = net.ReadEntity()
 		local ply = net.ReadEntity()
-		local doorId = net.ReadInt( 8 )
+		local doorId = net.ReadInt(8)
 		
 		if screen.Room.System then
-			screen.Room.System:ClickDoor( screen, ply, screen.Room.Ship.Doors[ doorId ] )
+			screen.Room.System:ClickDoor(screen, ply, screen.Room.Ship.Doors[doorId])
 		end
-	end )
+	end)
 end
 
-MsgN( "Loading systems..." )
-local files = file.Find( "finalfrontier/gamemode/systems/*.lua", "LUA" )
-for i, file in ipairs( files ) do	
-	local name = string.sub( file, 0, string.len( file ) - 4 )
-	MsgN( "  Loading system " .. name )
+MsgN("Loading systems...")
+local files = file.Find("finalfrontier/gamemode/systems/*.lua", "LUA")
+for i, file in ipairs(files) do	
+	local name = string.sub(file, 0, string.len(file) - 4)
+	MsgN("  Loading system " .. name)
 
-	if SERVER then AddCSLuaFile( "systems/" .. file ) end
+	if SERVER then AddCSLuaFile("systems/" .. file) end
 	
 	SYS = { Name = name }
-	setmetatable( SYS, { __index = _sysIndex } )
-	include( "systems/" .. file )
+	setmetatable(SYS, { __index = _sysIndex })
+	include("systems/" .. file)
 	
-	sys._dict[ name ] = SYS
+	sys._dict[name] = SYS
 	SYS = nil
 end
 
-function sys.Create( name, room )
-	if string.len( name ) == 0 then return nil end
-	if sys._dict[ name ] then
+function sys.Create(name, room)
+	if string.len(name) == 0 then return nil end
+	if sys._dict[name] then
 		local system = { Room = room, Ship = room.Ship, Base = _sysIndex }
-		setmetatable( system, { __index = sys._dict[ name ] } )
+		setmetatable(system, { __index = sys._dict[name] })
 		system:Initialize()
 		return system
 	end

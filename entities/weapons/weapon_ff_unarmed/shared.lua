@@ -1,5 +1,5 @@
 if SERVER then
-   AddCSLuaFile( "shared.lua" )
+   AddCSLuaFile("shared.lua")
 end
 
 SWEP.HoldType = "normal"
@@ -28,7 +28,7 @@ SWEP.AllowDelete = false
 SWEP.AllowDrop = false
 
 function SWEP:Initialize()
-	self:SetWeaponHoldType( "pistol" )
+	self:SetWeaponHoldType("pistol")
 end
 
 function SWEP:GetClass()
@@ -44,7 +44,7 @@ function SWEP:ShouldDropOnDie()
 end
 
 function SWEP:PrimaryAttack()
-   self.Owner:SetAnimation( PLAYER_ATTACK1 )
+   self.Owner:SetAnimation(PLAYER_ATTACK1)
 end
 
 function SWEP:SecondaryAttack()
@@ -61,7 +61,7 @@ function SWEP:Deploy()
 end
 
 function SWEP:Holster()
-   return not self.Owner:GetNWBool( "usingScreen" )
+   return not self.Owner:GetNWBool("usingScreen")
 end
 
 function SWEP:HUDShouldDraw()
