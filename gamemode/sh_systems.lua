@@ -77,10 +77,12 @@ elseif CLIENT then
 		if mouseOver then
 			r, g, b = r + 32, g + 32, b + 32
 		end
+		--[[
 		if room == screen.Room then
 			local add = math.sin(CurTime() * math.pi * 2) / 2 + 0.5
 			r, g, b = r + add * 32, g + add * 64, b
 		end
+		]]--
 		return Color(r, g, b, 255)
 	end
 	
@@ -101,17 +103,13 @@ elseif CLIENT then
 		return Color(c, c, c, 255)
 	end
 
-	function _sysIndex:DrawGUI(screen)
-		surface.SetTextColor(Color(255, 255, 255, 255))
-		surface.SetFont("CTextLarge")
-		surface.DrawCentredText(0, -screen.Height / 2 + 32, string.upper(self.FullName))
-		
+	function _sysIndex:DrawGUI(screen)		
 		if self.DrawWholeShip then		  
 			local margin = 16
 			screen:DrawShip(screen.Ship, -screen.Width / 2 + margin + 128, -screen.Height / 2 + margin + 64,
 				512 - margin * 2, 256 - margin * 2)
 		end
-		
+
 		screen:DrawCursor()
 	end
 end

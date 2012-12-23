@@ -1,3 +1,5 @@
+local RECHARGE_RATE = 1 / 60.0
+
 SYS.FullName = "Shield Control"
 
 function SYS:Initialize()
@@ -38,7 +40,14 @@ if SERVER then
 		self.PowerUsage = totNeeded / totPower
 		
 		for _, room in ipairs(self.Ship._roomlist) do
-			room._shields = (self.Distribution[room] or 0) * ratio
+			local val = (self.Distribution[room] or 0) * ratio
+			if room._shields < val then
+				room._shields = room._shields + RECHARGE_RATE * dt
+			end
+
+			if room._shields > val then
+				room._shields = val
+			end
 		end
 	end
 	

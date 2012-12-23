@@ -4,6 +4,13 @@ local UPDATE_FREQ = 0.5
 local CURSOR_UPDATE_FREQ = 0.25
 local MAX_USE_DISTANCE = 64
 
+local screen = {}
+screen.STATUS       = 1
+screen.SYSTEM       = 2
+screen.DOORS        = 3
+screen.SECURITY  	= 4
+screen.OVERRIDE     = 5
+
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 	
@@ -51,6 +58,7 @@ if SERVER then
 		end
 		
 		self:SetNWBool("used", false)
+		self:SetNWInt("screen", screen.STATUS)
 		self:SetNWEntity("user", nil)
 		self:SetNWString("ship", self.Room.ShipName)
 		self:SetNWString("room", self.RoomName)
@@ -78,6 +86,7 @@ if SERVER then
 	function ENT:StartUsing(ply)
 		self:SetNWBool("used", true)
 		self:SetNWEntity("user", ply)
+		self:SetNWInt("screen", screen.SYSTEM)
 		ply:SetNWBool("usingScreen", true)
 		ply:SetNWEntity("screen", self)
 		ply:SetNWEntity("oldWep", ply:GetActiveWeapon())
@@ -95,6 +104,7 @@ if SERVER then
 	
 	function ENT:StopUsing()
 		self:SetNWBool("used", false)
+		self:SetNWInt("screen", screen.STATUS)
 		
 		local ply = self:GetNWEntity("user")
 		if ply:IsValid() then
@@ -122,6 +132,8 @@ if SERVER then
 		screen:SetNWFloat("cury", net.ReadFloat())
 	end)
 elseif CLIENT then
+	local WHITE = Material("vgui/white")
+
 	SCREEN_DRAWSCALE = 16
 
 	surface.CreateFont("CTextSmall", {
@@ -253,37 +265,49 @@ elseif CLIENT then
 		
 		for k, room in pairs(ship.Rooms) do
 			if not room.ShipTrans then
+				local x, y
 				room.ShipTrans = {}
 				room.ShipTrans.Corners = {}
 				for i, v in ipairs(room.Corners) do
-					local x, y = ship.Transform:Transform(v.x, v.y)
+					x, y = ship.Transform:Transform(v.x, v.y)
 					room.ShipTrans.Corners[i] = { x = x, y = y }
 				end
 				room.ShipTrans.ConvexPolys = {}
 				for j, poly in ipairs(room.ConvexPolys) do
 					room.ShipTrans.ConvexPolys[j] = {}
 					for i, v in ipairs(poly) do
-						local x, y = ship.Transform:Transform(v.x, v.y)
+						x, y = ship.Transform:Transform(v.x, v.y)
 						room.ShipTrans.ConvexPolys[j][i] = { x = x, y = y }
 					end
 				end
+				local centre = room.Bounds:GetCentre()
+				x, y = ship.Transform:Transform(centre.x, centre.y)
+				room.ShipTrans.Centre = { x = x, y = y }
 			end
-			
+
 			local color = self.Room.System:GetRoomColor(self, room,
 				self.Room.System.CanClickRooms and
 				IsPointInsidePolyGroup(room.ShipTrans.ConvexPolys, mousePos))
-			
+
 			for i, poly in ipairs(room.ShipTrans.ConvexPolys) do
 				surface.SetDrawColor(color)
 				surface.DrawPoly(poly)
 			end
-			
+
 			surface.SetDrawColor(Color(255, 255, 255, 255))
 			last = room.ShipTrans.Corners[#room.ShipTrans.Corners]
 			lx, ly = last.x, last.y
 			for _, v in ipairs(room.ShipTrans.Corners) do
 				surface.DrawLine(lx, ly, v.x, v.y)
 				lx, ly = v.x, v.y
+			end
+
+			if room.System and room.System.Icon and room.ShipTrans.Centre then
+				surface.SetMaterial(room.System.Icon)
+				surface.SetDrawColor(Color(255, 255, 255, 32))
+				surface.DrawTexturedRect(
+					room.ShipTrans.Centre.x - 12, room.ShipTrans.Centre.y - 12, 24, 24)
+				surface.SetMaterial(WHITE)
 			end
 		end
 		
@@ -392,22 +416,43 @@ elseif CLIENT then
 		local ang = self:GetAngles()
 		ang:RotateAroundAxis(ang:Up(), 90)
 		ang:RotateAroundAxis(ang:Forward(), 90)
-		cam.Start3D2D(self:GetPos(), ang, 1 / SCREEN_DRAWSCALE)
-			if not self:GetNWBool("used") then
-				self:DrawStatusDial(0, 0, 192)
-				if self.Room and self.Room.System and self.Room.System.Icon then
-					surface.SetMaterial(self.Room.System.Icon)
+		
+		local curScreen = self:GetNWInt("screen")
+
+		if self.Room and self.Room.System and self.Room.System.Icon then
+			local dist = math.cos(CurTime() * math.pi * 2) + 1.5
+			local backPos = self:GetPos() - self:GetAngles():Forward() * dist
+			cam.Start3D2D(backPos, ang, 1 / SCREEN_DRAWSCALE)
+				if curScreen == screen.STATUS then
+					surface.SetDrawColor(Color(255, 255, 255, 255))
+				else
+					surface.SetDrawColor(Color(255, 255, 255, 4))
+				end
+				surface.SetMaterial(self.Room.System.Icon)
+				if curScreen == screen.STATUS then
 					surface.DrawTexturedRect(208, -64, 128, 128)
 					surface.DrawTexturedRect(-336, -64, 128, 128)
+				else
+					local quater = self.Width / 4
+					surface.DrawTexturedRect(-128 - quater, -128, 256, 256)
+					surface.DrawTexturedRect(-128 + quater, -128, 256, 256)
 				end
+				surface.SetMaterial(WHITE)
+			cam.End3D2D()
+		end
+		cam.Start3D2D(self:GetPos(), ang, 1 / SCREEN_DRAWSCALE)
+			if curScreen == screen.STATUS then
+				self:DrawStatusDial(0, 0, 192)
 			else
 				self:FindCursorPosition()
-				if self.Room and self.Room.System then
-					self.Room.System:DrawGUI(self)
-				else
-					surface.SetTextColor(Color(64, 64, 64, 255))
-					surface.SetFont("CTextLarge")
-					surface.DrawCentredText(0, 0, "NO SYSTEM INSTALLED")
+				if curScreen == screen.SYSTEM then
+					if self.Room and self.Room.System then
+						self.Room.System:DrawGUI(self)
+					else
+						surface.SetTextColor(Color(64, 64, 64, 255))
+						surface.SetFont("CTextLarge")
+						surface.DrawCentredText(0, 0, "NO SYSTEM INSTALLED")
+					end
 				end
 			end
 		cam.End3D2D()
