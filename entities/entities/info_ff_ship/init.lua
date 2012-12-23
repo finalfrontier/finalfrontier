@@ -8,6 +8,8 @@ ENT.Doors = nil
 
 ENT.Bounds = nil
 
+ENT._players = nil
+
 function ENT:KeyValue(key, value)
 	if key == "hullhealth" then
 		self.BaseHullHealth = tonumber(value)
@@ -19,6 +21,7 @@ function ENT:Initialize()
 	self._roomlist = {}
 	self.Doors = {}
 	self.Bounds = Bounds()
+	self._players = {}
 end
 
 function ENT:InitPostEntity()
@@ -47,7 +50,7 @@ util.AddNetworkString("ShipRoomStates")
 
 function ENT:SendInitShipData(ply)
 	net.Start("InitShipData")
-		net.WriteString(self:GetName())		
+		net.WriteString(self:GetName())
 		net.WriteInt(table.Count(self.Rooms), 8)
 		
 		for name, room in pairs(self.Rooms) do
@@ -140,4 +143,33 @@ function ENT:SendShipRoomStates(ply)
 		end
 		net.WriteInt(0, 8)
 	if send then net.Send(ply) end
+end
+
+local ply_mt = FindMetaTable("Player")
+function ply_mt:SetShip(ship)
+	if self._ship then
+		self._ship:_removePlayer(self)
+	end
+	ship:_addPlayer(self)
+	self._ship = ship
+end
+
+function ply_mt:GetShip()
+	return self._ship
+end
+
+function ENT:_addPlayer(ply)
+	if not table.HasValue(self._players, ply) then
+		table.insert(self._players, ply)
+	end
+end
+
+function ENT:_removePlayer(ply)
+	if table.HasValue(self._players, ply) then
+		table.remove(self._players, table.KeyFromValue(ply))
+	end
+end
+
+function ENT:IsPointInside(x, y)
+	return self.Bounds:IsPointInside(x, y)
 end

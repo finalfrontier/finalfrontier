@@ -31,11 +31,13 @@ function GM:PlayerInitialSpawn(ply)
 	ply:SetCanWalk(true)
 	
 	GAMEMODE:SetPlayerSpeed(ply, 175, 250)
-	
+
 	ships.SendInitShipsData(ply)
 end
 
 function GM:PlayerSpawn(ply)
+	local ship = ships.FindCurrentShip(ply)
+	if ship then ply:SetShip(ship) end
 	ply:Give("weapon_crowbar")
 end
 

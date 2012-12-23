@@ -25,13 +25,27 @@ function ships.FindRoomByName(name)
 end
 
 function ships.InitPostEntity()
-	local classOrder = { "info_ff_ship", "info_ff_room", "info_ff_roomcorner", "info_ff_door", "info_ff_screen" }
+	local classOrder = {
+		"info_ff_ship",
+		"info_ff_room",
+		"info_ff_roomcorner",
+		"info_ff_door",
+		"info_ff_screen"
+	}
 
 	for _1, class in ipairs(classOrder) do
 		for _2, ent in ipairs(ents.FindByClass(class)) do
 			ent:InitPostEntity()
 		end
 	end
+end
+
+function ships.FindCurrentShip(ply)
+	local pos = ply:GetPos()
+	for _, ship in pairs(ships._dict) do
+		if ship:IsPointInside(pos.x, pos.y) then return ship end
+	end
+	return nil
 end
 
 function ships.SendInitShipsData(ply)

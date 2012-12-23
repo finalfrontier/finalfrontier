@@ -39,11 +39,13 @@ if SERVER then
 		return
 	end
 elseif CLIENT then
+	_sysIndex.Icon = nil
+
 	_sysIndex.DrawWholeShip = false
 
 	_sysIndex.CanClickRooms = false
 	_sysIndex.CanClickDoors = false
-	
+
 	function _sysIndex:Click(screen, x, y, button)
 		return
 	end

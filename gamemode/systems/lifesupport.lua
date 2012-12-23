@@ -6,14 +6,11 @@ end
 
 if SERVER then
 	function SYS:ClickRoom(screen, ply, room)
-		room._airvolume = 0
-		room._temperature = 0
 		room.Ship:SendShipRoomStates(ply)
 	end
 	
 	function SYS:Think(dt)
-		self.Room._temperature = 298
-		self.Room._airvolume = self.Room.Volume
+		
 	end
 elseif CLIENT then
 	SYS.DrawWholeShip = true

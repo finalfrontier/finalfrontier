@@ -5,6 +5,8 @@ function SYS:Initialize()
 end
 
 if SERVER then
+	resource.AddFile("materials/systems/doorcontrol.png", "smooth")
+
 	util.AddNetworkString("SysDoorCloseAll")
 	util.AddNetworkString("SysDoorOpenAll")
 	util.AddNetworkString("SysDoorToggle")
@@ -74,6 +76,8 @@ if SERVER then
 		
 	end
 elseif CLIENT then
+	SYS.Icon = Material("systems/doorcontrol.png", "smooth")
+
 	SYS.DrawWholeShip = true
 	SYS.CanClickDoors = true
 	

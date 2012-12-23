@@ -38,7 +38,16 @@ function _boundsIndex:AddBounds(bounds)
 end
 
 function _boundsIndex:Equals(bounds)
-	return self.l == bounds.l and self.t == bounds.t and self.r == bounds.r and self.b == bounds.b
+	return  self.l == bounds.l and self.t == bounds.t
+		and self.r == bounds.r and self.b == bounds.b
+end
+
+function _boundsIndex:IsPointInside(x, y)
+	if x < self.l then return false end
+	if y < self.t then return false end
+	if x > self.r then return false end
+	if y > self.b then return false end
+	return true
 end
 
 function Bounds(x, y, width, height)

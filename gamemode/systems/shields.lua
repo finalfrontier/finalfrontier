@@ -5,6 +5,8 @@ function SYS:Initialize()
 end
 
 if SERVER then
+	resource.AddFile("materials/systems/shields.png", "smooth")
+
 	local SHIELD_POWER_PER_M2 = 0.01462
 
 	util.AddNetworkString("SysShieldSet")
@@ -55,6 +57,8 @@ if SERVER then
 		end
 	end
 elseif CLIENT then
+	SYS.Icon = Material("systems/shields.png", "smooth")
+
 	SYS.DrawWholeShip = true
 	SYS.CanClickRooms = true
 	
@@ -71,7 +75,7 @@ elseif CLIENT then
 		return Color(madd, shields * (255 - 192) + madd, shields * (255 - 128) + madd, 255)
 	end
 	
-	function SYS:Click(screen, x, y)
+	function SYS:Click(screen, x, y, button)
 		local roomIndex = screen:GetNWInt("CurRoom")
 		if roomIndex > 0 and screen.PowerBar then
 			local room = screen.Ship._roomlist[roomIndex]
@@ -81,7 +85,7 @@ elseif CLIENT then
 					net.WriteFloat(screen.PowerBar.Value)
 				net.SendToServer()
 			elseif y < screen.PowerBar.Y - 16 then
-				self:ClickRoom(screen, nil)
+				self:ClickRoom(screen, nil, button)
 			end
 		end
 	end

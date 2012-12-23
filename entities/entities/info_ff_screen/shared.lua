@@ -227,11 +227,11 @@ elseif CLIENT then
 			end
 		end
 		
-		surface.SetTextColor(Color(255, 255, 255, 255))
-		surface.SetFont("CTextSmall")
+		--surface.SetTextColor(Color(255, 255, 255, 255))
+		--surface.SetFont("CTextSmall")
 		
-		surface.DrawCentredText(-272, -32, FormatNum(temp * 600, 3, 2) .. "K")
-		surface.DrawCentredText(-272, 32, FormatNum(atmo * 100, 3, 2) .. "kPa")
+		--surface.DrawCentredText(-272, -32, FormatNum(temp * 600, 3, 2) .. "K")
+		--surface.DrawCentredText(-272, 32, FormatNum(atmo * 100, 3, 2) .. "kPa")
 	end
 	
 	function ENT:TransformShip(ship, x, y, width, height)
@@ -273,21 +273,9 @@ elseif CLIENT then
 				self.Room.System.CanClickRooms and
 				IsPointInsidePolyGroup(room.ShipTrans.ConvexPolys, mousePos))
 			
-			-- local polyclrs = { Color(255, 0, 0, 64), Color(0, 255, 0, 64), Color(0, 0, 255, 64) }
-			
 			for i, poly in ipairs(room.ShipTrans.ConvexPolys) do
 				surface.SetDrawColor(color)
 				surface.DrawPoly(poly)
-				
-				--[[
-				last = poly[#poly]
-				lx, ly = last.x, last.y
-				surface.SetDrawColor(polyclrs[i])
-				for __, v in ipairs(poly) do
-					surface.DrawLine(lx, ly, v.x, v.y)
-					lx, ly = v.x, v.y
-				end
-				]]--
 			end
 			
 			surface.SetDrawColor(Color(255, 255, 255, 255))
@@ -407,6 +395,11 @@ elseif CLIENT then
 		cam.Start3D2D(self:GetPos(), ang, 1 / SCREEN_DRAWSCALE)
 			if not self:GetNWBool("used") then
 				self:DrawStatusDial(0, 0, 192)
+				if self.Room and self.Room.System and self.Room.System.Icon then
+					surface.SetMaterial(self.Room.System.Icon)
+					surface.DrawTexturedRect(208, -64, 128, 128)
+					surface.DrawTexturedRect(-336, -64, 128, 128)
+				end
 			else
 				self:FindCursorPosition()
 				if self.Room and self.Room.System then
