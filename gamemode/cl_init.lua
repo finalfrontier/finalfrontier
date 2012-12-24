@@ -2,10 +2,12 @@
 -- Includes
 
 include("sh_bounds.lua")
+include("cl_matrix.lua")
 include("cl_transform2d.lua")
 include("cl_slider.lua")
 include("cl_button.lua")
 include("sh_systems.lua")
+include("cl_room.lua")
 include("cl_ships.lua")
 
 -- Global Functions

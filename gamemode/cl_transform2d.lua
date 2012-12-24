@@ -1,62 +1,28 @@
-local _matrixIndex = {}
-_matrixIndex.xx = 1
-_matrixIndex.xy = 0
-_matrixIndex.yx = 0
-_matrixIndex.yy = 1
+local _index = {}
+_index.Matrix = nil
+_index.Offset = nil
 
-function _matrixIndex:Mul(mat)
-	return Matrix(
-		mat.xx * self.xx + mat.xy * self.yx, mat.xx * self.xy + mat.xy * self.yy,
-		mat.yx * self.xx + mat.yy * self.yx, mat.yx * self.xy + mat.yy * self.yy)
-end
-
-function _matrixIndex:Rotate(angle)
-	local c = math.cos(angle)
-	local s = math.sin(angle)
-	
-	return self:Mul(Matrix(c, -s, s, c))
-end
-
-function _matrixIndex:Transform(x, y)
-	return x * self.xx + y * self.xy, x * self.yx + y * self.yy
-end
-
-function _matrixIndex:Scale(x, y)
-	y = y or x
-	return Matrix(self.xx * x, self.xy * y, self.yx * x, self.yy * y)
-end
-
-function Matrix(xx, xy, yx, yy)
-	local matrix = { xx = xx or 1, xy = xy or 0, yx = yx or 0, yy = yy or 1 }
-	setmetatable(matrix, { __index = _matrixIndex })
-	return matrix
-end
-
-local _transform2dIndex = {}
-_transform2dIndex.Matrix = nil
-_transform2dIndex.Offset = nil
-
-function _transform2dIndex:Translate(x, y)
+function _index:Translate(x, y)
 	self.Offset.x = self.Offset.x + x
 	self.Offset.y = self.Offset.y + y
 end
 
-function _transform2dIndex:Scale(x, y)
+function _index:Scale(x, y)
 	self.Matrix = self.Matrix:Scale(x, y)
 end
 
-function _transform2dIndex:Rotate(ang)
+function _index:Rotate(ang)
 	self.Matrix = self.Matrix:Rotate(ang)
 end
 
-function _transform2dIndex:Transform(x, y)
+function _index:Transform(x, y)
 	x, y = self.Matrix:Transform(x, y)
 	return x + self.Offset.x, y + self.Offset.y
 end
 
 function Transform2D()
 	local trans = { Matrix = Matrix(1, 0, 0, 1), Offset = { x = 0, y = 0 } }
-	setmetatable(trans, { __index = _transform2dIndex })
+	setmetatable(trans, { __index = _index })
 	return trans
 end
 

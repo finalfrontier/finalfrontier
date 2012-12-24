@@ -1,41 +1,9 @@
-local ROOM_UPDATE_FREQ = 1
-
 ships = {}
 
 ships._dict = {}
 
 function ships.FindByName(name)
 	return ships._dict[name]
-end
-
-local _roomIndex = {}
-_roomIndex._lastUpdate = 0
-
-_roomIndex._temperature = 0
-_roomIndex._oldTemp = 0
-_roomIndex._atmosphere = 0
-_roomIndex._oldAtmo = 0
-_roomIndex._shields = 0
-_roomIndex._oldShld = 0
-
-function _roomIndex:GetName()
-	return self.Name
-end
-
-function _roomIndex:GetStatusLerp()
-	return math.Clamp((CurTime() - self._lastUpdate) / ROOM_UPDATE_FREQ, 0, 1)
-end
-
-function _roomIndex:GetTemperature()
-	return self._oldTemp + (self._temperature - self._oldTemp) * self:GetStatusLerp()
-end
-
-function _roomIndex:GetAtmosphere()
-	return self._oldAtmo + (self._atmosphere - self._oldAtmo) * self:GetStatusLerp()
-end
-
-function _roomIndex:GetShields()
-	return self._oldShld + (self._shields - self._oldShld) * self:GetStatusLerp()
 end
 
 net.Receive("InitShipData", function(len)
@@ -49,8 +17,7 @@ net.Receive("InitShipData", function(len)
 	ship.Bounds = Bounds()
 	
 	for rNum = 1, roomCount do
-		local room = {}
-		setmetatable(room, { __index = _roomIndex })
+		local room = Room()
 		room.Ship = ship
 		room.Name = net.ReadString()
 		room.Index = net.ReadInt(8)

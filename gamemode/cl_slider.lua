@@ -1,25 +1,25 @@
-local _sliderIndex = {}
+local _index = {}
 
-_sliderIndex.X = 0
-_sliderIndex.Y = 0
+_index.X = 0
+_index.Y = 0
 
-_sliderIndex.Width = 256
-_sliderIndex.Height = 64
+_index.Width = 256
+_index.Height = 64
 
-_sliderIndex.Value = 0
-_sliderIndex.Damage = 0
+_index.Value = 0
+_index.Damage = 0
 
-_sliderIndex.Snap = 100
+_index.Snap = 100
 
-_sliderIndex.Color = Color(127, 127, 127, 255)
+_index.Color = Color(127, 127, 127, 255)
 
-function _sliderIndex:Draw(screen)
+function _index:Draw(screen)
 	surface.SetDrawColor(self.Color)
 	surface.DrawOutlinedRect(self.X, self.Y, self.Width, self.Height)
 	surface.DrawRect(self.X + 4, self.Y + 4, (self.Width - 8) * math.min(self.Value, 1), self.Height - 8)
 end
 
-function _sliderIndex:Click(x, y)
+function _index:Click(x, y)
 	if x >= self.X - 32 and y >= self.Y - 8
 		and x <= self.X + self.Width + 64 and y <= self.Y + self.Height + 16 then
 		self.Value = math.Clamp((x - self.X - 4) / (self.Width - 8), 0, 1)
@@ -31,6 +31,6 @@ end
 
 function Slider()
 	local slider = {}
-	setmetatable(slider, { __index = _sliderIndex })
+	setmetatable(slider, { __index = _index })
 	return slider
 end
