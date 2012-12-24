@@ -1,28 +1,30 @@
-local _index = {}
-_index.Matrix = nil
-_index.Offset = nil
+local _mt = {}
+_mt.__index = _mt
 
-function _index:Translate(x, y)
+_mt.Matrix = nil
+_mt.Offset = nil
+
+function _mt:Translate(x, y)
 	self.Offset.x = self.Offset.x + x
 	self.Offset.y = self.Offset.y + y
 end
 
-function _index:Scale(x, y)
+function _mt:Scale(x, y)
 	self.Matrix = self.Matrix:Scale(x, y)
 end
 
-function _index:Rotate(ang)
+function _mt:Rotate(ang)
 	self.Matrix = self.Matrix:Rotate(ang)
 end
 
-function _index:Transform(x, y)
+function _mt:Transform(x, y)
 	x, y = self.Matrix:Transform(x, y)
 	return x + self.Offset.x, y + self.Offset.y
 end
 
 function Transform2D()
 	local trans = { Matrix = Matrix(1, 0, 0, 1), Offset = { x = 0, y = 0 } }
-	setmetatable(trans, { __index = _index })
+	setmetatable(trans, _mt)
 	return trans
 end
 

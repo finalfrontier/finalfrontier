@@ -30,8 +30,8 @@ function _mt:Click(x, y)
 	return false
 end
 
-function Slider()
-	local slider = {}
-	setmetatable(slider, _mt)
-	return slider
+function TabMenu()
+	local tabmenu = {}
+	setmetatable(tabmenu, _mt)
+	return tabmenu
 end

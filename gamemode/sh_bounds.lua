@@ -1,19 +1,21 @@
-local _boundsIndex = {}
-_boundsIndex.l = 0
-_boundsIndex.t = 0
-_boundsIndex.r = 0
-_boundsIndex.b = 0
-_boundsIndex._set = false
+local _mt = {}
+_mt.__index = _mt
 
-function _boundsIndex:GetSize()
+_mt.l = 0
+_mt.t = 0
+_mt.r = 0
+_mt.b = 0
+_mt._set = false
+
+function _mt:GetSize()
 	return { width = self.r - self.l, height = self.b - self.t }
 end
 
-function _boundsIndex:GetCentre()
+function _mt:GetCentre()
 	return { x = (self.r + self.l) / 2, y = (self.b + self.t) / 2 }
 end
 
-function _boundsIndex:AddPoint(x, y)
+function _mt:AddPoint(x, y)
 	if not self._set then
 		self.l, self.t, self.r, self.b = x, y, x, y
 		self._set = true
@@ -25,7 +27,7 @@ function _boundsIndex:AddPoint(x, y)
 	end
 end
 
-function _boundsIndex:AddBounds(bounds)
+function _mt:AddBounds(bounds)
 	if not self._set then
 		self.l, self.t, self.r, self.b = bounds.l, bounds.t, bounds.r, bounds.b
 		self._set = true
@@ -37,12 +39,12 @@ function _boundsIndex:AddBounds(bounds)
 	end
 end
 
-function _boundsIndex:Equals(bounds)
+function _mt:Equals(bounds)
 	return  self.l == bounds.l and self.t == bounds.t
 		and self.r == bounds.r and self.b == bounds.b
 end
 
-function _boundsIndex:IsPointInside(x, y)
+function _mt:IsPointInside(x, y)
 	if x < self.l then return false end
 	if y < self.t then return false end
 	if x > self.r then return false end
@@ -56,6 +58,6 @@ function Bounds(x, y, width, height)
 		bounds.l, bounds.t, bounds.r, bounds.b = x, y, x + width, y + height
 		bounds._set = true
 	end
-	setmetatable(bounds, { __index = _boundsIndex })
+	setmetatable(bounds, _mt)
 	return bounds
 end

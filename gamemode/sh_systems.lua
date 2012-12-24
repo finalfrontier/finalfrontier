@@ -1,58 +1,60 @@
 sys = {}
 sys._dict = {}
 
-local _sysIndex = {}
-_sysIndex.Name = "unnamed"
-_sysIndex.Room = nil
-_sysIndex.Ship = nil
+local _mt = {}
+_mt.__index = _mt
 
-function _sysIndex:Initialize()
+_mt.Name = "unnamed"
+_mt.Room = nil
+_mt.Ship = nil
+
+function _mt:Initialize()
 	return
 end
 
-function _sysIndex:GetShip()
+function _mt:GetShip()
 	return self.Room.Ship
 end
 
 if SERVER then
 	resource.AddFile("materials/systems/noicon.png")
 
-	function _sysIndex:StartControlling(screen, ply)
+	function _mt:StartControlling(screen, ply)
 		return
 	end
 	
-	function _sysIndex:StopControlling(screen, ply)
+	function _mt:StopControlling(screen, ply)
 		return
 	end
 	
-	function _sysIndex:ClickRoom(screen, ply, room)
+	function _mt:ClickRoom(screen, ply, room)
 		return
 	end
 	
-	function _sysIndex:ClickDoor(screen, ply, door)
+	function _mt:ClickDoor(screen, ply, door)
 		return
 	end
 	
-	function _sysIndex:GetScreens()
+	function _mt:GetScreens()
 		return self.Room.Screens
 	end
 	
-	function _sysIndex:Think(dt)
+	function _mt:Think(dt)
 		return
 	end
 elseif CLIENT then
-	_sysIndex.Icon = Material("systems/noicon.png", "smooth")
+	_mt.Icon = Material("systems/noicon.png", "smooth")
 
-	_sysIndex.DrawWholeShip = false
+	_mt.DrawWholeShip = false
 
-	_sysIndex.CanClickRooms = false
-	_sysIndex.CanClickDoors = false
+	_mt.CanClickRooms = false
+	_mt.CanClickDoors = false
 
-	function _sysIndex:Click(screen, x, y, button)
+	function _mt:Click(screen, x, y, button)
 		return
 	end
 	
-	function _sysIndex:ClickRoom(screen, room, button)
+	function _mt:ClickRoom(screen, room, button)
 		net.Start("SysSelectRoom")
 			net.WriteEntity(screen)
 			net.WriteEntity(LocalPlayer())
@@ -65,7 +67,7 @@ elseif CLIENT then
 		net.SendToServer()
 	end
 	
-	function _sysIndex:ClickDoor(screen, door, button)
+	function _mt:ClickDoor(screen, door, button)
 		net.Start("SysSelectDoor")
 			net.WriteEntity(screen)
 			net.WriteEntity(LocalPlayer())
@@ -74,7 +76,7 @@ elseif CLIENT then
 		net.SendToServer()
 	end
 	
-	function _sysIndex:GetRoomColor(screen, room, mouseOver)
+	function _mt:GetRoomColor(screen, room, mouseOver)
 		local r, g, b = 32, 32, 32
 		if mouseOver then
 			r, g, b = r + 32, g + 32, b + 32
@@ -88,7 +90,7 @@ elseif CLIENT then
 		return Color(r, g, b, 255)
 	end
 	
-	function _sysIndex:GetDoorColor(screen, door, mouseOver)
+	function _mt:GetDoorColor(screen, door, mouseOver)
 		local c = 32
 		if mouseOver then
 			c = c + 32
@@ -105,7 +107,7 @@ elseif CLIENT then
 		return Color(c, c, c, 255)
 	end
 
-	function _sysIndex:DrawGUI(screen)		
+	function _mt:DrawGUI(screen)		
 		if self.DrawWholeShip then		  
 			local margin = 16
 			screen:DrawShip(screen.Ship, -screen.Width / 2 + margin + 128, -screen.Height / 2 + margin + 64,
@@ -154,7 +156,8 @@ for i, file in ipairs(files) do
 	if SERVER then AddCSLuaFile("systems/" .. file) end
 	
 	SYS = { Name = name }
-	setmetatable(SYS, { __index = _sysIndex })
+	setmetatable(SYS, _mt)
+	SYS.__index = SYS
 	include("systems/" .. file)
 	
 	sys._dict[name] = SYS
@@ -164,8 +167,8 @@ end
 function sys.Create(name, room)
 	if string.len(name) == 0 then return nil end
 	if sys._dict[name] then
-		local system = { Room = room, Ship = room.Ship, Base = _sysIndex }
-		setmetatable(system, { __index = sys._dict[name] })
+		local system = { Room = room, Ship = room.Ship, Base = _mt }
+		setmetatable(system, sys._dict[name])
 		system:Initialize()
 		return system
 	end
