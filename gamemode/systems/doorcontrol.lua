@@ -5,7 +5,7 @@ function SYS:Initialize()
 end
 
 if SERVER then
-	resource.AddFile("materials/systems/doorcontrol.png", "smooth")
+	resource.AddFile("materials/systems/doorcontrol.png")
 
 	util.AddNetworkString("SysDoorCloseAll")
 	util.AddNetworkString("SysDoorOpenAll")

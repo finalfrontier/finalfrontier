@@ -420,16 +420,17 @@ elseif CLIENT then
 		local curScreen = self:GetNWInt("screen")
 
 		if self.Room and self.Room.System and self.Room.System.Icon then
-			local dist = math.cos(CurTime() * math.pi * 2) + 1.5
+			local dist = 2.5
 			local backPos = self:GetPos() - self:GetAngles():Forward() * dist
+			local drawFront = false --curScreen == screen.STATUS
 			cam.Start3D2D(backPos, ang, 1 / SCREEN_DRAWSCALE)
-				if curScreen == screen.STATUS then
+				if drawFront then
 					surface.SetDrawColor(Color(255, 255, 255, 255))
 				else
 					surface.SetDrawColor(Color(255, 255, 255, 4))
 				end
 				surface.SetMaterial(self.Room.System.Icon)
-				if curScreen == screen.STATUS then
+				if drawFront then
 					surface.DrawTexturedRect(208, -64, 128, 128)
 					surface.DrawTexturedRect(-336, -64, 128, 128)
 				else

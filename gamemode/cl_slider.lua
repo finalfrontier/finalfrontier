@@ -9,6 +9,8 @@ _sliderIndex.Height = 64
 _sliderIndex.Value = 0
 _sliderIndex.Damage = 0
 
+_sliderIndex.Snap = 100
+
 _sliderIndex.Color = Color(127, 127, 127, 255)
 
 function _sliderIndex:Draw(screen)
@@ -21,6 +23,7 @@ function _sliderIndex:Click(x, y)
 	if x >= self.X - 32 and y >= self.Y - 8
 		and x <= self.X + self.Width + 64 and y <= self.Y + self.Height + 16 then
 		self.Value = math.Clamp((x - self.X - 4) / (self.Width - 8), 0, 1)
+		self.Value = math.Round(self.Value * self.Snap) / self.Snap
 		return true
 	end
 	return false

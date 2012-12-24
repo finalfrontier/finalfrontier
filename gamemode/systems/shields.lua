@@ -7,7 +7,7 @@ function SYS:Initialize()
 end
 
 if SERVER then
-	resource.AddFile("materials/systems/shields.png", "smooth")
+	resource.AddFile("materials/systems/shields.png")
 
 	local SHIELD_POWER_PER_M2 = 0.01462
 
@@ -114,6 +114,7 @@ elseif CLIENT then
 				screen.PowerBar.Y = screen.Height / 2 - 80
 				screen.PowerBar.Height = 32
 				screen.PowerBar.Width = 384
+				screen.PowerBar.Snap = 20
 			end
 			
 			if room ~= screen.CurRoom or LocalPlayer() ~= screen:GetNWEntity("user") then

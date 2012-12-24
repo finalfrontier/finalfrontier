@@ -6,7 +6,10 @@ end
 
 if SERVER then
 	function SYS:ClickRoom(screen, ply, room)
-		room.Ship:SendShipRoomStates(ply)
+		if room then
+			room._airvolume = 0
+			room.Ship:SendShipRoomStates(ply)
+		end
 	end
 	
 	function SYS:Think(dt)

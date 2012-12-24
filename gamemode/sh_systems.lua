@@ -15,6 +15,8 @@ function _sysIndex:GetShip()
 end
 
 if SERVER then
+	resource.AddFile("materials/systems/noicon.png")
+
 	function _sysIndex:StartControlling(screen, ply)
 		return
 	end
@@ -39,7 +41,7 @@ if SERVER then
 		return
 	end
 elseif CLIENT then
-	_sysIndex.Icon = nil
+	_sysIndex.Icon = Material("systems/noicon.png", "smooth")
 
 	_sysIndex.DrawWholeShip = false
 
