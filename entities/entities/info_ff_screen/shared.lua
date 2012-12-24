@@ -19,6 +19,7 @@ ENT.Room = nil
 
 if SERVER then
 	util.AddNetworkString("CursorPos")
+	util.AddNetworkString("ChangeScreen")
 	
 	ENT.RoomName = nil
 
@@ -131,6 +132,11 @@ if SERVER then
 		screen:SetNWFloat("curx", net.ReadFloat())
 		screen:SetNWFloat("cury", net.ReadFloat())
 	end)
+
+	net.Receive("ChangeScreen", function(len)
+		local screen = net.ReadEntity()		
+		screen:SetNWInt("screen", net.ReadInt(8))
+	end)
 elseif CLIENT then
 	local WHITE = Material("vgui/white")
 
@@ -188,6 +194,10 @@ elseif CLIENT then
 
 	function ENT:GetCursorPos()
 		return self._cursorx, self._cursory
+	end
+
+	function ENT:GetCurrentScreen()
+		return self:GetNWInt("screen")
 	end
 
 	function ENT:DrawStatusDial(x, y, radius)
@@ -421,7 +431,7 @@ elseif CLIENT then
 		ang:RotateAroundAxis(ang:Up(), 90)
 		ang:RotateAroundAxis(ang:Forward(), 90)
 		
-		local curScreen = self:GetNWInt("screen")
+		local curScreen = self:GetCurrentScreen()
 
 		if self.Room and self.Room.System and self.Room.System.Icon then
 			local dist = 2.5
@@ -457,6 +467,7 @@ elseif CLIENT then
 					self.TabMenu.Y = -self.Height / 2 + 8
 					self.TabMenu.Width = self.Width - 16
 				end
+				self.TabMenu:SetCurrentIndex(curScreen - 1)
 				self.TabMenu:Draw(self)
 				if curScreen == screen.SYSTEM then
 					if self.Room and self.Room.System then
@@ -467,33 +478,42 @@ elseif CLIENT then
 						surface.DrawCentredText(0, 0, "NO SYSTEM INSTALLED")
 					end
 				end
+				self:DrawCursor()
 			end
 		cam.End3D2D()
 	end
 	
 	function ENT:Click(ply, button)
 		local mousePos = { x = self._cursorx, y = self._cursory }
-		if self.Room and self.Room.System then
-			local sys = self.Room.System
-			if sys.CanClickRooms then
-				for k, room in pairs(self.Ship.Rooms) do
-					if IsPointInsidePolyGroup(room.ShipTrans.ConvexPolys, mousePos) then
-						sys:ClickRoom(self, room, button)
-						return
+		if self.Room then
+			local index = self.TabMenu:Click(mousePos.x, mousePos.y)
+			if index then
+				net.Start("ChangeScreen")
+					net.WriteEntity(self)
+					net.WriteInt(index+1, 8)
+				net.SendToServer()
+			elseif self:GetCurrentScreen() == screen.SYSTEM and self.Room.System then
+				local sys = self.Room.System
+				if sys.CanClickRooms then
+					for k, room in pairs(self.Ship.Rooms) do
+						if IsPointInsidePolyGroup(room.ShipTrans.ConvexPolys, mousePos) then
+							sys:ClickRoom(self, room, button)
+							return
+						end
 					end
 				end
-			end
-			
-			if sys.CanClickDoors then
-				for k, door in pairs(self.Ship.Doors) do
-					if IsPointInsidePoly(door.ShipTrans, mousePos) then
-						sys:ClickDoor(self, door, button)
-						return
+				
+				if sys.CanClickDoors then
+					for k, door in pairs(self.Ship.Doors) do
+						if IsPointInsidePoly(door.ShipTrans, mousePos) then
+							sys:ClickDoor(self, door, button)
+							return
+						end
 					end
 				end
+				
+				sys:Click(self, mousePos.x, mousePos.y, button)
 			end
-			
-			sys:Click(self, mousePos.x, mousePos.y, button)
 		end
 	end
 end

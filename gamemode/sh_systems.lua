@@ -113,8 +113,6 @@ elseif CLIENT then
 			screen:DrawShip(screen.Ship, -screen.Width / 2 + margin + 128, -screen.Height / 2 + margin + 64,
 				512 - margin * 2, 256 - margin * 2)
 		end
-
-		screen:DrawCursor()
 	end
 end
 

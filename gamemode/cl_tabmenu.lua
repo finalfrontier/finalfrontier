@@ -13,7 +13,7 @@ _mt._options = {}
 _mt._current = 0
 _mt._totwidth = 0
 
-_mt.Color = Color(255, 255, 255, 255)
+_mt.Color = Color(191, 191, 191, 255)
 
 function _mt:AddOption(option)
 	surface.SetFont("CTextSmall")
@@ -87,7 +87,22 @@ function _mt:Draw(screen)
 end
 
 function _mt:Click(x, y)
-	return false
+	if x < self.X or x >= self.X + self.Width
+		or y < self.Y or y >= self.Y + self.Height then
+		return nil
+	end
+
+	local scale = self.Width / self._totwidth
+	local left = self.X
+	for i, v in ipairs(self._options) do
+		local right = left + v.Width * scale
+		if x < right then
+			--self:SetCurrentIndex(i)
+			return i
+		end
+		left = right
+	end
+	return nil
 end
 
 function TabMenu(...)
