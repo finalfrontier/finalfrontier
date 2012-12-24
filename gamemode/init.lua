@@ -5,6 +5,7 @@ AddCSLuaFile("cl_matrix.lua")
 AddCSLuaFile("cl_transform2d.lua")
 AddCSLuaFile("cl_slider.lua")
 AddCSLuaFile("cl_button.lua")
+AddCSLuaFile("cl_tabmenu.lua")
 AddCSLuaFile("sh_bounds.lua")
 AddCSLuaFile("sh_systems.lua")
 

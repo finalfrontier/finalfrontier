@@ -186,6 +186,10 @@ elseif CLIENT then
 		end
 	end
 
+	function ENT:GetCursorPos()
+		return self._cursorx, self._cursory
+	end
+
 	function ENT:DrawStatusDial(x, y, radius)
 		local atmo, temp, shld = 0, 0, 0
 		if self.Room then
@@ -441,11 +445,19 @@ elseif CLIENT then
 				surface.SetMaterial(WHITE)
 			cam.End3D2D()
 		end
+
 		cam.Start3D2D(self:GetPos(), ang, 1 / SCREEN_DRAWSCALE)
 			if curScreen == screen.STATUS then
 				self:DrawStatusDial(0, 0, 192)
 			else
 				self:FindCursorPosition()
+				if not self.TabMenu then
+					self.TabMenu = TabMenu("SYSTEM", "ACCESS", "SECURITY", "OVERRIDE")
+					self.TabMenu.X = -self.Width / 2 + 8
+					self.TabMenu.Y = -self.Height / 2 + 8
+					self.TabMenu.Width = self.Width - 16
+				end
+				self.TabMenu:Draw(self)
 				if curScreen == screen.SYSTEM then
 					if self.Room and self.Room.System then
 						self.Room.System:DrawGUI(self)

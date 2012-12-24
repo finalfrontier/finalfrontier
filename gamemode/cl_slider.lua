@@ -31,7 +31,5 @@ function _mt:Click(x, y)
 end
 
 function Slider()
-	local slider = {}
-	setmetatable(slider, _mt)
-	return slider
+	return setmetatable({}, _mt)
 end

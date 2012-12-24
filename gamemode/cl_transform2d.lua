@@ -23,9 +23,7 @@ function _mt:Transform(x, y)
 end
 
 function Transform2D()
-	local trans = { Matrix = Matrix(1, 0, 0, 1), Offset = { x = 0, y = 0 } }
-	setmetatable(trans, _mt)
-	return trans
+	return setmetatable({ Matrix = Matrix(1, 0, 0, 1), Offset = { x = 0, y = 0 } }, _mt)
 end
 
 function FindBestTransform(sourceBounds, destBounds, canRotate, flip)

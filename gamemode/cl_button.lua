@@ -35,7 +35,5 @@ function _mt:Click(x, y)
 end
 
 function Button()
-	local button = {}
-	setmetatable(button, _mt)
-	return button
+	return setmetatable({}, _mt)
 end

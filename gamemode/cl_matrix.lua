@@ -29,7 +29,5 @@ function _mt:Scale(x, y)
 end
 
 function Matrix(xx, xy, yx, yy)
-	local matrix = { xx = xx or 1, xy = xy or 0, yx = yx or 0, yy = yy or 1 }
-	setmetatable(matrix, _mt)
-	return matrix
+	return setmetatable({ xx = xx or 1, xy = xy or 0, yx = yx or 0, yy = yy or 1 }, _mt)
 end

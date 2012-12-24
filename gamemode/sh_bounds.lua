@@ -58,6 +58,5 @@ function Bounds(x, y, width, height)
 		bounds.l, bounds.t, bounds.r, bounds.b = x, y, x + width, y + height
 		bounds._set = true
 	end
-	setmetatable(bounds, _mt)
-	return bounds
+	return setmetatable(bounds, _mt)
 end

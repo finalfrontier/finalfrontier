@@ -155,8 +155,7 @@ for i, file in ipairs(files) do
 
 	if SERVER then AddCSLuaFile("systems/" .. file) end
 	
-	SYS = { Name = name }
-	setmetatable(SYS, _mt)
+	SYS = setmetatable({ Name = name }, _mt)
 	SYS.__index = SYS
 	include("systems/" .. file)
 	

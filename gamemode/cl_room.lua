@@ -32,7 +32,5 @@ function _mt:GetShields()
 end
 
 function Room()
-	local room = {}
-	setmetatable(room, _mt)
-	return room
+	return setmetatable({}, _mt)
 end

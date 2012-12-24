@@ -1,37 +1,103 @@
+local BLACK = Color(0, 0, 0, 255)
+
 local _mt = {}
 _mt.__index = _mt
 
 _mt.X = 0
 _mt.Y = 0
 
-_mt.Width = 256
+_mt.Width = 768
 _mt.Height = 64
 
-_mt.Value = 0
-_mt.Damage = 0
+_mt._options = {}
+_mt._current = 0
+_mt._totwidth = 0
 
-_mt.Snap = 100
+_mt.Color = Color(255, 255, 255, 255)
 
-_mt.Color = Color(127, 127, 127, 255)
+function _mt:AddOption(option)
+	surface.SetFont("CTextSmall")
+	local width = surface.GetTextSize(option)
+	table.insert(self._options, { Value = option, Width = width })
+	self._totwidth = self._totwidth + width
+
+	if self._current == 0 then
+		self:SetCurrentIndex(1)
+	end
+end
+
+function _mt:GetCurrentIndex()
+	return self._current
+end
+
+function _mt:GetCurrent()
+	return self._options[self._current].Value
+end
+
+function _mt:SetCurrentIndex(index)
+	self._current = index
+end
+
+function _mt:GetOptionCount()
+	return #self._options
+end
+
+function _mt:SetCurrent(option)
+	for i, v in ipairs(self._options) do
+		if v.Value == option then
+			self._current = i
+			return
+		end
+	end
+end
 
 function _mt:Draw(screen)
 	surface.SetDrawColor(self.Color)
 	surface.DrawOutlinedRect(self.X, self.Y, self.Width, self.Height)
-	surface.DrawRect(self.X + 4, self.Y + 4, (self.Width - 8) * math.min(self.Value, 1), self.Height - 8)
+
+	surface.SetFont("CTextSmall")
+
+	local cursX, cursY = screen:GetCursorPos()
+
+	local scale = self.Width / self._totwidth
+	local left = self.X
+	local midy = self.Y + self.Height / 2
+	local margin = 8
+	for i, v in ipairs(self._options) do
+		local right = left + v.Width * scale
+		local midx = (left + right) * 0.5
+
+		if i == self._current then
+			surface.DrawRect(left + margin, self.Y + margin,
+				right - left - margin * 2, self.Height - margin * 2)
+			surface.SetTextColor(BLACK)
+		else
+			if cursY >= self.Y and cursY < self.Y + self.Height
+				and cursX >= left and cursX < right then
+				surface.DrawOutlinedRect(left + margin, self.Y + margin,
+					right - left - margin * 2, self.Height - margin * 2)
+			end
+			surface.SetTextColor(self.Color)
+		end
+
+		surface.DrawCentredText(midx, midy, v.Value)
+
+		left = right
+	end
 end
 
 function _mt:Click(x, y)
-	if x >= self.X - 32 and y >= self.Y - 8
-		and x <= self.X + self.Width + 64 and y <= self.Y + self.Height + 16 then
-		self.Value = math.Clamp((x - self.X - 4) / (self.Width - 8), 0, 1)
-		self.Value = math.Round(self.Value * self.Snap) / self.Snap
-		return true
-	end
 	return false
 end
 
-function TabMenu()
-	local tabmenu = {}
-	setmetatable(tabmenu, _mt)
+function TabMenu(...)
+	local tabmenu = setmetatable({ _options = {} }, _mt)
+	local options = {...}
+	if options and #options > 0 then
+		for _, v in ipairs(options) do
+			tabmenu:AddOption(v)
+		end
+	end
+
 	return tabmenu
 end
