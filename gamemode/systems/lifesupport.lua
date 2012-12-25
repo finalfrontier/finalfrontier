@@ -5,6 +5,8 @@ function SYS:Initialize()
 end
 
 if SERVER then
+	resource.AddFile("materials/systems/lifesupport.png")
+
 	function SYS:ClickRoom(screen, ply, room)
 		if room then
 			room._airvolume = 0
@@ -16,6 +18,8 @@ if SERVER then
 		
 	end
 elseif CLIENT then
+	SYS.Icon = Material("systems/lifesupport.png", "smooth")
+	
 	SYS.DrawWholeShip = true
 	SYS.CanClickRooms = true
 	

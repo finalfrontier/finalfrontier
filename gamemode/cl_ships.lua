@@ -65,7 +65,7 @@ net.Receive("InitShipData", function(len)
 	ships._dict[name] = ship
 end)
 
-net.Receive("ShipRoomStates", function(len)
+net.Receive("ShipStateUpdate", function(len)
 	local timestamp = net.ReadFloat()
 	local name = net.ReadString()
 	local ship = ships.FindByName(name)

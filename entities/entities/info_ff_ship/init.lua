@@ -46,7 +46,7 @@ function ENT:AddDoor(door)
 end
 
 util.AddNetworkString("InitShipData")
-util.AddNetworkString("ShipRoomStates")
+util.AddNetworkString("ShipStateUpdate")
 
 function ENT:SendInitShipData(ply)
 	net.Start("InitShipData")
@@ -97,7 +97,7 @@ function ENT:SendShipRoomStates(ply)
 	local shipCache = ply.ShipCaches[name]
 	local send = false
 
-	net.Start("ShipRoomStates")
+	net.Start("ShipStateUpdate")
 		net.WriteFloat(CurTime())
 		net.WriteString(self:GetName())
 		

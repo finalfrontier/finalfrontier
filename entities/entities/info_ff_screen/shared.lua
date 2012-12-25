@@ -433,25 +433,16 @@ elseif CLIENT then
 		
 		local curScreen = self:GetCurrentScreen()
 
-		if self.Room and self.Room.System and self.Room.System.Icon then
+		if curScreen ~= screen.STATUS and self.Room and self.Room.System
+			and self.Room.System.Icon then
 			local dist = 2.5
 			local backPos = self:GetPos() - self:GetAngles():Forward() * dist
-			local drawFront = false --curScreen == screen.STATUS
 			cam.Start3D2D(backPos, ang, 1 / SCREEN_DRAWSCALE)
-				if drawFront then
-					surface.SetDrawColor(Color(255, 255, 255, 255))
-				else
-					surface.SetDrawColor(Color(255, 255, 255, 4))
-				end
+				surface.SetDrawColor(Color(255, 255, 255, 4))
 				surface.SetMaterial(self.Room.System.Icon)
-				if drawFront then
-					surface.DrawTexturedRect(208, -64, 128, 128)
-					surface.DrawTexturedRect(-336, -64, 128, 128)
-				else
-					local quater = self.Width / 4
-					surface.DrawTexturedRect(-128 - quater, -128, 256, 256)
-					surface.DrawTexturedRect(-128 + quater, -128, 256, 256)
-				end
+				local quater = self.Width / 4
+				surface.DrawTexturedRect(-128 - quater, -128, 256, 256)
+				surface.DrawTexturedRect(-128 + quater, -128, 256, 256)
 				surface.SetMaterial(WHITE)
 			cam.End3D2D()
 		end
@@ -459,6 +450,13 @@ elseif CLIENT then
 		cam.Start3D2D(self:GetPos(), ang, 1 / SCREEN_DRAWSCALE)
 			if curScreen == screen.STATUS then
 				self:DrawStatusDial(0, 0, 192)
+				if self.Room and self.Room.System and self.Room.System.Icon then
+					surface.SetDrawColor(Color(255, 255, 255, 255))
+					surface.SetMaterial(self.Room.System.Icon)
+					surface.DrawTexturedRect(208, -64, 128, 128)
+					surface.DrawTexturedRect(-336, -64, 128, 128)
+					surface.SetMaterial(WHITE)
+				end
 			else
 				self:FindCursorPosition()
 				if not self.TabMenu then
