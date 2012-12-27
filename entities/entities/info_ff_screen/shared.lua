@@ -107,6 +107,7 @@ if SERVER then
 		self:SetNWBool("used", true)
 		self:SetNWEntity("user", ply)
 		self:SetNWInt("screen", screen.ACCESS)
+		self:SetNWBool("addingperm", not self:GetNWBool("addingperm", false))
 		ply:SetNWBool("usingScreen", true)
 		ply:SetNWEntity("screen", self)
 		ply:SetNWEntity("oldWep", ply:GetActiveWeapon())
@@ -216,7 +217,11 @@ elseif CLIENT then
 	end
 
 	function ENT:GetCurrentScreen()
-		return self:GetNWInt("screen")
+		return self:GetNWInt("screen", screen.STATUS)
+	end
+
+	function ENT:IsAddingPermission()
+		return self:GetNWBool("addingperm", false)
 	end
 
 	function ENT:DrawStatusDial(x, y, radius)
@@ -465,6 +470,42 @@ elseif CLIENT then
 		self._btnCol = 0
 		self._btnLeft = -self.Width / 2 + 16
 		self._btnTop = -self.Height / 2 + 96
+
+		if not self.PermList then
+			self.AddBtn = Button()
+			self.AddBtn.Width = self.Width / 2 - 32
+			self.AddBtn.Height = 48
+			self.PermBtn = Button()
+			self.PermBtn.Width = self.AddBtn.Width - (self.AddBtn.Height + 8)
+			self.PermBtn.Height = self.AddBtn.Height
+			self.DelBtn = Button()
+			self.DelBtn.Width = self.AddBtn.Height
+			self.DelBtn.Height = self.AddBtn.Height
+			self.DelBtn.Text = "X"
+
+			self.PermList = {}
+			self.AddList = {}
+			for i, ply in ipairs(player.GetAll()) do
+				if ply:HasPermission(self.Room, permission.ACCESS) then
+					table.insert(self.PermList, ply)
+				else
+					table.insert(self.AddList, ply)
+				end
+			end
+
+			table.sort(self.AddList, function(a, b)
+				return self:GetPos():DistToSqr(a:GetPos()) < self:GetPos():DistToSqr(b:GetPos())
+			end)
+		end
+		
+		surface.SetFont("CTextSmall")
+		surface.SetTextColor(Color(127, 127, 127, 255))
+
+		if self:IsAddingPermission() then
+			return self.AddList
+		else
+			return self.PermList
+		end
 	end
 
 	function ENT:NextSecurityButton(ply)
@@ -542,36 +583,14 @@ elseif CLIENT then
 						surface.DrawCentredText(0, 0, "NO SYSTEM INSTALLED")
 					end
 				elseif curScreen == screen.SECURITY then
-					if not self.PermList then
-						self.AddBtn = Button()
-						self.AddBtn.Width = self.Width / 2 - 32
-						self.AddBtn.Height = 48
-						self.PermBtn = Button()
-						self.PermBtn.Width = self.AddBtn.Width - (self.AddBtn.Height + 8)
-						self.PermBtn.Height = self.AddBtn.Height
-						self.DelBtn = Button()
-						self.DelBtn.Width = self.AddBtn.Height
-						self.DelBtn.Height = self.AddBtn.Height
-						self.DelBtn.Text = "X"
-
-						self.PermList = {}
-						self.AddList = {}
-						for i, ply in ipairs(player.GetAll()) do
-							if ply:HasPermission(self.Room, permission.ACCESS) then
-								table.insert(self.PermList, ply)
-							else
-								table.insert(self.AddList, ply)
-							end
-						end
-					end
-					surface.SetFont("CTextSmall")
-					surface.SetTextColor(Color(127, 127, 127, 255))
-
-					self:NewSecurityButtonPage()
-					for i, ply in ipairs(self.PermList) do
+					for i, ply in ipairs(self:NewSecurityButtonPage()) do
 						self:NextSecurityButton(ply)
-						self.PermBtn:Draw(self)
-						self.DelBtn:Draw(self)
+						if not self:IsAddingPermission() then
+							self.PermBtn:Draw(self)
+							self.DelBtn:Draw(self)
+						else
+							self.AddBtn:Draw(self)
+						end
 					end
 				end
 				self:DrawCursor()
@@ -614,20 +633,26 @@ elseif CLIENT then
 				
 				sys:Click(self, mousePos.x, mousePos.y, button)
 			elseif self:GetCurrentScreen() == screen.SECURITY and self.PermList then
-				self:NewSecurityButtonPage()
-				for i, ply in ipairs(self.PermList) do
+				for i, ply in ipairs(self:NewSecurityButtonPage()) do
 					self:NextSecurityButton(ply)
-					if self.PermBtn:Click(mousePos.x, mousePos.y) then
-						local perm = ply:GetPermission(self.Room) + 1
-						if perm > permission.SECURITY then perm = permission.ACCESS end
-						ply:SetPermission(self.Room, perm)
-						break
-					end
-					if self.DelBtn:Click(mousePos.x, mousePos.y) then
-						table.remove(self.PermList, i)
-						table.insert(self.AddList, ply)
-						ply:SetPermission(self.Room, permission.NONE)
-						break
+					if not self:IsAddingPermission() then
+						if self.PermBtn:Click(mousePos.x, mousePos.y) then
+							local perm = ply:GetPermission(self.Room) + 1
+							if perm > permission.SECURITY then perm = permission.ACCESS end
+							ply:SetPermission(self.Room, perm)
+							break
+						end
+						if self.DelBtn:Click(mousePos.x, mousePos.y) then
+							ply:SetPermission(self.Room, permission.NONE)
+							self.PermList = nil
+							break
+						end
+					else
+						if self.AddBtn:Click(mousePos.x, mousePos.y) then
+							ply:SetPermission(self.Room, permission.ACCESS)
+							self.PermList = nil
+							break
+						end
 					end
 				end
 			end

@@ -45,6 +45,7 @@ function ply_mt:HasPermission(room, perm)
 end
 
 function ply_mt:SetPermission(room, perm)
+	self:SetNWInt(room:GetPermissionsName(), perm)
 	net.Start("SetPermission")
 		net.WriteString(room.Ship.Name)
 		net.WriteInt(room.Index, 8)
