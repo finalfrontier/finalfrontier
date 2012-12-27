@@ -17,7 +17,7 @@ _mt.Color = Color(191, 191, 191, 255)
 
 function _mt:AddOption(option)
 	surface.SetFont("CTextSmall")
-	local width = surface.GetTextSize(option)
+	local width = 1 --surface.GetTextSize(option)
 	table.insert(self._options, { Value = option, Width = width })
 	self._totwidth = self._totwidth + width
 
@@ -36,6 +36,10 @@ end
 
 function _mt:SetCurrentIndex(index)
 	self._current = index
+end
+
+function _mt:GetOption(index)
+	return self._options[index].Value
 end
 
 function _mt:GetOptionCount()

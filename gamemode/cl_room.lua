@@ -31,6 +31,28 @@ function _mt:GetShields()
 	return self._oldShld + (self._shields - self._oldShld) * self:GetStatusLerp()
 end
 
+function _mt:GetPermissionsName()
+	return "p_" .. self.Ship.Name .. "_" .. self.Index
+end
+
+local ply_mt = FindMetaTable("Player")
+function ply_mt:GetPermission(room)
+	return self:GetNWInt(room:GetPermissionsName(), 0)
+end
+
+function ply_mt:HasPermission(room, perm)
+	return self:GetPermission(room) >= perm
+end
+
+function ply_mt:SetPermission(room, perm)
+	net.Start("SetPermission")
+		net.WriteString(room.Ship.Name)
+		net.WriteInt(room.Index, 8)
+		net.WriteEntity(self)
+		net.WriteInt(perm, 8)
+	net.SendToServer()
+end
+
 function Room()
 	return setmetatable({}, _mt)
 end

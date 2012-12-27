@@ -1,5 +1,7 @@
 local TEMPERATURE_LOSS_RATE = 0.00000382
 
+util.AddNetworkString("SetPermission")
+
 ENT.Type = "point"
 ENT.Base = "base_point"
 
@@ -147,3 +149,31 @@ function ENT:TransmitAir(room, delta)
 	self._airvolume = self._airvolume - delta
 	room._airvolume = room._airvolume + delta
 end
+
+function ENT:GetPermissionsName()
+	return "p_" .. self.ShipName .. "_" .. self.Index
+end
+
+local ply_mt = FindMetaTable("Player")
+function ply_mt:GetPermission(room)
+	return self:GetNWInt(room:GetPermissionsName(), 0)
+end
+
+function ply_mt:HasPermission(room, perm)
+	return self:GetPermission(room) >= perm
+end
+
+function ply_mt:SetPermission(room, perm)
+	self:SetNWInt(room:GetPermissionsName(), perm)
+end
+
+net.Receive("SetPermission", function(len, ply)
+	local ship = ships.FindByName(net.ReadString())
+	local room = ship:GetRoomByIndex(net.ReadInt(8))
+	local plyr = net.ReadEntity()
+	local perm = net.ReadInt(8)
+
+	if plyr and plyr:IsValid() then
+		plyr:SetPermission(room, perm)
+	end
+end)

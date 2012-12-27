@@ -10,7 +10,7 @@ net.Receive("InitShipData", function(len)
 	local name = net.ReadString()
 	local roomCount = net.ReadInt(8)
 	
-	local ship = {}
+	local ship = { Name = name }
 	ship.Rooms = {}
 	ship._roomlist = {}
 	ship.Doors = {}

@@ -6,10 +6,16 @@ local MAX_USE_DISTANCE = 64
 
 local screen = {}
 screen.STATUS       = 1
-screen.SYSTEM       = 2
-screen.DOORS        = 3
+screen.ACCESS       = 2
+screen.SYSTEM       = 3
 screen.SECURITY  	= 4
 screen.OVERRIDE     = 5
+
+local permission = {}
+permission.NONE 	= 0
+permission.ACCESS	= 1
+permission.SYSTEM 	= 2
+permission.SECURITY = 3
 
 ENT.Type = "anim"
 ENT.Base = "base_anim"
@@ -85,9 +91,22 @@ if SERVER then
 	end
 	
 	function ENT:StartUsing(ply)
+		if not ply:HasPermission(self.Room, permission.ACCESS) then
+			local hasPerms = false
+			for _, pl in ipairs(player.GetAll()) do
+				if pl:HasPermission(self.Room, permission.ACCESS) then
+					hasPerms = true
+					break
+				end
+			end
+			if not hasPerms then
+				ply:SetPermission(self.Room, permission.SECURITY)
+			end
+		end
+
 		self:SetNWBool("used", true)
 		self:SetNWEntity("user", ply)
-		self:SetNWInt("screen", screen.SYSTEM)
+		self:SetNWInt("screen", screen.ACCESS)
 		ply:SetNWBool("usingScreen", true)
 		ply:SetNWEntity("screen", self)
 		ply:SetNWEntity("oldWep", ply:GetActiveWeapon())
@@ -425,7 +444,48 @@ elseif CLIENT then
 		surface.SetDrawColor(Color(255, 255, 255, 127))
 		surface.DrawOutlinedRect(x - boxSize * 0.5, y - boxSize * 0.5, boxSize, boxSize)
 	end
+
+	local permClrs = {
+		Color(127, 127, 127, 255), 	-- NONE
+		Color(45, 51, 172, 255),	-- ACCESS
+		Color(51, 172, 45, 255),	-- SYSTEM
+		Color(172, 45, 51, 255)		-- SECURITY
+	}
+	function ENT:GetPermissionColour(perm)
+		return permClrs[perm + 1]
+	end
 	
+	ENT._btnRow = 0
+	ENT._btnCol = 0
+	ENT._btnLeft = 0
+	ENT._btnTop = 0
+
+	function ENT:NewSecurityButtonPage()
+		self._btnRow = 0
+		self._btnCol = 0
+		self._btnLeft = -self.Width / 2 + 16
+		self._btnTop = -self.Height / 2 + 96
+	end
+
+	function ENT:NextSecurityButton(ply)
+		local perm = ply:GetPermission(self.Room)
+		self.AddBtn.Text = ply:Nick()
+		self.PermBtn.Text = self.AddBtn.Text
+		self.PermBtn.Color = self:GetPermissionColour(perm)
+		self.AddBtn.X = self._btnLeft + self._btnCol * (self.PermBtn.Width + 8 + 48 + 32)
+		self.AddBtn.Y = self._btnTop + self._btnRow * (self.PermBtn.Height + 16)
+		self.PermBtn.X = self.AddBtn.X
+		self.PermBtn.Y = self.AddBtn.Y
+		self.DelBtn.X = self.PermBtn.X + self.PermBtn.Width + 8
+		self.DelBtn.Y = self.PermBtn.Y
+
+		self._btnRow = self._btnRow + 1
+		if self._btnRow >= 4 then
+			self._btnRow = 0
+			self._btnCol = self._btnCol + 1
+		end
+	end
+
 	function ENT:Draw()
 		local ang = self:GetAngles()
 		ang:RotateAroundAxis(ang:Up(), 90)
@@ -460,12 +520,18 @@ elseif CLIENT then
 			else
 				self:FindCursorPosition()
 				if not self.TabMenu then
-					self.TabMenu = TabMenu("SYSTEM", "ACCESS", "SECURITY", "OVERRIDE")
+					self.TabMenu = TabMenu()
+					self.TabMenu:AddOption("ACCESS")
+					if self.Room.System then
+						self.TabMenu:AddOption("SYSTEM")
+					end
+					self.TabMenu:AddOption("SECURITY")
+					self.TabMenu:AddOption("OVERRIDE")
 					self.TabMenu.X = -self.Width / 2 + 8
 					self.TabMenu.Y = -self.Height / 2 + 8
 					self.TabMenu.Width = self.Width - 16
 				end
-				self.TabMenu:SetCurrentIndex(curScreen - 1)
+				self.TabMenu:SetCurrent(table.KeyFromValue(screen, curScreen))
 				self.TabMenu:Draw(self)
 				if curScreen == screen.SYSTEM then
 					if self.Room and self.Room.System then
@@ -474,6 +540,38 @@ elseif CLIENT then
 						surface.SetTextColor(Color(64, 64, 64, 255))
 						surface.SetFont("CTextLarge")
 						surface.DrawCentredText(0, 0, "NO SYSTEM INSTALLED")
+					end
+				elseif curScreen == screen.SECURITY then
+					if not self.PermList then
+						self.AddBtn = Button()
+						self.AddBtn.Width = self.Width / 2 - 32
+						self.AddBtn.Height = 48
+						self.PermBtn = Button()
+						self.PermBtn.Width = self.AddBtn.Width - (self.AddBtn.Height + 8)
+						self.PermBtn.Height = self.AddBtn.Height
+						self.DelBtn = Button()
+						self.DelBtn.Width = self.AddBtn.Height
+						self.DelBtn.Height = self.AddBtn.Height
+						self.DelBtn.Text = "X"
+
+						self.PermList = {}
+						self.AddList = {}
+						for i, ply in ipairs(player.GetAll()) do
+							if ply:HasPermission(self.Room, permission.ACCESS) then
+								table.insert(self.PermList, ply)
+							else
+								table.insert(self.AddList, ply)
+							end
+						end
+					end
+					surface.SetFont("CTextSmall")
+					surface.SetTextColor(Color(127, 127, 127, 255))
+
+					self:NewSecurityButtonPage()
+					for i, ply in ipairs(self.PermList) do
+						self:NextSecurityButton(ply)
+						self.PermBtn:Draw(self)
+						self.DelBtn:Draw(self)
 					end
 				end
 				self:DrawCursor()
@@ -486,10 +584,14 @@ elseif CLIENT then
 		if self.Room then
 			local index = self.TabMenu:Click(mousePos.x, mousePos.y)
 			if index then
+				local nextScreen = screen[self.TabMenu:GetOption(index)]
 				net.Start("ChangeScreen")
 					net.WriteEntity(self)
-					net.WriteInt(index+1, 8)
+					net.WriteInt(nextScreen, 8)
 				net.SendToServer()
+				if nextScreen == screen.SECURITY then
+					self.PermList = nil
+				end
 			elseif self:GetCurrentScreen() == screen.SYSTEM and self.Room.System then
 				local sys = self.Room.System
 				if sys.CanClickRooms then
@@ -511,6 +613,23 @@ elseif CLIENT then
 				end
 				
 				sys:Click(self, mousePos.x, mousePos.y, button)
+			elseif self:GetCurrentScreen() == screen.SECURITY and self.PermList then
+				self:NewSecurityButtonPage()
+				for i, ply in ipairs(self.PermList) do
+					self:NextSecurityButton(ply)
+					if self.PermBtn:Click(mousePos.x, mousePos.y) then
+						local perm = ply:GetPermission(self.Room) + 1
+						if perm > permission.SECURITY then perm = permission.ACCESS end
+						ply:SetPermission(self.Room, perm)
+						break
+					end
+					if self.DelBtn:Click(mousePos.x, mousePos.y) then
+						table.remove(self.PermList, i)
+						table.insert(self.AddList, ply)
+						ply:SetPermission(self.Room, permission.NONE)
+						break
+					end
+				end
 			end
 		end
 	end

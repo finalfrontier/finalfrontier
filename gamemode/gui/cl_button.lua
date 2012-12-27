@@ -12,8 +12,8 @@ _mt.TextColor = Color(0, 0, 0, 255)
 _mt.Text = "CLICK ME"
 
 function _mt:Draw(screen)
-	if screen._cursorx >= self.X - 8 and screen._cursory >= self.Y - 8 and
-		screen._cursorx <= self.X + self.Width + 16 and screen._cursory <= self.Y + self.Height + 16 then
+	if screen._cursorx >= self.X and screen._cursory >= self.Y and
+		screen._cursorx <= self.X + self.Width and screen._cursory <= self.Y + self.Height then
 		surface.SetDrawColor(Color(self.Color.r + 64, self.Color.g + 64, self.Color.b + 64))
 	else
 		surface.SetDrawColor(self.Color)
@@ -27,8 +27,8 @@ function _mt:Draw(screen)
 end
 
 function _mt:Click(x, y)
-	if x >= self.X - 8 and y >= self.Y - 8 and
-		x <= self.X + self.Width + 16 and y <= self.Y + self.Height + 16 then
+	if x >= self.X and y >= self.Y and
+		x <= self.X + self.Width and y <= self.Y + self.Height then
 		return true
 	end
 	return false

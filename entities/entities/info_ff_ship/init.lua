@@ -39,6 +39,10 @@ function ENT:AddRoom(room)
 	room.Index = #self._roomlist
 end
 
+function ENT:GetRoomByIndex(index)
+	return self._roomlist[index]
+end
+
 function ENT:AddDoor(door)
 	if not table.HasValue(self.Doors, door) then
 		table.insert(self.Doors, door)
