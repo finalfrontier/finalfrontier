@@ -400,6 +400,122 @@ elseif CLIENT then
 			end
 		end
 	end
+
+	function ENT:TransformRoom(room, x, y, width, height)
+		local bounds = Bounds(x, y, width, height)
+		if not room.Transform or not room.TransformBounds:Equals(bounds) then
+			room.TransformBounds = bounds
+			local roomBounds = Bounds()
+			roomBounds:AddBounds(room.Bounds)
+			for _, door in ipairs(room.Doors) do
+				roomBounds:AddBounds(door.Bounds)
+			end
+			room.Transform = FindBestTransform(roomBounds, bounds, true, true)
+		end
+	end
+
+	function ENT:DrawRoom(room, x, y, width, height)
+		if not room then return end
+		
+		local margin = 16
+		self:TransformRoom(room, x, y, width, height)
+		
+		local mousePos = { x = self._cursorx, y = self._cursory }
+		local last, lx, ly = nil, 0, 0
+		
+		if not room.RoomTrans then
+			local x, y
+			room.RoomTrans = {}
+			room.RoomTrans.Corners = {}
+			for i, v in ipairs(room.Corners) do
+				x, y = room.Transform:Transform(v.x, v.y)
+				room.RoomTrans.Corners[i] = { x = x, y = y }
+			end
+			room.RoomTrans.ConvexPolys = {}
+			for j, poly in ipairs(room.ConvexPolys) do
+				room.RoomTrans.ConvexPolys[j] = {}
+				for i, v in ipairs(poly) do
+					x, y = room.Transform:Transform(v.x, v.y)
+					room.RoomTrans.ConvexPolys[j][i] = { x = x, y = y }
+				end
+			end
+			local centre = room.Bounds:GetCentre()
+			x, y = room.Transform:Transform(centre.x, centre.y)
+			room.RoomTrans.Centre = { x = x, y = y }
+		end
+
+		local color = Color(32, 32, 32, 255)
+
+		for i, poly in ipairs(room.RoomTrans.ConvexPolys) do
+			surface.SetDrawColor(color)
+			surface.DrawPoly(poly)
+		end
+
+		surface.SetDrawColor(Color(255, 255, 255, 255))
+		last = room.RoomTrans.Corners[#room.RoomTrans.Corners]
+		lx, ly = last.x, last.y
+		for _, v in ipairs(room.RoomTrans.Corners) do
+			surface.DrawLine(lx, ly, v.x, v.y)
+			lx, ly = v.x, v.y
+		end
+
+		if room.System and room.System.Icon and room.RoomTrans.Centre then
+			surface.SetMaterial(room.System.Icon)
+			surface.SetDrawColor(Color(255, 255, 255, 32))
+			surface.DrawTexturedRect(
+				room.RoomTrans.Centre.x - 24, room.RoomTrans.Centre.y - 24, 48, 48)
+			surface.SetMaterial(WHITE)
+		end
+		
+		for k, door in ipairs(room.Doors) do
+			if not door.RoomTrans then
+				door.RoomTrans = {}
+				local coords = {
+					{ x = -32, y = -64 },
+					{ x = -32, y =  64 },
+					{ x =  32, y =  64 },
+					{ x =  32, y = -64 }
+				}
+				local trans = Transform2D()
+				trans:Rotate(door.angle * math.pi / 180)
+				trans:Translate(door.x, door.y)
+				for i, v in ipairs(coords) do
+					local x, y = room.Transform:Transform(trans:Transform(v.x, v.y))
+					door.RoomTrans[i] = { x = x, y = y }
+				end
+			end
+			
+			local color = nil
+			local c = 32
+			if mouseOver then
+				c = c + 32
+			end
+			if not door.Open then
+				c = c + 127
+				
+				if door.Locked then
+					color = Color(c + 64, c - 64, c - 64, 255)
+				else
+					color = Color(c, c, c, 255)
+				end
+			elseif door.Locked then
+				color = Color(c, c + 64, c, 255)
+			else
+				color = Color(c, c, c, 255)
+			end
+
+			surface.SetDrawColor(color)
+			surface.DrawPoly(door.RoomTrans)
+			
+			surface.SetDrawColor(Color(255, 255, 255, 255))
+			last = door.RoomTrans[#door.RoomTrans]
+			lx, ly = last.x, last.y
+			for _, v in ipairs(door.RoomTrans) do
+				surface.DrawLine(lx, ly, v.x, v.y)
+				lx, ly = v.x, v.y
+			end
+		end
+	end
 	
 	function ENT:FindCursorPosition()
 		if self._using then
@@ -630,7 +746,12 @@ elseif CLIENT then
 				self:FindCursorPosition()
 				self.TabMenu:SetCurrent(table.KeyFromValue(screen, curScreen))
 				self.TabMenu:Draw(self)
-				if curScreen == screen.SYSTEM then
+				if curScreen == screen.ACCESS then
+					local margin = 16
+					self:DrawRoom(self.Room, -self.Width / 2 + margin + 128,
+						-self.Height / 2 + margin + 64, 512 - margin * 2,
+						self.Height - 64 - margin * 2)
+				elseif curScreen == screen.SYSTEM then
 					if self.Room and self.Room.System then
 						self.Room.System:DrawGUI(self)
 					else

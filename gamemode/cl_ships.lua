@@ -51,6 +51,19 @@ net.Receive("InitShipData", function(len)
 		door.angle = net.ReadFloat()
 		
 		door.Bounds = Bounds()
+		local coords = {
+			{ x = -32, y = -64 },
+			{ x = -32, y =  64 },
+			{ x =  32, y =  64 },
+			{ x =  32, y = -64 }
+		}
+		local trans = Transform2D()
+		trans:Rotate(door.angle * math.pi / 180)
+		trans:Translate(door.x, door.y)
+		for i, v in ipairs(coords) do
+			door.Bounds:AddPoint(trans:Transform(v.x, v.y))
+		end
+
 		local roomai = net.ReadInt(8)
 		local roombi = net.ReadInt(8)
 		door.Open = false
