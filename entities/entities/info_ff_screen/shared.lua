@@ -92,7 +92,9 @@ if SERVER then
 	end
 	
 	function ENT:StartUsing(ply)
-		if not ply:HasPermission(self.Room, permission.ACCESS) then
+		local perm = ply:GetPermission(self.Room)
+		--[[
+		if perm <= permission.NONE then
 			local hasPerms = false
 			for _, pl in ipairs(player.GetAll()) do
 				if pl:HasPermission(self.Room, permission.ACCESS) then
@@ -101,13 +103,20 @@ if SERVER then
 				end
 			end
 			if not hasPerms then
-				ply:SetPermission(self.Room, permission.SECURITY)
+				perm = permission.SECURITY
 			end
 		end
+		]]--
 
 		self:SetNWBool("used", true)
+		self:SetNWFloat("usestart", CurTime())
 		self:SetNWEntity("user", ply)
-		self:SetNWInt("screen", screen.ACCESS)
+		self:SetNWInt("permission", perm)
+		if perm >= permission.ACCESS then
+			self:SetNWInt("screen", screen.ACCESS)
+		else
+			self:SetNWInt("screen", screen.OVERRIDE)
+		end
 		self:SetNWBool("addingperm", false)
 		ply:SetNWBool("usingScreen", true)
 		ply:SetNWEntity("screen", self)
@@ -192,6 +201,8 @@ elseif CLIENT then
 	
 	ENT._using = false
 	
+	ENT._usestart = 0
+
 	ENT._lastCursorUpdate = 0
 	ENT._cursorx = 0
 	ENT._cursory = 0
@@ -493,12 +504,6 @@ elseif CLIENT then
 			self.DelBtn.Width = self.AddBtn.Height
 			self.DelBtn.Height = self.AddBtn.Height
 			self.DelBtn.Text = "X"
-
-			self.SwitchBtn = Button()
-			self.SwitchBtn.Width = self.Width / 4 - 16
-			self.SwitchBtn.Height = 64
-			self.SwitchBtn.X = -self.SwitchBtn.Width / 2
-			self.SwitchBtn.Y = self.Height / 2 - 64 - 16
 		end
 
 		if self:IsAddingPermission() then
@@ -553,7 +558,44 @@ elseif CLIENT then
 		end
 	end
 
+	function ENT:NewSession()
+		self.TabMenu = TabMenu()
+		local perm = self:GetNWInt("permission")
+		if perm >= permission.ACCESS then
+			self.TabMenu:AddOption("ACCESS")
+		end
+		if self.Room.System and perm >= permission.SYSTEM then
+			self.TabMenu:AddOption("SYSTEM")
+		end
+		if perm >= permission.SECURITY then
+			self.TabMenu:AddOption("SECURITY")
+		end
+		self.TabMenu:AddOption("OVERRIDE")
+		self.TabMenu.X = -self.Width / 2 + 8
+		self.TabMenu.Y = -self.Height / 2 + 8
+		self.TabMenu.Width = self.Width - 16
+
+		self.SwitchBtn = Button()
+		self.SwitchBtn.Width = self.Width / 4 - 16
+		self.SwitchBtn.Height = 64
+		self.SwitchBtn.X = -self.SwitchBtn.Width / 2
+		self.SwitchBtn.Y = self.Height / 2 - 64 - 16
+
+		self.OverrideBtn = Button()
+		self.OverrideBtn.Width = self.Width - 128
+		self.OverrideBtn.Height = self.Height - 128 - self.TabMenu.Height
+		self.OverrideBtn.X = -self.OverrideBtn.Width / 2
+		self.OverrideBtn.Y = self.TabMenu.Y + self.TabMenu.Height + 64
+		self.OverrideBtn.Text = "1337 H4X0RZ"
+		self.OverrideBtn.Color = Color(51, 172, 45, 255)
+	end
+
 	function ENT:Draw()
+		if self._usestart ~= self:GetNWFloat("usestart", 0) then
+			self._usestart = self:GetNWFloat("usestart", 0)
+			self:NewSession()
+		end
+
 		local ang = self:GetAngles()
 		ang:RotateAroundAxis(ang:Up(), 90)
 		ang:RotateAroundAxis(ang:Forward(), 90)
@@ -586,18 +628,6 @@ elseif CLIENT then
 				end
 			else
 				self:FindCursorPosition()
-				if not self.TabMenu then
-					self.TabMenu = TabMenu()
-					self.TabMenu:AddOption("ACCESS")
-					if self.Room.System then
-						self.TabMenu:AddOption("SYSTEM")
-					end
-					self.TabMenu:AddOption("SECURITY")
-					self.TabMenu:AddOption("OVERRIDE")
-					self.TabMenu.X = -self.Width / 2 + 8
-					self.TabMenu.Y = -self.Height / 2 + 8
-					self.TabMenu.Width = self.Width - 16
-				end
 				self.TabMenu:SetCurrent(table.KeyFromValue(screen, curScreen))
 				self.TabMenu:Draw(self)
 				if curScreen == screen.SYSTEM then
@@ -619,6 +649,8 @@ elseif CLIENT then
 						end
 					end
 					self.SwitchBtn:Draw(self)
+				elseif curScreen == screen.OVERRIDE then
+					self.OverrideBtn:Draw(self)
 				end
 				self:DrawCursor()
 			end
@@ -688,6 +720,10 @@ elseif CLIENT then
 						net.WriteBit(not self:IsAddingPermission())
 					net.SendToServer()
 				end
+			elseif self:GetCurrentScreen() == screen.OVERRIDE then
+				self:SetNWInt("permission", permission.SECURITY)
+				LocalPlayer():SetPermission(self.Room, permission.SECURITY)
+				self:NewSession()
 			end
 		end
 	end
