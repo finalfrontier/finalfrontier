@@ -26,6 +26,7 @@ ENT.Room = nil
 if SERVER then
 	util.AddNetworkString("CursorPos")
 	util.AddNetworkString("ChangeScreen")
+	util.AddNetworkString("SecurityMode")
 	
 	ENT.RoomName = nil
 
@@ -107,7 +108,7 @@ if SERVER then
 		self:SetNWBool("used", true)
 		self:SetNWEntity("user", ply)
 		self:SetNWInt("screen", screen.ACCESS)
-		self:SetNWBool("addingperm", not self:GetNWBool("addingperm", false))
+		self:SetNWBool("addingperm", false)
 		ply:SetNWBool("usingScreen", true)
 		ply:SetNWEntity("screen", self)
 		ply:SetNWEntity("oldWep", ply:GetActiveWeapon())
@@ -156,6 +157,11 @@ if SERVER then
 	net.Receive("ChangeScreen", function(len)
 		local screen = net.ReadEntity()		
 		screen:SetNWInt("screen", net.ReadInt(8))
+	end)
+
+	net.Receive("SecurityMode", function(len)
+		local screen = net.ReadEntity()		
+		screen:SetNWBool("addingperm", net.ReadBit() == 1)
 	end)
 elseif CLIENT then
 	local WHITE = Material("vgui/white")
@@ -465,26 +471,46 @@ elseif CLIENT then
 	ENT._btnLeft = 0
 	ENT._btnTop = 0
 
-	function ENT:NewSecurityButtonPage()
+	-- TODO: Clean up and implement pages
+	function ENT:NewSecurityButtonPage(page)
+		page = page or 1
+
 		self._btnRow = 0
 		self._btnCol = 0
 		self._btnLeft = -self.Width / 2 + 16
 		self._btnTop = -self.Height / 2 + 96
 
-		if not self.PermList then
+		if not self.AddBtn then
 			self.AddBtn = Button()
 			self.AddBtn.Width = self.Width / 2 - 32
 			self.AddBtn.Height = 48
+			
 			self.PermBtn = Button()
 			self.PermBtn.Width = self.AddBtn.Width - (self.AddBtn.Height + 8)
 			self.PermBtn.Height = self.AddBtn.Height
+			
 			self.DelBtn = Button()
 			self.DelBtn.Width = self.AddBtn.Height
 			self.DelBtn.Height = self.AddBtn.Height
 			self.DelBtn.Text = "X"
 
+			self.SwitchBtn = Button()
+			self.SwitchBtn.Width = self.Width / 4 - 16
+			self.SwitchBtn.Height = 64
+			self.SwitchBtn.X = -self.SwitchBtn.Width / 2
+			self.SwitchBtn.Y = self.Height / 2 - 64 - 16
+		end
+
+		if self:IsAddingPermission() then
+			self.SwitchBtn.Text = "MODIFY"
+		else
+			self.SwitchBtn.Text = "ADD NEW"
+		end
+
+		if not self.PermList then
 			self.PermList = {}
 			self.AddList = {}
+
 			for i, ply in ipairs(player.GetAll()) do
 				if ply:HasPermission(self.Room, permission.ACCESS) then
 					table.insert(self.PermList, ply)
@@ -592,6 +618,7 @@ elseif CLIENT then
 							self.AddBtn:Draw(self)
 						end
 					end
+					self.SwitchBtn:Draw(self)
 				end
 				self:DrawCursor()
 			end
@@ -654,6 +681,12 @@ elseif CLIENT then
 							break
 						end
 					end
+				end
+				if self.SwitchBtn:Click(mousePos.x, mousePos.y) then
+					net.Start("SecurityMode")
+						net.WriteEntity(self)
+						net.WriteBit(not self:IsAddingPermission())
+					net.SendToServer()
 				end
 			end
 		end
