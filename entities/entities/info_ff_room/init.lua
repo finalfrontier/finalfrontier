@@ -167,6 +167,11 @@ function ply_mt:SetPermission(room, perm)
 	self:SetNWInt(room:GetPermissionsName(), perm)
 end
 
+function ply_mt:HasDoorPermission(door)
+	return self:HasPermission(door.Rooms[1], permission.ACCESS)
+		and self:HasPermission(door.Rooms[2], permission.ACCESS)
+end
+
 net.Receive("SetPermission", function(len, ply)
 	local ship = ships.FindByName(net.ReadString())
 	local room = ship:GetRoomByIndex(net.ReadInt(8))

@@ -54,6 +54,11 @@ function ply_mt:SetPermission(room, perm)
 	net.SendToServer()
 end
 
+function ply_mt:HasDoorPermission(door)
+	return self:HasPermission(door.Rooms[1], permission.ACCESS)
+		and self:HasPermission(door.Rooms[2], permission.ACCESS)
+end
+
 function Room()
 	return setmetatable({}, _mt)
 end

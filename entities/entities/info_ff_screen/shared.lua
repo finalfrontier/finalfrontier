@@ -4,14 +4,14 @@ local UPDATE_FREQ = 0.5
 local CURSOR_UPDATE_FREQ = 0.25
 local MAX_USE_DISTANCE = 64
 
-local screen = {}
+screen = {}
 screen.STATUS       = 1
 screen.ACCESS       = 2
 screen.SYSTEM       = 3
 screen.SECURITY  	= 4
 screen.OVERRIDE     = 5
 
-local permission = {}
+permission = {}
 permission.NONE 	= 0
 permission.ACCESS	= 1
 permission.SYSTEM 	= 2
@@ -103,7 +103,7 @@ if SERVER then
 	
 	function ENT:StartUsing(ply)
 		local perm = ply:GetPermission(self.Room)
-		--[[
+		--[[ ]]
 		if perm <= permission.NONE then
 			local hasPerms = false
 			for _, pl in ipairs(player.GetAll()) do
@@ -116,7 +116,7 @@ if SERVER then
 				perm = permission.SECURITY
 			end
 		end
-		]]--
+		--[[ ]]--
 
 		self:SetNWBool("used", true)
 		self:SetNWFloat("usestart", CurTime())
@@ -182,7 +182,7 @@ if SERVER then
 			if self.Room.System:ClickDoor(self, ply, door, button) then
 				return
 			end
-		end
+		elseif not ply:HasDoorPermission(door) then return end
 
 		if button == MOUSE2 then
 			if door:IsLocked() then
@@ -362,12 +362,19 @@ elseif CLIENT then
 	end
 
 	function ENT:GetDoorColor(door, mouseOver)
-		local c = 32
-		if mouseOver then
-			c = c + 32
+		local c = 0
+		if self:GetNWEntity("user"):HasDoorPermission(door) then	
+			if self:GetCurrentScreen() == screen.ACCESS then
+				c = c + (math.cos(CurTime() * math.pi * 2) + 1) * 16 + 16
+			end
+			if mouseOver then
+				c = c + 32
+			end
+		else
+
 		end
 		if not door.Open then
-			c = c + 127
+			c = c + 64
 			
 			if door.Locked then
 				return Color(c + 64, c - 64, c - 64, 255)
