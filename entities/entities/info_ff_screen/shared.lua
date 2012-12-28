@@ -488,7 +488,9 @@ elseif CLIENT then
 				roomBounds:AddBounds(door.Bounds)
 			end
 			room.Transform = FindBestTransform(roomBounds, bounds, true, true)
+			return true
 		end
+		return false
 	end
 
 	function ENT:DrawRoom(room, x, y, width, height)
@@ -545,7 +547,8 @@ elseif CLIENT then
 		end
 		
 		for k, door in ipairs(room.Doors) do
-			if not door.RoomTrans then
+			if not door.RoomTrans or door.Transform ~= room.Transform then
+				door.Transform = room.Transform
 				door.RoomTrans = {}
 				local coords = {
 					{ x = -32, y = -64 },
