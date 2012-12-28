@@ -54,22 +54,8 @@ if SERVER then
 		screen:SetNWBool("lockMode", false)
 	end
 	
-	function SYS:ClickDoor(screen, ply, door)
-		if screen:GetNWBool("lockMode") then
-			if door:IsLocked() then
-				door:Unlock()
-			else
-				door:Lock()
-			end
-		else
-			if door:IsClosed() then
-				door:LockOpen()
-			else
-				door:UnlockClose()
-			end
-		end
-		
-		timer.Simple(0.1, function() screen.Room.Ship:SendShipRoomStates(ply) end)
+	function SYS:ClickDoor(screen, ply, door, button)
+		return false
 	end
 	
 	function SYS:Think(dt)

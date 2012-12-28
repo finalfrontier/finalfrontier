@@ -23,10 +23,20 @@ ENT.Base = "base_anim"
 ENT.Ship = nil
 ENT.Room = nil
 
+function ENT:GetCurrentScreen()
+	return self:GetNWInt("screen", screen.STATUS)
+end
+
+function ENT:IsAddingPermission()
+	return self:GetNWBool("addingperm", false)
+end
+
 if SERVER then
 	util.AddNetworkString("CursorPos")
 	util.AddNetworkString("ChangeScreen")
 	util.AddNetworkString("SecurityMode")
+	util.AddNetworkString("SysSelectRoom")
+	util.AddNetworkString("SysSelectDoor")
 	
 	ENT.RoomName = nil
 
@@ -156,6 +166,42 @@ if SERVER then
 			self.Room.System:StopControlling(self, ply)
 		end
 	end
+
+	function ENT:ClickRoom(ply, room, button)
+		if self:GetCurrentScreen() == screen.SYSTEM then
+			if self.Room.System:ClickRoom(self, ply, room, button) then
+				return
+			end
+		end
+
+		return
+	end
+
+	function ENT:ClickDoor(ply, door, button)
+		if self:GetCurrentScreen() == screen.SYSTEM then
+			if self.Room.System:ClickDoor(self, ply, door, button) then
+				return
+			end
+		end
+
+		if button == MOUSE2 then
+			if door:IsLocked() then
+				door:Unlock()
+			else
+				door:Lock()
+			end
+		else
+			if door:IsClosed() then
+				door:LockOpen()
+			else
+				door:UnlockClose()
+			end
+		end
+		
+		timer.Simple(0.1, function()
+			self.Room.Ship:SendShipRoomStates(ply)
+		end)
+	end
 	
 	net.Receive("CursorPos", function(len)
 		local screen = net.ReadEntity()		
@@ -171,6 +217,28 @@ if SERVER then
 	net.Receive("SecurityMode", function(len)
 		local screen = net.ReadEntity()		
 		screen:SetNWBool("addingperm", net.ReadBit() == 1)
+	end)
+	
+	net.Receive("SysSelectRoom", function(len)
+		local screen = net.ReadEntity()
+		local ply = net.ReadEntity()
+		local roomName = net.ReadString()
+		local button = net.ReadInt(8)
+		
+		if string.len(roomName) > 0 then
+			screen:ClickRoom(ply, ships.FindRoomByName(roomName), button)
+		else
+			screen:ClickRoom(ply, nil, button)
+		end
+	end)
+	
+	net.Receive("SysSelectDoor", function(len)
+		local screen = net.ReadEntity()
+		local ply = net.ReadEntity()
+		local doorId = net.ReadInt(8)
+		local button = net.ReadInt(8)
+		
+		screen:ClickDoor(ply, screen.Room.Ship.Doors[doorId], button)
 	end)
 elseif CLIENT then
 	local WHITE = Material("vgui/white")
@@ -233,14 +301,6 @@ elseif CLIENT then
 		return self._cursorx, self._cursory
 	end
 
-	function ENT:GetCurrentScreen()
-		return self:GetNWInt("screen", screen.STATUS)
-	end
-
-	function ENT:IsAddingPermission()
-		return self:GetNWBool("addingperm", false)
-	end
-
 	function ENT:DrawStatusDial(x, y, radius)
 		local atmo, temp, shld = 0, 0, 0
 		if self.Room then
@@ -299,6 +359,23 @@ elseif CLIENT then
 		
 		--surface.DrawCentredText(-272, -32, FormatNum(temp * 600, 3, 2) .. "K")
 		--surface.DrawCentredText(-272, 32, FormatNum(atmo * 100, 3, 2) .. "kPa")
+	end
+
+	function ENT:GetDoorColor(door, mouseOver)
+		local c = 32
+		if mouseOver then
+			c = c + 32
+		end
+		if not door.Open then
+			c = c + 127
+			
+			if door.Locked then
+				return Color(c + 64, c - 64, c - 64, 255)
+			end
+		elseif door.Locked then
+			return Color(c, c + 64, c, 255)
+		end
+		return Color(c, c, c, 255)
 	end
 	
 	function ENT:TransformShip(ship, x, y, width, height)
@@ -485,24 +562,8 @@ elseif CLIENT then
 				end
 			end
 			
-			local color = nil
-			local c = 32
-			if mouseOver then
-				c = c + 32
-			end
-			if not door.Open then
-				c = c + 127
-				
-				if door.Locked then
-					color = Color(c + 64, c - 64, c - 64, 255)
-				else
-					color = Color(c, c, c, 255)
-				end
-			elseif door.Locked then
-				color = Color(c, c + 64, c, 255)
-			else
-				color = Color(c, c, c, 255)
-			end
+			local color = self:GetDoorColor(door,
+				IsPointInsidePoly(door.RoomTrans, mousePos))
 
 			surface.SetDrawColor(color)
 			surface.DrawPoly(door.RoomTrans)
@@ -778,6 +839,28 @@ elseif CLIENT then
 		cam.End3D2D()
 	end
 	
+	function ENT:ClickRoom(room, button)
+		net.Start("SysSelectRoom")
+			net.WriteEntity(self)
+			net.WriteEntity(LocalPlayer())
+			if room then
+				net.WriteString(room:GetName())
+			else
+				net.WriteString("")
+			end
+			net.WriteInt(button, 8)
+		net.SendToServer()
+	end
+	
+	function ENT:ClickDoor(door, button)
+		net.Start("SysSelectDoor")
+			net.WriteEntity(self)
+			net.WriteEntity(LocalPlayer())
+			net.WriteInt(table.KeyFromValue(self.Ship.Doors, door), 8)
+			net.WriteInt(button, 8)
+		net.SendToServer()
+	end
+
 	function ENT:Click(ply, button)
 		local mousePos = { x = self._cursorx, y = self._cursory }
 		if self.Room then
@@ -791,12 +874,19 @@ elseif CLIENT then
 				if nextScreen == screen.SECURITY then
 					self.PermList = nil
 				end
+			elseif self:GetCurrentScreen() == screen.ACCESS then
+				for k, door in pairs(self.Room.Doors) do
+					if IsPointInsidePoly(door.RoomTrans, mousePos) then
+						self:ClickDoor(door, button)
+						return
+					end
+				end
 			elseif self:GetCurrentScreen() == screen.SYSTEM and self.Room.System then
 				local sys = self.Room.System
 				if sys.CanClickRooms then
 					for k, room in pairs(self.Ship.Rooms) do
 						if IsPointInsidePolyGroup(room.ShipTrans.ConvexPolys, mousePos) then
-							sys:ClickRoom(self, room, button)
+							self:ClickRoom(room, button)
 							return
 						end
 					end
@@ -805,7 +895,7 @@ elseif CLIENT then
 				if sys.CanClickDoors then
 					for k, door in pairs(self.Ship.Doors) do
 						if IsPointInsidePoly(door.ShipTrans, mousePos) then
-							sys:ClickDoor(self, door, button)
+							self:ClickDoor(door, button)
 							return
 						end
 					end

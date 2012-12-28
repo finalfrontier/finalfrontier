@@ -1,3 +1,6 @@
+MOUSE1 = 1
+MOUSE2 = 2
+
 sys = {}
 sys._dict = {}
 
@@ -28,11 +31,11 @@ if SERVER then
 	end
 	
 	function _mt:ClickRoom(screen, ply, room)
-		return
+		return true
 	end
 	
 	function _mt:ClickDoor(screen, ply, door)
-		return
+		return true
 	end
 	
 	function _mt:GetScreens()
@@ -54,28 +57,6 @@ elseif CLIENT then
 		return
 	end
 	
-	function _mt:ClickRoom(screen, room, button)
-		net.Start("SysSelectRoom")
-			net.WriteEntity(screen)
-			net.WriteEntity(LocalPlayer())
-			if room then
-				net.WriteString(room:GetName())
-			else
-				net.WriteString("")
-			end
-			net.WriteInt(button, 8)
-		net.SendToServer()
-	end
-	
-	function _mt:ClickDoor(screen, door, button)
-		net.Start("SysSelectDoor")
-			net.WriteEntity(screen)
-			net.WriteEntity(LocalPlayer())
-			net.WriteInt(table.KeyFromValue(screen.Ship.Doors, door), 8)
-			net.WriteInt(button, 8)
-		net.SendToServer()
-	end
-	
 	function _mt:GetRoomColor(screen, room, mouseOver)
 		local r, g, b = 32, 32, 32
 		if mouseOver then
@@ -91,20 +72,7 @@ elseif CLIENT then
 	end
 	
 	function _mt:GetDoorColor(screen, door, mouseOver)
-		local c = 32
-		if mouseOver then
-			c = c + 32
-		end
-		if not door.Open then
-			c = c + 127
-			
-			if door.Locked then
-				return Color(c + 64, c - 64, c - 64, 255)
-			end
-		elseif door.Locked then
-			return Color(c, c + 64, c, 255)
-		end
-		return Color(c, c, c, 255)
+		return screen:GetDoorColor(door, mouseOver)
 	end
 
 	function _mt:DrawGUI(screen)		
@@ -114,35 +82,6 @@ elseif CLIENT then
 				512 - margin * 2, 256 - margin * 2)
 		end
 	end
-end
-
-if SERVER then
-	util.AddNetworkString("SysSelectRoom")
-	util.AddNetworkString("SysSelectDoor")
-	
-	net.Receive("SysSelectRoom", function(len)
-		local screen = net.ReadEntity()
-		local ply = net.ReadEntity()
-		local roomName = net.ReadString()
-		
-		if screen.Room.System then
-			if string.len(roomName) > 0 then
-				screen.Room.System:ClickRoom(screen, ply, ships.FindRoomByName(roomName))
-			else
-				screen.Room.System:ClickRoom(screen, ply, nil)
-			end
-		end
-	end)
-	
-	net.Receive("SysSelectDoor", function(len)
-		local screen = net.ReadEntity()
-		local ply = net.ReadEntity()
-		local doorId = net.ReadInt(8)
-		
-		if screen.Room.System then
-			screen.Room.System:ClickDoor(screen, ply, screen.Room.Ship.Doors[doorId])
-		end
-	end)
 end
 
 MsgN("Loading systems...")

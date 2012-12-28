@@ -64,6 +64,8 @@ if SERVER then
 			screen:SetNWFloat("CurValue", self.Distribution[room] or 0)
 			screen:SetNWInt("CurRoom", room.Index)
 		end
+
+		return true
 	end
 elseif CLIENT then
 	SYS.Icon = Material("systems/shields.png", "smooth")

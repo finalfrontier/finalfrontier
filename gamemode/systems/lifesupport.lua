@@ -12,6 +12,8 @@ if SERVER then
 			room._airvolume = 0
 			room.Ship:SendShipRoomStates(ply)
 		end
+
+		return true
 	end
 	
 	function SYS:Think(dt)

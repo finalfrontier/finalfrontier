@@ -168,9 +168,6 @@ function GM:HUDWeaponPickedUp(weapon)
 	self.BaseClass:HUDWeaponPickedUp(weapon)
 end
 
-MOUSE1 = 1
-MOUSE2 = 2
-
 function GM:PlayerBindPress(ply, bind, pressed)
 	if ply:GetNWBool("usingScreen") then
 		if bind == "+attack" then
