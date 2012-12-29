@@ -103,7 +103,7 @@ if SERVER then
 	
 	function ENT:StartUsing(ply)
 		local perm = ply:GetPermission(self.Room)
-		--[[ ]]
+		--[[
 		if perm <= permission.NONE then
 			local hasPerms = false
 			for _, pl in ipairs(player.GetAll()) do
@@ -116,7 +116,7 @@ if SERVER then
 				perm = permission.SECURITY
 			end
 		end
-		--[[ ]]--
+		]]--
 
 		self:SetNWBool("used", true)
 		self:SetNWFloat("usestart", CurTime())
@@ -494,7 +494,8 @@ elseif CLIENT then
 			for _, door in ipairs(room.Doors) do
 				roomBounds:AddBounds(door.Bounds)
 			end
-			room.Transform = FindBestTransform(roomBounds, bounds, true, true)
+			local angle = self:GetAngles().Yaw + 90
+			room.Transform = FindBestTransform(roomBounds, bounds, false, true, angle)
 			return true
 		end
 		return false

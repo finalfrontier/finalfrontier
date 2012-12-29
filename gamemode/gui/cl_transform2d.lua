@@ -26,11 +26,19 @@ function Transform2D()
 	return setmetatable({ Matrix = Matrix(1, 0, 0, 1), Offset = { x = 0, y = 0 } }, _mt)
 end
 
-function FindBestTransform(sourceBounds, destBounds, canRotate, flip)
+function FindBestTransform(sourceBounds, destBounds, canRotate, flip, angle)
 	local src = sourceBounds:GetSize()
 	src.centre = sourceBounds:GetCentre()
 	local trans = Transform2D()
 	
+	if angle then
+		angle = math.Round(angle / 90)
+		trans:Rotate(angle * math.pi / 2)
+		if math.abs(angle) == 90 then
+			src.width, src.height = src.height, src.width
+		end
+	end
+
 	if canRotate and src.width < src.height then
 		trans:Rotate(math.pi / 2)
 		src.width, src.height = src.height, src.width
