@@ -392,6 +392,37 @@ elseif CLIENT then
 			ship.Transform = FindBestTransform(ship.Bounds, bounds, true, true)
 		end
 	end
+
+	function ENT:DrawDoor(door, transform, color)
+		if not door.Poly or door.Transform ~= transform then
+			door.Transform = transform
+			door.Poly = {}
+			local coords = {
+				{ x = -32, y = -64 },
+				{ x = -32, y =  64 },
+				{ x =  32, y =  64 },
+				{ x =  32, y = -64 }
+			}
+			local trans = Transform2D()
+			trans:Rotate(door.angle * math.pi / 180)
+			trans:Translate(door.x, door.y)
+			for i, v in ipairs(coords) do
+				local x, y = transform:Transform(trans:Transform(v.x, v.y))
+				door.Poly[i] = { x = x, y = y }
+			end
+		end
+		
+		surface.SetDrawColor(color)
+		surface.DrawPoly(door.Poly)
+		
+		surface.SetDrawColor(Color(255, 255, 255, 255))
+		last = door.Poly[#door.Poly]
+		lx, ly = last.x, last.y
+		for _, v in ipairs(door.Poly) do
+			surface.DrawLine(lx, ly, v.x, v.y)
+			lx, ly = v.x, v.y
+		end
+	end
 	
 	function ENT:DrawShip(ship, x, y, width, height)
 		if not ship then return end
@@ -451,37 +482,11 @@ elseif CLIENT then
 		end
 		
 		for k, door in ipairs(ship.Doors) do
-			if not door.ShipTrans then
-				door.ShipTrans = {}
-				local coords = {
-					{ x = -32, y = -64 },
-					{ x = -32, y =  64 },
-					{ x =  32, y =  64 },
-					{ x =  32, y = -64 }
-				}
-				local trans = Transform2D()
-				trans:Rotate(door.angle * math.pi / 180)
-				trans:Translate(door.x, door.y)
-				for i, v in ipairs(coords) do
-					local x, y = ship.Transform:Transform(trans:Transform(v.x, v.y))
-					door.ShipTrans[i] = { x = x, y = y }
-				end
-			end
-			
 			local color = self.Room.System:GetDoorColor(self, door,
-				self.Room.System.CanClickDoors and
-				IsPointInsidePoly(door.ShipTrans, mousePos))
+				self.Room.System.CanClickDoors and door.Poly and
+				IsPointInsidePoly(door.Poly, mousePos))
 			
-			surface.SetDrawColor(color)
-			surface.DrawPoly(door.ShipTrans)
-			
-			surface.SetDrawColor(Color(255, 255, 255, 255))
-			last = door.ShipTrans[#door.ShipTrans]
-			lx, ly = last.x, last.y
-			for _, v in ipairs(door.ShipTrans) do
-				surface.DrawLine(lx, ly, v.x, v.y)
-				lx, ly = v.x, v.y
-			end
+			self:DrawDoor(door, ship.Transform, color)
 		end
 	end
 
@@ -550,42 +555,15 @@ elseif CLIENT then
 			surface.SetMaterial(room.System.Icon)
 			surface.SetDrawColor(Color(255, 255, 255, 32))
 			surface.DrawTexturedRect(
-				room.RoomTrans.Centre.x - 24, room.RoomTrans.Centre.y - 24, 48, 48)
+				room.RoomTrans.Centre.x - 32, room.RoomTrans.Centre.y -32, 64, 64)
 			surface.SetMaterial(WHITE)
 		end
 		
 		for k, door in ipairs(room.Doors) do
-			if not door.RoomTrans or door.Transform ~= room.Transform then
-				door.Transform = room.Transform
-				door.RoomTrans = {}
-				local coords = {
-					{ x = -32, y = -64 },
-					{ x = -32, y =  64 },
-					{ x =  32, y =  64 },
-					{ x =  32, y = -64 }
-				}
-				local trans = Transform2D()
-				trans:Rotate(door.angle * math.pi / 180)
-				trans:Translate(door.x, door.y)
-				for i, v in ipairs(coords) do
-					local x, y = room.Transform:Transform(trans:Transform(v.x, v.y))
-					door.RoomTrans[i] = { x = x, y = y }
-				end
-			end
-			
-			local color = self:GetDoorColor(door,
-				IsPointInsidePoly(door.RoomTrans, mousePos))
+			local color = self:GetDoorColor(door, door.Poly and
+				IsPointInsidePoly(door.Poly, mousePos))
 
-			surface.SetDrawColor(color)
-			surface.DrawPoly(door.RoomTrans)
-			
-			surface.SetDrawColor(Color(255, 255, 255, 255))
-			last = door.RoomTrans[#door.RoomTrans]
-			lx, ly = last.x, last.y
-			for _, v in ipairs(door.RoomTrans) do
-				surface.DrawLine(lx, ly, v.x, v.y)
-				lx, ly = v.x, v.y
-			end
+			self:DrawDoor(door, room.Transform, color)
 		end
 	end
 	
@@ -887,7 +865,7 @@ elseif CLIENT then
 				end
 			elseif self:GetCurrentScreen() == screen.ACCESS then
 				for k, door in pairs(self.Room.Doors) do
-					if IsPointInsidePoly(door.RoomTrans, mousePos) then
+					if IsPointInsidePoly(door.Poly, mousePos) then
 						self:ClickDoor(door, button)
 						return
 					end
@@ -905,7 +883,7 @@ elseif CLIENT then
 				
 				if sys.CanClickDoors then
 					for k, door in pairs(self.Ship.Doors) do
-						if IsPointInsidePoly(door.ShipTrans, mousePos) then
+						if IsPointInsidePoly(door.Poly, mousePos) then
 							self:ClickDoor(door, button)
 							return
 						end
