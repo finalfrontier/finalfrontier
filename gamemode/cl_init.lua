@@ -9,6 +9,7 @@ include("gui/cl_button.lua")
 include("gui/cl_tabmenu.lua")
 include("sh_systems.lua")
 include("cl_room.lua")
+include("cl_ship.lua")
 include("cl_ships.lua")
 
 -- Global Functions

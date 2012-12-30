@@ -11,6 +11,23 @@ _mt._oldAtmo = 0
 _mt._shields = 0
 _mt._oldShld = 0
 
+function _mt:ReadFromNet()
+	self.Name = net.ReadString()
+	self.Index = net.ReadInt(8)
+	self.System = sys.Create(net.ReadString(), self)
+	
+	local cornerCount = net.ReadInt(8)
+	for cNum = 1, cornerCount do
+		local index = net.ReadInt(8)
+		local pos = { x = net.ReadFloat(), y = net.ReadFloat() }
+		
+		self.Corners[index] = pos
+		self.Bounds:AddPoint(pos.x, pos.y)
+	end
+	
+	self.ConvexPolys = FindConvexPolygons(self.Corners)
+end
+
 function _mt:GetName()
 	return self.Name
 end
@@ -59,6 +76,12 @@ function ply_mt:HasDoorPermission(door)
 		and self:HasPermission(door.Rooms[2], permission.ACCESS)
 end
 
-function Room()
-	return setmetatable({}, _mt)
+function Room(ship)
+	local room = { Ship = ship }
+
+	room.Bounds = Bounds()
+	room.Doors = {}
+	room.Corners = {}
+
+	return setmetatable(room, _mt)
 end

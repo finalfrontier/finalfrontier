@@ -1,5 +1,6 @@
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("cl_room.lua")
+AddCSLuaFile("cl_ship.lua")
 AddCSLuaFile("cl_ships.lua")
 AddCSLuaFile("sh_bounds.lua")
 AddCSLuaFile("gui/cl_matrix.lua")

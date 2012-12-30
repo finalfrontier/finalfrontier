@@ -7,74 +7,8 @@ function ships.FindByName(name)
 end
 
 net.Receive("InitShipData", function(len)
-	local name = net.ReadString()
-	local roomCount = net.ReadInt(8)
-	
-	local ship = { Name = name }
-	ship.Rooms = {}
-	ship._roomlist = {}
-	ship.Doors = {}
-	ship.Bounds = Bounds()
-	
-	for rNum = 1, roomCount do
-		local room = Room()
-		room.Ship = ship
-		room.Name = net.ReadString()
-		room.Index = net.ReadInt(8)
-		room.System = sys.Create(net.ReadString(), room)
-		room.Bounds = Bounds()
-		room.Doors = {}
-		
-		room.Corners = {}
-		local cornerCount = net.ReadInt(8)
-		for cNum = 1, cornerCount do
-			local index = net.ReadInt(8)
-			local pos = { x = net.ReadFloat(), y = net.ReadFloat() }
-			
-			room.Corners[index] = pos
-			room.Bounds:AddPoint(pos.x, pos.y)
-		end
-		
-		room.ConvexPolys = FindConvexPolygons(room.Corners)
-		
-		ship.Rooms[room.Name] = room
-		ship.Bounds:AddBounds(room.Bounds)
-	
-		ship._roomlist[room.Index] = room
-	end
-	
-	local doorCount = net.ReadInt(8)
-	for dNum = 1, doorCount do
-		local door = { _lastUpdate = 0 }
-		door.x = net.ReadFloat()
-		door.y = net.ReadFloat()
-		door.angle = net.ReadFloat()
-		
-		door.Bounds = Bounds()
-		local coords = {
-			{ x = -32, y = -64 },
-			{ x = -32, y =  64 },
-			{ x =  32, y =  64 },
-			{ x =  32, y = -64 }
-		}
-		local trans = Transform2D()
-		trans:Rotate(door.angle * math.pi / 180)
-		trans:Translate(door.x, door.y)
-		for i, v in ipairs(coords) do
-			door.Bounds:AddPoint(trans:Transform(v.x, v.y))
-		end
-
-		local roomai = net.ReadInt(8)
-		local roombi = net.ReadInt(8)
-		door.Open = false
-		door.Locked = false
-		door.Rooms = { ship._roomlist[roomai], ship._roomlist[roombi] }
-		
-		table.insert(door.Rooms[1].Doors, door)
-		table.insert(door.Rooms[2].Doors, door)
-		table.insert(ship.Doors, door)
-	end
-	
+	local ship = Ship()
+	ship:ReadFromNet()	
 	ships._dict[name] = ship
 end)
 
