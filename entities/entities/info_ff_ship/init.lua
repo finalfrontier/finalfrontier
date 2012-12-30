@@ -102,8 +102,8 @@ function ENT:SendShipRoomStates(ply)
 	local send = false
 
 	net.Start("ShipStateUpdate")
-		net.WriteFloat(CurTime())
 		net.WriteString(self:GetName())
+		net.WriteFloat(CurTime())
 		
 		shipCache.Rooms = shipCache.Rooms or {}
 		local roomCache = shipCache.Rooms

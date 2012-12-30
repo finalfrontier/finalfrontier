@@ -45,6 +45,37 @@ function _mt:ReadFromNet()
 	end
 end
 
+function _mt:UpdateFromNet()
+	local timestamp = net.ReadFloat()
+	while true do
+		local index = net.ReadInt(8)
+		if index == 0 then break end
+		local room = self._roomlist[index]
+		if timestamp > room._lastUpdate then
+			room._oldTemp = room._temperature
+			room._oldAtmo = room._atmosphere
+			room._oldShld = room._shields
+			
+			room._temperature = net.ReadFloat()
+			room._atmosphere = net.ReadFloat()
+			room._shields = net.ReadFloat()
+			
+			room._lastUpdate = timestamp
+		end
+	end
+	while true do
+		local index = net.ReadInt(8)
+		if index == 0 then break end
+		local door = self.Doors[index]
+		if timestamp > door._lastUpdate then
+			local flags = net.ReadInt(8)
+			if flags % 2 >= 1 then door.Open = true else door.Open = false end
+			if flags % 4 >= 2 then door.Locked = true else door.Locked = false end
+			door._lastUpdate = timestamp
+		end
+	end
+end
+
 function _mt:AddRoom(room)
 	self.Rooms[room.Name] = room
 	self._roomlist[room.Index] = room
