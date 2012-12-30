@@ -56,6 +56,8 @@ elseif CLIENT then
 	SYS.DrawWholeShip = true
 	SYS.CanClickDoors = true
 	
+	SYS.ShipMarginBottom = 96
+	
 	function SYS:Click(screen, x, y, button)
 		if screen.Buttons then
 			for _, btn in ipairs(screen.Buttons) do
@@ -104,9 +106,6 @@ elseif CLIENT then
 			btn:Draw(screen)
 		end
 
-		local margin = 16
-		screen:TransformShip(screen.Ship, -screen.Width / 2 + margin, -screen.Height / 2 + margin + 64,
-			screen.Width - margin * 2, screen.Height - margin * 2 - 72 - 64)
-		screen:DrawShip(screen.Ship)
+		self.Base.DrawGUI(self, screen)
 	end
 end

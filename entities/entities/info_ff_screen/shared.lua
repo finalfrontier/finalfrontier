@@ -361,17 +361,25 @@ elseif CLIENT then
 		--surface.DrawCentredText(-272, 32, FormatNum(atmo * 100, 3, 2) .. "kPa")
 	end
 
+	function ENT:IsCursorInsideRoom(room)
+		return room.Poly and IsPointInsidePolyGroup(room.Poly.Current.ConvexPolys, { x = self._cursorx, y = self._cursory })
+	end
+
+	function ENT:IsCursorInsideDoor(door)
+		return door.Poly and IsPointInsidePoly(door.Poly.Current, { x = self._cursorx, y = self._cursory })
+	end
+
 	function ENT:IsCursorInsidePoly(poly)
 		return IsPointInsidePoly(poly, { x = self._cursorx, y = self._cursory })
 	end
 
-	function ENT:GetDoorColor(door)
+	function ENT:GetDoorColor(door, noGlow)
 		local c = 0
-		if self:GetNWEntity("user"):HasDoorPermission(door) then	
+		if not noGlow and self:GetNWEntity("user"):HasDoorPermission(door) then	
 			if self:GetCurrentScreen() == screen.ACCESS then
-				c = c + (math.cos(CurTime() * math.pi * 2) + 1) * 16 + 16
+				c = c + (math.cos(CurTime() * math.pi * 4) + 1) * 16 + 16
 			end
-			if door.Poly and self:IsCursorInsidePoly(door.Poly.Current) then
+			if door.Poly and self:IsCursorInsideDoor(door) then
 				c = c + 32
 			end
 		end
@@ -552,6 +560,7 @@ elseif CLIENT then
 		end
 		if self.Room.System and perm >= permission.SYSTEM then
 			self.TabMenu:AddOption("SYSTEM")
+			self.Room.System:NewSession(self)
 		end
 		if perm >= permission.SECURITY then
 			self.TabMenu:AddOption("SECURITY")
@@ -654,6 +663,16 @@ elseif CLIENT then
 			end
 		cam.End3D2D()
 	end
+
+	function ENT:ChangeScreen(nextScreen)
+		net.Start("ChangeScreen")
+			net.WriteEntity(self)
+			net.WriteInt(nextScreen, 8)
+		net.SendToServer()
+		if nextScreen == screen.SECURITY then
+			self.PermList = nil
+		end
+	end
 	
 	function ENT:ClickRoom(room, button)
 		net.Start("SysSelectRoom")
@@ -682,17 +701,10 @@ elseif CLIENT then
 		if self.Room then
 			local index = self.TabMenu:Click(mousePos.x, mousePos.y)
 			if index then
-				local nextScreen = screen[self.TabMenu:GetOption(index)]
-				net.Start("ChangeScreen")
-					net.WriteEntity(self)
-					net.WriteInt(nextScreen, 8)
-				net.SendToServer()
-				if nextScreen == screen.SECURITY then
-					self.PermList = nil
-				end
+				self:ChangeScreen(screen[self.TabMenu:GetOption(index)])
 			elseif self:GetCurrentScreen() == screen.ACCESS then
 				for k, door in pairs(self.Room.Doors) do
-					if self:IsCursorInsidePoly(door.Poly.Current) then
+					if self:IsCursorInsideDoor(door) then
 						self:ClickDoor(door, button)
 						return
 					end
@@ -701,7 +713,7 @@ elseif CLIENT then
 				local sys = self.Room.System
 				if sys.CanClickRooms then
 					for k, room in pairs(self.Ship.Rooms) do
-						if self:IsCursorInsidePoly(room.Poly.Current.ConvexPolys) then
+						if self:IsCursorInsideRoom(room) then
 							self:ClickRoom(room, button)
 							return
 						end
@@ -710,7 +722,7 @@ elseif CLIENT then
 				
 				if sys.CanClickDoors then
 					for k, door in pairs(self.Ship.Doors) do
-						if self:IsCursorInsidePoly(door.Poly.Current) then
+						if self:IsCursorInsideDoor(door) then
 							self:ClickDoor(door, button)
 							return
 						end
@@ -751,6 +763,7 @@ elseif CLIENT then
 				self:SetNWInt("permission", permission.SECURITY)
 				LocalPlayer():SetPermission(self.Room, permission.SECURITY)
 				self:NewSession()
+				self:ChangeScreen(screen.ACCESS)
 			end
 		end
 	end

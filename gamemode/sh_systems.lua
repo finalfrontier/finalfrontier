@@ -49,38 +49,42 @@ elseif CLIENT then
 	_mt.Icon = Material("systems/noicon.png", "smooth")
 
 	_mt.DrawWholeShip = false
+	_mt.ShipMarginLeft = 24
+	_mt.ShipMarginTop = 24
+	_mt.ShipMarginRight = 24
+	_mt.ShipMarginBottom = 24
 
 	_mt.CanClickRooms = false
 	_mt.CanClickDoors = false
+
+	function _mt:NewSession(screen)
+		self._shipTransform = self.Ship:FindTransform(screen,
+			-screen.Width / 2 + self.ShipMarginLeft,
+			-screen.Height / 2 + self.ShipMarginTop + 64,
+			screen.Width - self.ShipMarginLeft - self.ShipMarginRight,
+			screen.Height - self.ShipMarginTop - self.ShipMarginBottom - 64)
+	end
 
 	function _mt:Click(screen, x, y, button)
 		return
 	end
 	
-	function _mt:GetRoomColor(screen, room, mouseOver)
-		local r, g, b = 32, 32, 32
-		if mouseOver then
-			r, g, b = r + 32, g + 32, b + 32
-		end
-		--[[
-		if room == screen.Room then
-			local add = math.sin(CurTime() * math.pi * 2) / 2 + 0.5
-			r, g, b = r + add * 32, g + add * 64, b
-		end
-		]]--
-		return Color(r, g, b, 255)
-	end
-	
-	function _mt:GetDoorColor(screen, door, mouseOver)
-		return screen:GetDoorColor(door, mouseOver)
+	function _mt.GetDoorColor(screen, door)
+		return screen:GetDoorColor(door, true)
 	end
 
-	function _mt:DrawGUI(screen)		
+	function _mt.GetRoomColor(screen, room)
+		local r, g, b = 32, 32, 32
+		if screen.Room.System.CanClickRooms and screen.IsCursorInsideRoom(room) then
+			r, g, b = r + 32, g + 32, b + 32
+		end
+		return Color(r, g, b, 255)
+	end
+
+	function _mt:DrawGUI(screen)
 		if self.DrawWholeShip then
-			local margin = 16
-			screen:TransformShip(screen.Ship, -screen.Width / 2 + margin + 128, -screen.Height / 2 + margin + 64,
-				512 - margin * 2, 256 - margin * 2)
-			screen:DrawShip(screen.Ship)
+			self.Ship:ApplyTransform(self._shipTransform)
+			self.Ship:Draw(screen, self.GetRoomColor, self.GetDoorColor)
 		end
 	end
 end

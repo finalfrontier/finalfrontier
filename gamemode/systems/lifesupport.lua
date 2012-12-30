@@ -25,11 +25,11 @@ elseif CLIENT then
 	SYS.DrawWholeShip = true
 	SYS.CanClickRooms = true
 	
-	function SYS:GetRoomColor(screen, room, mouseOver)
+	function SYS.GetRoomColor(screen, room)
 		local temp = math.Clamp(room:GetTemperature() / 300 - 1, -1, 1)
 		local atmo = math.Clamp(room:GetAtmosphere(), 0, 1)
 		local madd = 32
-		if mouseOver then madd = 64 end
+		if screen:IsCursorInsideRoom(room) then madd = 64 end
 		if temp >= 0 then
 			return Color(temp * atmo * (255 - 64) + madd, atmo * (255 - 64) + madd, madd, 255)
 		else

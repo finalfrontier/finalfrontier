@@ -72,13 +72,17 @@ elseif CLIENT then
 
 	SYS.DrawWholeShip = true
 	SYS.CanClickRooms = true
+
+	SYS.ShipMarginBottom = 96
+
+	SYS.MarginBottom = 16
 	
 	SYS.CurRoom = nil
 	
-	function SYS:GetRoomColor(screen, room, mouseOver)
+	function SYS.GetRoomColor(screen, room)
 		local shields = math.Clamp(room:GetShields(), 0, 1)
 		local madd = 32
-		if mouseOver then madd = 64 end
+		if screen:IsCursorInsideRoom(room) then madd = 64 end
 		if screen:GetNWInt("CurRoom") == room.Index then
 			local add = math.sin(CurTime() * math.pi * 2) / 2 + 0.5
 			madd = madd + 32 * add + 32
@@ -96,7 +100,7 @@ elseif CLIENT then
 					net.WriteFloat(screen.PowerBar.Value)
 				net.SendToServer()
 			elseif y < screen.PowerBar.Y - 16 then
-				self:ClickRoom(screen, nil, button)
+				screen:ClickRoom(nil, button)
 			end
 		end
 	end
@@ -112,10 +116,10 @@ elseif CLIENT then
 			
 			if not screen.PowerBar then
 				screen.PowerBar = Slider()
-				screen.PowerBar.X = -64
-				screen.PowerBar.Y = screen.Height / 2 - 80
-				screen.PowerBar.Height = 32
 				screen.PowerBar.Width = 384
+				screen.PowerBar.Height = 32
+				screen.PowerBar.X = -64
+				screen.PowerBar.Y = screen.Height / 2 - screen.PowerBar.Height - self.MarginBottom
 				screen.PowerBar.Snap = 20
 			end
 			
@@ -129,17 +133,17 @@ elseif CLIENT then
 			surface.SetTextColor(Color(127, 127, 127, 255))
 			surface.SetFont("CTextSmall")
 			
-			surface.DrawCentredText(-screen.Width / 2 + 128, screen.Height / 2 - 96,
+			surface.DrawCentredText(-screen.Width / 2 + 128, screen.PowerBar.Y - 16,
 				"INTEGRITY")
 			
-			surface.DrawCentredText(128, screen.Height / 2 - 96,
+			surface.DrawCentredText(128, screen.PowerBar.Y - 16,
 				"POWER DISTRIBUTION")
 			
 			local shields = room:GetShields()
 			local clr = Color(32, shields * (255 - 192) + 32, shields * (255 - 128) + 32, 255)
 			surface.SetTextColor(clr)
 			surface.SetFont("CTextLarge")
-			surface.DrawCentredText(-screen.Width / 2 + 128, screen.Height / 2 - 64,
+			surface.DrawCentredText(-screen.Width / 2 + 128, screen.PowerBar.Y + 16,
 				FormatNum(shields * 100, 3, 1) .. "%")
 			
 			screen.PowerBar.Color = clr
@@ -152,10 +156,10 @@ elseif CLIENT then
 			
 			if not screen.UsageBar then
 				screen.UsageBar = Slider()
-				screen.UsageBar.X = -screen.Width / 2 + 64
-				screen.UsageBar.Y = screen.Height / 2 - 80
-				screen.UsageBar.Height = 32
 				screen.UsageBar.Width = screen.Width - 128
+				screen.UsageBar.Height = 32
+				screen.UsageBar.X = -screen.Width / 2 + 64
+				screen.UsageBar.Y = screen.Height / 2 - screen.UsageBar.Height - self.MarginBottom
 			end
 			
 			local usage = screen:GetNWFloat("CurValue")
@@ -164,7 +168,7 @@ elseif CLIENT then
 			surface.SetTextColor(Color(127, 127, 127, 255))
 			surface.SetFont("CTextSmall")
 			
-			surface.DrawCentredText(0, screen.Height / 2 - 96,
+			surface.DrawCentredText(0, screen.UsageBar.Y - 16,
 				"POWER USAGE (" .. FormatNum(usage * 100, 3, 1) .. "%)")
 			
 			if usage < 1 then

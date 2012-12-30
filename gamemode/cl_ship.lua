@@ -68,7 +68,7 @@ function _mt:FindTransform(screen, x, y, width, height)
 end
 
 function _mt:ApplyTransform(transform)
-	for _, room in ipairs(self.Rooms) do
+	for _, room in pairs(self.Rooms) do
 		room:ApplyTransform(transform)
 	end
 
@@ -77,13 +77,13 @@ function _mt:ApplyTransform(transform)
 	end
 end
 
-function _mt:Draw(roomColorFunc, doorColorFunc)
-	for _, room in ipairs(self.Rooms) do
-		room:Draw(roomColorFunc)
+function _mt:Draw(screen, roomColorFunc, doorColorFunc)
+	for _, room in pairs(self.Rooms) do
+		room:Draw(screen, roomColorFunc)
 	end
 
 	for _, door in ipairs(self.Doors) do
-		door:Draw(doorColorFunc)
+		door:Draw(screen, doorColorFunc)
 	end
 end
 
