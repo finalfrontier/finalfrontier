@@ -105,7 +105,8 @@ elseif CLIENT then
 		end
 
 		local margin = 16
-		screen:DrawShip(screen.Ship, -screen.Width / 2 + margin, -screen.Height / 2 + margin + 64,
+		screen:TransformShip(screen.Ship, -screen.Width / 2 + margin, -screen.Height / 2 + margin + 64,
 			screen.Width - margin * 2, screen.Height - margin * 2 - 72 - 64)
+		screen:DrawShip(screen.Ship)
 	end
 end

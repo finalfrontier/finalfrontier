@@ -78,8 +78,9 @@ elseif CLIENT then
 	function _mt:DrawGUI(screen)		
 		if self.DrawWholeShip then
 			local margin = 16
-			screen:DrawShip(screen.Ship, -screen.Width / 2 + margin + 128, -screen.Height / 2 + margin + 64,
+			screen:TransformShip(screen.Ship, -screen.Width / 2 + margin + 128, -screen.Height / 2 + margin + 64,
 				512 - margin * 2, 256 - margin * 2)
+			screen:DrawShip(screen.Ship)
 		end
 	end
 end

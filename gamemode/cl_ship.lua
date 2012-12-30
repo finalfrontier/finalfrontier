@@ -14,34 +14,9 @@ function _mt:ReadFromNet()
 	
 	local doorCount = net.ReadInt(8)
 	for dNum = 1, doorCount do
-		local door = { _lastUpdate = 0 }
-		door.x = net.ReadFloat()
-		door.y = net.ReadFloat()
-		door.angle = net.ReadFloat()
-		
-		door.Bounds = Bounds()
-		local coords = {
-			{ x = -32, y = -64 },
-			{ x = -32, y =  64 },
-			{ x =  32, y =  64 },
-			{ x =  32, y = -64 }
-		}
-		local trans = Transform2D()
-		trans:Rotate(door.angle * math.pi / 180)
-		trans:Translate(door.x, door.y)
-		for i, v in ipairs(coords) do
-			door.Bounds:AddPoint(trans:Transform(v.x, v.y))
-		end
-
-		local roomai = net.ReadInt(8)
-		local roombi = net.ReadInt(8)
-		door.Open = false
-		door.Locked = false
-		door.Rooms = { self._roomlist[roomai], self._roomlist[roombi] }
-		
-		table.insert(door.Rooms[1].Doors, door)
-		table.insert(door.Rooms[2].Doors, door)
-		table.insert(self.Doors, door)
+		local door = Door(self)
+		door:ReadFromNet()
+		self:AddDoor(door)
 	end
 end
 
@@ -85,6 +60,31 @@ end
 
 function _mt:AddDoor(door)
 	table.insert(self.Doors, door)
+end
+
+function _mt:FindTransform(screen, x, y, width, height)
+	local bounds = Bounds(x, y, width, height)
+	return FindBestTransform(self.Bounds, bounds, true, true)
+end
+
+function _mt:ApplyTransform(transform)
+	for _, room in ipairs(self.Rooms) do
+		room:ApplyTransform(transform)
+	end
+
+	for _, door in ipairs(self.Doors) do
+		door:ApplyTransform(transform)
+	end
+end
+
+function _mt:Draw(roomColorFunc, doorColorFunc)
+	for _, room in ipairs(self.Rooms) do
+		room:Draw(roomColorFunc)
+	end
+
+	for _, door in ipairs(self.Doors) do
+		door:Draw(doorColorFunc)
+	end
 end
 
 function Ship()
