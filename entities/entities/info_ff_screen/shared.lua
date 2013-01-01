@@ -11,6 +11,8 @@ local NODE_LABELS = {
 	"Y", "Z"
 }
 
+local OVERRIDE_TIME_PER_NODE = 0.1
+
 screen = {}
 screen.STATUS       = 1
 screen.ACCESS       = 2
@@ -38,17 +40,23 @@ function ENT:IsAddingPermission()
 	return self:GetNWBool("addingperm", false)
 end
 
+function ENT:IsOverriding()
+	return (CurTime() - self:GetNWFloat("overridetime"))
+		<= self:GetNWInt("nodecount") * OVERRIDE_TIME_PER_NODE
+end
+
 if SERVER then	
 	util.AddNetworkString("CursorPos")
 	util.AddNetworkString("ChangeScreen")
 	util.AddNetworkString("SecurityMode")
 	util.AddNetworkString("SwapNodes")
+	util.AddNetworkString("Override")
 	util.AddNetworkString("SysSelectRoom")
 	util.AddNetworkString("SysSelectDoor")
 	
 	ENT.RoomName = nil
 
-	ENT.NodeCount = 8
+	ENT.NodeCount = 6
 	ENT.Nodes = nil
 	ENT.GoalSequence = nil
 	ENT.CurSequence = nil
@@ -92,6 +100,7 @@ if SERVER then
 		
 		self:SetNWBool("used", false)
 		self:SetNWInt("screen", screen.STATUS)
+		self:SetNWFloat("overridetime", -OVERRIDE_TIME_PER_NODE * self.NodeCount)
 		self:SetNWEntity("user", nil)
 		self:SetNWString("ship", self.Room.ShipName)
 		self:SetNWString("room", self.RoomName)
@@ -162,7 +171,67 @@ if SERVER then
 		end
 		self:SetNWString("sequence", str)
 	end
+
+	function ENT:ChangeGoalSequence()
+		self.GoalSequence = {}
+		for _, node in ipairs(self.CurSequence) do
+			table.insert(self.GoalSequence, node)
+		end
+	end
 	
+	function ENT:StartOverriding()
+		if self:GetNWBool("used") and not self:IsOverriding() then
+			self:SetNWFloat("overridetime", CurTime())
+
+			local str = ""
+			local correct = true
+			for i = 2, #self.CurSequence - 1 do
+				local prev = self.CurSequence[i - 1]
+				local curr = self.CurSequence[i]
+				local next = self.CurSequence[i + 1]
+
+				local score = 0
+				local found = false
+				for ci = 1, #self.GoalSequence do
+					local goal = self.GoalSequence[ci]
+					if goal == curr then
+						found = true
+					elseif goal == prev then
+						if not found then
+							score = score + 1
+						else
+							correct = false
+						end
+					elseif goal == next then
+						if found or ci == #self.GoalSequence then
+							score = score + 1
+						else
+							correct = false
+						end
+					end
+				end
+				if not found then correct = false end
+
+				str = str .. tostring(score)
+			end
+
+			self:SetNWString("overrideinfo", str)
+
+			if correct then
+				timer.Simple(OVERRIDE_TIME_PER_NODE * (self.NodeCount - 1), function()
+					local ply = self:GetNWEntity("user")
+					if ply and ply:IsValid() then
+						ply:SetPermission(self.Room, permission.SECURITY)
+					end
+
+					self:SetNWInt("permission", permission.SECURITY)
+					self:SetNWInt("screen", screen.SECURITY)
+					self:SetNWFloat("usestart", CurTime())
+				end)
+			end
+		end
+	end
+
 	function ENT:Think()
 		if self:GetNWBool("used") then
 			local ply = self:GetNWEntity("user")
@@ -304,6 +373,15 @@ if SERVER then
 		local screen = net.ReadEntity()
 		screen:SwapNodes(net.ReadInt(8))
 		screen:UpdateCurrentSequence()
+	end)
+
+	net.Receive("Override", function(len)
+		local screen = net.ReadEntity()
+		if screen:GetNWInt("permission") < permission.SECURITY then
+			screen:StartOverriding()
+		else
+			screen:ChangeGoalSequence()
+		end
 	end)
 	
 	net.Receive("SysSelectRoom", function(len)
@@ -707,7 +785,7 @@ elseif CLIENT then
 		local nodeCount = self:GetNWInt("nodecount")
 		local spacing = (self.Width - 128) / (nodeCount - 1)
 		local rowgap = (self.Height - 64) * 0.5
-		local midy = (-self.Height / 2 + 64 + self.Height / 2) * 0.5
+		local midy = (-self.Height / 2 + 64 + self.Height / 2 - 64) * 0.5
 		for i = 1, nodeCount do
 			local node = Node(NODE_LABELS[i])
 			node.X = spacing * (i - 1) - self.Width / 2 + 64
@@ -718,6 +796,17 @@ elseif CLIENT then
 				node.X = node.X + ((i % 2) - 0.5) * -spacing
 			end
 			self.Nodes[NODE_LABELS[i]] = node
+		end
+
+		self.OverrideBtn = Button()
+		self.OverrideBtn.Width = self.Width / 2 - 32
+		self.OverrideBtn.Height = 48
+		self.OverrideBtn.X = 16
+		self.OverrideBtn.Y = self.Height / 2 - 64
+		if self:GetNWInt("permission") < permission.SECURITY then
+			self.OverrideBtn.Text = "OVERRIDE"
+		else
+			self.OverrideBtn.Text = "SET GOAL SEQUENCE"
 		end
 
 		local margin = 16
@@ -793,6 +882,7 @@ elseif CLIENT then
 					end
 					self.SwitchBtn:Draw(self)
 				elseif curScreen == screen.OVERRIDE then
+					local overriding = self:IsOverriding()
 					local sequence = self:GetNodeSequence()
 					local last = nil
 					local toSwap = nil
@@ -800,7 +890,7 @@ elseif CLIENT then
 					for i, node in ipairs(sequence) do
 						if last then
 							surface.DrawConnector(last.X, last.Y, node.X, node.Y, 32)
-							if not toSwap and node:IsCursorInside(self) then
+							if not overriding and not toSwap and node:IsCursorInside(self) then
 								toSwap = {}
 								toSwap.last = sequence[i - 1]
 								toSwap.next = sequence[i + 1]
@@ -815,7 +905,21 @@ elseif CLIENT then
 						surface.DrawConnector(freeNode.X, freeNode.Y, toSwap.next.X, toSwap.next.Y, 32)
 					end
 					for _, node in pairs(self.Nodes) do
-						node:Draw(self)
+						node:Draw(self, overriding)
+					end
+					if not overriding then
+						self.OverrideBtn:Draw(self)
+					else
+						local ni = math.floor((CurTime() - self:GetNWFloat("overridetime"))
+							/ OVERRIDE_TIME_PER_NODE) + 1
+						local seq = self:GetNWString("sequence")
+						local sta = self:GetNWString("overrideinfo")
+						if ni >= 2 and ni < self:GetNWInt("nodecount") - 1 then
+							local node = self.Nodes[string.GetChar(seq, ni - 1)]
+							if not node:IsGlowing() then
+								node:StartGlow(tonumber(string.GetChar(sta, ni - 1)) + 1)
+							end
+						end
 					end
 				end
 				self:DrawCursor()
@@ -919,13 +1023,28 @@ elseif CLIENT then
 					net.SendToServer()
 				end
 			elseif self:GetCurrentScreen() == screen.OVERRIDE then
-				for i, node in ipairs(self:GetNodeSequence()) do
-					if node:IsCursorInside(self) then
-						net.Start("SwapNodes")
+				if not self:IsOverriding() then
+					for i, node in ipairs(self:GetNodeSequence()) do
+						if node:IsCursorInside(self) then
+							net.Start("SwapNodes")
+								net.WriteEntity(self)
+								net.WriteInt(i, 8)
+							net.SendToServer()
+							break
+						end
+					end
+					if self.OverrideBtn:Click(mousePos.x, mousePos.y) then
+						net.Start("Override")
 							net.WriteEntity(self)
-							net.WriteInt(i, 8)
 						net.SendToServer()
-						break
+						if self:GetNWInt("permission") >= permission.SECURITY then
+							local seq = self:GetNodeSequence()
+							for i, node in ipairs(seq) do
+								if i >= 2 and i < #seq then
+									node:StartGlow(3)
+								end
+							end
+						end
 					end
 				end
 			end
