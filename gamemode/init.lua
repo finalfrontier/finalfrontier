@@ -9,6 +9,7 @@ AddCSLuaFile("gui/cl_transform2d.lua")
 AddCSLuaFile("gui/cl_slider.lua")
 AddCSLuaFile("gui/cl_button.lua")
 AddCSLuaFile("gui/cl_tabmenu.lua")
+AddCSLuaFile("gui/cl_node.lua")
 AddCSLuaFile("sh_systems.lua")
 
 include("sv_init.lua")

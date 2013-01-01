@@ -7,6 +7,7 @@ include("gui/cl_transform2d.lua")
 include("gui/cl_slider.lua")
 include("gui/cl_button.lua")
 include("gui/cl_tabmenu.lua")
+include("gui/cl_node.lua")
 include("sh_systems.lua")
 include("cl_door.lua")
 include("cl_room.lua")
@@ -90,6 +91,25 @@ function surface.DrawCentredText(x, y, text)
 	local wid, hei = surface.GetTextSize(text)
 	surface.SetTextPos(x - wid / 2, y - hei / 2)
 	surface.DrawText(text)
+end
+
+local WHITE = Material("vgui/white")
+local CIRCLE = Material("circle.png", "smooth")
+function surface.DrawCircle(x, y, radius)
+	surface.SetMaterial(CIRCLE)
+	surface.DrawTexturedRect(x - radius, y - radius, radius * 2, radius * 2)
+	surface.SetMaterial(WHITE)
+end
+
+local CONNECTOR = Material("connector.png", "smooth")
+function surface.DrawConnector(sx, sy, ex, ey, width)
+	local dx = ex - sx
+	local dy = ey - sy
+	local diff = math.sqrt(dx * dx + dy * dy)
+	local ang = -math.atan2(dy, dx) / math.pi * 180
+	surface.SetMaterial(CONNECTOR)
+	surface.DrawTexturedRectRotated(sx + dx * 0.5, sy + dy * 0.5, diff, width, ang)
+	surface.SetMaterial(WHITE)
 end
 
 -- TODO: Add check to avoid complex polys in output

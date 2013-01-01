@@ -5,6 +5,11 @@ include("sh_bounds.lua")
 include("sh_systems.lua")
 include("sv_ships.lua")
 
+-- Resources
+
+resource.AddFile("materials/circle.png")
+resource.AddFile("materials/connector.png")
+
 -- Gamemode Overrides
 
 function GM:Initialize()

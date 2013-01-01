@@ -4,6 +4,13 @@ local UPDATE_FREQ = 0.5
 local CURSOR_UPDATE_FREQ = 0.25
 local MAX_USE_DISTANCE = 64
 
+local NODE_LABELS = {
+	"A", "B", "C", "D", "E", "F", "G", "H",
+	"I", "J", "K", "L", "M", "N", "O", "P",
+	"Q", "R", "S", "T", "U", "V", "W", "X",
+	"Y", "Z"
+}
+
 screen = {}
 screen.STATUS       = 1
 screen.ACCESS       = 2
@@ -31,14 +38,20 @@ function ENT:IsAddingPermission()
 	return self:GetNWBool("addingperm", false)
 end
 
-if SERVER then
+if SERVER then	
 	util.AddNetworkString("CursorPos")
 	util.AddNetworkString("ChangeScreen")
 	util.AddNetworkString("SecurityMode")
+	util.AddNetworkString("SwapNodes")
 	util.AddNetworkString("SysSelectRoom")
 	util.AddNetworkString("SysSelectDoor")
 	
 	ENT.RoomName = nil
+
+	ENT.NodeCount = 8
+	ENT.Nodes = nil
+	ENT.GoalSequence = nil
+	ENT.CurSequence = nil
 
 	function ENT:KeyValue(key, value)
 		if key == "room" then
@@ -74,12 +87,80 @@ if SERVER then
 			Error("Screen at " .. tostring(self:GetPos()) .. " (" .. self:GetName() .. ") has no room!\n")
 			return
 		end
+
+		self:GenerateSequence()
 		
 		self:SetNWBool("used", false)
 		self:SetNWInt("screen", screen.STATUS)
 		self:SetNWEntity("user", nil)
 		self:SetNWString("ship", self.Room.ShipName)
 		self:SetNWString("room", self.RoomName)
+	end
+
+	function ENT:GenerateSequence()
+		self.Nodes = {}
+		local temp = {}
+		for i = 1, self.NodeCount do
+			table.insert(self.Nodes, NODE_LABELS[i])
+			if i > 1 and i < self.NodeCount then
+				table.insert(temp, NODE_LABELS[i])
+			end
+		end
+		
+		local discard = math.random(#temp)
+		table.remove(temp, discard)
+
+		self.GoalSequence = {}
+		self.CurSequence = {}
+		table.insert(self.GoalSequence, self.Nodes[1])
+		table.insert(self.CurSequence, self.Nodes[1])
+		while #temp > 0 do
+			local index = math.random(#temp)
+			table.insert(self.GoalSequence, temp[index])
+			table.insert(self.CurSequence, temp[index])
+			table.remove(temp, index)
+		end
+		table.insert(self.GoalSequence, self.Nodes[#self.Nodes])
+		table.insert(self.CurSequence, self.Nodes[#self.Nodes])
+
+		self:SetNWInt("nodecount", self.NodeCount)
+
+		self:ShuffleCurrentSequence()
+		self:UpdateCurrentSequence()
+	end
+
+	function ENT:SwapNodes(index)
+		for i = 2, #self.Nodes - 1 do
+			if not table.HasValue(self.CurSequence, NODE_LABELS[i]) then
+				self.CurSequence[index] = NODE_LABELS[i]
+				break
+			end
+		end
+	end
+
+	function ENT:IsWellShuffled()
+		local correct = 0
+		for i = 2, #self.GoalSequence - 1 do
+			if self.GoalSequence[i] == self.CurSequence[i] then
+				correct = correct + 1
+			end
+		end
+
+		return correct <= 1
+	end
+
+	function ENT:ShuffleCurrentSequence()
+		while not self:IsWellShuffled() do
+			self:SwapNodes(math.random(2, #self.CurSequence - 1))
+		end
+	end
+
+	function ENT:UpdateCurrentSequence()
+		local str = ""
+		for i = 2, #self.CurSequence - 1 do
+			str = str .. self.CurSequence[i]
+		end
+		self:SetNWString("sequence", str)
 	end
 	
 	function ENT:Think()
@@ -217,6 +298,12 @@ if SERVER then
 	net.Receive("SecurityMode", function(len)
 		local screen = net.ReadEntity()		
 		screen:SetNWBool("addingperm", net.ReadBit() == 1)
+	end)
+
+	net.Receive("SwapNodes", function(len)
+		local screen = net.ReadEntity()
+		screen:SwapNodes(net.ReadInt(8))
+		screen:UpdateCurrentSequence()
 	end)
 	
 	net.Receive("SysSelectRoom", function(len)
@@ -369,6 +456,12 @@ elseif CLIENT then
 		return door.Poly and IsPointInsidePoly(door.Poly.Current, { x = self._cursorx, y = self._cursory })
 	end
 
+	function ENT:IsCursorInsideCircle(x, y, radius)
+		local dx = x - self._cursorx
+		local dy = y - self._cursory
+		return dx * dx + dy * dy <= radius * radius
+	end
+
 	function ENT:IsCursorInsidePoly(poly)
 		return IsPointInsidePoly(poly, { x = self._cursorx, y = self._cursory })
 	end
@@ -471,6 +564,40 @@ elseif CLIENT then
 		return permClrs[perm + 1]
 	end
 	
+	ENT._nodeString = nil
+	ENT._sequence = nil
+	ENT._freenode = nil
+	function ENT:GetNodeSequence()
+		local str = self:GetNWString("sequence")
+		if str ~= self._nodeString then
+			for _, node in pairs(self.Nodes) do
+				node.Enabled = false
+			end
+			local nodes = {}
+			local count = self:GetNWInt("nodecount")
+			table.insert(nodes, self.Nodes[NODE_LABELS[1]])
+			for i = 1, count - 3 do
+				local node = self.Nodes[string.GetChar(str, i)]
+				node.Enabled = true
+				table.insert(nodes,node)
+			end
+			table.insert(nodes, self.Nodes[NODE_LABELS[count]])
+			self._sequence = nodes
+			for i = 2, count - 1 do
+				local node = self.Nodes[NODE_LABELS[i]]
+				if not table.HasValue(self._sequence, node) then
+					self._freenode = node
+					break
+				end
+			end
+		end
+		return self._sequence
+	end
+
+	function ENT:GetFreeNode()
+		return self._freenode
+	end
+
 	ENT._btnRow = 0
 	ENT._btnCol = 0
 	ENT._btnLeft = 0
@@ -576,13 +703,22 @@ elseif CLIENT then
 		self.SwitchBtn.X = -self.SwitchBtn.Width / 2
 		self.SwitchBtn.Y = self.Height / 2 - 64 - 16
 
-		self.OverrideBtn = Button()
-		self.OverrideBtn.Width = self.Width - 128
-		self.OverrideBtn.Height = self.Height - 128 - self.TabMenu.Height
-		self.OverrideBtn.X = -self.OverrideBtn.Width / 2
-		self.OverrideBtn.Y = self.TabMenu.Y + self.TabMenu.Height + 64
-		self.OverrideBtn.Text = "1337 H4X0RZ"
-		self.OverrideBtn.Color = Color(51, 172, 45, 255)
+		self.Nodes = {}
+		local nodeCount = self:GetNWInt("nodecount")
+		local spacing = (self.Width - 128) / (nodeCount - 1)
+		local rowgap = (self.Height - 64) * 0.5
+		local midy = (-self.Height / 2 + 64 + self.Height / 2) * 0.5
+		for i = 1, nodeCount do
+			local node = Node(NODE_LABELS[i])
+			node.X = spacing * (i - 1) - self.Width / 2 + 64
+			if i == 1 or i == nodeCount then
+				node.Y = midy
+			else
+				node.Y = ((i % 2) - 0.5) * rowgap + midy
+				node.X = node.X + ((i % 2) - 0.5) * -spacing
+			end
+			self.Nodes[NODE_LABELS[i]] = node
+		end
 
 		local margin = 16
 		self._accessTransform = self.Room:FindTransform(self,
@@ -657,7 +793,30 @@ elseif CLIENT then
 					end
 					self.SwitchBtn:Draw(self)
 				elseif curScreen == screen.OVERRIDE then
-					self.OverrideBtn:Draw(self)
+					local sequence = self:GetNodeSequence()
+					local last = nil
+					local toSwap = nil
+					surface.SetDrawColor(Color(255, 255, 255, 32))
+					for i, node in ipairs(sequence) do
+						if last then
+							surface.DrawConnector(last.X, last.Y, node.X, node.Y, 32)
+							if not toSwap and node:IsCursorInside(self) then
+								toSwap = {}
+								toSwap.last = sequence[i - 1]
+								toSwap.next = sequence[i + 1]
+							end
+						end
+						last = node
+					end
+					if toSwap then
+						surface.SetDrawColor(Color(255, 255, 255, 8))
+						local freeNode = self:GetFreeNode()
+						surface.DrawConnector(toSwap.last.X, toSwap.last.Y, freeNode.X, freeNode.Y, 32)
+						surface.DrawConnector(freeNode.X, freeNode.Y, toSwap.next.X, toSwap.next.Y, 32)
+					end
+					for _, node in pairs(self.Nodes) do
+						node:Draw(self)
+					end
 				end
 				self:DrawCursor()
 			end
@@ -760,10 +919,15 @@ elseif CLIENT then
 					net.SendToServer()
 				end
 			elseif self:GetCurrentScreen() == screen.OVERRIDE then
-				self:SetNWInt("permission", permission.SECURITY)
-				LocalPlayer():SetPermission(self.Room, permission.SECURITY)
-				self:NewSession()
-				self:ChangeScreen(screen.ACCESS)
+				for i, node in ipairs(self:GetNodeSequence()) do
+					if node:IsCursorInside(self) then
+						net.Start("SwapNodes")
+							net.WriteEntity(self)
+							net.WriteInt(i, 8)
+						net.SendToServer()
+						break
+					end
+				end
 			end
 		end
 	end
