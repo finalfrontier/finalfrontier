@@ -910,14 +910,35 @@ elseif CLIENT then
 					if not overriding then
 						self.OverrideBtn:Draw(self)
 					else
-						local ni = math.floor((CurTime() - self:GetNWFloat("overridetime"))
-							/ OVERRIDE_TIME_PER_NODE) + 1
+						local dt = (CurTime() - self:GetNWFloat("overridetime"))
+							/ OVERRIDE_TIME_PER_NODE
+						local ni = math.floor(dt) + 1
+						dt = dt - ni + 1
 						local seq = self:GetNWString("sequence")
 						local sta = self:GetNWString("overrideinfo")
-						if ni >= 2 and ni < self:GetNWInt("nodecount") - 1 then
-							local node = self.Nodes[string.GetChar(seq, ni - 1)]
-							if not node:IsGlowing() then
-								node:StartGlow(tonumber(string.GetChar(sta, ni - 1)) + 1)
+						local count = self:GetNWInt("nodecount")
+						if ni >= 1 and ni < count then
+							local node, next = nil, nil
+							if ni >= 2 and ni < count - 1 then
+								node = self.Nodes[string.GetChar(seq, ni - 1)]
+								if ni < count - 2 then
+									next = self.Nodes[string.GetChar(seq, ni)]
+								else
+									next = self.Nodes[NODE_LABELS[count]]
+								end
+								if not node:IsGlowing() then
+									node:StartGlow(tonumber(string.GetChar(sta, ni - 1)) + 1)
+								end
+							elseif ni == 1 then
+								node = self.Nodes[NODE_LABELS[1]]
+								next = self.Nodes[string.GetChar(seq, 1)]
+							end
+
+							if node and next then
+								local x = node.X + (next.X - node.X) * dt
+								local y = node.Y + (next.Y - node.Y) * dt
+								surface.SetDrawColor(Color(255, 255, 255, 255))
+								surface.DrawCircle(x, y, 8)
 							end
 						end
 					end
