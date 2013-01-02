@@ -169,7 +169,7 @@ end
 
 function ply_mt:HasDoorPermission(door)
 	return self:HasPermission(door.Rooms[1], permission.ACCESS)
-		and self:HasPermission(door.Rooms[2], permission.ACCESS)
+		or self:HasPermission(door.Rooms[2], permission.ACCESS)
 end
 
 net.Receive("SetPermission", function(len, ply)

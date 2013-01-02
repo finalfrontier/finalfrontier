@@ -272,11 +272,7 @@ if SERVER then
 		self:SetNWFloat("usestart", CurTime())
 		self:SetNWEntity("user", ply)
 		self:SetNWInt("permission", perm)
-		if perm >= permission.ACCESS then
-			self:SetNWInt("screen", screen.ACCESS)
-		else
-			self:SetNWInt("screen", screen.OVERRIDE)
-		end
+		self:SetNWInt("screen", screen.ACCESS)
 		self:SetNWBool("addingperm", false)
 		ply:SetNWBool("usingScreen", true)
 		ply:SetNWEntity("screen", self)
@@ -760,9 +756,7 @@ elseif CLIENT then
 	function ENT:NewSession()
 		self.TabMenu = TabMenu()
 		local perm = self:GetNWInt("permission")
-		if perm >= permission.ACCESS then
-			self.TabMenu:AddOption("ACCESS")
-		end
+		self.TabMenu:AddOption("ACCESS")
 		if self.Room.System and perm >= permission.SYSTEM then
 			self.TabMenu:AddOption("SYSTEM")
 			self.Room.System:NewSession(self)

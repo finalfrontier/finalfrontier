@@ -12,7 +12,7 @@ ENT.Rooms = nil
 ENT._doorEnts = nil
 
 ENT._open = false
-ENT._locked = false
+ENT._locked = true
 ENT._lastupdate = 0
 
 function ENT:Initialize()
