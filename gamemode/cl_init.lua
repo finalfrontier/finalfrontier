@@ -2,12 +2,9 @@
 -- Includes
 
 include("sh_bounds.lua")
-include("gui/cl_matrix.lua")
-include("gui/cl_transform2d.lua")
-include("gui/cl_slider.lua")
-include("gui/cl_button.lua")
-include("gui/cl_tabmenu.lua")
-include("gui/cl_node.lua")
+include("cl_matrix.lua")
+include("cl_transform2d.lua")
+include("sh_gui.lua")
 include("sh_systems.lua")
 include("cl_door.lua")
 include("cl_room.lua")

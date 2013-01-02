@@ -11,7 +11,7 @@ local NODE_LABELS = {
 	"Y", "Z"
 }
 
-local OVERRIDE_TIME_PER_NODE = 0.1
+local OVERRIDE_TIME_PER_NODE = 0.5
 
 screen = {}
 screen.STATUS       = 1

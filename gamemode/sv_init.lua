@@ -2,6 +2,7 @@
 -- Includes
 
 include("sh_bounds.lua")
+include("sh_gui.lua")
 include("sh_systems.lua")
 include("sv_ships.lua")
 
