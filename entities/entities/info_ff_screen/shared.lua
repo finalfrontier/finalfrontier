@@ -4,6 +4,8 @@ local UPDATE_FREQ = 0.5
 local CURSOR_UPDATE_FREQ = 0.25
 local MAX_USE_DISTANCE = 64
 
+local MAIN_GUI_CLASS = "screen"
+
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 	
@@ -58,7 +60,7 @@ if SERVER then
 		self:SetNWBool("used", false)
 		self:SetNWEntity("user", nil)
 
-		self.UI = gui.Create(self, "statusdial")
+		self.UI = gui.Create(self, MAIN_GUI_CLASS)
 		self:UpdateLayout()
 	end
 
@@ -102,6 +104,9 @@ if SERVER then
 		ply:Give("weapon_ff_unarmed")
 		ply:SelectWeapon("weapon_ff_unarmed")
 
+		self.UI:SetPage(page.ACCESS)
+		self:UpdateLayout()
+
 		if self.Room.System then
 			self.Room.System:StartControlling(self, ply)
 		end
@@ -125,6 +130,9 @@ if SERVER then
 			ply:CrosshairEnable()
 		end
 		
+		self.UI:SetPage(page.STATUS)
+		self:UpdateLayout()
+
 		if self.Room.System then
 			self.Room.System:StopControlling(self, ply)
 		end
@@ -167,6 +175,10 @@ elseif CLIENT then
 	ENT._lastCursory = 0
 	
 	function ENT:UpdateLayout()
+		if not self.UI then
+			self.UI = gui.Create(self, MAIN_GUI_CLASS)
+		end
+
 		self.Layout = self:GetNWTable("layout")
 		if self.Layout then
 			self.UI:UpdateLayout(self.Layout)
@@ -184,10 +196,6 @@ elseif CLIENT then
 		if not self.Width and self:GetNWFloat("width") then
 			self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE
 			self.Height = self:GetNWFloat("height") * SCREEN_DRAWSCALE
-		end
-
-		if not self.UI then
-			self.UI = gui.Create(self, "statusdial")
 		end
 
 		self:UpdateLayout()

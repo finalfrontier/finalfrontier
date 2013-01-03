@@ -13,7 +13,7 @@ end
 function GUI:UpdatePosition()
 	self.Super[BASE].UpdatePosition(self)
 
-	for _, child in self:GetChildren() do
+	for _, child in pairs(self:GetChildren()) do
 		child:UpdatePosition()
 	end
 end
@@ -44,7 +44,7 @@ end
 function GUI:Think()
 	self.Super[BASE].Think(self)
 
-	for _, child in ipairs(self:GetChildren()) do
+	for _, child in pairs(self:GetChildren()) do
 		child:Think()
 	end
 end
@@ -56,7 +56,7 @@ function GUI:Click(x, y)
 		x, y = self
 	end
 	local ox, oy = self:GetOffset()
-	for _, child in ipairs(self:GetChildren()) do
+	for _, child in pairs(self:GetChildren()) do
 		child:Click(screen, x + ox, y + oy)
 	end
 end
@@ -65,7 +65,7 @@ if CLIENT then
 	function GUI:Draw()
 		self.Super[BASE].Draw(self)
 
-		for _, child in ipairs(self:GetChildren()) do
+		for _, child in pairs(self:GetChildren()) do
 			child:Draw(screen)
 		end
 	end
