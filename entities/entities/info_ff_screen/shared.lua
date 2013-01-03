@@ -58,9 +58,7 @@ if SERVER then
 		self:SetNWBool("used", false)
 		self:SetNWEntity("user", nil)
 
-		self.UI = gui.Create(self, "test")
-		self.UI:SetOffset(0, -96)
-
+		self.UI = gui.Create(self, "statusdial")
 		self:UpdateLayout()
 	end
 
@@ -104,9 +102,6 @@ if SERVER then
 		ply:Give("weapon_ff_unarmed")
 		ply:SelectWeapon("weapon_ff_unarmed")
 
-		self.UI.Player = ply
-		self:UpdateLayout()
-
 		if self.Room.System then
 			self.Room.System:StartControlling(self, ply)
 		end
@@ -129,9 +124,6 @@ if SERVER then
 			ply:SetCanWalk(true)
 			ply:CrosshairEnable()
 		end
-
-		self.UI.Player = nil
-		self:UpdateLayout()
 		
 		if self.Room.System then
 			self.Room.System:StopControlling(self, ply)
@@ -195,7 +187,7 @@ elseif CLIENT then
 		end
 
 		if not self.UI then
-			self.UI = gui.Create(self, "test")
+			self.UI = gui.Create(self, "statusdial")
 		end
 
 		self:UpdateLayout()
