@@ -1,3 +1,5 @@
+if SERVER then AddCSLuaFile("sh_gui.lua") end
+
 MOUSE1 = 1
 MOUSE2 = 2
 
@@ -17,7 +19,12 @@ function _mt:Initialize() return end
 function _mt:Think() return end
 function _mt:Click(x, y) return end
 
+if SERVER then
+	function _mt:UpdateLayout() end
+end
+
 if CLIENT then
+	function _mt:UpdateLayout() end
 	function _mt:Draw() return end
 end
 
@@ -50,11 +57,20 @@ for _, GUI in pairs(gui._dict) do
 	end
 end
 
-function gui.Create(screen, name)
+function gui.Create(parent, name)
 	if gui._dict[name] then
+		local screen = parent
+		if not parent.GetClass or parent:GetClass() ~= "info_ff_screen" then
+			screen = parent.Screen
+		end
+
 		local element = { Screen = screen }
 		setmetatable(element, gui._dict[name])
 		element:Initialize()
+
+		if screen ~= parent then
+			parent:AddChild(element)
+		end
 		return element
 	end
 end

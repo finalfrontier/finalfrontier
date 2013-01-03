@@ -1,3 +1,5 @@
+if SERVER then AddCSLuaFile("sh_systems.lua") end
+
 sys = {}
 sys._dict = {}
 

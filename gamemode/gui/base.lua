@@ -47,3 +47,17 @@ end
 function GUI:GetParent()
 	return self._parent
 end
+
+if CLIENT then
+	function GUI:UpdateLayout(layout)
+		self._offsetx = layout.x
+		self._offsety = layout.y
+	end
+end
+
+if SERVER then
+	function GUI:UpdateLayout(layout)
+		layout.x = self._offsetx
+		layout.y = self._offsety
+	end
+end

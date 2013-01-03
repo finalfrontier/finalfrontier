@@ -1,6 +1,8 @@
 -- Server Initialization
 -- Includes
 
+include("gmtools/nwtable.lua")
+
 include("sh_bounds.lua")
 include("sh_gui.lua")
 include("sh_systems.lua")

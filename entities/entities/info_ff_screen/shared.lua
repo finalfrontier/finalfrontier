@@ -10,6 +10,9 @@ ENT.Base = "base_anim"
 ENT.Ship = nil
 ENT.Room = nil
 
+ENT.UI = nil
+ENT.Layout = nil
+
 if SERVER then	
 	util.AddNetworkString("CursorPos")
 	
@@ -54,6 +57,18 @@ if SERVER then
 		self:SetNWString("room", self.RoomName)
 		self:SetNWBool("used", false)
 		self:SetNWEntity("user", nil)
+
+		self.UI = gui.Create(self, "test")
+		self.UI.Text = ":D"
+
+		self:UpdateLayout()
+	end
+
+	function ENT:UpdateLayout()
+		if not self.Layout then self.Layout = {} end
+
+		self.UI:UpdateLayout(self.Layout)
+		self:SetNWTable("layout", self.Layout)
 	end
 
 	function ENT:Think()
@@ -88,7 +103,10 @@ if SERVER then
 		ply:CrosshairDisable()
 		ply:Give("weapon_ff_unarmed")
 		ply:SelectWeapon("weapon_ff_unarmed")
-		
+
+		self.UI.Text = "Hi " .. ply:Nick() .. "!"
+		self:UpdateLayout()
+
 		if self.Room.System then
 			self.Room.System:StartControlling(self, ply)
 		end
@@ -111,6 +129,9 @@ if SERVER then
 			ply:SetCanWalk(true)
 			ply:CrosshairEnable()
 		end
+
+		self.UI.Text = ":D"
+		self:UpdateLayout()
 		
 		if self.Room.System then
 			self.Room.System:StopControlling(self, ply)
@@ -152,9 +173,14 @@ elseif CLIENT then
 	ENT._cursory = 0
 	ENT._lastCursorx = 0
 	ENT._lastCursory = 0
-
-	ENT._rootui = nil
 	
+	function ENT:UpdateLayout()
+		self.Layout = self:GetNWTable("layout")
+		if self.Layout then
+			self.UI:UpdateLayout(self.Layout)
+		end
+	end
+
 	function ENT:Think()
 		if not self.Ship and self:GetNWString("ship") then
 			self.Ship = ships.FindByName(self:GetNWString("ship"))
@@ -167,11 +193,13 @@ elseif CLIENT then
 			self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE
 			self.Height = self:GetNWFloat("height") * SCREEN_DRAWSCALE
 		end
-		
-		if not self._rootui then
-			self._rootui = gui.Create(self, "test")
+
+		if not self.UI then
+			self.UI = gui.Create(self, "test")
 		end
 
+		self:UpdateLayout()
+		
 		if not self._using and self:GetNWBool("used") and self:GetNWEntity("user") == LocalPlayer() then
 			self._using = true
 		elseif self._using and (not self:GetNWBool("used") or self:GetNWEntity("user") ~= LocalPlayer()) then
@@ -264,8 +292,8 @@ elseif CLIENT then
 		ang:RotateAroundAxis(ang:Forward(), 90)
 		
 		cam.Start3D2D(self:GetPos(), ang, 1 / SCREEN_DRAWSCALE)
-			if self._rootui then
-				self._rootui:Draw()
+			if self.UI then
+				self.UI:Draw()
 			end
 			if self._using then
 				self:FindCursorPosition()

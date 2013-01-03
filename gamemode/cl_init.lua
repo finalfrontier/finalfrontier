@@ -1,6 +1,8 @@
 -- Client Initialization
 -- Includes
 
+include("gmtools/nwtable.lua")
+
 include("sh_bounds.lua")
 include("cl_matrix.lua")
 include("cl_transform2d.lua")
