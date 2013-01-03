@@ -104,7 +104,7 @@ if SERVER then
 		ply:Give("weapon_ff_unarmed")
 		ply:SelectWeapon("weapon_ff_unarmed")
 
-		self.UI:SetPage(page.ACCESS)
+		self.UI:SetCurrentPage(page.ACCESS)
 		self:UpdateLayout()
 
 		if self.Room.System then
@@ -130,7 +130,7 @@ if SERVER then
 			ply:CrosshairEnable()
 		end
 		
-		self.UI:SetPage(page.STATUS)
+		self.UI:SetCurrentPage(page.STATUS)
 		self:UpdateLayout()
 
 		if self.Room.System then

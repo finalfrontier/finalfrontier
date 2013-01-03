@@ -1,51 +1,64 @@
 local BASE = "container"
 
-page = {
-	NONE = 0,
-	STATUS = 1,
-	ACCESS = 2,
-	SYSTEM = 3,
-	SECURITY = 4,
-	OVERRIDE = 5
-}
+page = {}
+page.STATUS   = 1
+page.ACCESS   = 2
+page.SYSTEM   = 3
+page.SECURITY = 4
+page.OVERRIDE = 5
 
 GUI.BaseName = BASE
 
-GUI._page = page.NONE
+GUI.Pages = nil
 
-GUI.StatusDial = nil
+GUI._curpage = 0
 
 function GUI:Initialize()
 	self.Super[BASE].Initialize(self)
 
-	self.StatusDial = gui.Create(self.Screen, "statusdial")
+	self.Pages = {
+		[page.STATUS]   = gui.Create(self.Screen, "statuspage"),
+		[page.ACCESS]   = gui.Create(self.Screen, "page"),
+		[page.SYSTEM]   = gui.Create(self.Screen, "page"),
+		[page.SECURITY] = gui.Create(self.Screen, "page"),
+		[page.OVERRIDE] = gui.Create(self.Screen, "page")
+	}
 
-	self:SetPage(page.STATUS)
+	self:SetCurrentPage(page.STATUS)
 end
 
-function GUI:SetPage(newpage)
-	if self._page == page.STATUS then
-		self:RemoveChild(self.StatusDial)
+function GUI:GetCurrentPage()
+	return self.Pages[self._curpage]
+end
+
+function GUI:SetCurrentPage(newpage)
+	if newpage == self._curpage then return end
+
+	local curpage = self:GetCurrentPage()
+	if curpage then
+		curpage:Leave()
+		self:RemoveChild(curpage)
 	end
 
-	if newpage == page.STATUS then
-		self:AddChild(self.StatusDial)
-	end
+	self._curpage = newpage
 
-	self._page = newpage
+	curpage = self:GetCurrentPage()
+	if curpage then
+		self:AddChild(curpage)
+		curpage:Enter()
+	end
 end
 
 if SERVER then
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)
 
-		layout.page = self._page
-
-		if not layout.statusdial then
-			layout.statusdial = {}
+		if layout.curpage ~= self._curpage or not layout.page then
+			layout.curpage = self._curpage
+			layout.page = {}
 		end
 
-		self.StatusDial:UpdateLayout(layout.statusdial)
+		self:GetCurrentPage():UpdateLayout(layout.page)
 	end
 end
 
@@ -53,7 +66,7 @@ if CLIENT then
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)
 
-		self:SetPage(layout.page)
-		self.StatusDial:UpdateLayout(layout.statusdial)
+		self:SetCurrentPage(layout.curpage)
+		self:GetCurrentPage():UpdateLayout(layout.page)
 	end
 end
