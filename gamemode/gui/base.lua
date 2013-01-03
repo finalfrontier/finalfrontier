@@ -1,3 +1,5 @@
+WHITE = Material("vgui/white")
+
 GUI._parent = nil
 
 GUI._offsetx = 0
@@ -5,6 +7,22 @@ GUI._offsety = 0
 
 GUI._posx = 0
 GUI._posy = 0
+
+function GUI:GetRoom()
+	return self.Screen.Room
+end
+
+function GUI:GetSystem()
+	return self.Screen.Room.System
+end
+
+function GUI:GetSystemIcon()
+	if self.Screen.Room.System then
+		return self.Screen.Room.System.Icon
+	end
+
+	return nil
+end
 
 function GUI:GetOffset()
 	return self._offsetx, self._offsety
