@@ -59,6 +59,7 @@ if SERVER then
 		self:SetNWEntity("user", nil)
 
 		self.UI = gui.Create(self, "test")
+		self.UI:SetOffset(0, -96)
 
 		self:UpdateLayout()
 	end

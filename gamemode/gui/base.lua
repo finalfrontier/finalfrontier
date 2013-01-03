@@ -50,14 +50,12 @@ end
 
 if CLIENT then
 	function GUI:UpdateLayout(layout)
-		self._offsetx = layout.x
-		self._offsety = layout.y
+		self:SetOffset(layout.x, layout.y)
 	end
 end
 
 if SERVER then
 	function GUI:UpdateLayout(layout)
-		layout.x = self._offsetx
-		layout.y = self._offsety
+		layout.x, layout.y = self:GetOffset()
 	end
 end

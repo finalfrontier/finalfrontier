@@ -4,6 +4,14 @@ GUI.BaseName = BASE
 
 GUI.Player = nil
 
+if SERVER then
+	function GUI:UpdateLayout(layout)
+		self.Super[BASE].UpdateLayout(self, layout)
+
+		layout.player = self.Player
+	end
+end
+
 if CLIENT then
 	function GUI:Draw()
 		local x, y = self:GetPos()
@@ -25,13 +33,5 @@ if CLIENT then
 		self.Super[BASE].UpdateLayout(self, layout)
 
 		self.Player = layout.player
-	end
-end
-
-if SERVER then
-	function GUI:UpdateLayout(layout)
-		self.Super[BASE].UpdateLayout(self, layout)
-
-		layout.player = self.Player
 	end
 end
