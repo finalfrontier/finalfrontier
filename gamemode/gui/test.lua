@@ -2,7 +2,7 @@ local BASE = "base"
 
 GUI.BaseName = BASE
 
-GUI.Text = "X"
+GUI.Player = nil
 
 if CLIENT then
 	function GUI:Draw()
@@ -13,7 +13,10 @@ if CLIENT then
 
 		surface.SetTextColor(Color(255, 255, 255, 255))
 		surface.SetFont("CTextLarge")
-		surface.DrawCentredText(x, y, self.Text)
+
+		if self.Player then
+			surface.DrawCentredText(x, y, self.Player:Nick())
+		end
 
 		self.Super[BASE].Draw(self)
 	end
@@ -21,7 +24,7 @@ if CLIENT then
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)
 
-		self.Text = layout.text
+		self.Player = layout.player
 	end
 end
 
@@ -29,6 +32,6 @@ if SERVER then
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)
 
-		layout.text = self.Text
+		layout.player = self.Player
 	end
 end

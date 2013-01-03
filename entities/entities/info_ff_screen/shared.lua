@@ -59,7 +59,6 @@ if SERVER then
 		self:SetNWEntity("user", nil)
 
 		self.UI = gui.Create(self, "test")
-		self.UI.Text = ":D"
 
 		self:UpdateLayout()
 	end
@@ -104,7 +103,7 @@ if SERVER then
 		ply:Give("weapon_ff_unarmed")
 		ply:SelectWeapon("weapon_ff_unarmed")
 
-		self.UI.Text = "Hi " .. ply:Nick() .. "!"
+		self.UI.Player = ply
 		self:UpdateLayout()
 
 		if self.Room.System then
@@ -130,7 +129,7 @@ if SERVER then
 			ply:CrosshairEnable()
 		end
 
-		self.UI.Text = ":D"
+		self.UI.Player = nil
 		self:UpdateLayout()
 		
 		if self.Room.System then
