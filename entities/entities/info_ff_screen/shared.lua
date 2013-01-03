@@ -152,6 +152,8 @@ elseif CLIENT then
 	ENT._cursory = 0
 	ENT._lastCursorx = 0
 	ENT._lastCursory = 0
+
+	ENT._rootui = nil
 	
 	function ENT:Think()
 		if not self.Ship and self:GetNWString("ship") then
@@ -166,6 +168,10 @@ elseif CLIENT then
 			self.Height = self:GetNWFloat("height") * SCREEN_DRAWSCALE
 		end
 		
+		if not self._rootui then
+			self._rootui = gui.Create(self, "test")
+		end
+
 		if not self._using and self:GetNWBool("used") and self:GetNWEntity("user") == LocalPlayer() then
 			self._using = true
 		elseif self._using and (not self:GetNWBool("used") or self:GetNWEntity("user") ~= LocalPlayer()) then
@@ -258,6 +264,9 @@ elseif CLIENT then
 		ang:RotateAroundAxis(ang:Forward(), 90)
 		
 		cam.Start3D2D(self:GetPos(), ang, 1 / SCREEN_DRAWSCALE)
+			if self._rootui then
+				self._rootui:Draw()
+			end
 			if self._using then
 				self:FindCursorPosition()
 				self:DrawCursor()

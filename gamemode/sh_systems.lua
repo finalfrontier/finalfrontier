@@ -1,6 +1,3 @@
-MOUSE1 = 1
-MOUSE2 = 2
-
 sys = {}
 sys._dict = {}
 
