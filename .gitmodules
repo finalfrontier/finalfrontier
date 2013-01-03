@@ -1,0 +1,3 @@
+[submodule "gamemode/gmtools"]
+	path = gamemode/gmtools
+	url = git@github.com:Metapyziks/gmtools.git
