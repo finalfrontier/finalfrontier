@@ -18,7 +18,7 @@ function GUI:Initialize()
 
 	self.Pages = {
 		[page.STATUS]   = gui.Create(self.Screen, "statuspage"),
-		[page.ACCESS]   = gui.Create(self.Screen, "page"),
+		[page.ACCESS]   = gui.Create(self.Screen, "accesspage"),
 		[page.SYSTEM]   = gui.Create(self.Screen, "page"),
 		[page.SECURITY] = gui.Create(self.Screen, "page"),
 		[page.OVERRIDE] = gui.Create(self.Screen, "page")

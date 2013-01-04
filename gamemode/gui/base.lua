@@ -17,7 +17,7 @@ function GUI:GetSystem()
 end
 
 function GUI:GetSystemIcon()
-	if self.Screen.Room.System then
+	if self.Screen.Room and self.Screen.Room.System then
 		return self.Screen.Room.System.Icon
 	end
 

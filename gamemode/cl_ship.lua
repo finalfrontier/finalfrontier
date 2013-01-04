@@ -57,6 +57,10 @@ function _mt:AddRoom(room)
 	self.Bounds:AddBounds(room.Bounds)
 end
 
+function _mt:GetRoomByIndex(index)
+	return self._roomlist[index]
+end
+
 function _mt:AddDoor(door)
 	table.insert(self.Doors, door)
 end
