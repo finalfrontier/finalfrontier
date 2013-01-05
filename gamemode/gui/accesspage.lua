@@ -5,8 +5,8 @@ GUI.BaseName = BASE
 GUI.RoomView = nil
 GUI.DoorViews = nil
 
-function GUI:Initialize()
-	self.Super[BASE].Initialize(self)
+function GUI:Enter()
+	self.Super[BASE].Enter(self)
 
 	self.RoomView = gui.Create(self, "roomview")
 	self.RoomView:SetCurrentRoom(self:GetRoom())
@@ -20,16 +20,28 @@ function GUI:Initialize()
 		end
 	end
 
+	local margin = 16
+
+	self.RoomView:SetBounds(Bounds(
+		self:GetLeft() + margin,
+		self:GetTop() + margin,
+		self:GetWidth() - margin * 2,
+		self:GetHeight() - margin * 2
+	))
+
 	if CLIENT then
-		local width = self.Screen.Width
-		local height = self.Screen.Height
-		local margin = 16
-
-		self.RoomView:SetBounds(-width / 2 + margin, -height / 2 + margin,
-			width - margin * 2, height - margin * 2)
-
 		for door, doorview in pairs(self.DoorViews) do
 			doorview:ApplyTransform(self.RoomView:GetAppliedTransform())
 		end
+	end
+end
+
+function GUI:Leave()
+	self.Super[BASE].Leave(self)
+
+	self.RoomView:Remove()
+
+	for door, doorview in pairs(self.DoorViews) do
+		doorview:Remove()
 	end
 end

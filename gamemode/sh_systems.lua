@@ -2,6 +2,7 @@ if SERVER then AddCSLuaFile("sh_systems.lua") end
 
 sys = {}
 sys._dict = {}
+sys._loaded = false
 
 local _mt = {}
 _mt.__index = _mt
@@ -88,23 +89,30 @@ elseif CLIENT then
 	end
 end
 
-MsgN("Loading systems...")
-local files = file.Find("finalfrontier/gamemode/systems/*.lua", "LUA")
-for i, file in ipairs(files) do	
-	local name = string.sub(file, 0, string.len(file) - 4)
-	MsgN("  Loading system " .. name)
+--function sys.Load()
+	if sys._loaded then return end
+	sys._loaded = true
 
-	if SERVER then AddCSLuaFile("systems/" .. file) end
-	
-	SYS = setmetatable({ Name = name }, _mt)
-	SYS.__index = SYS
-	include("systems/" .. file)
-	
-	sys._dict[name] = SYS
-	SYS = nil
-end
+	MsgN("Loading systems...")
+	local files = file.Find("finalfrontier/gamemode/systems/*.lua", "LUA")
+	for i, file in ipairs(files) do	
+		local name = string.sub(file, 0, string.len(file) - 4)
+		MsgN("  Loading system " .. name)
+
+		if SERVER then AddCSLuaFile("systems/" .. file) end
+		
+		SYS = setmetatable({ Name = name }, _mt)
+		SYS.__index = SYS
+		include("systems/" .. file)
+		
+		sys._dict[name] = SYS
+		SYS = nil
+	end
+--end
 
 function sys.Create(name, room)
+	--if not sys._loaded then sys.Load() end
+
 	if string.len(name) == 0 then return nil end
 	if sys._dict[name] then
 		local system = { Room = room, Ship = room.Ship, Base = _mt }

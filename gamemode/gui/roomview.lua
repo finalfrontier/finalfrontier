@@ -31,7 +31,6 @@ if SERVER then
 end
 
 if CLIENT then
-	GUI._bounds = nil
 	GUI._transform = nil
 
 	GUI._corners = nil
@@ -39,19 +38,16 @@ if CLIENT then
 
 	GUI.Color = Color(32, 32, 32, 255)
 
-	function GUI:SetBounds(x, y, width, height)
-		local bounds = Bounds(x, y, width, height)
-		if self._bounds and self._bounds:Equals(bounds) then return end
+	function GUI:SetBounds(bounds)
+		self.Super[BASE].SetBounds(self, bounds)
 
-		self._bounds = bounds
-
-		if self._room and self._bounds then
+		if self._room then
 			self:FindTransform()
 		end
 	end
 
 	function GUI:FindTransform()
-		if not (self._bounds and self._room) then return end
+		if not (self:GetBounds() and self._room) then return end
 
 		local roomBounds = Bounds()
 		roomBounds:AddBounds(self._room.Bounds)
@@ -60,7 +56,8 @@ if CLIENT then
 		end
 		local angle = self.Screen:GetAngles().Yaw + 90
 		
-		self:ApplyTransform(FindBestTransform(roomBounds, self._bounds, false, true, angle))
+		self:ApplyTransform(FindBestTransform(roomBounds,
+			self:GetGlobalBounds(), false, true, angle))
 	end
 
 	function GUI:ApplyTransform(transform)

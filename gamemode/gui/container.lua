@@ -10,11 +10,11 @@ function GUI:Initialize()
 	self._children = {}
 end
 
-function GUI:UpdatePosition()
-	self.Super[BASE].UpdatePosition(self)
+function GUI:UpdateGlobalBounds()
+	self.Super[BASE].UpdateGlobalBounds(self)
 
 	for _, child in pairs(self:GetChildren()) do
-		child:UpdatePosition()
+		child:UpdateGlobalBounds()
 	end
 end
 
@@ -28,6 +28,10 @@ function GUI:AddChild(child)
 
 	table.insert(self._children, child)
 	child._parent = self
+
+	if child:GetBounds() then
+		child:UpdateGlobalBounds()
+	end
 end
 
 function GUI:RemoveChild(child)
@@ -58,7 +62,7 @@ end
 
 if CLIENT then
 	function IsPointInside(x, y)
-		local ox, oy = self:GetOffset()
+		local ox, oy = self:GetLeft(), self:GetTop()
 		for _, child in pairs(self:GetChildren()) do
 			if child:IsPointInside(x - ox, y - oy) then
 				return true
@@ -69,7 +73,7 @@ if CLIENT then
 	end
 
 	function GUI:Click(x, y, button)
-		local ox, oy = self:GetOffset()
+		local ox, oy = self:GetLeft(), self:GetTop()
 		for _, child in pairs(self:GetChildren()) do
 			if child:Click(x - ox, y - oy, button) then
 				return
@@ -107,6 +111,12 @@ if SERVER then
 			local name = "c_" .. i
 			if not layout[name] then layout[name] = {} end
 			child:UpdateLayout(layout[name])
+		end
+
+		local i = #self:GetChildren() + 1
+		while layout["c_" .. i] do
+			layout["c_" .. i] = nil
+			i = i + 1
 		end
 	end
 end

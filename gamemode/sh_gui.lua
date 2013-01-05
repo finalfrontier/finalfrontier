@@ -77,12 +77,13 @@ function gui.Create(parent, name)
 		end
 
 		setmetatable(element, gui._dict[name])
-		element:Initialize()
 
 		if screen ~= parent then
 			parent:AddChild(element)
 		end
 
+		element:Initialize()
+		
 		return element
 	end
 end

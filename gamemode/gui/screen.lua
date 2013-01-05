@@ -16,6 +16,10 @@ GUI._curpage = 0
 function GUI:Initialize()
 	self.Super[BASE].Initialize(self)
 
+	self:SetWidth(self.Screen.Width)
+	self:SetHeight(self.Screen.Height)
+	self:SetCentre(0, 0)
+
 	self.Pages = {
 		[page.STATUS]   = gui.Create(self.Screen, "statuspage"),
 		[page.ACCESS]   = gui.Create(self.Screen, "accesspage"),

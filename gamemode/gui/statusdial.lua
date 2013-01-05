@@ -2,14 +2,11 @@ local BASE = "base"
 
 GUI.BaseName = BASE
 
-GUI.Radius = 192
+function GUI:Initialize()
+	self.Super[BASE].Initialize(self)
 
-if SERVER then
-	function GUI:UpdateLayout(layout)
-		self.Super[BASE].UpdateLayout(self, layout)
-
-		layout.radius = self.Radius
-	end
+	self:SetWidth(384)
+	self:SetHeight(384)
 end
 
 if CLIENT then
@@ -23,8 +20,8 @@ if CLIENT then
 	GUI._innerCircle = nil
 
 	function GUI:Draw()
-		local x, y = self:GetPos()
-		local radius = self.Radius
+		local x, y = self:GetGlobalCentre()
+		local radius = math.min(self:GetWidth(), self:GetHeight()) * 0.5
 		local room = self.Screen.Room
 
 		local atmo, temp, shld = 0, 0, 0
@@ -82,11 +79,5 @@ if CLIENT then
 		end
 
 		self.Super[BASE].Draw(self)
-	end
-
-	function GUI:UpdateLayout(layout)
-		self.Super[BASE].UpdateLayout(self, layout)
-
-		self.Radius = layout.radius
 	end
 end

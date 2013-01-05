@@ -179,7 +179,7 @@ end
 
 function GM:Initialize()
 	MsgN("Final Frontier client-side is initializing...")
-	
+
 	self.BaseClass:Initialize()
 end
 

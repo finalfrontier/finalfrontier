@@ -5,6 +5,8 @@ GUI.BaseName = BASE
 GUI._door = nil
 GUI._bounds = nil
 
+GUI.CanClick = true
+
 GUI.OpenLockedColor = Color(0, 64, 0, 255)
 GUI.OpenUnlockedColor = Color(0, 0, 0, 255)
 
@@ -60,9 +62,7 @@ end
 
 if CLIENT then
 	GUI._transform = nil
-
 	GUI._poly = nil
-	GUI._bounds = nil
 
 	GUI.Color = Color(32, 32, 32, 255)
 
@@ -83,10 +83,6 @@ if CLIENT then
 		end
 	end
 
-	function GUI:IsPointInside(x, y)
-		return self._bounds:IsPointInside(x, y)
-	end
-
 	function GUI:ApplyTransform(transform)
 		if self._transform == transform or not self._door then return end
 
@@ -100,15 +96,18 @@ if CLIENT then
 		}
 		
 		self._poly = {}
-		self._bounds = Bounds()
+		local bounds = Bounds()
+		local ox = self:GetParent():GetGlobalLeft()
+		local oy = self:GetParent():GetGlobalTop()
 		local trans = Transform2D()
 		trans:Rotate(self._door.Angle * math.pi / 180)
 		trans:Translate(self._door.X, self._door.Y)
 		for i, v in ipairs(coords) do
 			local x, y = transform:Transform(trans:Transform(v.x, v.y))
 			self._poly[i] = { x = x, y = y }
-			self._bounds:AddPoint(x, y)
+			bounds:AddPoint(x - ox, y - oy)
 		end
+		self:SetBounds(bounds)
 	end
 
 	function GUI:GetAppliedTransform()
@@ -116,8 +115,6 @@ if CLIENT then
 	end
 
 	function GUI:Draw()
-		self.Super[BASE].Draw(self)
-
 		if not self._transform then return end
 
 		local last, lx, ly = nil, 0, 0
@@ -125,7 +122,7 @@ if CLIENT then
 		surface.SetDrawColor(self:GetDoorColor())
 		surface.DrawPoly(self._poly)
 
-		if self:IsPointInside(self:GetCursorPos()) then
+		if self.CanClick and self:IsPointInside(self:GetCursorPos()) then
 			surface.SetDrawColor(Color(255, 255, 255, 16))
 			surface.DrawPoly(self._poly)
 		end
@@ -137,6 +134,8 @@ if CLIENT then
 			surface.DrawLine(lx, ly, v.x, v.y)
 			lx, ly = v.x, v.y
 		end
+
+		self.Super[BASE].Draw(self)
 	end
 
 	function GUI:UpdateLayout(layout)

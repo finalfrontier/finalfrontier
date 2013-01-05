@@ -1,5 +1,7 @@
 if SERVER then AddCSLuaFile("shared.lua") end
 
+local SCREEN_DRAWSCALE = 16
+
 local UPDATE_FREQ = 0.5
 local CURSOR_UPDATE_FREQ = 0.25
 local MAX_USE_DISTANCE = 64
@@ -11,6 +13,9 @@ ENT.Base = "base_anim"
 	
 ENT.Ship = nil
 ENT.Room = nil
+
+ENT.Width = 0
+ENT.Height = 0
 
 ENT.UI = nil
 ENT.Layout = nil
@@ -35,6 +40,8 @@ if SERVER then
 					self:SetNWFloat("width", tonumber(split[1]))
 					self:SetNWFloat("height", tonumber(split[1]))
 				end
+				self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE
+				self.Height = self:GetNWFloat("height") * SCREEN_DRAWSCALE
 			end
 		end
 	end
@@ -164,8 +171,6 @@ if SERVER then
 elseif CLIENT then
 	local WHITE = Material("vgui/white")
 
-	SCREEN_DRAWSCALE = 16
-
 	surface.CreateFont("CTextSmall", {
 		font = "consolas",
 		size = 32,
@@ -179,9 +184,6 @@ elseif CLIENT then
 		weight = 400,
 		antialias = true
 	})
-	
-	ENT.Width = nil
-	ENT.Height = nil
 
 	ENT._using = false
 	ENT._usestart = 0
@@ -211,10 +213,8 @@ elseif CLIENT then
 			end
 		end
 		
-		if not self.Width and self:GetNWFloat("width") then
-			self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE
-			self.Height = self:GetNWFloat("height") * SCREEN_DRAWSCALE
-		end
+		self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE
+		self.Height = self:GetNWFloat("height") * SCREEN_DRAWSCALE
 
 		self:UpdateLayout()
 		

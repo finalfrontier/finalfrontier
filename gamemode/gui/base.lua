@@ -3,14 +3,16 @@ WHITE = Material("vgui/white")
 if SERVER then util.AddNetworkString("Click") end
 
 GUI._parent = nil
+GUI._bounds = nil
+GUI._globBounds = nil
 
-GUI._offsetx = 0
-GUI._offsety = 0
+GUI.SyncBounds = false
+GUI.CanClick = false
 
-GUI._posx = 0
-GUI._posy = 0
-
-GUI.SyncPosition = false
+function GUI:Initialize()
+	self._bounds = Bounds(0, 0, 0, 0)
+	self._globBounds = Bounds(0, 0, 0, 0)
+end
 
 function GUI:GetRoom()
 	return self.Screen.Room
@@ -38,32 +40,80 @@ function GUI:GetUsingPlayer()
 	return self.Screen:GetNWEntity("user")
 end
 
-function GUI:GetOffset()
-	return self._offsetx, self._offsety
+function GUI:GetBounds() return self._bounds end
+function GUI:GetLeft() return self._bounds.l end
+function GUI:GetTop() return self._bounds.t end
+function GUI:GetRight() return self._bounds.r end
+function GUI:GetBottom() return self._bounds.b end
+function GUI:GetWidth() return self._bounds.r - self._bounds.l end
+function GUI:GetHeight() return self._bounds.b - self._bounds.t end
+function GUI:GetCentre()
+	return
+		(self._bounds.r + self._bounds.l) * 0.5,
+		(self._bounds.t + self._bounds.b) * 0.5
 end
 
-function GUI:SetOffset(x, y)
-	if x then self._offsetx = x end
-	if y then self._offsety = y end
+function GUI:SetBounds(bounds)
+	self._bounds = bounds
+	self:UpdateGlobalBounds()
+end
+function GUI:SetLeft(val)
+	self._bounds.l = val
+	self:SetBounds(self._bounds)
+end
+function GUI:SetTop(val)
+	self._bounds.t = val
+	self:SetBounds(self._bounds)
+end
+function GUI:SetRight(val)
+	self._bounds.r = val
+	self:SetBounds(self._bounds)
+end
+function GUI:SetBottom(val)
+	self._bounds.b = val
+	self:SetBounds(self._bounds)
+end
+function GUI:SetWidth(val)
+	self._bounds.r = self._bounds.l + val
+	self:SetBounds(self._bounds)
+end
+function GUI:SetHeight(val)
+	self._bounds.b = self._bounds.t + val
+	self:SetBounds(self._bounds)
+end
+function GUI:SetCentre(x, y)
+	local hw = self:GetWidth() * 0.5
+	local hh = self:GetHeight() * 0.5
+	self._bounds.l = x - hw
+	self._bounds.r = x + hw
+	self._bounds.t = y - hh
+	self._bounds.b = y + hh
+	self:SetBounds(self._bounds)
+end
 
-	if x or y then
-		self:UpdatePosition()
+function GUI:GetGlobalBounds() return self._globBounds end
+function GUI:GetGlobalLeft() return self._globBounds.l end
+function GUI:GetGlobalTop() return self._globBounds.t end
+function GUI:GetGlobalRight() return self._globBounds.r end
+function GUI:GetGlobalBottom() return self._globBounds.b end
+function GUI:GetGlobalCentre()
+	return
+		(self._globBounds.r + self._globBounds.l) * 0.5,
+		(self._globBounds.t + self._globBounds.b) * 0.5
+end
+
+function GUI:UpdateGlobalBounds()
+	if not self:HasParent() then
+		self._globBounds.l = self._bounds.l
+		self._globBounds.r = self._bounds.r
+		self._globBounds.t = self._bounds.t
+		self._globBounds.b = self._bounds.b
+	else
+		self._globBounds.l = self._bounds.l + self._parent._globBounds.l
+		self._globBounds.r = self._bounds.r + self._parent._globBounds.l
+		self._globBounds.t = self._bounds.t + self._parent._globBounds.t
+		self._globBounds.b = self._bounds.b + self._parent._globBounds.t
 	end
-end
-
-function GUI:UpdatePosition()
-	self._posx = self._offsetx
-	self._posy = self._offsety
-
-	if self:HasParent() then
-		local addx, addy = self:GetParent():GetPos()
-		self._posx = self._posx + addx
-		self._posy = self._posy + addy
-	end
-end
-
-function GUI:GetPos()
-	return self._posx, self._posy
 end
 
 function GUI:Remove()
@@ -85,8 +135,8 @@ if CLIENT then
 		local x, y = self.Screen:GetCursorPos()
 
 		if self:HasParent() then
-			x = x - self._parent._posx
-			y = y - self._parent._posy
+			x = x - self._parent._globBounds.l
+			y = y - self._parent._globBounds.t
 		end
 
 		return x, y
@@ -109,11 +159,11 @@ if CLIENT then
 	end
 
 	function GUI:IsPointInside(x, y)
-		return false
+		return self:GetBounds():IsPointInside(x, y)
 	end
 
 	function GUI:Click(x, y, button)
-		if self:IsPointInside(x, y) then
+		if self.CanClick and self:IsPointInside(x, y) then
 			self:OnClick(button)
 			return true
 		end
@@ -121,10 +171,31 @@ if CLIENT then
 		return false
 	end
 
+--[[
+	function GUI:Draw()
+		if self.Screen:GetNWBool("used") and self:IsPointInside(self:GetCursorPos()) then
+			surface.SetDrawColor(0, 255, 0, 255)
+		else
+			surface.SetDrawColor(255, 0, 0, 255)
+		end
+
+		surface.DrawOutlinedRect(self:GetGlobalLeft(), self:GetGlobalTop(),
+			self:GetWidth(), self:GetHeight())
+
+		local x, y = self:GetGlobalCentre()
+		surface.DrawCircle(x, y, 8)
+	end
+--]]
+
 	function GUI:UpdateLayout(layout)
 		self._id = layout.id
-		if self.SyncPosition and layout.x and layout.y then
-			self:SetOffset(layout.x, layout.y)
+		if self.SyncBounds and layout.bounds then
+			self:SetBounds(Bounds(
+				layout.bounds.l,
+				layout.bounds.t,
+				layout.bounds.r - layout.bounds.l,
+				layout.bounds.b - layout.bounds.t
+			))
 		end
 	end
 end
@@ -136,10 +207,15 @@ if SERVER then
 
 	function GUI:UpdateLayout(layout)
 		layout.id = self._id
-		if self.SyncPosition then
-			layout.x, layout.y = self:GetOffset()
-		elseif layout.x or layout.y then
-			layout.x, layout.y = nil, nil
+		if self.SyncBounds then
+			layout.bounds = {
+				l = self._bounds.l,
+				r = self._bounds.r,
+				t = self._bounds.t,
+				b = self._bounds.b
+			}
+		elseif layout.bounds then
+			layout.bounds = nil
 		end
 	end
 
@@ -160,7 +236,7 @@ if SERVER then
 					if not element then return end
 				end
 			end
-			if element then
+			if element and element.CanClick then
 				local button = net.ReadInt(8)
 				element:OnClick(button)
 			end
