@@ -91,6 +91,8 @@ if SERVER then
 	end
 	
 	function ENT:StartUsing(ply)
+		if self:GetNWBool("used", false) then return end
+
 		self:SetNWBool("used", true)
 		self:SetNWFloat("usestart", CurTime())
 		self:SetNWEntity("user", ply)
@@ -113,6 +115,8 @@ if SERVER then
 	end
 	
 	function ENT:StopUsing()
+		if not self:GetNWBool("used", false) then return end
+
 		self:SetNWBool("used", false)
 		
 		local ply = self:GetNWEntity("user")
@@ -129,7 +133,7 @@ if SERVER then
 			ply:SetCanWalk(true)
 			ply:CrosshairEnable()
 		end
-		
+
 		self.UI:SetCurrentPage(page.STATUS)
 		self:UpdateLayout()
 
