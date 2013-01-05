@@ -100,7 +100,6 @@ if CLIENT then
 	end
 
 	function GUI:OnClick(button)
-		print("click@" .. self:GetRoom().Name .. ":" .. self:GetID())
 		net.Start("Click")
 		net.WriteEntity(self.Screen)
 		self:SendIDHierarchy()
@@ -113,9 +112,9 @@ if CLIENT then
 		return false
 	end
 
-	function GUI:Click(x, y)
+	function GUI:Click(x, y, button)
 		if self:IsPointInside(x, y) then
-			self:OnClick(x, y)
+			self:OnClick(button)
 			return true
 		end
 
@@ -132,7 +131,7 @@ end
 
 if SERVER then
 	function GUI:OnClick(button)
-		print("click@" .. self:GetRoom():GetName() .. ":" .. self:GetID())
+		return
 	end
 
 	function GUI:UpdateLayout(layout)

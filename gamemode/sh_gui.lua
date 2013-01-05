@@ -23,7 +23,7 @@ end
 
 function _mt:Initialize() return end
 function _mt:Think() return end
-function _mt:Click(x, y) return false end
+function _mt:Click(x, y, button) return false end
 
 if SERVER then
 	function _mt:UpdateLayout(layout) return end

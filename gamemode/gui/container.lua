@@ -68,15 +68,15 @@ if CLIENT then
 		return false
 	end
 
-	function GUI:Click(x, y)
+	function GUI:Click(x, y, button)
 		local ox, oy = self:GetOffset()
 		for _, child in pairs(self:GetChildren()) do
-			if child:Click(x - ox, y - oy) then
+			if child:Click(x - ox, y - oy, button) then
 				return
 			end
 		end
 
-		self.Super[BASE].Click(self, x, y)
+		self.Super[BASE].Click(self, x, y, button)
 	end
 
 	function GUI:Draw()

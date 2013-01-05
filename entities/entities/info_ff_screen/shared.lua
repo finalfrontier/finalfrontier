@@ -322,7 +322,8 @@ elseif CLIENT then
 
 	function ENT:Click(button)
 		if self.UI then
-			self.UI:Click(self:GetCursorPos())
+			local x, y = self:GetCursorPos()
+			self.UI:Click(x, y, button)
 		end
 	end
 end
