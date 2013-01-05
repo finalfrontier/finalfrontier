@@ -4,6 +4,12 @@ GUI.BaseName = BASE
 
 GUI._door = nil
 
+GUI.OpenLockedColor = Color(0, 64, 0, 255)
+GUI.OpenUnlockedColor = Color(0, 0, 0, 255)
+
+GUI.ClosedLockedColor = Color(127, 64, 64, 255)
+GUI.ClosedUnlockedColor = Color(64, 64, 64, 255)
+
 function GUI:SetCurrentDoor(door)
 	if self._door == door then return end
 
@@ -32,6 +38,23 @@ if CLIENT then
 	GUI._poly = nil
 
 	GUI.Color = Color(32, 32, 32, 255)
+
+	function GUI:GetDoorColor()
+		local door = self:GetCurrentDoor()
+		if door.Open then
+			if door.Locked then
+				return self.OpenLockedColor
+			else
+				return self.OpenUnlockedColor
+			end
+		else
+			if door.Locked then
+				return self.ClosedLockedColor
+			else
+				return self.ClosedUnlockedColor
+			end
+		end
+	end
 
 	function GUI:ApplyTransform(transform)
 		if self._transform == transform or not self._door then return end
@@ -66,7 +89,7 @@ if CLIENT then
 
 		local last, lx, ly = nil, 0, 0
 
-		surface.SetDrawColor(self.Color)
+		surface.SetDrawColor(self:GetDoorColor())
 		surface.DrawPoly(self._poly)
 	
 		surface.SetDrawColor(Color(255, 255, 255, 255))
