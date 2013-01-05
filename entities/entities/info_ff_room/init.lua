@@ -73,10 +73,9 @@ function ENT:InitPostEntity()
 		local doors = ents.FindByName(name)
 		if #doors > 0 then
 			local door = doors[1]
-			door:AddRoom(self)
-			self:AddDoor(door)
-			
 			self.Ship:AddDoor(door)
+			door:AddRoom(self)
+			self:AddDoor(door)			
 		end
 	end
 	
@@ -111,6 +110,12 @@ function ENT:AddCorner(index, x, y)
 end
 
 function ENT:AddDoor(door)
+	for i, other in ipairs(self.Doors) do
+		if other.Index > door.Index then
+			table.insert(self.Doors, i, door)
+			return
+		end
+	end
 	table.insert(self.Doors, door)
 end
 

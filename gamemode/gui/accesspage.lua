@@ -13,7 +13,7 @@ function GUI:Initialize()
 
 	self.DoorViews = {}
 	if self:GetRoom() then
-		for _, door in pairs(self:GetRoom().Doors) do
+		for _, door in ipairs(self:GetRoom().Doors) do
 			local doorview = gui.Create(self, "doorview")
 			doorview:SetCurrentDoor(door)
 			self.DoorViews[door] = doorview

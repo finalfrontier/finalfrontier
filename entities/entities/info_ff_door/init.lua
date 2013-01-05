@@ -9,6 +9,8 @@ ENT.Base = "base_point"
 ENT.Area = 4
 ENT.Rooms = nil
 
+ENT.Index = 0
+
 ENT._doorEnts = nil
 
 ENT._open = false

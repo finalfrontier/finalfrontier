@@ -16,6 +16,12 @@ function GUI:GetRoom()
 	return self.Screen.Room
 end
 
+function GUI:GetShip()
+	if self.Screen.Room then
+		return self.Screen.Room.Ship
+	end
+end
+
 function GUI:GetSystem()
 	return self.Screen.Room.System
 end
@@ -26,6 +32,10 @@ function GUI:GetSystemIcon()
 	end
 
 	return nil
+end
+
+function GUI:GetUsingPlayer()
+	return self.Screen:GetNWEntity("user")
 end
 
 function GUI:GetOffset()
@@ -90,7 +100,7 @@ if CLIENT then
 	end
 
 	function GUI:OnClick(button)
-		print("click @ " .. self:GetRoom().Name .. " : " .. self:GetID())
+		print("click@" .. self:GetRoom().Name .. ":" .. self:GetID())
 		net.Start("Click")
 		net.WriteEntity(self.Screen)
 		self:SendIDHierarchy()
@@ -122,7 +132,7 @@ end
 
 if SERVER then
 	function GUI:OnClick(button)
-		print("click @ " .. self:GetRoom():GetName() .. " : " .. self:GetID())
+		print("click@" .. self:GetRoom():GetName() .. ":" .. self:GetID())
 	end
 
 	function GUI:UpdateLayout(layout)
@@ -151,7 +161,10 @@ if SERVER then
 					if not element then return end
 				end
 			end
-			element:OnClick(net.ReadInt(8))
+			if element then
+				local button = net.ReadInt(8)
+				element:OnClick(button)
+			end
 		end
 	end)
 end

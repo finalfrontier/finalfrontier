@@ -46,6 +46,7 @@ end
 function ENT:AddDoor(door)
 	if not table.HasValue(self.Doors, door) then
 		table.insert(self.Doors, door)
+		door.Index = #self.Doors
 	end
 end
 

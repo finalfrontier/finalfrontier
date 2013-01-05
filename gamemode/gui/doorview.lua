@@ -22,6 +22,31 @@ function GUI:GetCurrentDoor()
 end
 
 if SERVER then
+	function GUI:OnClick(button)
+		local ply = self:GetUsingPlayer()
+		local door = self:GetCurrentDoor()
+
+		-- if not ply:HasDoorPermission(door) then return end
+
+		if button == MOUSE2 then
+			if door:IsLocked() then
+				door:Unlock()
+			else
+				door:Lock()
+			end
+		else
+			if door:IsClosed() then
+				door:LockOpen()
+			else
+				door:UnlockClose()
+			end
+		end
+
+		timer.Simple(0.1, function()
+			self:GetShip():SendShipRoomStates(ply)
+		end)
+	end
+
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)
 
@@ -99,6 +124,11 @@ if CLIENT then
 
 		surface.SetDrawColor(self:GetDoorColor())
 		surface.DrawPoly(self._poly)
+
+		if self:IsPointInside(self:GetCursorPos()) then
+			surface.SetDrawColor(Color(255, 255, 255, 16))
+			surface.DrawPoly(self._poly)
+		end
 	
 		surface.SetDrawColor(Color(255, 255, 255, 255))
 		last = self._poly[#self._poly]
