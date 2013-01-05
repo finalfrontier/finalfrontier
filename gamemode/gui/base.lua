@@ -22,10 +22,14 @@ function GUI:GetShip()
 	if self.Screen.Room then
 		return self.Screen.Room.Ship
 	end
+	return nil
 end
 
 function GUI:GetSystem()
-	return self.Screen.Room.System
+	if self.Screen.Room then
+		return self.Screen.Room.System
+	end
+	return nil
 end
 
 function GUI:GetSystemIcon()
@@ -47,6 +51,11 @@ function GUI:GetRight() return self._bounds.r end
 function GUI:GetBottom() return self._bounds.b end
 function GUI:GetWidth() return self._bounds.r - self._bounds.l end
 function GUI:GetHeight() return self._bounds.b - self._bounds.t end
+function GUI:GetSize()
+	return
+		self._bounds.r - self._bounds.l,
+		self._bounds.b - self._bounds.t
+end
 function GUI:GetCentre()
 	return
 		(self._bounds.r + self._bounds.l) * 0.5,
@@ -79,6 +88,11 @@ function GUI:SetWidth(val)
 end
 function GUI:SetHeight(val)
 	self._bounds.b = self._bounds.t + val
+	self:SetBounds(self._bounds)
+end
+function GUI:SetSize(width, height)
+	self._bounds.r = self._bounds.l + width
+	self._bounds.b = self._bounds.t + height
 	self:SetBounds(self._bounds)
 end
 function GUI:SetCentre(x, y)
