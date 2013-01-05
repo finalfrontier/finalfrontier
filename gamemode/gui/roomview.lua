@@ -90,6 +90,10 @@ if CLIENT then
 		self._centre = { x = x, y = y }
 	end
 
+	function GUI:GetAppliedTransform()
+		return self._transform
+	end
+
 	function GUI:Draw()
 		self.Super[BASE].Draw(self)
 

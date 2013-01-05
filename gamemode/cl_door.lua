@@ -1,10 +1,24 @@
 local _mt = {}
 _mt.__index = _mt
 
+_mt._lastUpdate = 0
+
+_mt.Ship = nil
+_mt.Rooms = nil
+
+_mt.X = 0
+_mt.Y = 0
+_mt.Angle = 0
+
+_mt.Open = false
+_mt.Locked = false
+
+_mt.Bounds = nil
+
 function _mt:ReadFromNet()
-	self.x = net.ReadFloat()
-	self.y = net.ReadFloat()
-	self.angle = net.ReadFloat()
+	self.X = net.ReadFloat()
+	self.Y = net.ReadFloat()
+	self.Angle = net.ReadFloat()
 	
 	self.Bounds = Bounds()
 	local coords = {
@@ -14,8 +28,8 @@ function _mt:ReadFromNet()
 		{ x =  32, y = -64 }
 	}
 	local trans = Transform2D()
-	trans:Rotate(self.angle * math.pi / 180)
-	trans:Translate(self.x, self.y)
+	trans:Rotate(self.Angle * math.pi / 180)
+	trans:Translate(self.X, self.Y)
 	for i, v in ipairs(coords) do
 		self.Bounds:AddPoint(trans:Transform(v.x, v.y))
 	end
@@ -30,50 +44,6 @@ function _mt:ReadFromNet()
 	table.insert(self.Rooms[2].Doors, self)
 end
 
-function _mt:ApplyTransform(transform)
-	if not self.Poly then self.Poly = {} end
-
-	if not self.Poly[transform] then
-		local poly = {}
-		local coords = {
-			{ x = -32, y = -64 },
-			{ x = -32, y =  64 },
-			{ x =  32, y =  64 },
-			{ x =  32, y = -64 }
-		}
-		local trans = Transform2D()
-		trans:Rotate(self.angle * math.pi / 180)
-		trans:Translate(self.x, self.y)
-		for i, v in ipairs(coords) do
-			local x, y = transform:Transform(trans:Transform(v.x, v.y))
-			poly[i] = { x = x, y = y }
-		end
-		self.Poly[transform] = poly
-	end
-
-	self.Poly.Current = self.Poly[transform]
-end
-
-function _mt:Draw(screen, colorFunc)
-	if not self.Poly then return end
-
-	if colorFunc then
-		surface.SetDrawColor(colorFunc(screen, self))
-	else
-		surface.SetDrawColor(Color(0, 0, 0, 255))
-	end
-	
-	surface.DrawPoly(self.Poly.Current)
-	
-	surface.SetDrawColor(Color(255, 255, 255, 255))
-	last = self.Poly.Current[#self.Poly.Current]
-	lx, ly = last.x, last.y
-	for _, v in ipairs(self.Poly.Current) do
-		surface.DrawLine(lx, ly, v.x, v.y)
-		lx, ly = v.x, v.y
-	end
-end
-
 function Door(ship)
-	return setmetatable({ Ship = ship, _lastUpdate = 0 }, _mt)
+	return setmetatable({ Ship = ship }, _mt)
 end
