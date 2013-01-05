@@ -17,9 +17,10 @@ ENT.Layout = nil
 
 if SERVER then	
 	util.AddNetworkString("CursorPos")
-	util.AddNetworkString("Click")
 	
 	ENT.RoomName = nil
+
+	ENT.NextGUIID = 1
 
 	function ENT:KeyValue(key, value)
 		if key == "room" then
@@ -158,17 +159,6 @@ if SERVER then
 		if screen:GetNWEntity("user") == ply then
 			screen:SetNWFloat("curx", net.ReadFloat())
 			screen:SetNWFloat("cury", net.ReadFloat())
-		end
-	end)
-
-	net.Receive("Click", function(len, ply)
-		local screen = net.ReadEntity()
-		if screen:GetNWEntity("user") == ply then
-			print("click!")
-			screen:SetNWFloat("curx", net.ReadFloat())
-			screen:SetNWFloat("cury", net.ReadFloat())
-			local button = net.ReadInt(8)
-			screen:Click(button)
 		end
 	end)
 elseif CLIENT then
@@ -331,15 +321,7 @@ elseif CLIENT then
 	end
 
 	function ENT:Click(button)
-		net.Start("Click")
-			net.WriteEntity(self)
-			net.WriteFloat(self._cursorx)
-			net.WriteFloat(self._cursory)
-			net.WriteInt(button, 8)
-		net.SendToServer()
-
 		if self.UI then
-			print("click!")
 			self.UI:Click(self:GetCursorPos())
 		end
 	end

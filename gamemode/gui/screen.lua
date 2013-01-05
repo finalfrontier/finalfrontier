@@ -53,12 +53,9 @@ if SERVER then
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)
 
-		if layout.curpage ~= self._curpage or not layout.page then
+		if layout.curpage ~= self._curpage then
 			layout.curpage = self._curpage
-			layout.page = {}
 		end
-
-		self:GetCurrentPage():UpdateLayout(layout.page)
 	end
 end
 
@@ -67,6 +64,5 @@ if CLIENT then
 		self.Super[BASE].UpdateLayout(self, layout)
 
 		self:SetCurrentPage(layout.curpage)
-		self:GetCurrentPage():UpdateLayout(layout.page)
 	end
 end

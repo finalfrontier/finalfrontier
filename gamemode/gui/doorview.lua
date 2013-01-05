@@ -3,6 +3,7 @@ local BASE = "base"
 GUI.BaseName = BASE
 
 GUI._door = nil
+GUI._bounds = nil
 
 GUI.OpenLockedColor = Color(0, 64, 0, 255)
 GUI.OpenUnlockedColor = Color(0, 0, 0, 255)
@@ -36,6 +37,7 @@ if CLIENT then
 	GUI._transform = nil
 
 	GUI._poly = nil
+	GUI._bounds = nil
 
 	GUI.Color = Color(32, 32, 32, 255)
 
@@ -56,6 +58,10 @@ if CLIENT then
 		end
 	end
 
+	function GUI:IsPointInside(x, y)
+		return self._bounds:IsPointInside(x, y)
+	end
+
 	function GUI:ApplyTransform(transform)
 		if self._transform == transform or not self._door then return end
 
@@ -67,14 +73,16 @@ if CLIENT then
 			{ x =  32, y =  64 },
 			{ x =  32, y = -64 }
 		}
-			
+		
 		self._poly = {}
+		self._bounds = Bounds()
 		local trans = Transform2D()
 		trans:Rotate(self._door.Angle * math.pi / 180)
 		trans:Translate(self._door.X, self._door.Y)
 		for i, v in ipairs(coords) do
 			local x, y = transform:Transform(trans:Transform(v.x, v.y))
 			self._poly[i] = { x = x, y = y }
+			self._bounds:AddPoint(x, y)
 		end
 	end
 

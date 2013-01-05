@@ -33,11 +33,3 @@ function GUI:Initialize()
 		end
 	end
 end
-
-if SERVER then
-	function GUI:Click(x, y)
-		print("Click!!")
-		self:GetParent():SetCurrentPage(page.STATUS)
-		self.Screen:UpdateLayout()
-	end
-end

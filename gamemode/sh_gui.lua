@@ -9,22 +9,28 @@ gui._dict = {}
 local _mt = {}
 _mt.__index = _mt
 
+_mt._id = 0
+
 _mt.BaseName = nil
 _mt.Base = nil
 
 _mt.Screen = nil
 _mt.Name = nil
 
+function _mt:GetID()
+	return self._id
+end
+
 function _mt:Initialize() return end
 function _mt:Think() return end
-function _mt:Click(x, y) return nil end
+function _mt:Click(x, y) return false end
 
 if SERVER then
-	function _mt:UpdateLayout() end
+	function _mt:UpdateLayout(layout) return end
 end
 
 if CLIENT then
-	function _mt:UpdateLayout() end
+	function _mt:UpdateLayout(layout) return end
 	function _mt:Draw() return end
 end
 
@@ -65,12 +71,18 @@ function gui.Create(parent, name)
 		end
 
 		local element = { Screen = screen }
+		if SERVER then
+			element._id = screen.NextGUIID
+			screen.NextGUIID = screen.NextGUIID + 1
+		end
+
 		setmetatable(element, gui._dict[name])
 		element:Initialize()
 
 		if screen ~= parent then
 			parent:AddChild(element)
 		end
+
 		return element
 	end
 end
