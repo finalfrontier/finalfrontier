@@ -17,7 +17,7 @@ _mt.Name = nil
 
 function _mt:Initialize() return end
 function _mt:Think() return end
-function _mt:Click(x, y) return end
+function _mt:Click(x, y) return nil end
 
 if SERVER then
 	function _mt:UpdateLayout() end

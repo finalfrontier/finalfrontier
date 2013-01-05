@@ -190,13 +190,15 @@ function GM:HUDWeaponPickedUp(weapon)
 end
 
 function GM:PlayerBindPress(ply, bind, pressed)
+	if ply ~= LocalPlayer() then return end
 	if ply:GetNWBool("usingScreen") then
-		if bind == "+attack" then
-			local screen = ply:GetNWEntity("screen")
-			if screen then screen:Click(ply, MOUSE1) end
-		elseif bind == "+attack2" then
-			local screen = ply:GetNWEntity("screen")
-			if screen then screen:Click(ply, MOUSE2) end
+		local screen = ply:GetNWEntity("screen")
+		if screen then
+			if bind == "+attack" then
+				screen:Click(MOUSE1)
+			elseif bind == "+attack2" then
+				screen:Click(MOUSE2)
+			end
 		end
 	end
 end

@@ -19,7 +19,7 @@ function GUI:Initialize()
 			self.DoorViews[door] = doorview
 		end
 	end
-	
+
 	if CLIENT then
 		local width = self.Screen.Width
 		local height = self.Screen.Height
@@ -34,10 +34,10 @@ function GUI:Initialize()
 	end
 end
 
-if CLIENT then
-	function GUI:Draw()
-		self.Super[BASE].Draw(self)
-
-		self.RoomView:Draw()
+if SERVER then
+	function GUI:Click(x, y)
+		print("Click!!")
+		self:GetParent():SetCurrentPage(page.STATUS)
+		self.Screen:UpdateLayout()
 	end
 end

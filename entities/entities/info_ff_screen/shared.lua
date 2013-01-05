@@ -17,6 +17,7 @@ ENT.Layout = nil
 
 if SERVER then	
 	util.AddNetworkString("CursorPos")
+	util.AddNetworkString("Click")
 	
 	ENT.RoomName = nil
 
@@ -142,10 +143,33 @@ if SERVER then
 		end
 	end
 
-	net.Receive("CursorPos", function(len)
-		local screen = net.ReadEntity()		
-		screen:SetNWFloat("curx", net.ReadFloat())
-		screen:SetNWFloat("cury", net.ReadFloat())
+	function ENT:GetCursorPos()
+		return self:GetNWFloat("curx"), self:GetNWFloat("cury")
+	end
+
+	function ENT:Click(button)
+		if self.UI then
+			self.UI:Click(self:GetCursorPos())
+		end
+	end
+
+	net.Receive("CursorPos", function(len, ply)
+		local screen = net.ReadEntity()
+		if screen:GetNWEntity("user") == ply then
+			screen:SetNWFloat("curx", net.ReadFloat())
+			screen:SetNWFloat("cury", net.ReadFloat())
+		end
+	end)
+
+	net.Receive("Click", function(len, ply)
+		local screen = net.ReadEntity()
+		if screen:GetNWEntity("user") == ply then
+			print("click!")
+			screen:SetNWFloat("curx", net.ReadFloat())
+			screen:SetNWFloat("cury", net.ReadFloat())
+			local button = net.ReadInt(8)
+			screen:Click(button)
+		end
 	end)
 elseif CLIENT then
 	local WHITE = Material("vgui/white")
@@ -306,7 +330,17 @@ elseif CLIENT then
 		cam.End3D2D()
 	end
 
-	function ENT:Click(ply, button)
-		local mx, my = self:GetCursorPos()
+	function ENT:Click(button)
+		net.Start("Click")
+			net.WriteEntity(self)
+			net.WriteFloat(self._cursorx)
+			net.WriteFloat(self._cursory)
+			net.WriteInt(button, 8)
+		net.SendToServer()
+
+		if self.UI then
+			print("click!")
+			self.UI:Click(self:GetCursorPos())
+		end
 	end
 end

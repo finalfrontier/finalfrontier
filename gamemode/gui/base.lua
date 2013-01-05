@@ -67,6 +67,17 @@ function GUI:GetParent()
 end
 
 if CLIENT then
+	function GUI:GetCursorPos()
+		local x, y = self.Screen:GetCursorPos()
+		
+		if self:HasParent() then
+			x = x - self._parent._posx
+			y = y - self._parent._posy
+		end
+
+		return x, y
+	end
+
 	function GUI:UpdateLayout(layout)
 		self:SetOffset(layout.x, layout.y)
 	end

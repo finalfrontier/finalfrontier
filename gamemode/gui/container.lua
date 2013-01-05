@@ -52,12 +52,9 @@ end
 function GUI:Click(x, y)
 	self.Super[BASE].Click(self, x, y)
 
-	if not x or not y then
-		x, y = self
-	end
 	local ox, oy = self:GetOffset()
 	for _, child in pairs(self:GetChildren()) do
-		child:Click(screen, x + ox, y + oy)
+		child:Click(x - ox, y - oy)
 	end
 end
 
@@ -66,7 +63,7 @@ if CLIENT then
 		self.Super[BASE].Draw(self)
 
 		for _, child in pairs(self:GetChildren()) do
-			child:Draw(screen)
+			child:Draw()
 		end
 	end
 end
