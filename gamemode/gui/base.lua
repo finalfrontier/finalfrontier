@@ -198,6 +198,10 @@ if CLIENT then
 		return self:GetBounds():IsPointInside(x, y)
 	end
 
+	function GUI:IsCursorInside()
+		return self:IsPointInside(self:GetCursorPos())
+	end
+
 	function GUI:Click(x, y, button)
 		if self.CanClick and self:IsPointInside(x, y) then
 			self:OnClick(button)
@@ -207,7 +211,7 @@ if CLIENT then
 		return false
 	end
 
-
+if DEBUG then
 	function GUI:Draw()
 		if self.Screen:GetNWBool("used") and self:IsPointInside(self:GetCursorPos()) then
 			surface.SetTextColor(0, 255, 0, 255)
@@ -218,7 +222,7 @@ if CLIENT then
 		end
 
 		surface.SetFont("DermaDefault")
-		surface.SetTextPos(self:GetGlobalLeft() + 4, self:GetGlobalTop() + 4)
+		surface.SetTextPos(self:GetGlobalLeft() + 8, self:GetGlobalTop() + 4)
 		surface.DrawText(self.Name .. " (" .. self:GetID() .. ")")
 
 		surface.DrawOutlinedRect(self:GetGlobalLeft(), self:GetGlobalTop(),
@@ -227,7 +231,7 @@ if CLIENT then
 		local x, y = self:GetGlobalCentre()
 		surface.DrawCircle(x, y, 8)
 	end
-
+end
 
 	function GUI:UpdateLayout(layout)
 		self._id = layout.id

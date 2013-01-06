@@ -79,11 +79,25 @@ function GUI:UpdateTabPositions()
 	end
 end
 
+if SERVER then
+	function GUI:UpdateLayout(layout)
+		self.Super[BASE].UpdateLayout(self, layout)
+
+		layout.current = self:GetCurrentIndex()
+	end
+end
+
 if CLIENT then
 	function GUI:Draw()
 		surface.SetDrawColor(self.Color)
 		surface.DrawOutlinedRect(self:GetGlobalRect())
 
 		self.Super[BASE].Draw(self)
+	end
+
+	function GUI:UpdateLayout(layout)
+		self.Super[BASE].UpdateLayout(self, layout)
+
+		self:SetCurrentIndex(layout.current)
 	end
 end

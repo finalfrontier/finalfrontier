@@ -121,7 +121,7 @@ if CLIENT then
 			surface.SetDrawColor(self:GetDoorColor())
 			surface.DrawPoly(self._poly)
 
-			if self.CanClick and self:IsPointInside(self:GetCursorPos()) then
+			if self.CanClick and self:IsCursorInside() then
 				surface.SetDrawColor(Color(255, 255, 255, 16))
 				surface.DrawPoly(self._poly)
 			end
