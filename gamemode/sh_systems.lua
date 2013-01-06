@@ -1,5 +1,11 @@
 if SERVER then AddCSLuaFile("sh_systems.lua") end
 
+permission = {}
+permission.NONE 	= 0
+permission.ACCESS	= 1
+permission.SYSTEM 	= 2
+permission.SECURITY = 3
+
 sys = {}
 sys._dict = {}
 sys._loaded = false

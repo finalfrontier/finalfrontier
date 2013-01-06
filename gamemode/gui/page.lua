@@ -9,5 +9,10 @@ function GUI:Initialize()
 	self:SetHeight(self.Screen.Height)
 end
 
-function GUI:Leave() end
 function GUI:Enter() end
+
+function GUI:Leave() 
+	for _, child in pairs(self:GetChildren()) do
+		child:Remove()
+	end
+end

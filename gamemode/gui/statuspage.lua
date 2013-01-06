@@ -31,12 +31,3 @@ function GUI:Enter()
 		end
 	end
 end
-
-function GUI:Leave()
-	self.Super[BASE].Leave(self)
-
-	self.StatusDial:Remove()
-
-	self.LeftIcon:Remove()
-	self.RightIcon:Remove()
-end

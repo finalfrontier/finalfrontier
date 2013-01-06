@@ -1,11 +1,5 @@
 local TEMPERATURE_LOSS_RATE = 0.00000382
 
-permission = {}
-permission.NONE 	= 0
-permission.ACCESS	= 1
-permission.SYSTEM 	= 2
-permission.SECURITY = 3
-
 util.AddNetworkString("SetPermission")
 
 ENT.Type = "point"

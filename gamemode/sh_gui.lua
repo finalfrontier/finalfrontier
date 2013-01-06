@@ -1,6 +1,6 @@
 if SERVER then AddCSLuaFile("sh_gui.lua") end
 
-DEBUG = false
+DEBUG = true
 
 MOUSE1 = 1
 MOUSE2 = 2

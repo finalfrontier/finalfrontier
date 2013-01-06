@@ -35,13 +35,3 @@ function GUI:Enter()
 		end
 	end
 end
-
-function GUI:Leave()
-	self.Super[BASE].Leave(self)
-
-	self.RoomView:Remove()
-
-	for door, doorview in pairs(self.DoorViews) do
-		doorview:Remove()
-	end
-end

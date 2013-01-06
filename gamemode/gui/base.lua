@@ -199,6 +199,9 @@ if CLIENT then
 
 	function GUI:Click(x, y, button)
 		if self.CanClick and self:IsPointInside(x, y) then
+if DEBUG then
+			print("click@" .. self:GetRoom().Name .. ":" .. self.Name .. "(" .. self:GetID() .. ")")
+end
 			net.Start("Click")
 			net.WriteEntity(self.Screen)
 			self:SendIDHierarchy()
@@ -214,13 +217,13 @@ if CLIENT then
 
 if DEBUG then
 	function GUI:Draw()
+		local color = Color(255, 0, 0, 255)
 		if self.Screen:GetNWBool("used") and self:IsPointInside(self:GetCursorPos()) then
-			surface.SetTextColor(0, 255, 0, 255)
-			surface.SetDrawColor(0, 255, 0, 255)
-		else
-			surface.SetTextColor(255, 0, 0, 255)
-			surface.SetDrawColor(255, 0, 0, 255)
+			color = Color(0, 255, 0, 255)
 		end
+
+		surface.SetTextColor(color)
+		surface.SetDrawColor(color)
 
 		surface.SetFont("DermaDefault")
 		surface.SetTextPos(self:GetGlobalLeft() + 8, self:GetGlobalTop() + 4)
@@ -229,8 +232,10 @@ if DEBUG then
 		surface.DrawOutlinedRect(self:GetGlobalLeft(), self:GetGlobalTop(),
 			self:GetWidth(), self:GetHeight())
 
-		local x, y = self:GetGlobalCentre()
-		surface.DrawCircle(x, y, 8)
+		color.a = 4
+		surface.SetDrawColor(color)
+		surface.DrawRect(self:GetGlobalLeft(), self:GetGlobalTop(),
+			self:GetWidth(), self:GetHeight())
 	end
 end
 
@@ -281,6 +286,9 @@ if SERVER then
 			end
 			if element and element.CanClick then
 				local button = net.ReadInt(8)
+if DEBUG then
+			print("click@" .. screen.Room:GetName() .. ":" .. element.Name .. "(" .. element:GetID() .. ")")
+end
 				element:OnClick(button)
 			end
 		end

@@ -20,6 +20,7 @@ end
 
 if CLIENT then
 	function GUI:Draw()
+		surface.SetDrawColor(self.Color)
 		if self:HasParent() and self:GetParent():GetCurrent() == self then
 			surface.DrawRect(self:GetGlobalRect())
 			surface.SetTextColor(BLACK)
