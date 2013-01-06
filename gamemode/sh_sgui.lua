@@ -1,4 +1,4 @@
-if SERVER then AddCSLuaFile("sh_gui.lua") end
+if SERVER then AddCSLuaFile("sh_sgui.lua") end
 
 DEBUG = false
 
@@ -36,20 +36,20 @@ if CLIENT then
 	function _mt:Draw() return end
 end
 
-MsgN("Loading gui...")
-local files = file.Find("finalfrontier/gamemode/gui/*.lua", "LUA")
+MsgN("Loading sgui...")
+local files = file.Find("finalfrontier/gamemode/sgui/*.lua", "LUA")
 for i, file in ipairs(files) do	
 	local name = string.sub(file, 0, string.len(file) - 4)
-	if SERVER then AddCSLuaFile("gui/" .. file) end
+	if SERVER then AddCSLuaFile("sgui/" .. file) end
 
-	MsgN("  Loading gui element " .. name)
+	MsgN("  Loading sgui element " .. name)
 
 	GUI = { Name = name }
 	GUI.__index = GUI
 	GUI.Super = {}
 	GUI.Super.__index = GUI.Super
 	GUI.Super[name] = GUI
-	include("gui/" .. file)
+	include("sgui/" .. file)
 
 	sgui._dict[name] = GUI
 	GUI = nil

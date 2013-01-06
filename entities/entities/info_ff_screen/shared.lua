@@ -163,10 +163,10 @@ if SERVER then
 
 	net.Receive("CursorPos", function(len, ply)
 		local screen = net.ReadEntity()
-		--if screen:GetNWEntity("user") == ply then
+		if screen:GetNWEntity("user") == ply then
 			screen:SetNWFloat("curx", net.ReadFloat())
 			screen:SetNWFloat("cury", net.ReadFloat())
-		--end
+		end
 	end)
 elseif CLIENT then
 	local WHITE = Material("vgui/white")
