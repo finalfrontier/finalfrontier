@@ -34,12 +34,10 @@ function FindBestTransform(sourceBounds, destBounds, canRotate, flip, angle)
 	if angle then
 		angle = math.Round(angle / 90)
 		trans:Rotate(angle * math.pi / 2)
-		if math.abs(angle) == 90 then
+		if (math.abs(angle) % 2) == 1 then
 			src.width, src.height = src.height, src.width
 		end
-	end
-
-	if canRotate and src.width < src.height then
+	elseif canRotate and src.width < src.height then
 		trans:Rotate(math.pi / 2)
 		src.width, src.height = src.height, src.width
 	end
