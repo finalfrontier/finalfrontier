@@ -115,24 +115,24 @@ if CLIENT then
 	end
 
 	function GUI:Draw()
-		if not self._transform then return end
+		if self._transform then
+			local last, lx, ly = nil, 0, 0
 
-		local last, lx, ly = nil, 0, 0
-
-		surface.SetDrawColor(self:GetDoorColor())
-		surface.DrawPoly(self._poly)
-
-		if self.CanClick and self:IsPointInside(self:GetCursorPos()) then
-			surface.SetDrawColor(Color(255, 255, 255, 16))
+			surface.SetDrawColor(self:GetDoorColor())
 			surface.DrawPoly(self._poly)
-		end
-	
-		surface.SetDrawColor(Color(255, 255, 255, 255))
-		last = self._poly[#self._poly]
-		lx, ly = last.x, last.y
-		for _, v in ipairs(self._poly) do
-			surface.DrawLine(lx, ly, v.x, v.y)
-			lx, ly = v.x, v.y
+
+			if self.CanClick and self:IsPointInside(self:GetCursorPos()) then
+				surface.SetDrawColor(Color(255, 255, 255, 16))
+				surface.DrawPoly(self._poly)
+			end
+		
+			surface.SetDrawColor(Color(255, 255, 255, 255))
+			last = self._poly[#self._poly]
+			lx, ly = last.x, last.y
+			for _, v in ipairs(self._poly) do
+				surface.DrawLine(lx, ly, v.x, v.y)
+				lx, ly = v.x, v.y
+			end
 		end
 
 		self.Super[BASE].Draw(self)

@@ -23,8 +23,8 @@ function GUI:Enter()
 	local margin = 16
 
 	self.RoomView:SetBounds(Bounds(
-		self:GetLeft() + margin,
-		self:GetTop() + margin,
+		margin,
+		margin,
 		self:GetWidth() - margin * 2,
 		self:GetHeight() - margin * 2
 	))

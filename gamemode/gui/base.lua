@@ -51,6 +51,9 @@ function GUI:GetRight() return self._bounds.r end
 function GUI:GetBottom() return self._bounds.b end
 function GUI:GetWidth() return self._bounds.r - self._bounds.l end
 function GUI:GetHeight() return self._bounds.b - self._bounds.t end
+function GUI:GetOrigin()
+	return self._bounds.l, self._bounds.t
+end
 function GUI:GetSize()
 	return
 		self._bounds.r - self._bounds.l,
@@ -60,6 +63,11 @@ function GUI:GetCentre()
 	return
 		(self._bounds.r + self._bounds.l) * 0.5,
 		(self._bounds.t + self._bounds.b) * 0.5
+end
+function GUI:GetRect()
+	return self._bounds.l, self._bounds.t,
+		self._bounds.r - self._bounds.l,
+		self._bounds.b - self._bounds.t
 end
 
 function GUI:SetBounds(bounds)
@@ -90,6 +98,15 @@ function GUI:SetHeight(val)
 	self._bounds.b = self._bounds.t + val
 	self:SetBounds(self._bounds)
 end
+function GUI:SetOrigin(x, y)
+	local w = self:GetWidth()
+	local h = self:GetHeight()
+	self._bounds.l = x
+	self._bounds.r = x + w
+	self._bounds.t = y
+	self._bounds.b = y + h
+	self:SetBounds(self._bounds)
+end
 function GUI:SetSize(width, height)
 	self._bounds.r = self._bounds.l + width
 	self._bounds.b = self._bounds.t + height
@@ -114,6 +131,11 @@ function GUI:GetGlobalCentre()
 	return
 		(self._globBounds.r + self._globBounds.l) * 0.5,
 		(self._globBounds.t + self._globBounds.b) * 0.5
+end
+function GUI:GetGlobalRect()
+	return self._globBounds.l, self._globBounds.t,
+		self._bounds.r - self._bounds.l,
+		self._bounds.b - self._bounds.t
 end
 
 function GUI:UpdateGlobalBounds()
@@ -185,13 +207,19 @@ if CLIENT then
 		return false
 	end
 
---[[
+
 	function GUI:Draw()
 		if self.Screen:GetNWBool("used") and self:IsPointInside(self:GetCursorPos()) then
+			surface.SetTextColor(0, 255, 0, 255)
 			surface.SetDrawColor(0, 255, 0, 255)
 		else
+			surface.SetTextColor(255, 0, 0, 255)
 			surface.SetDrawColor(255, 0, 0, 255)
 		end
+
+		surface.SetFont("DermaDefault")
+		surface.SetTextPos(self:GetGlobalLeft() + 4, self:GetGlobalTop() + 4)
+		surface.DrawText(self.Name .. " (" .. self:GetID() .. ")")
 
 		surface.DrawOutlinedRect(self:GetGlobalLeft(), self:GetGlobalTop(),
 			self:GetWidth(), self:GetHeight())
@@ -199,7 +227,7 @@ if CLIENT then
 		local x, y = self:GetGlobalCentre()
 		surface.DrawCircle(x, y, 8)
 	end
---]]
+
 
 	function GUI:UpdateLayout(layout)
 		self._id = layout.id

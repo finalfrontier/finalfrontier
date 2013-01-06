@@ -92,34 +92,34 @@ if CLIENT then
 	end
 
 	function GUI:Draw()
+		if self._transform then
+			local last, lx, ly = nil, 0, 0
+
+			surface.SetDrawColor(self.Color)
+
+			for i, poly in ipairs(self._polys) do
+				surface.DrawPoly(poly)
+			end
+
+			surface.SetDrawColor(Color(255, 255, 255, 255))
+			last = self._corners[#self._corners]
+			lx, ly = last.x, last.y
+			for _, v in ipairs(self._corners) do
+				surface.DrawLine(lx, ly, v.x, v.y)
+				lx, ly = v.x, v.y
+			end
+
+			local icon = self:GetSystemIcon()
+			if icon then
+				surface.SetMaterial(icon)
+				surface.SetDrawColor(Color(255, 255, 255, 32))
+				surface.DrawTexturedRect(self._centre.x - 32,
+					self._centre.y - 32, 64, 64)
+				surface.SetMaterial(WHITE)
+			end
+		end
+		
 		self.Super[BASE].Draw(self)
-
-		if not self._transform then return end
-
-		local last, lx, ly = nil, 0, 0
-
-		surface.SetDrawColor(self.Color)
-
-		for i, poly in ipairs(self._polys) do
-			surface.DrawPoly(poly)
-		end
-
-		surface.SetDrawColor(Color(255, 255, 255, 255))
-		last = self._corners[#self._corners]
-		lx, ly = last.x, last.y
-		for _, v in ipairs(self._corners) do
-			surface.DrawLine(lx, ly, v.x, v.y)
-			lx, ly = v.x, v.y
-		end
-
-		local icon = self:GetSystemIcon()
-		if icon then
-			surface.SetMaterial(icon)
-			surface.SetDrawColor(Color(255, 255, 255, 32))
-			surface.DrawTexturedRect(self._centre.x - 32,
-				self._centre.y - 32, 64, 64)
-			surface.SetMaterial(WHITE)
-		end
 	end
 
 	function GUI:UpdateLayout(layout)

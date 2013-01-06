@@ -84,11 +84,11 @@ if CLIENT then
 	end
 
 	function GUI:Draw()
-		self.Super[BASE].Draw(self)
-
 		for _, child in pairs(self:GetChildren()) do
 			child:Draw()
 		end
+		
+		self.Super[BASE].Draw(self)
 	end
 
 	function GUI:UpdateLayout(layout)

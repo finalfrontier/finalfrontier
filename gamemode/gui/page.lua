@@ -10,7 +10,4 @@ function GUI:Initialize()
 end
 
 function GUI:Leave() end
-function GUI:Enter()
-	self:SetWidth(self:GetParent():GetWidth())
-	self:SetHeight(self:GetParent():GetHeight())
-end
+function GUI:Enter() end

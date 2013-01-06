@@ -10,6 +10,10 @@ page.OVERRIDE = 5
 GUI.BaseName = BASE
 
 GUI.Pages = nil
+GUI.TabMenu = nil
+
+GUI.TabHeight = 64
+GUI.TabMargin = 8
 
 GUI._curpage = 0
 
@@ -28,6 +32,17 @@ function GUI:Initialize()
 		[page.OVERRIDE] = gui.Create(self.Screen, "page")
 	}
 
+	self.TabMenu = gui.Create(self.Screen, "tabmenu")
+	self.TabMenu:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)
+	self.TabMenu:SetCentre(self:GetWidth() / 2, self.TabHeight / 2 + self.TabMargin)
+
+	self.TabMenu:AddTab("ACCESS")
+	if self:GetSystem() then
+		self.TabMenu:AddTab("SYSTEM")
+	end
+	self.TabMenu:AddTab("SECURITY")
+	self.TabMenu:AddTab("OVERRIDE")
+
 	self:SetCurrentPage(page.STATUS)
 end
 
@@ -42,12 +57,28 @@ function GUI:SetCurrentPage(newpage)
 	if curpage then
 		curpage:Leave()
 		self:RemoveChild(curpage)
+
+		if curpage ~= self.Pages[page.STATUS] then
+			self.TabMenu:Remove()
+		end
 	end
 
 	self._curpage = newpage
 
 	curpage = self:GetCurrentPage()
 	if curpage then
+		if curpage ~= self.Pages[page.STATUS] then
+			if not self.TabMenu:HasParent() then
+				self:AddChild(self.TabMenu)
+			end
+
+			curpage:SetHeight(self:GetHeight() - self.TabHeight - self.TabMargin * 2)
+			curpage:SetOrigin(0, self.TabHeight + self.TabMargin * 2)
+		else
+			curpage:SetHeight(self:GetHeight())
+			curpage:SetOrigin(0, 0)
+		end
+
 		self:AddChild(curpage)
 		curpage:Enter()
 	end

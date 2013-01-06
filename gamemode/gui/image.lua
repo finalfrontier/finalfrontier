@@ -7,8 +7,6 @@ if CLIENT then
 	GUI.Material = WHITE
 
 	function GUI:Draw()
-		self.Super[BASE].Draw(self)
-
 		if self.Material then
 			surface.SetDrawColor(self.Color)
 			surface.SetMaterial(self.Material)
@@ -20,5 +18,7 @@ if CLIENT then
 			)
 			surface.SetMaterial(WHITE)
 		end
+		
+		self.Super[BASE].Draw(self)
 	end
 end
