@@ -88,6 +88,8 @@ function GUI:SetCurrentPage(newpage)
 		self:AddChild(curpage)
 		curpage:Enter()
 	end
+
+	self.TabMenu:SetCurrent(table.KeyFromValue(page, newpage))
 end
 
 if SERVER then

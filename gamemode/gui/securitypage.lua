@@ -16,13 +16,11 @@ function GUI:UpdateButtons()
 	if self.PlayerList then
 		self.Buttons = {}
 		for i, ply in ipairs(self.PlayerList) do
-			for j = 1, 4 do
-				local btn = gui.Create(self, "securitybutton")
-				btn:SetPlayer(ply)
-				btn:SetSize((self:GetWidth() - 16) / 2 - 4, 48)
-				btn:SetCentre(self:GetWidth() / 4, j * 48 - 16)
-				table.insert(self.Buttons, btn)
-			end
+			local btn = gui.Create(self, "securitybutton")
+			btn:SetPlayer(ply)
+			btn:SetSize((self:GetWidth() - 16) / 2 - 4, 48)
+			btn:SetCentre(self:GetWidth() / 4, i * 48 - 16)
+			table.insert(self.Buttons, btn)
 		end
 	end
 end
@@ -45,6 +43,7 @@ function GUI:Leave()
 	self.Super[BASE].Leave(self)
 
 	self.PlayerList = nil
+	self.Buttons = nil
 end
 
 if SERVER then
@@ -89,7 +88,7 @@ if CLIENT then
 				self.UpdateButtons()
 			end
 		end
-		
+
 		self.Super[BASE].UpdateLayout(self, layout)
 	end	
 end

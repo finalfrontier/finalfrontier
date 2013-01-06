@@ -57,10 +57,19 @@ function GUI:SetCurrentIndex(index)
 end
 
 function GUI:SetCurrent(tab)
-	for i, v in ipairs(self._tabs) do
-		if v == tab then
-			self:SetCurrentIndex(i)
-			return
+	if type(tab) == "string" then
+		for i, v in ipairs(self._tabs) do
+			if v.Text == tab then
+				self:SetCurrentIndex(i)
+				return
+			end
+		end
+	else
+		for i, v in ipairs(self._tabs) do
+			if v == tab then
+				self:SetCurrentIndex(i)
+				return
+			end
 		end
 	end
 end

@@ -18,6 +18,30 @@ function GUI:Initialize()
 	self._permButton = gui.Create(self, "button")
 	self._adrmButton = gui.Create(self, "button")
 
+	if SERVER then
+		self._permButton.OnClick = function(btn)
+			local ply = self:GetPlayer()
+			local room = self:GetRoom()
+			if not ply then return end
+			local perm = ply:GetPermission(room)
+			perm = perm + 1
+			if perm > permission.SECURITY then perm = permission.ACCESS end
+			ply:SetPermission(self:GetRoom(), perm)
+		end
+
+		self._adrmButton.OnClick = function(btn)
+			local ply = self:GetPlayer()
+			local room = self:GetRoom()
+			if not ply then return end
+
+			if ply:GetPermission(room) <= permission.NONE then
+				ply:SetPermission(self:GetRoom(), permission.ACCESS)
+			else
+				ply:SetPermission(self:GetRoom(), permission.NONE)
+			end
+		end
+	end
+
 	self._adrmButton.Text = "X"
 end
 
@@ -50,7 +74,7 @@ if CLIENT then
 			if perm >= permission.SECURITY then
 				self._permButton.Color = self.PermSecurityColor
 			elseif perm >= permission.SYSTEM then
-				self._permButton.Color = self.PermAccessColor
+				self._permButton.Color = self.PermSystemColor
 			elseif perm >= permission.ACCESS then
 				self._permButton.Color = self.PermAccessColor
 			else
