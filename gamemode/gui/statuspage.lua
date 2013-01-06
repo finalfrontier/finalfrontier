@@ -10,7 +10,7 @@ function GUI:Enter()
 	self.Super[BASE].Enter(self)
 
 	self.StatusDial = gui.Create(self, "statusdial")
-	self.StatusDial:SetCentre(self:GetCentre())
+	self.StatusDial:SetCentre(self:GetWidth() / 2, self:GetHeight() / 2)
 
 	self.LeftIcon = gui.Create(self, "image")
 	self.RightIcon = gui.Create(self, "image")

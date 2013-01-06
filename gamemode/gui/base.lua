@@ -166,6 +166,10 @@ function GUI:GetParent()
 	return self._parent
 end
 
+function GUI:OnClick(button)
+	return
+end
+
 if CLIENT then
 	function GUI:GetCursorPos()
 		local x, y = self.Screen:GetCursorPos()
@@ -185,15 +189,6 @@ if CLIENT then
 		net.WriteInt(self:GetID(), 16)
 	end
 
-	function GUI:OnClick(button)
-		net.Start("Click")
-		net.WriteEntity(self.Screen)
-		self:SendIDHierarchy()
-		net.WriteInt(0, 16)
-		net.WriteInt(button, 8)
-		net.SendToServer()
-	end
-
 	function GUI:IsPointInside(x, y)
 		return self:GetBounds():IsPointInside(x, y)
 	end
@@ -204,6 +199,12 @@ if CLIENT then
 
 	function GUI:Click(x, y, button)
 		if self.CanClick and self:IsPointInside(x, y) then
+			net.Start("Click")
+			net.WriteEntity(self.Screen)
+			self:SendIDHierarchy()
+			net.WriteInt(0, 16)
+			net.WriteInt(button, 8)
+			net.SendToServer()
 			self:OnClick(button)
 			return true
 		end
@@ -247,10 +248,6 @@ end
 end
 
 if SERVER then
-	function GUI:OnClick(button)
-		return
-	end
-
 	function GUI:UpdateLayout(layout)
 		layout.id = self._id
 		if self.SyncBounds then
