@@ -19,12 +19,13 @@ function GUI:AddTab(text)
 	tab.Text = text
 
 	table.insert(self._tabs, tab)
+	self:UpdateTabPositions()
 
 	if self._current == 0 then
 		self:SetCurrentIndex(1)
 	end
 
-	self:UpdateTabPositions()
+	return tab
 end
 
 function GUI:SetBounds(bounds)
@@ -40,11 +41,18 @@ function GUI:GetCurrent()
 	return self._tabs[self._current]
 end
 
+function GUI:OnChangeCurrent()
+	return
+end
+
 function GUI:SetCurrentIndex(index)
 	if index < 1 or index > #self._tabs then
-		self._current = 0
-	else
+		index = 0
+	end
+
+	if self._current ~= index then
 		self._current = index
+		self:OnChangeCurrent(index)
 	end
 end
 

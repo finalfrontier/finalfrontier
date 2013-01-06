@@ -43,6 +43,12 @@ function GUI:Initialize()
 	self.TabMenu:AddTab("SECURITY")
 	self.TabMenu:AddTab("OVERRIDE")
 
+	if SERVER then
+		self.TabMenu.OnChangeCurrent = function(tabmenu)
+			self:SetCurrentPage(page[tabmenu:GetCurrent().Text])
+		end
+	end
+
 	self:SetCurrentPage(page.STATUS)
 end
 
