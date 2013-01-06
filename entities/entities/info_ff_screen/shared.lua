@@ -313,7 +313,7 @@ elseif CLIENT then
 			if self.UI then
 				self.UI:Draw()
 			end
-			if self._using then
+			if self:GetNWBool("used") then
 				self:FindCursorPosition()
 				self:DrawCursor()
 			end
