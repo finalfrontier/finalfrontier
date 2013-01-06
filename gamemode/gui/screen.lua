@@ -25,14 +25,14 @@ function GUI:Initialize()
 	self:SetCentre(0, 0)
 
 	self.Pages = {
-		[page.STATUS]   = gui.Create(self.Screen, "statuspage"),
-		[page.ACCESS]   = gui.Create(self.Screen, "accesspage"),
-		[page.SYSTEM]   = gui.Create(self.Screen, "page"),
-		[page.SECURITY] = gui.Create(self.Screen, "securitypage"),
-		[page.OVERRIDE] = gui.Create(self.Screen, "page")
+		[page.STATUS]   = sgui.Create(self.Screen, "statuspage"),
+		[page.ACCESS]   = sgui.Create(self.Screen, "accesspage"),
+		[page.SYSTEM]   = sgui.Create(self.Screen, "page"),
+		[page.SECURITY] = sgui.Create(self.Screen, "securitypage"),
+		[page.OVERRIDE] = sgui.Create(self.Screen, "page")
 	}
 
-	self.TabMenu = gui.Create(self.Screen, "tabmenu")
+	self.TabMenu = sgui.Create(self.Screen, "tabmenu")
 	self.TabMenu:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)
 	self.TabMenu:SetCentre(self:GetWidth() / 2, self.TabHeight / 2 + self.TabMargin)
 

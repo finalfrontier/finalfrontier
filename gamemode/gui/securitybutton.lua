@@ -15,8 +15,8 @@ GUI._adrmButton = nil
 function GUI:Initialize()
 	self.Super[BASE].Initialize(self)
 
-	self._permButton = gui.Create(self, "button")
-	self._adrmButton = gui.Create(self, "button")
+	self._permButton = sgui.Create(self, "button")
+	self._adrmButton = sgui.Create(self, "button")
 
 	if SERVER then
 		self._permButton.OnClick = function(btn)

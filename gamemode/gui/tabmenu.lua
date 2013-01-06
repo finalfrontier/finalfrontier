@@ -15,7 +15,7 @@ function GUI:Initialize()
 end
 
 function GUI:AddTab(text)
-	local tab = gui.Create(self, "tab")
+	local tab = sgui.Create(self, "tab")
 	tab.Text = text
 
 	table.insert(self._tabs, tab)

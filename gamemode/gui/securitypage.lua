@@ -16,7 +16,7 @@ function GUI:UpdateButtons()
 	if self.PlayerList then
 		self.Buttons = {}
 		for i, ply in ipairs(self.PlayerList) do
-			local btn = gui.Create(self, "securitybutton")
+			local btn = sgui.Create(self, "securitybutton")
 			btn:SetPlayer(ply)
 			btn:SetSize((self:GetWidth() - 16) / 2 - 4, 48)
 			btn:SetCentre(self:GetWidth() / 4, i * 48 - 16)

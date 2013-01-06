@@ -41,6 +41,14 @@ function GUI:RemoveChild(child)
 	end
 end
 
+function GUI:RemoveAllChildren()
+	for _, child in pairs(self._children) do
+		child._parent = nil
+	end
+
+	self._children = {}
+end
+
 function GUI:GetChild(id)
 	for _, child in pairs(self:GetChildren()) do
 		if child:GetID() == id then return child end

@@ -5,8 +5,8 @@ DEBUG = false
 MOUSE1 = 1
 MOUSE2 = 2
 
-gui = {}
-gui._dict = {}
+sgui = {}
+sgui._dict = {}
 
 local _mt = {}
 _mt.__index = _mt
@@ -51,13 +51,13 @@ for i, file in ipairs(files) do
 	GUI.Super[name] = GUI
 	include("gui/" .. file)
 
-	gui._dict[name] = GUI
+	sgui._dict[name] = GUI
 	GUI = nil
 end
 
-for _, GUI in pairs(gui._dict) do
+for _, GUI in pairs(sgui._dict) do
 	if GUI.BaseName then
-		GUI.Base = gui._dict[GUI.BaseName]
+		GUI.Base = sgui._dict[GUI.BaseName]
 		setmetatable(GUI, GUI.Base)
 		setmetatable(GUI.Super, GUI.Base.Super)
 	else
@@ -65,8 +65,8 @@ for _, GUI in pairs(gui._dict) do
 	end
 end
 
-function gui.Create(parent, name)
-	if gui._dict[name] then
+function sgui.Create(parent, name)
+	if sgui._dict[name] then
 		local screen = parent
 		if not parent.GetClass or parent:GetClass() ~= "info_ff_screen" then
 			screen = parent.Screen
@@ -78,7 +78,7 @@ function gui.Create(parent, name)
 			screen.NextGUIID = screen.NextGUIID + 1
 		end
 
-		setmetatable(element, gui._dict[name])
+		setmetatable(element, sgui._dict[name])
 
 		if screen ~= parent then
 			parent:AddChild(element)

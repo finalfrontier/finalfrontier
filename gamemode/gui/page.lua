@@ -11,8 +11,6 @@ end
 
 function GUI:Enter() end
 
-function GUI:Leave() 
-	for _, child in pairs(self:GetChildren()) do
-		child:Remove()
-	end
+function GUI:Leave()
+	self:RemoveAllChildren()
 end

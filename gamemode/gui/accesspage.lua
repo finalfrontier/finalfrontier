@@ -8,13 +8,13 @@ GUI.DoorViews = nil
 function GUI:Enter()
 	self.Super[BASE].Enter(self)
 
-	self.RoomView = gui.Create(self, "roomview")
+	self.RoomView = sgui.Create(self, "roomview")
 	self.RoomView:SetCurrentRoom(self:GetRoom())
 
 	self.DoorViews = {}
 	if self:GetRoom() then
 		for _, door in ipairs(self:GetRoom().Doors) do
-			local doorview = gui.Create(self, "doorview")
+			local doorview = sgui.Create(self, "doorview")
 			doorview:SetCurrentDoor(door)
 			self.DoorViews[door] = doorview
 		end

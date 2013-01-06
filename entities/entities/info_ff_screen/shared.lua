@@ -69,7 +69,7 @@ if SERVER then
 		self:SetNWBool("used", false)
 		self:SetNWEntity("user", nil)
 
-		self.UI = gui.Create(self, MAIN_GUI_CLASS)
+		self.UI = sgui.Create(self, MAIN_GUI_CLASS)
 		self:UpdateLayout()
 	end
 
@@ -163,10 +163,10 @@ if SERVER then
 
 	net.Receive("CursorPos", function(len, ply)
 		local screen = net.ReadEntity()
-		if screen:GetNWEntity("user") == ply then
+		--if screen:GetNWEntity("user") == ply then
 			screen:SetNWFloat("curx", net.ReadFloat())
 			screen:SetNWFloat("cury", net.ReadFloat())
-		end
+		--end
 	end)
 elseif CLIENT then
 	local WHITE = Material("vgui/white")
@@ -196,7 +196,7 @@ elseif CLIENT then
 	
 	function ENT:UpdateLayout()
 		if not self.UI then
-			self.UI = gui.Create(self, MAIN_GUI_CLASS)
+			self.UI = sgui.Create(self, MAIN_GUI_CLASS)
 		end
 
 		self.Layout = self:GetNWTable("layout")
