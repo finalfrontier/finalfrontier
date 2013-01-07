@@ -27,10 +27,13 @@ function GUI:Initialize()
 	self.Pages = {
 		[page.STATUS]   = sgui.Create(self.Screen, "statuspage"),
 		[page.ACCESS]   = sgui.Create(self.Screen, "accesspage"),
-		[page.SYSTEM]   = sgui.Create(self.Screen, "page"),
 		[page.SECURITY] = sgui.Create(self.Screen, "securitypage"),
 		[page.OVERRIDE] = sgui.Create(self.Screen, "page")
 	}
+
+	if self:GetSystem() then
+		self.Pages[page.SYSTEM] = sgui.Create(self.Screen, self:GetSystem().SGUIName)
+	end
 
 	self.TabMenu = sgui.Create(self.Screen, "tabmenu")
 	self.TabMenu:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)

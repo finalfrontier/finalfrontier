@@ -56,6 +56,7 @@ if SERVER then
 			if #rooms > 0 then
 				self.Room = rooms[1]
 				self.Room:AddScreen(self)
+				self.Ship = self.Room.Ship
 			end
 		end
 		

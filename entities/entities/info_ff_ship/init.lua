@@ -39,6 +39,10 @@ function ENT:AddRoom(room)
 	room.Index = #self._roomlist
 end
 
+function ENT:GetRooms()
+	return self._roomlist
+end
+
 function ENT:GetRoomByIndex(index)
 	return self._roomlist[index]
 end

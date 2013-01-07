@@ -155,11 +155,11 @@ function FindConvexPolygons(poly, output)
 	return output
 end
 
-function IsPointInsidePoly(poly, p)
+function IsPointInsidePoly(poly, x, y)
 	for i, v in ipairs(poly) do
 		local n = poly[(i % #poly) + 1]
 		local ax, ay = n.x - v.x, n.y - v.y
-		local bx, by = p.x - v.x, p.y - v.y
+		local bx, by =   x - v.x,   y - v.y
 		local cross = ax * by - ay * bx
 		if cross < 0 then return false end
 	end
@@ -167,9 +167,9 @@ function IsPointInsidePoly(poly, p)
 	return true
 end
 
-function IsPointInsidePolyGroup(polys, p)
+function IsPointInsidePolyGroup(polys, x, y)
 	for _, poly in ipairs(polys) do
-		if IsPointInsidePoly(poly, p) then return true end
+		if IsPointInsidePoly(poly, x, y) then return true end
 	end
 	
 	return false

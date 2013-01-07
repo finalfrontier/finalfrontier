@@ -9,7 +9,7 @@ function GUI:SetCurrentRoom(room)
 
 	self._room = room
 
-	if CLIENT and self._room and self._bounds then
+	if CLIENT and self._room then
 		self:FindTransform()
 	end
 end
@@ -36,18 +36,17 @@ if CLIENT then
 	GUI._corners = nil
 	GUI._polys = nil
 
+	GUI._iconBounds = nil
+
 	GUI.Color = Color(32, 32, 32, 255)
 
 	function GUI:SetBounds(bounds)
 		self.Super[BASE].SetBounds(self, bounds)
-
-		if self._room then
-			self:FindTransform()
-		end
+		self:FindTransform()
 	end
 
 	function GUI:FindTransform()
-		if not (self:GetBounds() and self._room) then return end
+		if not self._room then return end
 
 		local roomBounds = Bounds()
 		roomBounds:AddBounds(self._room.Bounds)
@@ -57,20 +56,22 @@ if CLIENT then
 		local angle = self.Screen:GetAngles().Yaw + 90
 		
 		self:ApplyTransform(FindBestTransform(roomBounds,
-			self:GetGlobalBounds(), false, true, angle))
+			self:GetGlobalBounds(), false, true, angle), true)
 	end
 
-	function GUI:ApplyTransform(transform)
+	function GUI:ApplyTransform(transform, updateBounds)
 		if self._transform == transform or not self._room then return end
 
 		self._transform = transform
 		
 		local x, y
+		local newBounds = Bounds()
 
 		self._corners = {}
 		for i, v in ipairs(self._room.Corners) do
 			x, y = transform:Transform(v.x, v.y)
 			self._corners[i] = { x = x, y = y }
+			newBounds:AddPoint(x, y)
 		end
 
 		self._polys = {}
@@ -82,13 +83,29 @@ if CLIENT then
 			end
 		end
 
-		local centre = self._room.Bounds:GetCentre()
-		x, y = transform:Transform(centre.x, centre.y)
-		self._centre = { x = x, y = y }
+		self._iconBounds = Bounds()
+		local cx, cy = self._room.Bounds:GetCentre()
+		x, y = cx - 64, cy - 64
+		self._iconBounds:AddPoint(transform:Transform(x, y))
+		x, y = cx + 64, cy + 64
+		self._iconBounds:AddPoint(transform:Transform(x, y))
+
+		if updateBounds then
+			newBounds:Move(self:GetLeft() - self:GetGlobalLeft(),
+				self:GetTop() - self:GetGlobalTop())
+			self.Super[BASE].SetBounds(self, newBounds)
+		end
 	end
 
 	function GUI:GetAppliedTransform()
 		return self._transform
+	end
+
+	function GUI:IsPointInside(x, y)
+		local xo = self:GetLeft() - self:GetGlobalLeft()
+		local yo = self:GetTop() - self:GetGlobalTop()
+		return self.Super[BASE].IsPointInside(self, x, y) and self._polys
+			and IsPointInsidePolyGroup(self._polys, x - xo, y - yo)
 	end
 
 	function GUI:Draw()
@@ -109,12 +126,10 @@ if CLIENT then
 				lx, ly = v.x, v.y
 			end
 
-			local icon = self:GetSystemIcon()
-			if icon then
-				surface.SetMaterial(icon)
+			if self._room.System and self._room.System.Icon then
+				surface.SetMaterial(self._room.System.Icon)
 				surface.SetDrawColor(Color(255, 255, 255, 32))
-				surface.DrawTexturedRect(self._centre.x - 32,
-					self._centre.y - 32, 64, 64)
+				surface.DrawTexturedRect(self._iconBounds:GetRect())
 				surface.SetMaterial(WHITE)
 			end
 		end
@@ -127,7 +142,7 @@ if CLIENT then
 
 		if layout.room then
 			if not self._room or self._room.Index ~= layout.room then
-				self:SetRoom(self.Screen.Ship:GetRoomByIndex(layout.room))
+				self:SetCurrentRoom(self.Screen.Ship:GetRoomByIndex(layout.room))
 			end
 		else
 			self._room = nil

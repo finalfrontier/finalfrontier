@@ -27,8 +27,9 @@ function Transform2D()
 end
 
 function FindBestTransform(sourceBounds, destBounds, canRotate, flip, angle)
-	local src = sourceBounds:GetSize()
-	src.centre = sourceBounds:GetCentre()
+	local src = {}
+	src.width, src.height = sourceBounds:GetSize()
+	src.centrex, src.centrey = sourceBounds:GetCentre()
 	local trans = Transform2D()
 	
 	if angle then
@@ -46,8 +47,9 @@ function FindBestTransform(sourceBounds, destBounds, canRotate, flip, angle)
 	
 	src.ratio = src.width / src.height
 	
-	local dest = destBounds:GetSize()
-	dest.centre = destBounds:GetCentre()
+	local dest = {}
+	dest.width, dest.height = destBounds:GetSize()
+	dest.centrex, dest.centrey = destBounds:GetCentre()
 	dest.ratio = dest.width / dest.height
 	
 	if dest.ratio < src.ratio then
@@ -56,7 +58,7 @@ function FindBestTransform(sourceBounds, destBounds, canRotate, flip, angle)
 		trans:Scale(dest.height / src.height)
 	end
 	
-	local sx, sy = trans:Transform(src.centre.x, src.centre.y)
-	trans:Translate(dest.centre.x - sx, dest.centre.y - sy)
+	local sx, sy = trans:Transform(src.centrex, src.centrey)
+	trans:Translate(dest.centrex - sx, dest.centrey - sy)
 	return trans
 end

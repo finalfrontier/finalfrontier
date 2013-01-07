@@ -17,6 +17,8 @@ _mt.Name = "unnamed"
 _mt.Room = nil
 _mt.Ship = nil
 
+_mt.SGUIName = "page"
+
 function _mt:Initialize()
 	return
 end
@@ -36,14 +38,6 @@ if SERVER then
 		return
 	end
 	
-	function _mt:ClickRoom(screen, ply, room)
-		return true
-	end
-	
-	function _mt:ClickDoor(screen, ply, door)
-		return true
-	end
-	
 	function _mt:GetScreens()
 		return self.Room.Screens
 	end
@@ -53,46 +47,6 @@ if SERVER then
 	end
 elseif CLIENT then
 	_mt.Icon = Material("systems/noicon.png", "smooth")
-
-	_mt.DrawWholeShip = false
-	_mt.ShipMarginLeft = 24
-	_mt.ShipMarginTop = 24
-	_mt.ShipMarginRight = 24
-	_mt.ShipMarginBottom = 24
-
-	_mt.CanClickRooms = false
-	_mt.CanClickDoors = false
-
-	function _mt:NewSession(screen)
-		self._shipTransform = self.Ship:FindTransform(screen,
-			-screen.Width / 2 + self.ShipMarginLeft,
-			-screen.Height / 2 + self.ShipMarginTop + 64,
-			screen.Width - self.ShipMarginLeft - self.ShipMarginRight,
-			screen.Height - self.ShipMarginTop - self.ShipMarginBottom - 64)
-	end
-
-	function _mt:Click(screen, x, y, button)
-		return
-	end
-	
-	function _mt.GetDoorColor(screen, door)
-		return screen:GetDoorColor(door, true)
-	end
-
-	function _mt.GetRoomColor(screen, room)
-		local r, g, b = 32, 32, 32
-		if screen.Room.System.CanClickRooms and screen.IsCursorInsideRoom(room) then
-			r, g, b = r + 32, g + 32, b + 32
-		end
-		return Color(r, g, b, 255)
-	end
-
-	function _mt:DrawGUI(screen)
-		if self.DrawWholeShip then
-			self.Ship:ApplyTransform(self._shipTransform)
-			self.Ship:Draw(screen, self.GetRoomColor, self.GetDoorColor)
-		end
-	end
 end
 
 --function sys.Load()

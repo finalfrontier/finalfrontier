@@ -10,11 +10,15 @@ _mt.b = 0
 _mt._set = false
 
 function _mt:GetSize()
-	return { width = self.r - self.l, height = self.b - self.t }
+	return self.r - self.l, self.b - self.t
 end
 
 function _mt:GetCentre()
-	return { x = (self.r + self.l) / 2, y = (self.b + self.t) / 2 }
+	return (self.r + self.l) / 2, (self.b + self.t) / 2
+end
+
+function _mt:GetRect()
+	return self.l, self.t, self.r - self.l, self.b - self.t
 end
 
 function _mt:AddPoint(x, y)
@@ -39,6 +43,13 @@ function _mt:AddBounds(bounds)
 		if bounds.r > self.r then self.r = bounds.r end
 		if bounds.b > self.b then self.b = bounds.b end
 	end
+end
+
+function _mt:Move(x, y)
+	self.l = self.l + x
+	self.t = self.t + y
+	self.r = self.r + x
+	self.b = self.b + y
 end
 
 function _mt:Equals(bounds)

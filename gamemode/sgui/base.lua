@@ -19,10 +19,7 @@ function GUI:GetRoom()
 end
 
 function GUI:GetShip()
-	if self.Screen.Room then
-		return self.Screen.Room.Ship
-	end
-	return nil
+	return self.Screen.Ship
 end
 
 function GUI:GetSystem()

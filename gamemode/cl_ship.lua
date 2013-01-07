@@ -50,11 +50,19 @@ function _mt:UpdateFromNet()
 	end
 end
 
+function _mt:GetName()
+	return self.Name
+end
+
 function _mt:AddRoom(room)
 	self.Rooms[room.Name] = room
 	self._roomlist[room.Index] = room
 
 	self.Bounds:AddBounds(room.Bounds)
+end
+
+function _mt:GetRooms()
+	return self._roomlist
 end
 
 function _mt:GetRoomByIndex(index)
