@@ -38,6 +38,7 @@ function GUI:GetSystemIcon()
 end
 
 function GUI:GetUsingPlayer()
+	if not self.Screen:GetNWBool("used") then return nil end
 	return self.Screen:GetNWEntity("user")
 end
 

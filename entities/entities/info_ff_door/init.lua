@@ -59,11 +59,17 @@ function ENT:Close()
 end
 
 function ENT:Lock()
-	self._locked = true
+	if not self._locked then
+		self._locked = true
+		self:EmitSound("doors/door_metal_large_close2.wav", SNDLVL_STATIC, 100)
+	end
 end
 
 function ENT:Unlock()
-	self._locked = false
+	if self._locked then
+		self._locked = false
+		self:EmitSound("doors/door_metal_large_open1.wav", SNDLVL_STATIC, 100)
+	end
 end
 
 function ENT:ToggleLock()

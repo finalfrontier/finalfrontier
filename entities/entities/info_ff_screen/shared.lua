@@ -104,7 +104,6 @@ if SERVER then
 		if self:GetNWBool("used", false) then return end
 
 		self:SetNWBool("used", true)
-		self:SetNWFloat("usestart", CurTime())
 		self:SetNWEntity("user", ply)
 		ply:SetNWBool("usingScreen", true)
 		ply:SetNWEntity("screen", self)
@@ -187,7 +186,6 @@ elseif CLIENT then
 	})
 
 	ENT._using = false
-	ENT._usestart = 0
 
 	ENT._lastCursorUpdate = 0
 	ENT._cursorx = 0
@@ -224,10 +222,6 @@ elseif CLIENT then
 		elseif self._using and (not self:GetNWBool("used") or self:GetNWEntity("user") ~= LocalPlayer()) then
 			self._using = false
 		end
-	end
-
-	function ENT:NewSession()
-
 	end
 
 	function ENT:GetCursorPos()
@@ -301,11 +295,6 @@ elseif CLIENT then
 	end
 
 	function ENT:Draw()
-		if self._usestart ~= self:GetNWFloat("usestart", 0) then
-			self._usestart = self:GetNWFloat("usestart", 0)
-			self:NewSession()
-		end
-
 		local ang = self:GetAngles()
 		ang:RotateAroundAxis(ang:Up(), 90)
 		ang:RotateAroundAxis(ang:Forward(), 90)
