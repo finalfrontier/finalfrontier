@@ -156,11 +156,15 @@ end
 
 local ply_mt = FindMetaTable("Player")
 function ply_mt:SetShip(ship)
+	if self._ship == ship then return end
 	if self._ship then
+		print(self:Nick() .. " is leaving " .. self._ship:GetName())
 		self._ship:_removePlayer(self)
 	end
+	print(self:Nick() .. " is boarding " .. ship:GetName())
 	ship:_addPlayer(self)
 	self._ship = ship
+	self:SetNWString("ship", ship:GetName())
 end
 
 function ply_mt:GetShip()
@@ -175,7 +179,7 @@ end
 
 function ENT:_removePlayer(ply)
 	if table.HasValue(self._players, ply) then
-		table.remove(self._players, table.KeyFromValue(ply))
+		table.remove(self._players, table.KeyFromValue(self._players, ply))
 	end
 end
 

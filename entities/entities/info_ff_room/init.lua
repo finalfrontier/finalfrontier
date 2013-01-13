@@ -26,6 +26,8 @@ ENT._temperature = 298
 ENT._airvolume = 1000
 ENT._shields = 1
 
+ENT._players = nil
+
 function ENT:KeyValue(key, value)
 	if key == "ship" then
 		self.ShipName = tostring(value)
@@ -86,6 +88,8 @@ function ENT:InitPostEntity()
 	self._airvolume = self.Volume -- * math.random()
 	self._shields = math.random()
 	self._lastupdate = CurTime()
+
+	self._players = {}
 end
 
 function ENT:Think()
@@ -96,11 +100,23 @@ function ENT:Think()
 	if self.System then self.System:Think(dt) end
 	
 	self._temperature = self._temperature * (1 - TEMPERATURE_LOSS_RATE * self.SurfaceArea * dt)
+
+	local min = Vector(self.Bounds.l, self.Bounds.t, -65536)
+	local max = Vector(self.Bounds.r, self.Bounds.b, 65536)
+
+	for _, ent in pairs(ents.FindInBox(min, max)) do
+		local pos = ent:GetPos()
+		if ent:IsPlayer() and self:IsPointInside(pos.x, pos.y)
+			and ent:GetRoom() ~= self then
+			ent:SetRoom(self)
+		end
+	end
 end
 
 function ENT:AddCorner(index, x, y)
 	self.Corners[index] = { x = x, y = y }
 	self.Bounds:AddPoint(x, y)
+	self.Ship.Bounds:AddPoint(x, y)
 end
 
 function ENT:AddDoor(door)
@@ -175,6 +191,38 @@ end
 function ply_mt:HasDoorPermission(door)
 	return self:HasPermission(door.Rooms[1], permission.ACCESS)
 		or self:HasPermission(door.Rooms[2], permission.ACCESS)
+end
+
+function ply_mt:SetRoom(room)
+	if self._room == room then return end
+	if self._room then
+		--print(self:Nick() .. " is leaving " .. self._room:GetName())
+		self._room:_removePlayer(self)
+	end
+	--print(self:Nick() .. " is entering " .. room:GetName())
+	room:_addPlayer(self)
+	self._room = room
+	self:SetNWInt("room", room.Index)
+end
+
+function ply_mt:GetRoom()
+	return self._room
+end
+
+function ENT:_addPlayer(ply)
+	if not table.HasValue(self._players, ply) then
+		table.insert(self._players, ply)
+	end
+end
+
+function ENT:_removePlayer(ply)
+	if table.HasValue(self._players, ply) then
+		table.remove(self._players, table.KeyFromValue(self._players, ply))
+	end
+end
+
+function ENT:IsPointInside(x, y)
+	return self.Bounds:IsPointInside(x, y)
 end
 
 net.Receive("SetPermission", function(len, ply)

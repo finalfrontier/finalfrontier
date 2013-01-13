@@ -43,6 +43,9 @@ end
 function ships.FindCurrentShip(ply)
 	local pos = ply:GetPos()
 	for _, ship in pairs(ships._dict) do
+		--print(ply:Nick() .. " test " .. ship:GetName() .. ":")
+		--print("  " .. tostring(ply:GetPos()))
+		--print("  " .. tostring(ship.Bounds))
 		if ship:IsPointInside(pos.x, pos.y) then return ship end
 	end
 	return nil

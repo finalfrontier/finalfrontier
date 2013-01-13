@@ -65,6 +65,10 @@ function _mt:IsPointInside(x, y)
 	return true
 end
 
+function _mt:__tostring()
+	return "{(" .. self.l .. "," .. self.t .. "),(" .. self.r .. "," .. self.b .. ")}"
+end
+
 function Bounds(x, y, width, height)
 	local bounds = {}
 	if x then
