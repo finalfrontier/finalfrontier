@@ -19,6 +19,8 @@ function GUI:GetCurrentRoom()
 end
 
 if SERVER then
+	resource.AddFile("materials/playerdot.png")
+
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)
 
@@ -108,6 +110,7 @@ if CLIENT then
 			and IsPointInsidePolyGroup(self._polys, x - xo, y - yo)
 	end
 
+	local PLAYER_DOT = Material("playerdot.png", "smooth")
 	function GUI:Draw()
 		if self._transform then
 			local last, lx, ly = nil, 0, 0
@@ -130,9 +133,25 @@ if CLIENT then
 				surface.SetMaterial(self._room.System.Icon)
 				surface.SetDrawColor(Color(255, 255, 255, 32))
 				surface.DrawTexturedRect(self._iconBounds:GetRect())
-				surface.SetMaterial(WHITE)
+			end
+
+			surface.SetDrawColor(Color(172, 45, 51, 255))
+			surface.SetMaterial(PLAYER_DOT)
+			for _, ply in pairs(player.GetAll()) do
+				if ply:IsInRoom(self._room) then
+					local pos = ply:GetPos()
+					local l, t = self._transform:Transform(pos.x - 32, pos.y - 32)
+					local r, b = self._transform:Transform(pos.x + 32, pos.y + 32)
+					l, r = math.min(l, r), math.max(l, r)
+					t, b = math.min(t, b), math.max(t, b)
+					local ang = ply:EyeAngles().y - self.Screen:GetAngles().y - 90
+					surface.DrawTexturedRectRotated(
+						(l + r) * 0.5, (t + b) * 0.5, r - l, b - t, ang)
+				end
 			end
 		end
+
+		surface.SetMaterial(WHITE)
 		
 		self.Super[BASE].Draw(self)
 	end

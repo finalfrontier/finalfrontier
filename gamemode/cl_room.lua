@@ -82,6 +82,13 @@ function ply_mt:GetRoom()
 	return self:GetShip():GetRoomByIndex(self:GetNWInt("room"))
 end
 
+function ply_mt:IsInRoom(room)
+	if self:GetNWString("ship") == room.Ship.Name
+		and self:GetNWInt("room") == room.Index then
+		return true
+	end
+end
+
 function Room(ship)
 	local room = { Ship = ship }
 

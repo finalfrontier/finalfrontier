@@ -8,7 +8,7 @@ GUI.DoorViews = nil
 function GUI:Enter()
 	self.Super[BASE].Enter(self)
 
-	self.RoomView = sgui.Create(self, "roomview")
+	self.RoomView = sgui.Create(self.Screen, "roomview")
 	self.RoomView:SetCurrentRoom(self:GetRoom())
 
 	self.DoorViews = {}
@@ -19,6 +19,8 @@ function GUI:Enter()
 			self.DoorViews[door] = doorview
 		end
 	end
+
+	self:AddChild(self.RoomView)
 
 	local margin = 16
 
