@@ -140,8 +140,8 @@ if CLIENT then
 			for _, ply in pairs(player.GetAll()) do
 				if ply:IsInRoom(self._room) then
 					local pos = ply:GetPos()
-					local l, t = self._transform:Transform(pos.x - 32, pos.y - 32)
-					local r, b = self._transform:Transform(pos.x + 32, pos.y + 32)
+					local l, t = self._transform:Transform(pos.x - 48, pos.y - 48)
+					local r, b = self._transform:Transform(pos.x + 48, pos.y + 48)
 					l, r = math.min(l, r), math.max(l, r)
 					t, b = math.min(t, b), math.max(t, b)
 					local ang = ply:EyeAngles().y - self.Screen:GetAngles().y - 90

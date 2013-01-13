@@ -25,18 +25,18 @@ function GUI:SetCurrentShip(ship)
 		self._doors = nil
 	else
 		print(ship:GetName())
-		self._rooms = {}
-		for _, room in ipairs(ship:GetRooms()) do
-			local roomview = sgui.Create(self, "roomview")
-			roomview:SetCurrentRoom(room)
-			self._rooms[room] = roomview
-		end
-
 		self._doors = {}
 		for _, door in ipairs(ship.Doors) do
 			local doorview = sgui.Create(self, "doorview")
 			doorview:SetCurrentDoor(door)
 			self._doors[door] = doorview
+		end
+
+		self._rooms = {}
+		for _, room in ipairs(ship:GetRooms()) do
+			local roomview = sgui.Create(self, "roomview")
+			roomview:SetCurrentRoom(room)
+			self._rooms[room] = roomview
 		end
 
 		if CLIENT then

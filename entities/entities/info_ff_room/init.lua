@@ -141,7 +141,7 @@ function ENT:Think()
 
 		if dmg then
 			for _, ply in pairs(self._players) do
-				if ply:IsValid() and ply:Alive() then
+				if ply and ply:IsValid() and ply:Alive() then
 					ply:TakeDamageInfo(dmg)
 					if sounds then
 						ply:EmitSound(table.Random(sounds), SNDLVL_IDLE, 100)
@@ -259,6 +259,10 @@ function ENT:_removePlayer(ply)
 	if table.HasValue(self._players, ply) then
 		table.remove(self._players, table.KeyFromValue(self._players, ply))
 	end
+end
+
+function ENT:GetPlayers()
+	return self._players
 end
 
 function ENT:IsPointInside(x, y)

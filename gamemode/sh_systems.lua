@@ -6,9 +6,11 @@ permission.ACCESS	= 1
 permission.SYSTEM 	= 2
 permission.SECURITY = 3
 
-sys = {}
-sys._dict = {}
-sys._loaded = false
+if not sys then
+	sys = {}
+	sys._dict = {}
+	sys._loaded = false
+end
 
 local _mt = {}
 _mt.__index = _mt

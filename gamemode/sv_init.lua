@@ -54,3 +54,14 @@ function GM:Think()
 		ships.SendRoomStatesUpdate(ply)
 	end
 end
+
+function GM:SetupPlayerVisibility(ply)
+	local ship = ply:GetShip()
+	if not ship then return end
+
+	for _, room in pairs(ship.Rooms) do
+		if #room:GetPlayers() > 0 then
+			AddOriginToPVS(room:GetPos())
+		end
+	end
+end
