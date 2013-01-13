@@ -25,6 +25,7 @@ function _mt:UpdateFromNet()
 		local index = net.ReadInt(8)
 		if index == 0 then break end
 		local room = self._roomlist[index]
+		if not room then return end
 		if timestamp > room._lastUpdate then
 			room._oldTemp = room._temperature
 			room._oldAtmo = room._atmosphere
@@ -96,6 +97,12 @@ function _mt:Draw(screen, roomColorFunc, doorColorFunc)
 	for _, door in ipairs(self.Doors) do
 		door:Draw(screen, doorColorFunc)
 	end
+end
+
+local ply_mt = FindMetaTable("Player")
+function ply_mt:GetShip()
+	if not self:GetNWString("ship") then return nil end
+	return ships.FindByName(self:GetNWString("ship"))
 end
 
 function Ship()

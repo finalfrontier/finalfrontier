@@ -158,10 +158,10 @@ local ply_mt = FindMetaTable("Player")
 function ply_mt:SetShip(ship)
 	if self._ship == ship then return end
 	if self._ship then
-		print(self:Nick() .. " is leaving " .. self._ship:GetName())
+		--print(self:Nick() .. " is leaving " .. self._ship:GetName())
 		self._ship:_removePlayer(self)
 	end
-	print(self:Nick() .. " is boarding " .. ship:GetName())
+	--print(self:Nick() .. " is boarding " .. ship:GetName())
 	ship:_addPlayer(self)
 	self._ship = ship
 	self:SetNWString("ship", ship:GetName())

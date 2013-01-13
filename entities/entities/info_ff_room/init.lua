@@ -1,4 +1,5 @@
 local TEMPERATURE_LOSS_RATE = 0.00000382
+local DAMAGE_INTERVAL = 1.0
 
 util.AddNetworkString("SetPermission")
 
@@ -21,6 +22,7 @@ ENT.Doors = nil
 ENT.Bounds = nil
 
 ENT._lastupdate = 0
+ENT._lastdamage = 0
 
 ENT._temperature = 298
 ENT._airvolume = 1000
@@ -76,8 +78,13 @@ function ENT:InitPostEntity()
 	end
 	
 	if self.System == "medical" then
+		self._airvolume = self.Volume -- * math.random()
 		self._temperature = 600
+	elseif self.System == "transporter" then
+		self._temperature = 300
+		self._airvolume = 0
 	else
+		self._airvolume = self.Volume -- * math.random()
 		self._temperature = 300
 	end
 	
@@ -85,12 +92,17 @@ function ENT:InitPostEntity()
 		self.System = sys.Create(self.System, self)
 	end
 	
-	self._airvolume = self.Volume -- * math.random()
 	self._shields = math.random()
 	self._lastupdate = CurTime()
 
 	self._players = {}
 end
+
+local DROWN_SOUNDS = {
+	"npc/combine_soldier/pain1.wav",
+	"npc/combine_soldier/pain2.wav",
+	"npc/combine_soldier/pain3.wav"
+}
 
 function ENT:Think()
 	local curTime = CurTime()
@@ -110,6 +122,34 @@ function ENT:Think()
 			and ent:GetRoom() ~= self then
 			ent:SetRoom(self)
 		end
+	end
+
+	if CurTime() - self._lastdamage > DAMAGE_INTERVAL then
+		local dmg = nil
+		local sounds = nil
+
+		if self:GetTemperature() > 350 then
+			dmg = DamageInfo()
+			dmg:SetDamageType(DMG_BURN)
+			dmg:SetDamage(math.min(math.ceil((self:GetTemperature() - 350) / 25), 10))
+		elseif self:GetAtmosphere() < 0.75 then
+			dmg = DamageInfo()
+			dmg:SetDamageType(DMG_POISON)
+			dmg:SetDamage(math.min(math.ceil((0.75 - self:GetAtmosphere()) * 10), 10))
+			sounds = DROWN_SOUNDS
+		end
+
+		if dmg then
+			for _, ply in pairs(self._players) do
+				if ply:IsValid() and ply:Alive() then
+					ply:TakeDamageInfo(dmg)
+					if sounds then
+						ply:EmitSound(table.Random(sounds), SNDLVL_IDLE, 100)
+					end
+				end
+			end
+		end
+		self._lastdamage = CurTime()
 	end
 end
 

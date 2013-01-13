@@ -76,6 +76,12 @@ function ply_mt:HasDoorPermission(door)
 		or self:HasPermission(door.Rooms[2], permission.ACCESS)
 end
 
+function ply_mt:GetRoom()
+	if not self:GetNWInt("room") then return nil end
+	if not self:GetNWString("ship") then return nil end
+	return self:GetShip():GetRoomByIndex(self:GetNWInt("room"))
+end
+
 function Room(ship)
 	local room = { Ship = ship }
 
