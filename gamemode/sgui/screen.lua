@@ -28,7 +28,7 @@ function GUI:Initialize()
 		[page.STATUS]   = sgui.Create(self.Screen, "statuspage"),
 		[page.ACCESS]   = sgui.Create(self.Screen, "accesspage"),
 		[page.SECURITY] = sgui.Create(self.Screen, "securitypage"),
-		[page.OVERRIDE] = sgui.Create(self.Screen, "page")
+		[page.OVERRIDE] = sgui.Create(self.Screen, "overridepage")
 	}
 
 	if self:GetSystem() then
@@ -114,7 +114,7 @@ end
 if CLIENT then
 	function GUI:UpdateLayout(layout)
 		self:SetCurrentPage(layout.curpage)
-		
+
 		self.Super[BASE].UpdateLayout(self, layout)
 	end
 end
