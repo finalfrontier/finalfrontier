@@ -113,8 +113,8 @@ end
 
 if CLIENT then
 	function GUI:UpdateLayout(layout)
-		self.Super[BASE].UpdateLayout(self, layout)
-
 		self:SetCurrentPage(layout.curpage)
+		
+		self.Super[BASE].UpdateLayout(self, layout)
 	end
 end

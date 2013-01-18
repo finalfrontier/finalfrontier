@@ -11,9 +11,8 @@ GUI.Color = Color(191, 191, 191, 255)
 function GUI:OnClick(button)
 	self.Super[BASE].OnClick(self, button)
 
-	self:GetParent():SetCurrent(self)
-
-	if SERVER then
+	if SERVER and self:GetParent():GetCurrent() ~= self then
+		self:GetParent():SetCurrent(self)
 		self.Screen:UpdateLayout()
 	end
 end
