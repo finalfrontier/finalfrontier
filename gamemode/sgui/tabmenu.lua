@@ -42,7 +42,9 @@ function GUI:GetCurrent()
 end
 
 function GUI:OnChangeCurrent()
-	return
+	if DEBUG then
+		print("tabmenu -> " .. tostring(self._current))
+	end
 end
 
 function GUI:SetCurrentIndex(index)

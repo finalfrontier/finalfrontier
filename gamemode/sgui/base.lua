@@ -202,6 +202,7 @@ if DEBUG then
 end
 			net.Start("Click")
 			net.WriteEntity(self.Screen)
+			net.WriteFloat(self.Screen:GetNWFloat("layout"))
 			self:SendIDHierarchy()
 			net.WriteInt(0, 16)
 			net.WriteInt(button, 8)
@@ -267,6 +268,8 @@ if SERVER then
 
 	net.Receive("Click", function(len, ply)
 		local screen = net.ReadEntity()
+		local layoutTime = net.ReadFloat()
+		if layoutTime < screen:GetNWFloat("layout") then return end
 		if screen:GetNWEntity("user") == ply then
 			local element = nil
 			while true do

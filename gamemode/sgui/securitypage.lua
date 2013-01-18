@@ -58,7 +58,7 @@ if SERVER then
 			end
 
 			for i, ply in ipairs(self.PlayerList) do
-				layout.players["p" .. i] = ply
+				layout.players[i] = ply
 			end
 		end
 	end	
@@ -72,9 +72,7 @@ if CLIENT then
 			end
 
 			local changed = false
-			for k, ply in pairs(layout.players) do
-				local i = tonumber(string.sub(k, 2))
-
+			for i, ply in pairs(layout.players) do
 				if not self.PlayerList[i] or self.PlayerList[i] ~= ply then
 					changed = true
 					self.PlayerList[i] = ply

@@ -75,6 +75,7 @@ if SERVER then
 	end
 
 	function ENT:UpdateLayout()
+		if not self.UI then return end
 		if not self.Layout then self.Layout = {} end
 
 		self.UI:UpdateLayout(self.Layout)

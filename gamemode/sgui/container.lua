@@ -103,9 +103,8 @@ if CLIENT then
 		self.Super[BASE].UpdateLayout(self, layout)
 
 		for i, child in ipairs(self:GetChildren()) do
-			local name = "c_" .. i
-			if layout[name] then
-				child:UpdateLayout(layout[name])
+			if layout[i] then
+				child:UpdateLayout(layout[i])
 			end
 		end
 	end
@@ -116,14 +115,13 @@ if SERVER then
 		self.Super[BASE].UpdateLayout(self, layout)
 
 		for i, child in ipairs(self:GetChildren()) do
-			local name = "c_" .. i
-			if not layout[name] then layout[name] = {} end
-			child:UpdateLayout(layout[name])
+			if not layout[i] then layout[i] = {} end
+			child:UpdateLayout(layout[i])
 		end
 
 		local i = #self:GetChildren() + 1
-		while layout["c_" .. i] do
-			layout["c_" .. i] = nil
+		while layout[i] do
+			layout[i] = nil
 			i = i + 1
 		end
 	end

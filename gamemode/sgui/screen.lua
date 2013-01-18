@@ -47,7 +47,9 @@ function GUI:Initialize()
 	self.TabMenu:AddTab("OVERRIDE")
 
 	if SERVER then
+		local old = self.TabMenu.OnChangeCurrent
 		self.TabMenu.OnChangeCurrent = function(tabmenu)
+			old(tabmenu)
 			self:SetCurrentPage(page[tabmenu:GetCurrent().Text])
 		end
 	end
@@ -93,6 +95,10 @@ function GUI:SetCurrentPage(newpage)
 	end
 
 	self.TabMenu:SetCurrent(table.KeyFromValue(page, newpage))
+
+	if SERVER then
+		self.Screen:UpdateLayout()
+	end
 end
 
 if SERVER then
