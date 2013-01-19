@@ -9,8 +9,11 @@ page.OVERRIDE = 5
 
 GUI.BaseName = BASE
 
+GUI.Permission = 0
+
 GUI.Pages = nil
 GUI.TabMenu = nil
+GUI.Tabs = nil
 
 GUI.TabHeight = 64
 GUI.TabMargin = 8
@@ -24,27 +27,27 @@ function GUI:Initialize()
 	self:SetHeight(self.Screen.Height)
 	self:SetCentre(0, 0)
 
-	self.Pages = {
-		[page.STATUS]   = sgui.Create(self.Screen, "statuspage"),
-		[page.ACCESS]   = sgui.Create(self.Screen, "accesspage"),
-		[page.SECURITY] = sgui.Create(self.Screen, "securitypage"),
-		[page.OVERRIDE] = sgui.Create(self.Screen, "overridepage")
-	}
-
+	self.Pages = {}
+	self.Pages[page.STATUS] = sgui.Create(self.Screen, "statuspage")
+	self.Pages[page.ACCESS] = sgui.Create(self.Screen, "accesspage")
 	if self:GetSystem() then
 		self.Pages[page.SYSTEM] = sgui.Create(self.Screen, self:GetSystem().SGUIName)
 	end
+	self.Pages[page.SECURITY] = sgui.Create(self.Screen, "securitypage")
+	self.Pages[page.OVERRIDE] = sgui.Create(self.Screen, "overridepage")
 
 	self.TabMenu = sgui.Create(self.Screen, "tabmenu")
 	self.TabMenu:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)
 	self.TabMenu:SetCentre(self:GetWidth() / 2, self.TabHeight / 2 + self.TabMargin)
 
-	self.TabMenu:AddTab("ACCESS")
+	self.Tabs = {}
+	self.Tabs[page.ACCESS] = self.TabMenu:AddTab("ACCESS")
 	if self:GetSystem() then
-		self.TabMenu:AddTab("SYSTEM")
+		self.Tabs[page.SYSTEM] = self.TabMenu:AddTab("SYSTEM")
 	end
-	self.TabMenu:AddTab("SECURITY")
-	self.TabMenu:AddTab("OVERRIDE")
+	self.Tabs[page.SECURITY] = self.TabMenu:AddTab("SECURITY")
+	self.Tabs[page.OVERRIDE] = self.TabMenu:AddTab("OVERRIDE")
+
 
 	if SERVER then
 		local old = self.TabMenu.OnChangeCurrent
@@ -54,7 +57,15 @@ function GUI:Initialize()
 		end
 	end
 
+	self:UpdatePermissions()
 	self:SetCurrentPage(page.STATUS)
+end
+
+function GUI:UpdatePermissions()
+	if self:GetSystem() then
+		self.Tabs[page.SYSTEM].CanClick = self.Permission >= permission.SYSTEM
+	end
+	self.Tabs[page.SECURITY].CanClick = self.Permission >= permission.SECURITY
 end
 
 function GUI:GetCurrentPage()
@@ -94,7 +105,7 @@ function GUI:SetCurrentPage(newpage)
 		curpage:Enter()
 	end
 
-	self.TabMenu:SetCurrent(table.KeyFromValue(page, newpage))
+	self.TabMenu:SetCurrent(self.Tabs[newpage])
 
 	if SERVER then
 		self.Screen:UpdateLayout()
@@ -105,6 +116,8 @@ if SERVER then
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)
 
+		layout.permission = self.Permission
+
 		if layout.curpage ~= self._curpage then
 			layout.curpage = self._curpage
 		end
@@ -113,6 +126,11 @@ end
 
 if CLIENT then
 	function GUI:UpdateLayout(layout)
+		if self.Permission ~= layout.permission then
+			self.Permission = layout.permission
+			self:UpdatePermissions()
+		end
+
 		self:SetCurrentPage(layout.curpage)
 
 		self.Super[BASE].UpdateLayout(self, layout)

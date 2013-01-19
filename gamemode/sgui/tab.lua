@@ -7,6 +7,7 @@ GUI.CanClick = true
 
 GUI.Text = "UNNAMED"
 GUI.Color = Color(191, 191, 191, 255)
+GUI.DisabledColor = Color(64, 64, 64, 255)
 
 function GUI:OnClick(button)
 	self.Super[BASE].OnClick(self, button)
@@ -27,7 +28,11 @@ if CLIENT then
 			if self.CanClick and self:IsCursorInside() then
 				surface.DrawOutlinedRect(self:GetGlobalRect())
 			end
-			surface.SetTextColor(self.Color)
+			if self.CanClick then
+				surface.SetTextColor(self.Color)
+			else
+				surface.SetTextColor(self.DisabledColor)
+			end
 		end
 
 		local x, y = self:GetGlobalCentre()
