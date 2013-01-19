@@ -58,6 +58,12 @@ function GUI:Enter()
 			node:SetCentre(pos.x, pos.y)
 			node.Label = NODE_LABELS[i]
 
+			local index = i
+			node.OnClick = function(node, button)
+				self.Screen:SwapOverrideNodes(table.KeyFromValue(self.CurrSequence, index))
+				self.Screen:UpdateLayout()
+			end
+
 			self.Nodes[i] = node
 		end
 	end
@@ -99,11 +105,16 @@ if CLIENT then
 
 	function GUI:Draw()
 		if self.CurrSequence then
+			local freeNode = self:GetFreeNode()
+			freeNode.Enabled = false
+			freeNode.CanClick = false
 			local last = self.Start
 			local toSwap = nil
 			surface.SetDrawColor(Color(255, 255, 255, 32))
 			for i, index in ipairs(self.CurrSequence) do
 				local node = self.Nodes[index]
+				node.Enabled = true
+				node.CanClick = true
 				self:DrawConnectorBetween(last, node)
 				last = node
 				if not toSwap and node:IsCursorInside() then
@@ -114,8 +125,8 @@ if CLIENT then
 			end
 			self:DrawConnectorBetween(last, self.End)
 			if toSwap then
-				surface.SetDrawColor(Color(45, 51, 172, 32))
-				local freeNode = self:GetFreeNode()
+				surface.SetDrawColor(Color(255, 255, 255,
+					math.cos(CurTime() * math.pi * 2) * 24 + 32))
 				self:DrawConnectorBetween(toSwap.last, freeNode)
 				self:DrawConnectorBetween(freeNode, toSwap.next)
 			end
