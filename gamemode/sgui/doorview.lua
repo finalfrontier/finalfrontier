@@ -140,6 +140,13 @@ if CLIENT then
 				surface.DrawLine(lx, ly, v.x, v.y)
 				lx, ly = v.x, v.y
 			end
+			if self.Enabled and not self.CanClick then
+				surface.SetDrawColor(Color(255, 255, 255, 32))
+				surface.DrawLine(self._poly[1].x, self._poly[1].y,
+					self._poly[3].x, self._poly[3].y)
+				surface.DrawLine(self._poly[2].x, self._poly[2].y,
+					self._poly[4].x, self._poly[4].y)
+			end
 		end
 
 		self.Super[BASE].Draw(self)
