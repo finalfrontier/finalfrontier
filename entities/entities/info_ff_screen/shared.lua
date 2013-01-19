@@ -24,6 +24,10 @@ if SERVER then
 	util.AddNetworkString("CursorPos")
 	
 	ENT.RoomName = nil
+	ENT.OverrideNodeCount = 8
+
+	ENT.OverrideNodePositions = nil
+	ENT.OverrideSequence = nil
 
 	ENT.NextGUIID = 1
 
@@ -70,8 +74,55 @@ if SERVER then
 		self:SetNWBool("used", false)
 		self:SetNWEntity("user", nil)
 
+		self:GenerateOverrideSequence()
+
 		self.UI = sgui.Create(self, MAIN_GUI_CLASS)
 		self:UpdateLayout()
+	end
+
+	function ENT:GenerateOverrideNodePositions(bounds)
+		self.OverrideNodePositions = {}
+		local left, top, width, height = bounds:GetRect()
+		local mindist = width / 2
+		for i = 1, self.OverrideNodeCount do
+			while true do
+				local x = left + math.random() * width
+				local y = top + math.random() * height
+				local canPlace = true
+				for k, pos in pairs(self.OverrideNodePositions) do
+					local xd, yd = pos.x - x, pos.y - y
+					if xd * xd + yd * yd < mindist * mindist then
+						canPlace = false
+						break
+					end
+				end
+				if canPlace then 
+					self.OverrideNodePositions[i] = { x = x, y = y }
+					break
+				end
+				if mindist > width / 32 then
+					mindist = mindist - width / 256
+				end
+			end
+		end
+	end
+
+	function ENT:GenerateOverrideSequence()
+		local temp = {}
+		for i = 1, self.OverrideNodeCount do
+			if i > 1 and i < self.OverrideNodeCount then
+				table.insert(temp, i)
+			end
+		end
+
+		table.remove(temp, math.random(#temp))
+
+		self.OverrideSequence = {}
+		while #temp > 0 do
+			local index = math.random(#temp)
+			table.insert(self.OverrideSequence, temp[index])
+			table.remove(temp, index)
+		end
 	end
 
 	function ENT:UpdateLayout()

@@ -5,6 +5,8 @@ GUI.BaseName = BASE
 GUI.CanClick = false
 GUI.Enabled = false
 
+GUI.Label = "X"
+
 if CLIENT then
 	local GLOW_STATES = {
 		Color(172, 45, 51, 255),
@@ -18,7 +20,6 @@ if CLIENT then
 	GUI.EnabledColor = Color(191, 191, 191, 255)
 	GUI.SelectedColor = Color(255, 255, 255, 255)
 	GUI.TextColor = Color(0, 0, 0, 255)
-	GUI.Label = "X"
 
 	GUI._glowstart = 0
 	GUI._glowstate = 0
