@@ -5,7 +5,7 @@ GUI.BaseName = BASE
 GUI.CanClick = true
 GUI.Enabled = true
 
-GUI.Label = "X"
+GUI.Label = nil
 
 if CLIENT then
 	local GLOW_STATES = {
@@ -83,9 +83,11 @@ if CLIENT then
 		surface.SetDrawColor(color)
 		surface.DrawCircle(x, y, rad - 6)
 
-		surface.SetTextColor(self.TextColor)
-		surface.SetFont("CTextSmall")
-		surface.DrawCentredText(x, y, self.Label)
+		if self.Label then
+			surface.SetTextColor(self.TextColor)
+			surface.SetFont("CTextSmall")
+			surface.DrawCentredText(x, y, self.Label)
+		end
 
 		self.Super[BASE].Draw(self)
 	end

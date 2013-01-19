@@ -24,10 +24,11 @@ if SERVER then
 	util.AddNetworkString("CursorPos")
 	
 	ENT.RoomName = nil
-	ENT.OverrideNodeCount = 8
+	ENT.OverrideNodeCount = 4
 
 	ENT.OverrideNodePositions = nil
-	ENT.OverrideSequence = nil
+	ENT.OverrideGoalSequence = nil
+	ENT.OverrideCurrSequence = nil
 
 	ENT.NextGUIID = 1
 	ENT.FreeGUIIDs = nil
@@ -76,6 +77,7 @@ if SERVER then
 		self:SetNWEntity("user", nil)
 
 		self:GenerateOverrideSequence()
+		self:ShuffleCurrentOverrideSequence()
 
 		self.FreeGUIIDs = {}
 
@@ -130,18 +132,49 @@ if SERVER then
 	function ENT:GenerateOverrideSequence()
 		local temp = {}
 		for i = 1, self.OverrideNodeCount do
-			if i > 1 and i < self.OverrideNodeCount then
-				table.insert(temp, i)
-			end
+			table.insert(temp, i)
 		end
 
 		table.remove(temp, math.random(#temp))
 
-		self.OverrideSequence = {}
+		self.OverrideGoalSequence = {}
+		self.OverrideCurrSequence = {}
 		while #temp > 0 do
 			local index = math.random(#temp)
-			table.insert(self.OverrideSequence, temp[index])
+			table.insert(self.OverrideGoalSequence, temp[index])
+			table.insert(self.OverrideCurrSequence, temp[index])
 			table.remove(temp, index)
+		end
+	end
+
+	function ENT:SwapOverrideNodes(index)
+		if index < 1 or index > #self.OverrideCurrSequence then return end
+		for i = 1, self.OverrideNodeCount do
+			if not table.HasValue(self.OverrideCurrSequence, i) then
+				self.OverrideCurrSequence[index] = i
+				break
+			end
+		end
+	end
+
+	function ENT:IsOverrideWellShuffled()
+		local correct = 0
+		local limit = 1
+		for i = 1, #self.OverrideGoalSequence do
+			if self.OverrideGoalSequence[i] == self.OverrideCurrSequence[i] then
+				correct = correct + 1
+				if correct > limit then return false end
+			end
+		end
+
+		return true
+	end
+
+	function ENT:ShuffleCurrentOverrideSequence()
+		local tries = 0
+		while not self:IsOverrideWellShuffled() and tries < 512 do
+			self:SwapOverrideNodes(math.random(1, #self.OverrideCurrSequence))
+			tries = tries + 1
 		end
 	end
 
