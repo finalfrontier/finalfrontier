@@ -252,6 +252,16 @@ end
 end
 
 if SERVER then
+	function GUI:AllocateNewID()
+		self._id = self.Screen.NextGUIID
+		self.Screen.NextGUIID = self.Screen.NextGUIID + 1
+	end
+
+	function GUI:InvalidateID()
+		self.Screen:FreeGUIID(self._id)
+		self._id = 0
+	end
+
 	function GUI:UpdateLayout(layout)
 		layout.id = self._id
 		if self.SyncBounds then

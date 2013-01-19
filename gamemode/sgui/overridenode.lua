@@ -2,8 +2,8 @@ local BASE = "page"
 
 GUI.BaseName = BASE
 
-GUI.CanClick = false
-GUI.Enabled = false
+GUI.CanClick = true
+GUI.Enabled = true
 
 GUI.Label = "X"
 

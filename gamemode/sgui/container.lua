@@ -29,6 +29,10 @@ function GUI:AddChild(child)
 	table.insert(self._children, child)
 	child._parent = self
 
+	if SERVER and self._id > 0 then
+		child:AllocateNewID()
+	end
+
 	if child:GetBounds() then
 		child:UpdateGlobalBounds()
 	end
@@ -38,15 +42,17 @@ function GUI:RemoveChild(child)
 	if table.HasValue(self._children, child) then
 		table.RemoveByValue(self._children, child)
 		child._parent = nil
+
+		if SERVER then
+			child:InvalidateID()
+		end
 	end
 end
 
 function GUI:RemoveAllChildren()
-	for _, child in pairs(self._children) do
-		child._parent = nil
+	while #self._children > 0 do
+		self:RemoveChild(self._children[#self._children])
 	end
-
-	self._children = {}
 end
 
 function GUI:GetChild(id)
@@ -111,6 +117,26 @@ if CLIENT then
 end
 
 if SERVER then
+	function GUI:AllocateNewID()
+		self.Super[BASE].AllocateNewID(self)
+
+		if not self._children then return end
+
+		for _, child in ipairs(self._children) do
+			child:AllocateNewID()
+		end
+	end
+	
+	function GUI:InvalidateID()
+		self.Super[BASE].InvalidateID(self)
+
+		if not self._children then return end
+
+		for _, child in ipairs(self._children) do
+			child:InvalidateID()
+		end
+	end
+
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)
 

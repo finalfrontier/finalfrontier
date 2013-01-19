@@ -30,6 +30,7 @@ if SERVER then
 	ENT.OverrideSequence = nil
 
 	ENT.NextGUIID = 1
+	ENT.FreeGUIIDs = nil
 
 	function ENT:KeyValue(key, value)
 		if key == "room" then
@@ -76,8 +77,24 @@ if SERVER then
 
 		self:GenerateOverrideSequence()
 
+		self.FreeGUIIDs = {}
+
 		self.UI = sgui.Create(self, MAIN_GUI_CLASS)
+		self.UI:AllocateNewID()
 		self:UpdateLayout()
+	end
+
+	function ENT:FreeGUIID(id)
+		if id == self.NextGUIID - 1 then
+			self.NextGUIID = id
+			while #self.FreeGUIIDs > 0 and self.FreeGUIIDs[#self.FreeGUIIDs] == id - 1 do
+				table.remove(self.FreeGUIIDs, #self.FreeGUIIDs)
+				id = id - 1
+				self.NextGUIID = id
+			end
+		else
+			table.insert(self.FreeGUIIDs, id)
+		end
 	end
 
 	function ENT:GenerateOverrideNodePositions(bounds)

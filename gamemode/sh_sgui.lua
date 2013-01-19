@@ -73,10 +73,6 @@ function sgui.Create(parent, name)
 		end
 
 		local element = { Screen = screen }
-		if SERVER then
-			element._id = screen.NextGUIID
-			screen.NextGUIID = screen.NextGUIID + 1
-		end
 
 		setmetatable(element, sgui._dict[name])
 
