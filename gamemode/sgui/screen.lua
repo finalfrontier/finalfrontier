@@ -30,7 +30,7 @@ function GUI:Initialize()
 	self.Pages = {}
 	self.Pages[page.STATUS] = sgui.Create(self.Screen, "statuspage")
 	self.Pages[page.ACCESS] = sgui.Create(self.Screen, "accesspage")
-	if self:GetSystem() then
+	if self:GetSystem() and self:GetSystem().SGUIName ~= "page" then
 		self.Pages[page.SYSTEM] = sgui.Create(self.Screen, self:GetSystem().SGUIName)
 	end
 	self.Pages[page.SECURITY] = sgui.Create(self.Screen, "securitypage")
@@ -42,7 +42,7 @@ function GUI:Initialize()
 
 	self.Tabs = {}
 	self.Tabs[page.ACCESS] = self.TabMenu:AddTab("ACCESS")
-	if self:GetSystem() then
+	if self.Pages[page.SYSTEM] then
 		self.Tabs[page.SYSTEM] = self.TabMenu:AddTab("SYSTEM")
 	end
 	self.Tabs[page.SECURITY] = self.TabMenu:AddTab("SECURITY")
@@ -62,7 +62,7 @@ function GUI:Initialize()
 end
 
 function GUI:UpdatePermissions()
-	if self:GetSystem() then
+	if self.Pages[page.SYSTEM] then
 		self.Tabs[page.SYSTEM].CanClick = self.Permission >= permission.SYSTEM
 	end
 	self.Tabs[page.SECURITY].CanClick = self.Permission >= permission.SECURITY

@@ -45,6 +45,14 @@ function GUI:SetCurrentShip(ship)
 	end
 end
 
+function GUI:GetRoomElements()
+	return self._rooms
+end
+
+function GUI:GetDoorElements()
+	return self._doors
+end
+
 if SERVER then
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)

@@ -42,6 +42,11 @@ function GUI:Enter()
 	self.ShipView = sgui.Create(self, "shipview")
 	self.ShipView:SetCurrentShip(self:GetShip())
 
+	for _, door in pairs(self.ShipView:GetDoorElements()) do
+		door.Enabled = true
+		door.NeedsPermission = false
+	end
+
 	local margin = 16
 	local buttonHeight = 48
 

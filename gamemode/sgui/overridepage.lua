@@ -16,6 +16,8 @@ GUI.Nodes = nil
 GUI.CurrSequence = nil
 GUI.CheckSequence = nil
 
+GUI.PulseTime = 0
+
 GUI.Overriding = false
 GUI.OverrideStartTime = 0
 GUI.TimePerNode = 1
@@ -37,11 +39,16 @@ function GUI:Enter()
 	self.OverrideButton = sgui.Create(self, "button")
 	self.OverrideButton:SetSize(w - 32, 48)
 	self.OverrideButton:SetCentre(w / 2, h - 24 - 16)
-	self.OverrideButton.Text = "Test Override Sequence"
 
 	if SERVER then
 		self.OverrideButton.OnClick = function(btn, button)
-			self:StartOverriding()
+			if self:GetPermission() < permission.SECURITY then
+				self:StartOverriding()
+			else
+				self.Screen:SetOverrideSequence()
+				self.PulseTime = CurTime()
+				self.Screen:UpdateLayout()
+			end
 		end
 	end
 
@@ -89,12 +96,6 @@ function GUI:Enter()
 	end
 end
 
-function GUI:Leave()
-	self.Super[BASE].Leave(self)
-
-	self.Nodes = nil
-end
-
 if SERVER then
 	function GUI:FindCheckSequence()
 		if not self.CheckSequence then self.CheckSequence = {} end
@@ -133,11 +134,29 @@ if SERVER then
 			self.Screen:UpdateLayout()
 
 			timer.Simple(self.TimePerNode * #self.Nodes, function()
-				self.Overriding = false
-				self.OverrideButton.CanClick = true
-
-				self.Screen:UpdateLayout()
+				self:StopOverriding()
 			end)
+		end
+	end
+
+	function GUI:StopOverriding()
+		if self.Overriding then
+			self.Overriding = false
+			self.OverrideButton.CanClick = true
+
+			local overridden = true
+			for i, s in ipairs(self.CurrSequence) do
+				if self.Screen.OverrideGoalSequence[i] ~= s then
+					overridden = false
+				end
+			end
+			if overridden then
+				self.PulseTime = CurTime()
+				self:GetParent().Permission = permission.SECURITY
+				self:GetParent():UpdatePermissions()
+			end
+
+			self.Screen:UpdateLayout()
 		end
 	end
 
@@ -155,8 +174,8 @@ if SERVER then
 			end
 		end
 
-		if self.Screen.OverrideCurrSequence then
-			layout.sequence = self.Screen.OverrideCurrSequence
+		if self.CurrSequence then
+			layout.sequence = self.CurrSequence
 		end
 
 		layout.ovrd = self.Overriding
@@ -169,6 +188,7 @@ if SERVER then
 		end
 
 		layout.otpn = self.TimePerNode
+		layout.pulsetime = self.PulseTime
 	end	
 end
 
@@ -207,22 +227,24 @@ if CLIENT then
 				self:DrawConnectorBetween(freeNode, toSwap.next)
 			end
 
-			local dt = (CurTime() - self.OverrideStartTime) / self.TimePerNode
-			local ni = math.floor(dt)
-			dt = dt - ni
-			if ni >= 0 and ni <= #self.CurrSequence then
-				local last = self.Nodes[self.CurrSequence[ni]] or self.Start
-				local next = self.Nodes[self.CurrSequence[ni + 1]] or self.End
-				if last ~= self.Start and not last:IsGlowing() then
-					last:StartGlow(self.CheckSequence[ni] + 1)
+			if self.CheckSequence then
+				local dt = (CurTime() - self.OverrideStartTime) / self.TimePerNode
+				local ni = math.floor(dt)
+				dt = dt - ni
+				if ni >= 0 and ni <= #self.CurrSequence then
+					local last = self.Nodes[self.CurrSequence[ni]] or self.Start
+					local next = self.Nodes[self.CurrSequence[ni + 1]] or self.End
+					if last ~= self.Start and not last:IsGlowing() then
+						last:StartGlow(self.CheckSequence[ni] + 1)
+					end
+					local lx, ly = last:GetGlobalCentre()
+					local nx, ny = next:GetGlobalCentre()
+					local x = lx + (nx - lx) * dt
+					local y = ly + (ny - ly) * dt
+					surface.SetDrawColor(Color(255, 255, 255, 255))
+					surface.DrawCircle(x, y, math.cos((CurTime() - self.OverrideStartTime)
+						* math.pi * 2 / self.TimePerNode) * 4 + 16)
 				end
-				local lx, ly = last:GetGlobalCentre()
-				local nx, ny = next:GetGlobalCentre()
-				local x = lx + (nx - lx) * dt
-				local y = ly + (ny - ly) * dt
-				surface.SetDrawColor(Color(255, 255, 255, 255))
-				surface.DrawCircle(x, y, math.cos((CurTime() - self.OverrideStartTime)
-					* math.pi * 2 / self.TimePerNode) * 4 + 16)
 			end
 		end
 
@@ -253,7 +275,20 @@ if CLIENT then
 
 		self.TimePerNode = layout.otpn
 
+		if layout.pulsetime ~= self.PulseTime then
+			self.PulseTime = layout.pulsetime
+			for _, node in pairs(self.Nodes) do
+				if node.Enabled then node:StartGlow(3) end
+			end
+		end
+
 		self.OverrideButton.CanClick = not self.Overriding
+		
+		if self:GetPermission() < permission.SECURITY then
+			self.OverrideButton.Text = "Test Override Sequence"
+		else
+			self.OverrideButton.Text = "Set Override Sequence"
+		end
 
 		self.Super[BASE].UpdateLayout(self, layout)
 	end	

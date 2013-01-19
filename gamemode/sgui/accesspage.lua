@@ -16,6 +16,8 @@ function GUI:Enter()
 		for _, door in ipairs(self:GetRoom().Doors) do
 			local doorview = sgui.Create(self, "doorview")
 			doorview:SetCurrentDoor(door)
+			doorview.Enabled = true
+			doorview.NeedsPermission = true
 			self.DoorViews[door] = doorview
 		end
 	end

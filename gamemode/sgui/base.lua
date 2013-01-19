@@ -14,6 +14,10 @@ function GUI:Initialize()
 	self._globBounds = Bounds(0, 0, 0, 0)
 end
 
+function GUI:GetPermission()
+	return self.Screen.UI.Permission
+end
+
 function GUI:GetRoom()
 	return self.Screen.Room
 end

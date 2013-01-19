@@ -7,6 +7,9 @@ GUI._bounds = nil
 
 GUI.CanClick = true
 
+GUI.Enabled = false
+GUI.NeedsPermission = true
+
 GUI.OpenLockedColor = Color(0, 64, 0, 255)
 GUI.OpenUnlockedColor = Color(0, 0, 0, 255)
 
@@ -28,7 +31,8 @@ if SERVER then
 		local ply = self:GetUsingPlayer()
 		local door = self:GetCurrentDoor()
 
-		-- if not ply:HasDoorPermission(door) then return end
+		if not self.Enabled or (self.NeedsPermission
+			and not ply:HasDoorPermission(door)) then return end
 
 		if button == MOUSE2 then
 			if door:IsLocked() then
@@ -117,6 +121,9 @@ if CLIENT then
 	function GUI:Draw()
 		if self._transform then
 			local last, lx, ly = nil, 0, 0
+			local ply = self:GetUsingPlayer()
+			self.CanClick = self.Enabled and (not self.NeedsPermission or
+				(ply and ply:HasDoorPermission(self._door)))
 
 			surface.SetDrawColor(self:GetDoorColor())
 			surface.DrawPoly(self._poly)

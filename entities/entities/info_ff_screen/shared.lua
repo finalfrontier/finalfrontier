@@ -180,6 +180,12 @@ if SERVER then
 		end
 	end
 
+	function ENT:SetOverrideSequence()
+		for i, v in ipairs(self.OverrideCurrSequence) do
+			self.OverrideGoalSequence[i] = v
+		end
+	end
+
 	function ENT:UpdateLayout()
 		if not self.UI then return end
 		if not self.Layout then self.Layout = {} end
@@ -222,6 +228,7 @@ if SERVER then
 		ply:Give("weapon_ff_unarmed")
 		ply:SelectWeapon("weapon_ff_unarmed")
 
+		self.UI.Permission = ply:GetPermission(self.Room)
 		self.UI:SetCurrentPage(page.ACCESS)
 		self:UpdateLayout()
 
