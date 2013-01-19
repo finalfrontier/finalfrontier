@@ -17,6 +17,7 @@ GUI.CurrSequence = nil
 
 GUI.Overriding = false
 GUI.OverrideStartTime = 0
+GUI.TimePerNode = 1
 
 function GUI:GetFreeNode()
 	for i = 1, #self.Nodes do
@@ -39,11 +40,20 @@ function GUI:Enter()
 
 	if SERVER then
 		self.OverrideButton.OnClick = function(btn, button)
-			self.Overriding = true
-			self.OverrideStartTime = CurTime()
-			self.OverrideButton.CanClick = false
+			if not self.Overriding then
+				self.Overriding = true
+				self.OverrideStartTime = CurTime()
+				self.OverrideButton.CanClick = false
 
-			self.Screen:UpdateLayout()
+				self.Screen:UpdateLayout()
+
+				timer.Simple(self.TimePerNode * #self.Nodes, function()
+					self.Overriding = false
+					self.OverrideButton.CanClick = true
+
+					self.Screen:UpdateLayout()
+				end)
+			end
 		end
 	end
 
@@ -64,6 +74,7 @@ function GUI:Enter()
 	self.Nodes = {}
 
 	if SERVER then
+		self.TimePerNode = self.Screen.OverrideTimePerNode
 		self.CurrSequence = self.Screen.OverrideCurrSequence
 
 		if not self.Screen.OverrideNodePositions then
@@ -117,6 +128,8 @@ if SERVER then
 
 		layout.ovrd = self.Overriding
 		layout.ovrdtime = self.OverrideStartTime
+
+		layout.otpn = self.TimePerNode
 	end	
 end
 
@@ -154,6 +167,24 @@ if CLIENT then
 				self:DrawConnectorBetween(toSwap.last, freeNode)
 				self:DrawConnectorBetween(freeNode, toSwap.next)
 			end
+
+			local dt = (CurTime() - self.OverrideStartTime) / self.TimePerNode
+			local ni = math.floor(dt)
+			dt = dt - ni
+			if ni >= 0 and ni <= #self.CurrSequence then
+				local last = self.Nodes[self.CurrSequence[ni]] or self.Start
+				local next = self.Nodes[self.CurrSequence[ni + 1]] or self.End
+				if last ~= self.Start and not last:IsGlowing() then
+					last:StartGlow(1)
+				end
+				local lx, ly = last:GetGlobalCentre()
+				local nx, ny = next:GetGlobalCentre()
+				local x = lx + (nx - lx) * dt
+				local y = ly + (ny - ly) * dt
+				surface.SetDrawColor(Color(255, 255, 255, 255))
+				surface.DrawCircle(x, y, math.cos((CurTime() - self.OverrideStartTime)
+					* math.pi * 2 / self.TimePerNode) * 4 + 16)
+			end
 		end
 
 		self.Super[BASE].Draw(self)
@@ -180,8 +211,10 @@ if CLIENT then
 		self.Overriding = layout.ovrd
 		self.OverrideStartTime = layout.ovrdtime
 
+		self.TimePerNode = layout.otpn
+
 		self.OverrideButton.CanClick = not self.Overriding
-			
+
 		self.Super[BASE].UpdateLayout(self, layout)
 	end	
 end

@@ -24,7 +24,9 @@ if SERVER then
 	util.AddNetworkString("CursorPos")
 	
 	ENT.RoomName = nil
+
 	ENT.OverrideNodeCount = 4
+	ENT.OverrideTimePerNode = 1
 
 	ENT.OverrideNodePositions = nil
 	ENT.OverrideGoalSequence = nil
