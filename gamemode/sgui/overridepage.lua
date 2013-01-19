@@ -9,10 +9,14 @@ local NODE_LABELS = {
 
 GUI.BaseName = BASE
 
+GUI.OverrideButton = nil
 GUI.Start = nil
 GUI.End = nil
 GUI.Nodes = nil
 GUI.CurrSequence = nil
+
+GUI.Overriding = false
+GUI.OverrideStartTime = 0
 
 function GUI:GetFreeNode()
 	for i = 1, #self.Nodes do
@@ -27,6 +31,23 @@ function GUI:Enter()
 	self.Super[BASE].Enter(self)
 
 	local w, h = self:GetSize()
+
+	self.OverrideButton = sgui.Create(self, "button")
+	self.OverrideButton:SetSize(w - 32, 48)
+	self.OverrideButton:SetCentre(w / 2, h - 24 - 16)
+	self.OverrideButton.Text = "Test Override Sequence"
+
+	if SERVER then
+		self.OverrideButton.OnClick = function(btn, button)
+			self.Overriding = true
+			self.OverrideStartTime = CurTime()
+			self.OverrideButton.CanClick = false
+
+			self.Screen:UpdateLayout()
+		end
+	end
+
+	h = h - 80
 
 	self.Start = sgui.Create(self, "overridenode")
 	self.Start:SetSize(64, 64)
@@ -93,6 +114,9 @@ if SERVER then
 		if self.Screen.OverrideCurrSequence then
 			layout.sequence = self.Screen.OverrideCurrSequence
 		end
+
+		layout.ovrd = self.Overriding
+		layout.ovrdtime = self.OverrideStartTime
 	end	
 end
 
@@ -114,10 +138,10 @@ if CLIENT then
 			for i, index in ipairs(self.CurrSequence) do
 				local node = self.Nodes[index]
 				node.Enabled = true
-				node.CanClick = true
+				node.CanClick = not self.Overriding
 				self:DrawConnectorBetween(last, node)
 				last = node
-				if not toSwap and node:IsCursorInside() then
+				if not self.Overriding and not toSwap and node:IsCursorInside() then
 					toSwap = {}
 					toSwap.last = self.Nodes[self.CurrSequence[i - 1]] or self.Start
 					toSwap.next = self.Nodes[self.CurrSequence[i + 1]] or self.End
@@ -153,6 +177,11 @@ if CLIENT then
 			self.CurrSequence = layout.sequence
 		end
 
+		self.Overriding = layout.ovrd
+		self.OverrideStartTime = layout.ovrdtime
+
+		self.OverrideButton.CanClick = not self.Overriding
+			
 		self.Super[BASE].UpdateLayout(self, layout)
 	end	
 end
