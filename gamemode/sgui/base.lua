@@ -184,7 +184,7 @@ if CLIENT then
 		if self:HasParent() then
 			self:GetParent():SendIDHierarchy()
 		end
-		net.WriteInt(self:GetID(), 16)
+		net.WriteUInt(self:GetID(), 16)
 	end
 
 	function GUI:IsPointInside(x, y)
@@ -204,7 +204,7 @@ end
 			net.WriteEntity(self.Screen)
 			net.WriteFloat(self.Screen:GetNWFloat("layout"))
 			self:SendIDHierarchy()
-			net.WriteInt(0, 16)
+			net.WriteUInt(0, 16)
 			net.WriteInt(button, 8)
 			net.SendToServer()
 			self:OnClick(button)
@@ -273,7 +273,7 @@ if SERVER then
 		if screen:GetNWEntity("user") == ply then
 			local element = nil
 			while true do
-				local id = net.ReadInt(16)
+				local id = net.ReadUInt(16)
 				if element == nil then
 					if id == screen.UI:GetID() then
 						element = screen.UI
