@@ -310,10 +310,10 @@ elseif CLIENT then
 	function ENT:UpdateLayout()
 		if not self.UI then
 			self.UI = sgui.Create(self, MAIN_GUI_CLASS)
+			self.Layout = self:GetNWTable("layout")
 		end
 
-		self.Layout = self:GetNWTable("layout")
-		if self.Layout then
+		if self.Layout and table.Count(self.Layout) > 0 then
 			self.UI:UpdateLayout(self.Layout)
 		end
 	end
