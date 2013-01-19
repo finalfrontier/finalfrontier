@@ -101,10 +101,13 @@ if SERVER then
 					break
 				end
 				if mindist > width / 32 then
-					mindist = mindist - width / 256
+					mindist = mindist - width / 1024
 				end
 			end
 		end
+		table.sort(self.OverrideNodePositions, function(a, b)
+			return b.x > a.x
+		end)
 	end
 
 	function ENT:GenerateOverrideSequence()
