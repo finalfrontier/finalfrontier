@@ -11,6 +11,7 @@ local NODE_LABELS = {
 
 GUI.BaseName = BASE
 
+GUI.ShuffleButton = nil
 GUI.OverrideButton = nil
 GUI.Start = nil
 GUI.End = nil
@@ -38,12 +39,24 @@ function GUI:Enter()
 
 	local w, h = self:GetSize()
 
+	self.ShuffleButton = sgui.Create(self, "button")
+	self.ShuffleButton:SetSize(w / 4 - 24, 48)
+	self.ShuffleButton:SetOrigin(16, h - 48 - 16)
+	self.ShuffleButton.Text = "Shuffle"
+
 	self.OverrideButton = sgui.Create(self, "button")
-	self.OverrideButton:SetSize(w - 32, 48)
-	self.OverrideButton:SetCentre(w / 2, h - 24 - 16)
+	self.OverrideButton:SetSize(w * 3 / 4 - 24, 48)
+	self.OverrideButton:SetOrigin(w / 4 + 8, h - 48 - 16)
 
 	if SERVER then
+		self.ShuffleButton.OnClick = function(btn, button)
+			if self.Overriding then return end
+			self.Screen:ShuffleCurrentOverrideSequence()
+			self.Screen:UpdateLayout()
+		end
+
 		self.OverrideButton.OnClick = function(btn, button)
+			if self.Overriding then return end
 			if self:GetPermission() < permission.SECURITY then
 				self:StartOverriding()
 			else
@@ -284,6 +297,7 @@ if CLIENT then
 			end
 		end
 
+		self.ShuffleButton.CanClick = not self.Overriding
 		self.OverrideButton.CanClick = not self.Overriding
 		
 		if self:GetPermission() < permission.SECURITY then

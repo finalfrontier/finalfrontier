@@ -174,7 +174,7 @@ if SERVER then
 
 	function ENT:ShuffleCurrentOverrideSequence()
 		local tries = 0
-		while not self:IsOverrideWellShuffled() and tries < 512 do
+		while tries < 256 or (not self:IsOverrideWellShuffled() and tries < 512) do
 			self:SwapOverrideNodes(math.random(1, #self.OverrideCurrSequence))
 			tries = tries + 1
 		end
