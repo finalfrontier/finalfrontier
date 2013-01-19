@@ -85,7 +85,7 @@ if CLIENT then
 
 		if self.Label then
 			surface.SetTextColor(self.TextColor)
-			surface.SetFont("CTextSmall")
+			surface.SetFont("CTextTiny")
 			surface.DrawCentredText(x, y, self.Label)
 		end
 

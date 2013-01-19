@@ -32,6 +32,27 @@ if SERVER then
 end
 
 if CLIENT then
+	surface.CreateFont("CTextTiny", {
+		font = "consolas",
+		size = 24,
+		weight = 400,
+		antialias = true
+	})
+
+	surface.CreateFont("CTextSmall", {
+		font = "consolas",
+		size = 32,
+		weight = 400,
+		antialias = true
+	})
+	
+	surface.CreateFont("CTextLarge", {
+		font = "consolas",
+		size = 64,
+		weight = 400,
+		antialias = true
+	})
+
 	function _mt:UpdateLayout(layout) return end
 	function _mt:Draw() return end
 end

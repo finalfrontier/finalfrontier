@@ -1,5 +1,7 @@
 local BASE = "page"
 
+local NODE_SIZE = 36
+
 local NODE_LABELS = {
 	"A", "B", "C", "D", "E", "F", "G", "H",
 	"I", "J", "K", "L", "M", "N", "O", "P",
@@ -55,13 +57,13 @@ function GUI:Enter()
 	h = h - 80
 
 	self.Start = sgui.Create(self, "overridenode")
-	self.Start:SetSize(64, 64)
+	self.Start:SetSize(NODE_SIZE, NODE_SIZE)
 	self.Start:SetCentre(48, h / 2)
 	self.Start.Enabled = false
 	self.Start.CanClick = false
 
 	self.End = sgui.Create(self, "overridenode")
-	self.End:SetSize(64, 64)
+	self.End:SetSize(NODE_SIZE, NODE_SIZE)
 	self.End:SetCentre(w - 48, h / 2)
 	self.End.Enabled = false
 	self.End.CanClick = false
@@ -80,7 +82,7 @@ function GUI:Enter()
 		local rows = math.ceil(count / 4)
 		for i = 1, count do
 			local node = sgui.Create(self, "overridenode")
-			node:SetSize(64, 64)
+			node:SetSize(NODE_SIZE, NODE_SIZE)
 			local pos = self.Screen.OverrideNodePositions[i]
 			node:SetCentre(pos.x, pos.y)
 			node.Label = NODE_LABELS[i]
@@ -256,7 +258,7 @@ if CLIENT then
 			for i, n in ipairs(layout.nodes) do
 				if not self.Nodes[i] then
 					local node = sgui.Create(self, "overridenode")
-					node:SetSize(64, 64)
+					node:SetSize(NODE_SIZE, NODE_SIZE)
 					node:SetCentre(n.x, n.y)
 					node.Label = n.label
 

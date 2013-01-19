@@ -25,8 +25,8 @@ if SERVER then
 	
 	ENT.RoomName = nil
 
-	ENT.OverrideNodeCount = 4
-	ENT.OverrideTimePerNode = 1
+	ENT.OverrideNodeCount = 8
+	ENT.OverrideTimePerNode = 0.5
 
 	ENT.OverrideNodePositions = nil
 	ENT.OverrideGoalSequence = nil
@@ -104,27 +104,27 @@ if SERVER then
 	function ENT:GenerateOverrideNodePositions(bounds)
 		self.OverrideNodePositions = {}
 		local left, top, width, height = bounds:GetRect()
-		local mindist = width / 2
 		for i = 1, self.OverrideNodeCount do
-			while true do
+			local bestScore = 0
+			local bestx, besty
+			for j = 1, 1024 do
 				local x = left + math.random() * width
 				local y = top + math.random() * height
-				local canPlace = true
+				local min = width * width + height * height
 				for k, pos in pairs(self.OverrideNodePositions) do
 					local xd, yd = pos.x - x, pos.y - y
-					if xd * xd + yd * yd < mindist * mindist then
-						canPlace = false
-						break
+					local d2 = xd * xd + yd * yd
+					if d2 < min then
+						min = d2
 					end
 				end
-				if canPlace then 
-					self.OverrideNodePositions[i] = { x = x, y = y }
-					break
-				end
-				if mindist > width / 32 then
-					mindist = mindist - width / 1024
+				if min >= bestScore then
+					bestScore = min
+					bestx = x
+					besty = y
 				end
 			end
+			self.OverrideNodePositions[i] = { x = bestx, y = besty }
 		end
 		table.sort(self.OverrideNodePositions, function(a, b)
 			return b.x > a.x
@@ -284,20 +284,6 @@ if SERVER then
 	end)
 elseif CLIENT then
 	local WHITE = Material("vgui/white")
-
-	surface.CreateFont("CTextSmall", {
-		font = "consolas",
-		size = 32,
-		weight = 400,
-		antialias = true
-	})
-	
-	surface.CreateFont("CTextLarge", {
-		font = "consolas",
-		size = 64,
-		weight = 400,
-		antialias = true
-	})
 
 	ENT._using = false
 
