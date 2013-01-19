@@ -14,6 +14,7 @@ GUI.Start = nil
 GUI.End = nil
 GUI.Nodes = nil
 GUI.CurrSequence = nil
+GUI.CheckSequence = nil
 
 GUI.Overriding = false
 GUI.OverrideStartTime = 0
@@ -40,20 +41,7 @@ function GUI:Enter()
 
 	if SERVER then
 		self.OverrideButton.OnClick = function(btn, button)
-			if not self.Overriding then
-				self.Overriding = true
-				self.OverrideStartTime = CurTime()
-				self.OverrideButton.CanClick = false
-
-				self.Screen:UpdateLayout()
-
-				timer.Simple(self.TimePerNode * #self.Nodes, function()
-					self.Overriding = false
-					self.OverrideButton.CanClick = true
-
-					self.Screen:UpdateLayout()
-				end)
-			end
+			self:StartOverriding()
 		end
 	end
 
@@ -108,6 +96,51 @@ function GUI:Leave()
 end
 
 if SERVER then
+	function GUI:FindCheckSequence()
+		if not self.CheckSequence then self.CheckSequence = {} end
+		
+		local goal = self.Screen.OverrideGoalSequence
+		for i = 1, #self.CurrSequence do
+			local last = self.CurrSequence[i - 1]
+			local curr = self.CurrSequence[i]
+			local next = self.CurrSequence[i + 1]
+
+			if curr and table.HasValue(goal, curr) then
+				curr = table.KeyFromValue(goal, curr)
+			else curr = math.ceil(#self.CurrSequence / 2) end
+			if last and table.HasValue(goal, last) then
+				last = table.KeyFromValue(goal, last)
+			else last = 0 end
+			if next and table.HasValue(goal, next) then
+				next = table.KeyFromValue(goal, next)
+			else next = #self.CurrSequence + 1 end
+
+			local score = 0
+			if last < curr then score = score + 1 end
+			if curr < next then score = score + 1 end
+
+			self.CheckSequence[i] = score
+		end
+	end
+
+	function GUI:StartOverriding()
+		if not self.Overriding then
+			self.Overriding = true
+			self.OverrideStartTime = CurTime()
+			self.OverrideButton.CanClick = false
+
+			self:FindCheckSequence()
+			self.Screen:UpdateLayout()
+
+			timer.Simple(self.TimePerNode * #self.Nodes, function()
+				self.Overriding = false
+				self.OverrideButton.CanClick = true
+
+				self.Screen:UpdateLayout()
+			end)
+		end
+	end
+
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)
 
@@ -128,6 +161,12 @@ if SERVER then
 
 		layout.ovrd = self.Overriding
 		layout.ovrdtime = self.OverrideStartTime
+
+		if self.Overriding then
+			layout.check = self.CheckSequence
+		elseif layout.check then
+			layout.check = nil
+		end
 
 		layout.otpn = self.TimePerNode
 	end	
@@ -175,7 +214,7 @@ if CLIENT then
 				local last = self.Nodes[self.CurrSequence[ni]] or self.Start
 				local next = self.Nodes[self.CurrSequence[ni + 1]] or self.End
 				if last ~= self.Start and not last:IsGlowing() then
-					last:StartGlow(1)
+					last:StartGlow(self.CheckSequence[ni] + 1)
 				end
 				local lx, ly = last:GetGlobalCentre()
 				local nx, ny = next:GetGlobalCentre()
@@ -210,6 +249,7 @@ if CLIENT then
 
 		self.Overriding = layout.ovrd
 		self.OverrideStartTime = layout.ovrdtime
+		self.CheckSequence = layout.check
 
 		self.TimePerNode = layout.otpn
 
