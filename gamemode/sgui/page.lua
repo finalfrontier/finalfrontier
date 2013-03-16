@@ -14,3 +14,8 @@ function GUI:Enter() end
 function GUI:Leave()
 	self:RemoveAllChildren()
 end
+
+function GUI:IsCurrentPage()
+    local parent = self:GetParent()
+    return parent and parent:GetCurrentPage() == self
+end

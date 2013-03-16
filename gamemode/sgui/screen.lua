@@ -48,7 +48,6 @@ function GUI:Initialize()
 	self.Tabs[page.SECURITY] = self.TabMenu:AddTab("SECURITY")
 	self.Tabs[page.OVERRIDE] = self.TabMenu:AddTab("OVERRIDE")
 
-
 	if SERVER then
 		local old = self.TabMenu.OnChangeCurrent
 		self.TabMenu.OnChangeCurrent = function(tabmenu)

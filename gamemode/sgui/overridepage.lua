@@ -159,19 +159,22 @@ if SERVER then
 			self.Overriding = false
 			self.OverrideButton.CanClick = true
 
-			local overridden = true
-			for i, s in ipairs(self.CurrSequence) do
-				if self.Screen.OverrideGoalSequence[i] ~= s then
-					overridden = false
+			if self:IsCurrentPage() then
+				local overridden = true
+				for i, s in ipairs(self.CurrSequence) do
+					if self.Screen.OverrideGoalSequence[i] ~= s then
+						overridden = false
+					end
 				end
-			end
-			if overridden then
-				self.PulseTime = CurTime()
-				self:GetParent().Permission = permission.SECURITY
-				self:GetParent():UpdatePermissions()
-			end
 
-			self.Screen:UpdateLayout()
+				if overridden then
+					self.PulseTime = CurTime()
+					self:GetParent().Permission = permission.SECURITY
+					self:GetParent():UpdatePermissions()
+				end
+
+				self.Screen:UpdateLayout()
+			end
 		end
 	end
 
