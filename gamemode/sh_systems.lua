@@ -72,6 +72,10 @@ end
 	end
 --end
 
+function sys.GetAll()
+	return sys._dict
+end
+
 function sys.Create(name, room)
 	--if not sys._loaded then sys.Load() end
 

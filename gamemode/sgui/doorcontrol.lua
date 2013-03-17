@@ -35,7 +35,6 @@ if SERVER then
 	end
 end
 
-
 function GUI:Enter()
 	self.Super[BASE].Enter(self)
 
