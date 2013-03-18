@@ -38,10 +38,11 @@ end
 
 function SYS:Initialize()
     if SERVER then
-        self._systemTotal = #sys.GetAll()
         self._systemWeights = {}
-        for _, system in pairs(sys.GetAll()) do
-            self:SetSystemWeight(system, 1.0)
+        for _, room in pairs(self.Ship:GetRooms()) do
+            if room.System then
+                self:SetSystemWeight(room.System.Name, 1.0)
+            end
         end
     end
 end

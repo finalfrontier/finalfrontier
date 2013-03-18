@@ -11,6 +11,7 @@ ENT.ShipName = nil
 ENT.Index = 0
 
 ENT.System = nil
+ENT.SystemName = nil
 ENT.Volume = 1000
 ENT.SurfaceArea = 60
 
@@ -34,7 +35,7 @@ function ENT:KeyValue(key, value)
 	if key == "ship" then
 		self.ShipName = tostring(value)
 	elseif key == "system" then
-		self.System = tostring(value)
+		self.SystemName = tostring(value)
 	elseif key == "volume" then
 		self.Volume = tonumber(value)
 		self.SurfaceArea = math.sqrt(self.Volume) * 6
@@ -77,10 +78,10 @@ function ENT:InitPostEntity()
 		end
 	end
 	
-	if self.System == "medical" then
+	if self.SystemName == "medical" then
 		self._airvolume = self.Volume -- * math.random()
 		self._temperature = 600
-	elseif self.System == "transporter" then
+	elseif self.SystemName == "transporter" then
 		self._temperature = 300
 		self._airvolume = 0
 	else
@@ -88,8 +89,8 @@ function ENT:InitPostEntity()
 		self._temperature = 300
 	end
 	
-	if self.System then
-		self.System = sys.Create(self.System, self)
+	if self.SystemName then
+		self.System = sys.Create(self.SystemName, self)
 	end
 	
 	self._shields = math.random()

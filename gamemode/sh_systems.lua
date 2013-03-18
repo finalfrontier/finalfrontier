@@ -18,6 +18,7 @@ _mt.__index = _mt
 _mt.Name = "unnamed"
 _mt.Room = nil
 _mt.Ship = nil
+_mt.Powered = false
 
 _mt.SGUIName = "page"
 

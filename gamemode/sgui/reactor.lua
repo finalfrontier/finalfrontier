@@ -1,21 +1,33 @@
 local BASE = "page"
 
+local ICON_SIZE = 48
+local ICON_PADDING = 16
+
 GUI.BaseName = BASE
 
-GUI.ShipView = nil
+GUI.Rows = nil
+
+function GUI:AddRow(system)
+    local row = {}
+    row.Icon = sgui.Create(self, "image")
+    row.Icon:SetOrigin(8, ICON_PADDING + #self.Rows * (ICON_SIZE + ICON_PADDING))
+    row.Icon:SetSize(ICON_SIZE, ICON_SIZE)
+    if CLIENT then row.Icon.Material = system.Icon end
+
+    row.Label = nil
+    row.Slider = nil
+
+    table.insert(self.Rows, row)
+end
 
 function GUI:Enter()
     self.Super[BASE].Enter(self)
 
-    self.ShipView = sgui.Create(self, "shipview")
-    self.ShipView:SetCurrentShip(self:GetShip())
+    self.Rows = {}
 
-    local margin = 16
-
-    self.ShipView:SetBounds(Bounds(
-        margin,
-        margin * 0.5,
-        self:GetWidth() - margin * 2,
-        self:GetHeight() - margin * 1.5
-    ))
+    for _, room in pairs(self:GetShip():GetRooms()) do
+        if room.System then
+            self:AddRow(room.System)
+        end
+    end
 end

@@ -120,6 +120,13 @@ if CLIENT then
 			for i, poly in ipairs(self._polys) do
 				surface.DrawPoly(poly)
 			end
+			
+			if self.CanClick and self:IsCursorInside() then
+				surface.SetDrawColor(Color(255, 255, 255, 16))
+				for i, poly in ipairs(self._polys) do
+					surface.DrawPoly(poly)
+				end
+			end
 
 			surface.SetDrawColor(Color(255, 255, 255, 255))
 			last = self._corners[#self._corners]
