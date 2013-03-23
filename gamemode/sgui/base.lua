@@ -168,7 +168,7 @@ function GUI:GetParent()
 	return self._parent
 end
 
-function GUI:OnClick(button)
+function GUI:OnClick(x, y, button)
 	return
 end
 
@@ -210,8 +210,10 @@ end
 			self:SendIDHierarchy()
 			net.WriteUInt(0, 16)
 			net.WriteInt(button, 8)
+			net.WriteFloat(x)
+			net.WriteFloat(y)
 			net.SendToServer()
-			self:OnClick(button)
+			self:OnClick(x, y, button)
 			return true
 		end
 
@@ -301,10 +303,12 @@ if SERVER then
 			end
 			if element and element.CanClick then
 				local button = net.ReadInt(8)
+				local x, y = net.ReadFloat(), net.ReadFloat()
 if DEBUG then
-			print("click@" .. screen.Room:GetName() .. ":" .. element.Name .. "(" .. element:GetID() .. ")")
+			print("click@" .. screen.Room:GetName() .. ":" .. element.Name ..
+				"(" .. element:GetID() .. ")")
 end
-				element:OnClick(button)
+				element:OnClick(x, y, button)
 			end
 		end
 	end)

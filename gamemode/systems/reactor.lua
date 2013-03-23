@@ -1,6 +1,8 @@
 SYS.FullName = "Reactor"
 SYS.SGUIName = "reactor"
 
+SYS.Powered = false
+
 if SERVER then
     resource.AddFile("materials/systems/reactor.png")
 
@@ -40,8 +42,8 @@ function SYS:Initialize()
     if SERVER then
         self._systemWeights = {}
         for _, room in pairs(self.Ship:GetRooms()) do
-            if room.System then
-                self:SetSystemWeight(room.System.Name, 1.0)
+            if room.System and room.System.Powered then
+                self:SetSystemWeight(room.System.Name, 0.5)
             end
         end
     end

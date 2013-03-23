@@ -207,7 +207,7 @@ if SERVER then
 
 		layout.otpn = self.TimePerNode
 		layout.pulsetime = self.PulseTime
-	end	
+	end
 end
 
 if CLIENT then

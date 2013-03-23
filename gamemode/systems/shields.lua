@@ -2,6 +2,8 @@ local RECHARGE_RATE = 1 / 60.0
 
 SYS.FullName = "Shield Control"
 
+SYS.Powered = true
+
 if SERVER then
 	resource.AddFile("materials/systems/shields.png")
 

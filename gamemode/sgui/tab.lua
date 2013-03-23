@@ -9,8 +9,8 @@ GUI.Text = "UNNAMED"
 GUI.Color = Color(191, 191, 191, 255)
 GUI.DisabledColor = Color(64, 64, 64, 255)
 
-function GUI:OnClick(button)
-	self.Super[BASE].OnClick(self, button)
+function GUI:OnClick(x, y, button)
+	self.Super[BASE].OnClick(self, x, y, button)
 
 	if SERVER and self:GetParent():GetCurrent() ~= self then
 		self:GetParent():SetCurrent(self)

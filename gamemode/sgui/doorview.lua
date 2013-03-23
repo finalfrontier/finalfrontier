@@ -27,7 +27,7 @@ function GUI:GetCurrentDoor()
 end
 
 if SERVER then
-	function GUI:OnClick(button)
+	function GUI:OnClick(x, y, button)
 		local ply = self:GetUsingPlayer()
 		local door = self:GetCurrentDoor()
 
