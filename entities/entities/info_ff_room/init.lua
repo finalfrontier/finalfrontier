@@ -1,8 +1,6 @@
 local TEMPERATURE_LOSS_RATE = 0.00000382
 local DAMAGE_INTERVAL = 1.0
 
-util.AddNetworkString("SetPermission")
-
 ENT.Type = "point"
 ENT.Base = "base_point"
 
@@ -269,14 +267,3 @@ end
 function ENT:IsPointInside(x, y)
 	return self.Bounds:IsPointInside(x, y)
 end
-
-net.Receive("SetPermission", function(len, ply)
-	local ship = ships.FindByName(net.ReadString())
-	local room = ship:GetRoomByIndex(net.ReadInt(8))
-	local plyr = net.ReadEntity()
-	local perm = net.ReadInt(8)
-
-	if plyr and plyr:IsValid() then
-		plyr:SetPermission(room, perm)
-	end
-end)

@@ -25,7 +25,7 @@ if SERVER then
 	
 	ENT.RoomName = nil
 
-	ENT.OverrideNodeCount = 2
+	ENT.OverrideNodeCount = 3
 	ENT.OverrideTimePerNode = 0.5
 
 	ENT.OverrideNodePositions = nil

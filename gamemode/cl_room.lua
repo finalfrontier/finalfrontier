@@ -61,16 +61,6 @@ function ply_mt:HasPermission(room, perm)
 	return self:GetPermission(room) >= perm
 end
 
-function ply_mt:SetPermission(room, perm)
-	self:SetNWInt(room:GetPermissionsName(), perm)
-	net.Start("SetPermission")
-		net.WriteString(room.Ship.Name)
-		net.WriteInt(room.Index, 8)
-		net.WriteEntity(self)
-		net.WriteInt(perm, 8)
-	net.SendToServer()
-end
-
 function ply_mt:HasDoorPermission(door)
 	return self:HasPermission(door.Rooms[1], permission.ACCESS)
 		or self:HasPermission(door.Rooms[2], permission.ACCESS)
