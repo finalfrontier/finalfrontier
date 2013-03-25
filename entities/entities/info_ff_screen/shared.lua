@@ -10,7 +10,7 @@ local MAIN_GUI_CLASS = "screen"
 
 ENT.Type = "anim"
 ENT.Base = "base_anim"
-	
+
 ENT.Ship = nil
 ENT.Room = nil
 

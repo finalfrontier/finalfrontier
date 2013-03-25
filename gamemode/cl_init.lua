@@ -8,10 +8,7 @@ include("cl_matrix.lua")
 include("cl_transform2d.lua")
 include("sh_sgui.lua")
 include("sh_systems.lua")
-include("cl_door.lua")
-include("cl_room.lua")
-include("cl_ship.lua")
-include("cl_ships.lua")
+include("sh_ships.lua")
 
 -- Global Functions
 
@@ -181,6 +178,12 @@ function GM:Initialize()
 	MsgN("Final Frontier client-side is initializing...")
 
 	self.BaseClass:Initialize()
+end
+
+function GM:InitPostEntity()
+	MsgN("Final Frontier client-side is initializing post-entity...")
+	
+	ships.InitPostEntity()
 end
 
 function GM:HUDWeaponPickedUp(weapon)

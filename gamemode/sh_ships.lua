@@ -1,3 +1,5 @@
+if SERVER then AddCSLuaFile("sh_ships.lua") end
+
 local ROOM_UPDATE_FREQ = 1
 
 ships = {}
@@ -35,35 +37,19 @@ function ships.InitPostEntity()
 
 	for _1, class in ipairs(classOrder) do
 		for _2, ent in ipairs(ents.FindByClass(class)) do
-			ent:InitPostEntity()
+			if ent.InitPostEntity then
+				ent:InitPostEntity()
+			end
 		end
 	end
 end
 
-function ships.FindCurrentShip(ply)
-	local pos = ply:GetPos()
-	for _, ship in pairs(ships._dict) do
-		--print(ply:Nick() .. " test " .. ship:GetName() .. ":")
-		--print("  " .. tostring(ply:GetPos()))
-		--print("  " .. tostring(ship.Bounds))
-		if ship:IsPointInside(pos.x, pos.y) then return ship end
-	end
-	return nil
-end
-
-function ships.SendInitShipsData(ply)
-	for _, ship in pairs(ships._dict) do
-		ship:SendInitShipData(ply)
-	end
-end
-
-function ships.SendRoomStatesUpdate(ply)
-	local curTime = CurTime()
-	if (curTime - ply:GetNWFloat("lastRoomUpdate")) > ROOM_UPDATE_FREQ then
-		ply:SetNWFloat("lastRoomUpdate", curTime)
-		
+if SERVER then
+	function ships.FindCurrentShip(ply)
+		local pos = ply:GetPos()
 		for _, ship in pairs(ships._dict) do
-			ship:SendShipRoomStates(ply)
+			if ship:IsPointInside(pos.x, pos.y) then return ship end
 		end
+		return nil
 	end
 end
