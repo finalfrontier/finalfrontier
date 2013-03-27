@@ -6,45 +6,61 @@ local OPEN_DISTANCE = 160
 ENT.Type = "point"
 ENT.Base = "base_point"
 
-ENT.Area = 4
-ENT.Rooms = nil
-
-ENT.Index = 0
-
+ENT._rooms = nil
 ENT._doorEnts = nil
 
-ENT._open = false
-ENT._locked = false
 ENT._lastupdate = 0
 
 ENT._nwdata = nil
 
 function ENT:Initialize()
-	self.Rooms = {}
+	self._rooms = {}
+	self._nwdata = {}
 end
 
 function ENT:InitPostEntity()
-	self._lastupdate = CurTime()
-	
 	local name = self:GetName()
 	local doorName = string.Replace(name, "_info_", "_")
-	
+
 	self._doorEnts = ents.FindByName(doorName)
+
+	self:SetArea(4)
+	self:NextUpdate()
+end
+
+function ENT:SetArea(area)
+	self._nwdata.area = value
+	self:_UpdateNWData()
+end
+
+function ENT:GetArea()
+	return self._nwdata.area
+end
+
+function ENT:SetIndex(index)
+	self._nwdata.index = index
+	self:_UpdateNWData()
+end
+
+function ENT:GetIndex()
+	return self._nwdata.index
 end
 
 function ENT:AddRoom(room)
-	table.insert(self.Rooms, room)
+	table.insert(self._rooms, room)
+end
+
+function ENT:GetRooms()
+	return self._rooms
 end
 
 function ENT:AcceptInput(name, activator, caller, data)
 	if name == "Opened" then
-		self._open = true
 		self._nwdata.open = true
-		self:UpdateNWData()
+		self:_UpdateNWData()
 	elseif name == "Closed" then
-		self._open = false
 		self._nwdata.open = false
-		self:UpdateNWData()
+		self:_UpdateNWData()
 	end
 end
 
@@ -66,18 +82,16 @@ end
 
 function ENT:Lock()
 	if self:IsUnlocked() then
-		self._locked = true
 		self._nwdata.locked = true
-		self:UpdateNWData()
+		self:_UpdateNWData()
 		self:EmitSound("doors/door_metal_large_close2.wav", SNDLVL_STATIC, 100)
 	end
 end
 
 function ENT:Unlock()
 	if self:IsLocked() then
-		self._locked = false
 		self._nwdata.locked = false
-		self:UpdateNWData()
+		self:_UpdateNWData()
 		self:EmitSound("doors/door_metal_large_open1.wav", SNDLVL_STATIC, 100)
 	end
 end
@@ -101,34 +115,48 @@ function ENT:UnlockClose()
 	self:Close()
 end
 
-function ENT:Think()
+function ENT:NextUpdate()
 	local curTime = CurTime()
 	local dt = curTime - self._lastupdate
 	self._lastupdate = curTime
+
+	return dt
+end
+
+function ENT:Think()
+	local dt = self:NextUpdate()
 	
-	if #self.Rooms < 2 then return end
+	local rooms = self:GetRooms()
+
+	if #rooms < 2 then return end
 	
 	if self:IsOpen() then	
 		-- Temperature transfer
-		local roomA = self.Rooms[1]
-		local roomB = self.Rooms[2]
+		local roomA = rooms[1]
+		local roomB = rooms[2]
 		if roomA:GetTemperature() < roomB:GetTemperature() then
-			roomA = self.Rooms[2]
-			roomB = self.Rooms[1]
+			roomA = rooms[2]
+			roomB = rooms[1]
 		end
-		local delta = (roomA:GetTemperature() - roomB:GetTemperature()) * self.Area * TEMPERATURE_TRANSMIT_RATE * dt
+
+		local delta = (roomA:GetTemperature() - roomB:GetTemperature())
+			* self:GetArea() * TEMPERATURE_TRANSMIT_RATE * dt
+
 		if delta > 0 then
 			roomA:TransmitTemperature(roomB, delta)
 		end
 		
 		-- Atmosphere transfer
-		roomA = self.Rooms[1]
-		roomB = self.Rooms[2]
+		roomA = rooms[1]
+		roomB = rooms[2]
 		if roomA:GetAtmosphere() < roomB:GetAtmosphere() then
-			roomA = self.Rooms[2]
-			roomB = self.Rooms[1]
+			roomA = rooms[2]
+			roomB = rooms[1]
 		end
-		delta = (roomA:GetAtmosphere() - roomB:GetAtmosphere()) * self.Area * ATMOSPHERE_TRANSMIT_RATE * dt
+
+		delta = (roomA:GetAtmosphere() - roomB:GetAtmosphere())
+			* self:GetArea() * ATMOSPHERE_TRANSMIT_RATE * dt
+
 		if delta > 0 then
 			roomA:TransmitAir(roomB, delta)
 		end
@@ -164,21 +192,21 @@ function ENT:Think()
 end
 
 function ENT:IsOpen()
-	return self._open
+	return self._nwdata.open
 end
 
 function ENT:IsClosed()
-	return not self._open
+	return not self._nwdata.open
 end
 
 function ENT:IsLocked()
-	return self._locked
+	return self._nwdata.locked
 end
 
 function ENT:IsUnlocked()
-	return not self._locked
+	return not self._nwdata.locked
 end
 
-function ENT:UpdateNWData()
+function ENT:_UpdateNWData()
 	SetGlobalTable(self:GetName(), self._nwdata)
 end
