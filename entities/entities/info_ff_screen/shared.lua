@@ -41,11 +41,10 @@ if SERVER then
 		elseif key == "size" then
 			local split = string.Explode(" ", tostring(value))
 			if #split >= 1 then
+				self:SetNWFloat("width", tonumber(split[1]))
 				if #split >= 2 then
-					self:SetNWFloat("width", tonumber(split[1]))
 					self:SetNWFloat("height", tonumber(split[2]))
 				else
-					self:SetNWFloat("width", tonumber(split[1]))
 					self:SetNWFloat("height", tonumber(split[1]))
 				end
 				self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE

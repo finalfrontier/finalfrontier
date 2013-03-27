@@ -5,50 +5,67 @@ ENT.Type = "point"
 ENT.Base = "base_point"
 
 ENT.Ship = nil
-ENT.ShipName = nil
-ENT.Index = 0
 
 ENT.System = nil
-ENT.SystemName = nil
-ENT.Volume = 1000
-ENT.SurfaceArea = 60
 
 ENT.Corners = nil
 ENT.Screens = nil
-ENT.DoorNames = nil
 ENT.Doors = nil
-
 ENT.Bounds = nil
 
 ENT._lastupdate = 0
 ENT._lastdamage = 0
 
-ENT._temperature = 298
 ENT._airvolume = 1000
 ENT._shields = 1
 
 ENT._players = nil
 
-function ENT:KeyValue(key, value)
-	if key == "ship" then
-		self.ShipName = tostring(value)
-	elseif key == "system" then
-		self.SystemName = tostring(value)
-	elseif key == "volume" then
-		self.Volume = tonumber(value)
-		self.SurfaceArea = math.sqrt(self.Volume) * 6
-	elseif string.find(key, "^door%d*") then
-		self.DoorNames = self.DoorNames or {}
-		table.insert(self.DoorNames, tostring(value))
-	end
+ENT._nwdata = nil
+
+function ENT:SetShipName(name)
+	self._nwdata.shipname = name
+	self:UpdateNWData()
 end
 
-function ENT:InitPostEntity()
+function ENT:GetShipName()
+	return self._nwdata.shipname
+end
+
+function ENT:SetSystemName(name)
+	self._nwdata.systemname = name
+	self:UpdateNWData()
+end
+
+function ENT:GetSystemName()
+	return self._nwdata.systemname
+end
+
+function ENT:Initialize()
 	self.Corners = {}
 	self.Doors = {}
 	self.Screens = {}
 	self.Bounds = Bounds()
-	
+
+	self._players = {}
+	self._nwdata = {}
+	self._nwdata.doornames = {}
+end
+
+function ENT:KeyValue(key, value)
+	if key == "ship" then
+		self:SetShipName(tostring(value))
+	elseif key == "system" then
+		self:SetSystemName(tostring(value))
+	elseif key == "volume" then
+		self:SetVolume(tonumber(value))
+		self:SetSurfaceArea(math.sqrt(self.Volume) * 6)
+	elseif string.find(key, "^door%d*") then
+		self:AddDoorName(tostring(value))
+	end
+end
+
+function ENT:InitPostEntity()	
 	if not self.DoorNames then
 		MsgN(self:GetName() .. " has no doors!")
 	end
@@ -78,13 +95,13 @@ function ENT:InitPostEntity()
 	
 	if self.SystemName == "medical" then
 		self._airvolume = self.Volume -- * math.random()
-		self._temperature = 600
+		self:SetTemperature(600)
 	elseif self.SystemName == "transporter" then
-		self._temperature = 300
+		self:SetTemperature(300)
 		self._airvolume = 0
 	else
+		self:SetTemperature(300)
 		self._airvolume = self.Volume -- * math.random()
-		self._temperature = 300
 	end
 	
 	if self.SystemName then
@@ -94,7 +111,7 @@ function ENT:InitPostEntity()
 	self._shields = math.random()
 	self._lastupdate = CurTime()
 
-	self._players = {}
+	self:UpdateNWData()
 end
 
 local DROWN_SOUNDS = {
@@ -173,11 +190,11 @@ function ENT:AddScreen(screen)
 end
 
 function ENT:GetTemperature()
-	return self._temperature * self:GetAtmosphere()
+	return self._nwdata.temperature * self:GetAtmosphere()
 end
 
 function ENT:SetTemperature(temp)
-	self._temperature = math.Clamp(temp / self:GetAtmosphere(), 0, 600)
+	self._nwdata.temperature = math.Clamp(temp / self:GetAtmosphere(), 0, 600)
 end
 
 function ENT:GetAirVolume()
@@ -235,10 +252,8 @@ end
 function ply_mt:SetRoom(room)
 	if self._room == room then return end
 	if self._room then
-		--print(self:Nick() .. " is leaving " .. self._room:GetName())
 		self._room:_removePlayer(self)
 	end
-	--print(self:Nick() .. " is entering " .. room:GetName())
 	room:_addPlayer(self)
 	self._room = room
 	self:SetNWInt("room", room.Index)
@@ -266,4 +281,8 @@ end
 
 function ENT:IsPointInside(x, y)
 	return self.Bounds:IsPointInside(x, y)
+end
+
+function ENT:UpdateNWData()
+	SetGlobalTable(self:GetName(), self._nwdata)
 end

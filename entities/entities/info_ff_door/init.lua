@@ -17,6 +17,8 @@ ENT._open = false
 ENT._locked = false
 ENT._lastupdate = 0
 
+ENT._nwdata = nil
+
 function ENT:Initialize()
 	self.Rooms = {}
 end
@@ -37,13 +39,17 @@ end
 function ENT:AcceptInput(name, activator, caller, data)
 	if name == "Opened" then
 		self._open = true
+		self._nwdata.open = true
+		self:UpdateNWData()
 	elseif name == "Closed" then
 		self._open = false
+		self._nwdata.open = false
+		self:UpdateNWData()
 	end
 end
 
 function ENT:Open()
-	if not self._locked and not self._open then
+	if self:IsUnlocked() and self:IsClosed() then
 		for _, ent in ipairs(self._doorEnts) do
 			ent:Fire("Open", "", 0)
 		end
@@ -51,7 +57,7 @@ function ENT:Open()
 end
 
 function ENT:Close()
-	if not self._locked and self._open then
+	if self:IsUnlocked() and self:IsOpen() then
 		for _, ent in ipairs(self._doorEnts) do
 			ent:Fire("Close", "", 0)
 		end
@@ -59,21 +65,25 @@ function ENT:Close()
 end
 
 function ENT:Lock()
-	if not self._locked then
+	if self:IsUnlocked() then
 		self._locked = true
+		self._nwdata.locked = true
+		self:UpdateNWData()
 		self:EmitSound("doors/door_metal_large_close2.wav", SNDLVL_STATIC, 100)
 	end
 end
 
 function ENT:Unlock()
-	if self._locked then
+	if self:IsLocked() then
 		self._locked = false
+		self._nwdata.locked = false
+		self:UpdateNWData()
 		self:EmitSound("doors/door_metal_large_open1.wav", SNDLVL_STATIC, 100)
 	end
 end
 
 function ENT:ToggleLock()
-	if self._locked then
+	if self:IsLocked() then
 		self:Unlock()
 	else
 		self:Lock()
@@ -167,4 +177,8 @@ end
 
 function ENT:IsUnlocked()
 	return not self._locked
+end
+
+function ENT:UpdateNWData()
+	SetGlobalTable(self:GetName(), self._nwdata)
 end
