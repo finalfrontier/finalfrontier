@@ -4,114 +4,71 @@ local DAMAGE_INTERVAL = 1.0
 ENT.Type = "point"
 ENT.Base = "base_point"
 
-ENT.Ship = nil
-
-ENT.System = nil
-
 ENT.Corners = nil
 ENT.Screens = nil
-ENT.Doors = nil
 ENT.Bounds = nil
+
+ENT._ship = nil
+ENT._system = nil
+ENT._doors = nil
 
 ENT._lastupdate = 0
 ENT._lastdamage = 0
-
-ENT._airvolume = 1000
-ENT._shields = 1
 
 ENT._players = nil
 
 ENT._nwdata = nil
 
-function ENT:SetShipName(name)
-	self._nwdata.shipname = name
-	self:UpdateNWData()
-end
-
-function ENT:GetShipName()
-	return self._nwdata.shipname
-end
-
-function ENT:SetSystemName(name)
-	self._nwdata.systemname = name
-	self:UpdateNWData()
-end
-
-function ENT:GetSystemName()
-	return self._nwdata.systemname
-end
-
 function ENT:Initialize()
 	self.Corners = {}
-	self.Doors = {}
 	self.Screens = {}
 	self.Bounds = Bounds()
 
+	self._doors = {}
 	self._players = {}
+
 	self._nwdata = {}
 	self._nwdata.doornames = {}
 end
 
 function ENT:KeyValue(key, value)
 	if key == "ship" then
-		self:SetShipName(tostring(value))
+		self:_SetShipName(tostring(value))
 	elseif key == "system" then
-		self:SetSystemName(tostring(value))
+		self:_SetSystemName(tostring(value))
 	elseif key == "volume" then
-		self:SetVolume(tonumber(value))
-		self:SetSurfaceArea(math.sqrt(self.Volume) * 6)
+		self:_SetVolume(tonumber(value))
+		self:_SetSurfaceArea(math.sqrt(self:GetVolume()) * 6)
 	elseif string.find(key, "^door%d*") then
-		self:AddDoorName(tostring(value))
+		self:_AddDoorName(tostring(value))
 	end
 end
 
-function ENT:InitPostEntity()	
-	if not self.DoorNames then
+function ENT:InitPostEntity()
+	if #self:GetDoorNames() == 0 then
 		MsgN(self:GetName() .. " has no doors!")
 	end
 	
-	self.DoorNames = self.DoorNames or {}
-	if self.ShipName then
-		self.Ship = ships.FindByName(self.ShipName)
-		if self.Ship then
-			self.Ship:AddRoom(self)
-		end
-	end
-	
-	if not self.Ship then
-		Error("Room at " .. tostring(self:GetPos()) .. " (" .. self:GetName() .. ") has no ship!\n")
-		return
-	end
-	
-	for _, name in ipairs(self.DoorNames) do
-		local doors = ents.FindByName(name)
-		if #doors > 0 then
-			local door = doors[1]
-			self.Ship:AddDoor(door)
-			door:AddRoom(self)
-			self:AddDoor(door)			
-		end
-	end
-	
-	if self.SystemName == "medical" then
-		self._airvolume = self.Volume -- * math.random()
-		self:SetTemperature(600)
-	elseif self.SystemName == "transporter" then
-		self:SetTemperature(300)
-		self._airvolume = 0
-	else
-		self:SetTemperature(300)
-		self._airvolume = self.Volume -- * math.random()
-	end
-	
-	if self.SystemName then
-		self.System = sys.Create(self.SystemName, self)
-	end
-	
-	self._shields = math.random()
-	self._lastupdate = CurTime()
+	self:_UpdateShip()
 
-	self:UpdateNWData()
+	if not self:GetShip() then return end
+
+	self:_UpdateDoors()
+	self:_UpdateSystem()
+
+	self:SetAirVolume(self.Volume)
+	self:SetTemperature(300)
+	
+	local sysName = self:GetSystemName()
+	if sysName == "medical" then
+		self:SetTemperature(600)
+	elseif sysName == "transporter" then
+		self:SetAirVolume(0)
+	end
+		
+	self:SetShields(math.random())
+
+	self:NextUpdate()
 end
 
 local DROWN_SOUNDS = {
@@ -120,14 +77,21 @@ local DROWN_SOUNDS = {
 	"npc/combine_soldier/pain3.wav"
 }
 
-function ENT:Think()
+function ENT:NextUpdate()
 	local curTime = CurTime()
 	local dt = curTime - self._lastupdate
 	self._lastupdate = curTime
 
-	if self.System then self.System:Think(dt) end
+	return dt
+end
+
+function ENT:Think()
+	local dt = self:NextUpdate()
+
+	if self:HasSystem() then self.System:Think(dt) end
 	
-	self._temperature = self._temperature * (1 - TEMPERATURE_LOSS_RATE * self.SurfaceArea * dt)
+	self:SetTemperature(self:GetTemperature() * (1 - TEMPERATURE_LOSS_RATE
+		* self.SurfaceArea * dt))
 
 	local min = Vector(self.Bounds.l, self.Bounds.t, -65536)
 	local max = Vector(self.Bounds.r, self.Bounds.b, 65536)
@@ -169,6 +133,83 @@ function ENT:Think()
 	end
 end
 
+function ENT:_SetShipName(name)
+	self._nwdata.shipname = name
+	self:_UpdateNWData()
+end
+
+function ENT:GetShipName()
+	return self._nwdata.shipname
+end
+
+function ENT:_UpdateShip()
+	local name = self:GetShipName()
+	if name then
+		self._ship = ships.FindByName(name)
+		if self._ship then
+			self._ship:AddRoom(self)
+		end
+	else
+		Error("Room at " .. tostring(self:GetPos()) .. " (" .. self:GetName()
+			.. ") has no ship!\n")
+	end
+end
+
+function ENT:GetShip()
+	return self._ship
+end
+
+function ENT:_SetSystemName(name)
+	self._nwdata.systemname = name
+	self:_UpdateNWData()
+end
+
+function ENT:GetSystemName()
+	return self._nwdata.systemname
+end
+
+function ENT:_UpdateSystem()
+	local name = self:GetSystemName()
+	if name then
+		self._system = sys.Create(name, self)
+	end
+end
+
+function ENT:HasSystem()
+	return self._system ~= nil
+end
+
+function ENT:GetSystem()
+	return self._system
+end
+
+function ENT:_SetVolume(value)
+	self._nwdata.volume = value
+	self:_UpdateNWData()
+end
+
+function ENT:GetVolume()
+	return self._nwdata.volume or 0
+end
+
+function ENT:_SetSurfaceArea(value)
+	self._nwdata.surfacearea = value
+	self:_UpdateNWData()
+end
+
+function ENT:GetSurfaceArea()
+	return self._nwdata.surfacearea or 0
+end
+
+function ENT:_AddDoorName(name)
+	table.insert(self._nwdata.doornames, name)
+	self:_UpdateNWData()
+end
+
+function ENT:GetDoorNames()
+	return self._nwdata.doornames
+end
+
 function ENT:AddCorner(index, x, y)
 	self.Corners[index] = { x = x, y = y }
 	self.Bounds:AddPoint(x, y)
@@ -176,55 +217,86 @@ function ENT:AddCorner(index, x, y)
 end
 
 function ENT:AddDoor(door)
-	for i, other in ipairs(self.Doors) do
-		if other.Index > door.Index then
-			table.insert(self.Doors, i, door)
+	for i, other in ipairs(self._doors) do
+		if other:GetIndex() > door:GetIndex() then
+			table.insert(self._doors, i, door)
 			return
 		end
 	end
-	table.insert(self.Doors, door)
+	table.insert(self._doors, door)
+end
+
+function ENT:_UpdateDoors()
+	for _, name in ipairs(self:GetDoorNames()) do
+		local doors = ents.FindByName(name)
+		if #doors > 0 then
+			local door = doors[1]
+			self:GetShip():AddDoor(door)
+			door:AddRoom(self)
+			self:AddDoor(door)
+		end
+	end
+end
+
+function ENT:GetDoors()
+	return self._doors
 end
 
 function ENT:AddScreen(screen)
 	table.insert(self.Screens, screen)
 end
 
+function ENT:SetTemperature(temp)
+	self._nwdata.temperature = math.Clamp(temp / self:GetAtmosphere(), 0, 600)
+	self:_UpdateNWData()
+end
+
 function ENT:GetTemperature()
 	return self._nwdata.temperature * self:GetAtmosphere()
 end
 
-function ENT:SetTemperature(temp)
-	self._nwdata.temperature = math.Clamp(temp / self:GetAtmosphere(), 0, 600)
+function ENT:SetAirVolume(volume)
+	self._nwdata.airvolume = volume
+	self:_UpdateNWData()
 end
 
 function ENT:GetAirVolume()
-	return self._airvolume
+	return self._nwdata.airvolume
+end
+
+function ENT:SetAtmosphere(atmosphere)
+	self:SetAirVolume(self:GetVolume() * atmosphere)
 end
 
 function ENT:GetAtmosphere()
-	return self._airvolume / self.Volume
+	return self:GetAirVolume() / self:GetVolume()
+end
+
+function ENT:SetShields(shields)
+	self._nwdata.shields = shields
+	self:_UpdateNWData()
 end
 
 function ENT:GetShields()
-	return self._shields
+	return self._nwdata.shields
 end
 
 function ENT:TransmitTemperature(room, delta)
 	if delta < 0 then room:TransmitTemperature(self, delta) return end
 
-	if delta > self._temperature then delta = self._temperature end
+	delta = math.min(delta, self:GetTemperature())
 	
-	self._temperature = self._temperature - delta
-	room._temperature = room._temperature + delta
+	self:SetTemperature(self:GetTemperature() - delta)
+	room:SetTemperature(room:GetTemperature() + delta)
 end
 
 function ENT:TransmitAir(room, delta)
 	if delta < 0 then room:TransmitAir(self, delta) return end
 
-	if delta > self._airvolume then delta = self._airvolume end
+	delta = math.min(delta, self:GetAirVolume())
 	
-	self._airvolume = self._airvolume - delta
-	room._airvolume = room._airvolume + delta
+	self:SetAirVolume(self._airvolume - delta)
+	room:SetAirVolume(room._airvolume + delta)
 end
 
 function ENT:GetPermissionsName()
@@ -252,9 +324,9 @@ end
 function ply_mt:SetRoom(room)
 	if self._room == room then return end
 	if self._room then
-		self._room:_removePlayer(self)
+		self._room:_RemovePlayer(self)
 	end
-	room:_addPlayer(self)
+	room:_AddPlayer(self)
 	self._room = room
 	self:SetNWInt("room", room.Index)
 end
@@ -263,13 +335,13 @@ function ply_mt:GetRoom()
 	return self._room
 end
 
-function ENT:_addPlayer(ply)
+function ENT:_AddPlayer(ply)
 	if not table.HasValue(self._players, ply) then
 		table.insert(self._players, ply)
 	end
 end
 
-function ENT:_removePlayer(ply)
+function ENT:_RemovePlayer(ply)
 	if table.HasValue(self._players, ply) then
 		table.remove(self._players, table.KeyFromValue(self._players, ply))
 	end
@@ -283,6 +355,6 @@ function ENT:IsPointInside(x, y)
 	return self.Bounds:IsPointInside(x, y)
 end
 
-function ENT:UpdateNWData()
+function ENT:_UpdateNWData()
 	SetGlobalTable(self:GetName(), self._nwdata)
 end

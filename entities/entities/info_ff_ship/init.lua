@@ -36,7 +36,7 @@ end
 
 function ENT:AddRoom(room)
 	local name = room:GetName()
-	if not name then return end
+	if not name or self.Rooms[name] then return end
 
 	self.Rooms[name] = room
 	table.insert(self._roomlist, room)
