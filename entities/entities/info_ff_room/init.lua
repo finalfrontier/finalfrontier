@@ -4,13 +4,11 @@ local DAMAGE_INTERVAL = 1.0
 ENT.Type = "point"
 ENT.Base = "base_point"
 
-ENT.Corners = nil
-ENT.Screens = nil
-ENT.Bounds = nil
-
 ENT._ship = nil
+ENT._screens = nil
 ENT._system = nil
 ENT._doors = nil
+ENT._bounds = nil
 
 ENT._lastupdate = 0
 ENT._lastdamage = 0
@@ -20,15 +18,15 @@ ENT._players = nil
 ENT._nwdata = nil
 
 function ENT:Initialize()
-	self.Corners = {}
-	self.Screens = {}
-	self.Bounds = Bounds()
-
+	self._screens = {}
 	self._doors = {}
+	self._bounds = Bounds()
+
 	self._players = {}
 
 	self._nwdata = {}
 	self._nwdata.doornames = {}
+	self._nwdata.corners = {}
 end
 
 function ENT:KeyValue(key, value)
@@ -201,6 +199,17 @@ function ENT:GetSurfaceArea()
 	return self._nwdata.surfacearea or 0
 end
 
+function ENT:AddCorner(index, x, y)
+	self._nwdata.corners[index] = { x = x, y = y }
+	self:GetBounds():AddPoint(x, y)
+	self:GetShip():GetBounds():AddPoint(x, y)
+	self:_UpdateNWData()
+end
+
+function ENT:GetCorners()
+	return self._nwdata.corners
+end
+
 function ENT:_AddDoorName(name)
 	table.insert(self._nwdata.doornames, name)
 	self:_UpdateNWData()
@@ -210,13 +219,7 @@ function ENT:GetDoorNames()
 	return self._nwdata.doornames
 end
 
-function ENT:AddCorner(index, x, y)
-	self.Corners[index] = { x = x, y = y }
-	self.Bounds:AddPoint(x, y)
-	self.Ship.Bounds:AddPoint(x, y)
-end
-
-function ENT:AddDoor(door)
+function ENT:_AddDoor(door)
 	for i, other in ipairs(self._doors) do
 		if other:GetIndex() > door:GetIndex() then
 			table.insert(self._doors, i, door)
@@ -233,7 +236,7 @@ function ENT:_UpdateDoors()
 			local door = doors[1]
 			self:GetShip():AddDoor(door)
 			door:AddRoom(self)
-			self:AddDoor(door)
+			self:_AddDoor(door)
 		end
 	end
 end
@@ -243,7 +246,11 @@ function ENT:GetDoors()
 end
 
 function ENT:AddScreen(screen)
-	table.insert(self.Screens, screen)
+	table.insert(self._screens, screen)
+end
+
+function ENT:GetScreens()
+	return self._screens
 end
 
 function ENT:SetTemperature(temp)
@@ -256,7 +263,7 @@ function ENT:GetTemperature()
 end
 
 function ENT:SetAirVolume(volume)
-	self._nwdata.airvolume = volume
+	self._nwdata.airvolume = math.Clamp(volume, 0, self:GetVolume())
 	self:_UpdateNWData()
 end
 
@@ -273,7 +280,7 @@ function ENT:GetAtmosphere()
 end
 
 function ENT:SetShields(shields)
-	self._nwdata.shields = shields
+	self._nwdata.shields = math.Clamp(shields, 0, 1)
 	self:_UpdateNWData()
 end
 
@@ -352,7 +359,7 @@ function ENT:GetPlayers()
 end
 
 function ENT:IsPointInside(x, y)
-	return self.Bounds:IsPointInside(x, y)
+	return self:GetBounds():IsPointInside(x, y)
 end
 
 function ENT:_UpdateNWData()
