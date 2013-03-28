@@ -1,24 +1,27 @@
-local ROOM_UPDATE_FREQ = 1
-
 ships = {}
 
 ships._dict = {}
+ships._nwdata = {}
 
 function ships.Add(ship)
 	local name = ship:GetName()
-	if not name then return end
+	if not name or ships._dict[name] then return end
 	
 	ships._dict[name] = ship
+	table.insert(ships._nwdata, name)
+	ships._UpdateNWData()
+
 	MsgN("Ship added at " .. tostring(ship:GetPos()) .. " (" .. name .. ")")
 end
 
-function ships.FindByName(name)
+function ships.GetByName(name)
 	return ships._dict[name]
 end
 
-function ships.FindRoomByName(name)
+function ships.GetRoomByName(name)
 	for _, ship in pairs(ships._dict) do
-		if ship.Rooms[name] then return ship.Rooms[name] end
+		local room = ship:GetRoomByName(name)
+		if room then return room end
 	end
 	
 	return nil
@@ -43,27 +46,11 @@ end
 function ships.FindCurrentShip(ply)
 	local pos = ply:GetPos()
 	for _, ship in pairs(ships._dict) do
-		--print(ply:Nick() .. " test " .. ship:GetName() .. ":")
-		--print("  " .. tostring(ply:GetPos()))
-		--print("  " .. tostring(ship.Bounds))
 		if ship:IsPointInside(pos.x, pos.y) then return ship end
 	end
 	return nil
 end
 
-function ships.SendInitShipsData(ply)
-	for _, ship in pairs(ships._dict) do
-		ship:SendInitShipData(ply)
-	end
-end
-
-function ships.SendRoomStatesUpdate(ply)
-	local curTime = CurTime()
-	if (curTime - ply:GetNWFloat("lastRoomUpdate")) > ROOM_UPDATE_FREQ then
-		ply:SetNWFloat("lastRoomUpdate", curTime)
-		
-		for _, ship in pairs(ships._dict) do
-			ship:SendShipRoomStates(ply)
-		end
-	end
+function ships._UpdateNWData()
+	SetGlobalTable("ships", ships._nwdata)
 end

@@ -27,7 +27,7 @@ function _mt:Initialize()
 end
 
 function _mt:GetShip()
-	return self.Room.Ship
+	return self.Room:GetShip()
 end
 
 if SERVER then
@@ -42,7 +42,7 @@ if SERVER then
 	end
 	
 	function _mt:GetScreens()
-		return self.Room.Screens
+		return self.Room:GetScreens()
 	end
 	
 	function _mt:Think(dt)

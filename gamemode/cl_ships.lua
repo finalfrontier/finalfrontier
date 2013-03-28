@@ -1,22 +1,27 @@
 ships = {}
 
 ships._dict = {}
+ships._nwdata = GetGlobalTable("ships")
 
 function ships.AddShip(ship)
-	ships._dict[ship.Name] = ship
+	ships._dict[ship:GetName()] = ship
 end
 
 function ships.FindByName(name)
 	return ships._dict[name]
 end
 
-net.Receive("InitShipData", function(len)
-	local ship = Ship()
-	ship:ReadFromNet()
-	ships.AddShip(ship)
-end)
+function ships.Think()
+    -- TODO: only subscribe to the ship that the player is within
+    if #ships._nwdata > table.Count(ships._dict) then
+        for _, name in pairs(ships._nwdata) do
+            if not ships._dict[name] then
+                ships._dict[name] = Ship(name)
+            end
+        end
+    end
 
-net.Receive("ShipStateUpdate", function(len)
-	local ship = ships.FindByName(net.ReadString())
-	ship:UpdateFromNet()
-end)
+    for _, ship in pairs(self._dict) do
+        ship:Think()
+    end
+end

@@ -25,6 +25,7 @@ function ENT:Initialize()
 	self._players = {}
 
 	self._nwdata.roomnames = {}
+	self._nwdata.doornames = {}
 	
 	self:_SetBaseHealth(1)
 end
@@ -73,7 +74,7 @@ function ENT:AddDoor(door)
 		table.insert(self._doors, door)
 		door:SetIndex(#self._doors)
 
-		self._nwdata.doors[door:GetIndex()] = door:GetName()
+		self._nwdata.doornames[door:GetIndex()] = door:GetName()
 		self:_UpdateNWData()
 	end
 end

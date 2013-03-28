@@ -4,32 +4,55 @@ local _mt = {}
 _mt.__index = _mt
 _mt._lastUpdate = 0
 
-_mt._temperature = 0
-_mt._oldTemp = 0
-_mt._atmosphere = 0
-_mt._oldAtmo = 0
-_mt._shields = 0
-_mt._oldShld = 0
+_mt._ship = nil
+_mt._doors = nil
+_mt._bounds = nil
+_mt._system = nil
 
-function _mt:ReadFromNet()
-	self.Name = net.ReadString()
-	self.Index = net.ReadInt(8)
-	self.System = sys.Create(net.ReadString(), self)
-	
-	local cornerCount = net.ReadInt(8)
-	for cNum = 1, cornerCount do
-		local index = net.ReadInt(8)
-		local pos = { x = net.ReadFloat(), y = net.ReadFloat() }
-		
-		self.Corners[index] = pos
-		self.Bounds:AddPoint(pos.x, pos.y)
-	end
-	
-	self.ConvexPolys = FindConvexPolygons(self.Corners)
-end
+_mt._nwdata = nil
 
 function _mt:GetName()
-	return self.Name
+	return self._nwdata.name
+end
+
+function _mt:GetIndex()
+	return self._nwdata.index
+end
+
+function _mt:GetShip()
+	return self._ship
+end
+
+function _mt:GetBounds()
+	return self._bounds
+end
+
+function _mt:GetSystemName()
+	return self._nwdata.systemname
+end
+
+function _mt:_UpdateSystem()
+	self._system = sys.Create(self:GetSystemName(), self)
+end
+
+function _mt:GetSystem()
+	return self._system
+end
+
+function _mt:GetVolume()
+	return self._nwdata.volume or 0
+end
+
+function _mt:GetSurfaceArea()
+	return self._nwdata.surfacearea or 0
+end
+
+function _mt:GetDoors()
+	return self._doors
+end
+
+function _mt:GetCorners()
+	return self._nwdata.corners
 end
 
 function _mt:GetStatusLerp()
@@ -37,19 +60,23 @@ function _mt:GetStatusLerp()
 end
 
 function _mt:GetTemperature()
-	return self._oldTemp + (self._temperature - self._oldTemp) * self:GetStatusLerp()
+	return self._nwdata.temperature * self:GetAtmosphere()
+end
+
+function _mt:GetAirVolume()
+	return self._nwdata.airvolume
 end
 
 function _mt:GetAtmosphere()
-	return self._oldAtmo + (self._atmosphere - self._oldAtmo) * self:GetStatusLerp()
+	return self:GetAirVolume() / self:GetVolume()
 end
 
 function _mt:GetShields()
-	return self._oldShld + (self._shields - self._oldShld) * self:GetStatusLerp()
+	return self._nwdata.shields
 end
 
 function _mt:GetPermissionsName()
-	return "p_" .. self.Ship.Name .. "_" .. self.Index
+	return "p_" .. self:GetShip():GetName() .. "_" .. self:GetIndex()
 end
 
 local ply_mt = FindMetaTable("Player")
@@ -79,12 +106,22 @@ function ply_mt:IsInRoom(room)
 	end
 end
 
-function Room(ship)
-	local room = { Ship = ship }
+function _mt:Think()
+	if self:GetSystemName() ~= nil and self:GetSystem() == nil then
+		self._UpdateSystem()
+	end
+end
 
-	room.Bounds = Bounds()
-	room.Doors = {}
-	room.Corners = {}
+function Room(name, ship, index)
+	local room = {}
+
+	room._nwdata = GetGlobalTable(name)
+	room._nwdata.name = name
+	room._nwdata.index = index
+
+	room._ship = ship
+	room._doors = {}
+	room._bounds = Bounds()
 
 	return setmetatable(room, _mt)
 end

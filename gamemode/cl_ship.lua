@@ -1,69 +1,33 @@
 local _mt = {}
 _mt.__index = _mt
 
-function _mt:ReadFromNet()
-	self.Name = net.ReadString()
-	
-	local roomCount = net.ReadInt(8)
-	for rNum = 1, roomCount do
-		local room = Room(self)
-		room:ReadFromNet()
-		self:AddRoom(room)
-	end
-	
-	local doorCount = net.ReadInt(8)
-	for dNum = 1, doorCount do
-		local door = Door(self)
-		door:ReadFromNet()
-		self:AddDoor(door)
-	end
-end
+_mt._roomdict = nil
+_mt._roomlist = nil
 
-function _mt:UpdateFromNet()
-	local timestamp = net.ReadFloat()
-	while true do
-		local index = net.ReadInt(8)
-		if index == 0 then break end
-		local room = self._roomlist[index]
-		if not room then return end
-		if timestamp > room._lastUpdate then
-			room._oldTemp = room._temperature
-			room._oldAtmo = room._atmosphere
-			room._oldShld = room._shields
-			
-			room._temperature = net.ReadFloat()
-			room._atmosphere = net.ReadFloat()
-			room._shields = net.ReadFloat()
-			
-			room._lastUpdate = timestamp
-		end
-	end
-	while true do
-		local index = net.ReadInt(8)
-		if index == 0 then break end
-		local door = self.Doors[index]
-		if timestamp > door._lastUpdate then
-			local flags = net.ReadInt(8)
-			if flags % 2 >= 1 then door.Open = true else door.Open = false end
-			if flags % 4 >= 2 then door.Locked = true else door.Locked = false end
-			door._lastUpdate = timestamp
-		end
-	end
-end
+_mt._bounds = nil
+
+_mt._nwdata = nil
 
 function _mt:GetName()
-	return self.Name
+	return self._nwdata.name
 end
 
-function _mt:AddRoom(room)
-	self.Rooms[room.Name] = room
-	self._roomlist[room.Index] = room
+function _mt:_AddRoom(room)
+	local name = room:GetName()
+	if self._roomdict[name] then return end
 
-	self.Bounds:AddBounds(room.Bounds)
+	self._roomdict[name] = room
+	self._roomlist[room:GetIndex()] = room
+
+	self._bounds:AddBounds(room:GetBounds())
 end
 
 function _mt:GetRooms()
 	return self._roomlist
+end
+
+function _mt:GetRoomByName(name)
+	return self._roomdict[name]
 end
 
 function _mt:GetRoomByIndex(index)
@@ -71,30 +35,56 @@ function _mt:GetRoomByIndex(index)
 end
 
 function _mt:AddDoor(door)
-	table.insert(self.Doors, door)
+	self._doors[door:GetIndex()] = door
+end
+
+function _mt:GetDoors()
+	return self._doors
+end
+
+function _mt:GetDoorByIndex(index)
+	return self._doors[index]
 end
 
 function _mt:FindTransform(screen, x, y, width, height)
 	local bounds = Bounds(x, y, width, height)
-	return FindBestTransform(self.Bounds, bounds, true, true)
+	return FindBestTransform(self:GetBounds(), bounds, true, true)
 end
 
 function _mt:ApplyTransform(transform)
-	for _, room in pairs(self.Rooms) do
+	for _, room in pairs(self:GetRooms()) do
 		room:ApplyTransform(transform)
 	end
 
-	for _, door in ipairs(self.Doors) do
+	for _, door in ipairs(self:GetDoors()) do
 		door:ApplyTransform(transform)
 	end
 end
 
+function _mt:Think()
+	if #self._roomlist < table.Count(self._nwdata.roomnames) then
+		for index, name in pairs(self._nwdata.roomnames) do
+			if not self._roomdict[name] then
+				self:_AddRoom(Room(name, self, index))
+			end
+		end
+	end
+
+	for _, room in pairs(self:GetRooms()) do
+		room:Think()
+	end
+
+	for _, door in ipairs(self:GetDoors()) do
+		door:Think()
+	end
+end
+
 function _mt:Draw(screen, roomColorFunc, doorColorFunc)
-	for _, room in pairs(self.Rooms) do
+	for _, room in pairs(self:GetRooms()) do
 		room:Draw(screen, roomColorFunc)
 	end
 
-	for _, door in ipairs(self.Doors) do
+	for _, door in ipairs(self:GetDoors()) do
 		door:Draw(screen, doorColorFunc)
 	end
 end
@@ -105,13 +95,15 @@ function ply_mt:GetShip()
 	return ships.FindByName(self:GetNWString("ship"))
 end
 
-function Ship()
+function Ship(name)
 	local ship = {}
 
-	ship.Rooms = {}
+	ship._roomdict = {}
 	ship._roomlist = {}
-	ship.Doors = {}
-	ship.Bounds = Bounds()
+	ship._doors = {}
+	ship._bounds = Bounds()
+
+	ship._nwdata = GetGlobalTable(name)
 
 	return setmetatable(ship, _mt)
 end

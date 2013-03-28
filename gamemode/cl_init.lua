@@ -183,6 +183,10 @@ function GM:Initialize()
 	self.BaseClass:Initialize()
 end
 
+function GM:Think()
+	ships.Think()
+end
+
 function GM:HUDWeaponPickedUp(weapon)
 	if weapon:GetClass() == "weapon_ff_unarmed" then return end
 	
