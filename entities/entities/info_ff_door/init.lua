@@ -16,6 +16,8 @@ ENT._nwdata = nil
 function ENT:Initialize()
 	self._rooms = {}
 	self._nwdata = {}
+
+	self:_SetArea(4)
 end
 
 function ENT:InitPostEntity()
@@ -24,11 +26,10 @@ function ENT:InitPostEntity()
 
 	self._doorEnts = ents.FindByName(doorName)
 
-	self:SetArea(4)
 	self:NextUpdate()
 end
 
-function ENT:SetArea(area)
+function ENT:_SetArea(area)
 	self._nwdata.area = value
 	self:_UpdateNWData()
 end

@@ -27,6 +27,8 @@ function ENT:Initialize()
 	self._nwdata = {}
 	self._nwdata.doornames = {}
 	self._nwdata.corners = {}
+
+	self:SetIndex(0)
 end
 
 function ENT:KeyValue(key, value)
@@ -131,6 +133,15 @@ function ENT:Think()
 	end
 end
 
+function ENT:SetIndex(index)
+	self._nwdata.index = index
+	self:_UpdateNWData()
+end
+
+function ENT:GetIndex()
+	return self._nwdata.index
+end
+
 function ENT:_SetShipName(name)
 	self._nwdata.shipname = name
 	self:_UpdateNWData()
@@ -211,6 +222,8 @@ function ENT:GetCorners()
 end
 
 function ENT:_AddDoorName(name)
+	if self._nwdata.doornames[name] then return end
+
 	table.insert(self._nwdata.doornames, name)
 	self:_UpdateNWData()
 end
@@ -220,13 +233,7 @@ function ENT:GetDoorNames()
 end
 
 function ENT:_AddDoor(door)
-	for i, other in ipairs(self._doors) do
-		if other:GetIndex() > door:GetIndex() then
-			table.insert(self._doors, i, door)
-			return
-		end
-	end
-	table.insert(self._doors, door)
+	self._doors[door:GetIndex()] = door -- may not work
 end
 
 function ENT:_UpdateDoors()
