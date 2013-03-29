@@ -26,6 +26,24 @@ function ENT:InitPostEntity()
 
 	self._doorEnts = ents.FindByName(doorName)
 
+	local coords = {
+		{ x = -32, y = -64 },
+		{ x = -32, y =  64 },
+		{ x =  32, y =  64 },
+		{ x =  32, y = -64 }
+	}
+
+	local trans = Transform2D()
+	trans:Rotate(self:GetAngles().y * math.pi / 180)
+	local pos = self:GetPos()
+	trans:Translate(pos.x, pos.y)
+	
+	self._nwdata.corners = {}
+	for i, v in ipairs(coords) do
+		self._nwdata.corners[i] = trans:Transform(v.x, v.y)
+	end
+	self:_UpdateNWData()
+
 	self:NextUpdate()
 end
 

@@ -5,7 +5,7 @@ _mt.__index = _mt
 _mt._lastUpdate = 0
 
 _mt._ship = nil
-_mt._doors = nil
+_mt._doorlist = nil
 _mt._bounds = nil
 _mt._system = nil
 
@@ -21,6 +21,13 @@ end
 
 function _mt:GetShip()
 	return self._ship
+end
+
+function _mt:_UpdateBounds()
+	self._bounds = Bounds()
+	for _, v in pairs(self:GetCorners()) do
+		self._bounds:AddPoint(v.x, v.y)
+	end
 end
 
 function _mt:GetBounds()
@@ -47,8 +54,25 @@ function _mt:GetSurfaceArea()
 	return self._nwdata.surfacearea or 0
 end
 
+function _mt:GetDoorNames()
+	return self._nwdata.doornames or {}
+end
+
+function _mt:_UpdateDoors()
+	for _, name in pairs(self:GetDoorNames()) do
+		local door = self:GetShip():GetDoorByName(name)
+		if not door then return end
+
+		self._doorlist[door:GetIndex()] = door
+	end
+end
+
 function _mt:GetDoors()
-	return self._doors
+	return self._doorlist
+end
+
+function _mt:GetDoorByIndex(index)
+	return self._doorlist[index]
 end
 
 function _mt:GetCorners()
@@ -107,8 +131,16 @@ function ply_mt:IsInRoom(room)
 end
 
 function _mt:Think()
-	if self:GetSystemName() ~= nil and self:GetSystem() == nil then
+	if self:GetSystemName() and not self:GetSystem() then
 		self._UpdateSystem()
+	end
+
+	if not self:GetBounds() and self:GetCorners() then
+		self._UpdateBounds()
+	end
+
+	if table.Count(self:GetDoors()) < table.Count(self:GetDoorNames()) then
+		self._UpdateDoors()
 	end
 end
 
@@ -120,8 +152,7 @@ function Room(name, ship, index)
 	room._nwdata.index = index
 
 	room._ship = ship
-	room._doors = {}
-	room._bounds = Bounds()
+	room._doorlist = {}
 
 	return setmetatable(room, _mt)
 end

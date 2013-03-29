@@ -1,3 +1,5 @@
+if SERVER then AddCSLuaFile("sh_transform2d.lua") end
+
 local _mt = {}
 _mt.__index = _mt
 

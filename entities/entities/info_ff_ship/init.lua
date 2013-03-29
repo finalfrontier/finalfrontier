@@ -57,6 +57,10 @@ function ENT:AddRoom(room)
 	self:_UpdateNWData()
 end
 
+function ENT:GetRoomNames()
+	return self._nwdata.roomnames
+end
+
 function ENT:GetRooms()
 	return self._roomlist
 end
@@ -77,6 +81,10 @@ function ENT:AddDoor(door)
 		self._nwdata.doornames[door:GetIndex()] = door:GetName()
 		self:_UpdateNWData()
 	end
+end
+
+function ENT:GetDoorNames()
+	return self._nwdata.doornames
 end
 
 function ENT:GetDoors()

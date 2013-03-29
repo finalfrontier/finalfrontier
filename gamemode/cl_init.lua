@@ -4,8 +4,8 @@
 include("gmtools/nwtable.lua")
 
 include("sh_bounds.lua")
-include("cl_matrix.lua")
-include("cl_transform2d.lua")
+include("sh_matrix.lua")
+include("sh_transform2d.lua")
 include("sh_sgui.lua")
 include("sh_systems.lua")
 include("cl_door.lua")

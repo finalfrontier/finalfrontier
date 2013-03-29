@@ -3,6 +3,7 @@ _mt.__index = _mt
 
 _mt._roomdict = nil
 _mt._roomlist = nil
+_mt._doorlist = nil
 
 _mt._bounds = nil
 
@@ -12,14 +13,31 @@ function _mt:GetName()
 	return self._nwdata.name
 end
 
-function _mt:_AddRoom(room)
-	local name = room:GetName()
-	if self._roomdict[name] then return end
+function _mt:_UpdateBounds()
+	local bounds = Bounds()
+	for _, room in pairs(self:GetRooms()) do
+		if not room:GetBounds() then return end
+		bounds:AddBounds(room:GetBounds())
+	end
+	self._bounds = bounds
+end
 
-	self._roomdict[name] = room
-	self._roomlist[room:GetIndex()] = room
+function _mt:GetBounds()
+	return self._bounds
+end
 
-	self._bounds:AddBounds(room:GetBounds())
+function _mt:GetRoomNames()
+	return self._nwdata.roomnames or {}
+end
+
+function _mt:_UpdateRooms()
+	for index, name in pairs(self:GetDoorNames()) do
+		if self._roomdict[name] then return end
+
+		local room = Room(name, self, index)
+		self._roomdict[name] = room
+		self._roomlist[index] = room
+	end
 end
 
 function _mt:GetRooms()
@@ -34,16 +52,28 @@ function _mt:GetRoomByIndex(index)
 	return self._roomlist[index]
 end
 
+function _mt:_UpdateDoors()
+	for index, name in pairs(self:GetDoorNames()) do
+		if self._doorlist[index] then return end
+		
+		self._roomdict[name] = Door(name, self, index)
+	end
+end
+
 function _mt:AddDoor(door)
-	self._doors[door:GetIndex()] = door
+	self._doorlist[door:GetIndex()] = door
+end
+
+function _mt:GetDoorNames()
+	return self._nwdata.doornames or {}
 end
 
 function _mt:GetDoors()
-	return self._doors
+	return self._doorlist
 end
 
 function _mt:GetDoorByIndex(index)
-	return self._doors[index]
+	return self._doorlist[index]
 end
 
 function _mt:FindTransform(screen, x, y, width, height)
@@ -62,12 +92,17 @@ function _mt:ApplyTransform(transform)
 end
 
 function _mt:Think()
-	if #self._roomlist < table.Count(self._nwdata.roomnames) then
-		for index, name in pairs(self._nwdata.roomnames) do
-			if not self._roomdict[name] then
-				self:_AddRoom(Room(name, self, index))
-			end
-		end
+	if table.Count(self:GetRooms()) < table.Count(self:GetRoomNames()) then
+		self:_UpdateRooms()
+	end
+
+	if table.Count(self:GetDoors()) < table.Count(self:GetDoorNames()) then
+		self:_UpdateDoors()
+	end
+
+	if not self:GetBounds() and and table.Count(self:GetRoomNames()) > 0 and
+		table.Count(self:GetRooms()) == table.Count(self:GetRoomNames()) then
+		self:_UpdateBounds()
 	end
 
 	for _, room in pairs(self:GetRooms()) do
@@ -100,8 +135,7 @@ function Ship(name)
 
 	ship._roomdict = {}
 	ship._roomlist = {}
-	ship._doors = {}
-	ship._bounds = Bounds()
+	ship._doorlist = {}
 
 	ship._nwdata = GetGlobalTable(name)
 
