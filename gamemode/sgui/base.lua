@@ -28,14 +28,14 @@ end
 
 function GUI:GetSystem()
 	if self.Screen.Room then
-		return self.Screen.Room.System
+		return self.Screen.Room:GetSystem()
 	end
 	return nil
 end
 
 function GUI:GetSystemIcon()
-	if self.Screen.Room and self.Screen.Room.System then
-		return self.Screen.Room.System.Icon
+	if self.Screen.Room and self.Screen.Room:GetSystem() then
+		return self.Screen.Room:GetSystem().Icon
 	end
 
 	return nil
@@ -202,7 +202,7 @@ if CLIENT then
 	function GUI:Click(x, y, button)
 		if self.CanClick and self:IsPointInside(x, y) then
 if DEBUG then
-			print("click@" .. self:GetRoom().Name .. ":" .. self.Name .. "(" .. self:GetID() .. ")")
+			print("click@" .. self:GetRoom():GetName() .. ":" .. self.Name .. "(" .. self:GetID() .. ")")
 end
 			net.Start("Click")
 			net.WriteEntity(self.Screen)

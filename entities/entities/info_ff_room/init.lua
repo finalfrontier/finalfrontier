@@ -154,7 +154,7 @@ end
 function ENT:_UpdateShip()
 	local name = self:GetShipName()
 	if name then
-		self._ship = ships.FindByName(name)
+		self._ship = ships.GetByName(name)
 		if self._ship then
 			self._ship:AddRoom(self)
 		end

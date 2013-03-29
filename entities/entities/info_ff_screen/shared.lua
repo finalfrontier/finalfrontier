@@ -305,7 +305,7 @@ elseif CLIENT then
 
 	function ENT:Think()
 		if not self.Ship and self:GetNWString("ship") then
-			self.Ship = ships.FindByName(self:GetNWString("ship"))
+			self.Ship = ships.GetByName(self:GetNWString("ship"))
 			if self.Ship then
 				self.Room = self.Ship.Rooms[self:GetNWString("room")]
 			end

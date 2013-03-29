@@ -28,12 +28,12 @@ if SERVER then
 		
 		for _, room in ipairs(self.Ship:GetRooms()) do
 			local val = (self.Distribution[room] or 0) * ratio
-			if room._shields < val then
-				room._shields = room._shields + RECHARGE_RATE * dt
-			end
-
-			if room._shields > val then
-				room._shields = val
+			if room:GetShields() < val then
+				room:SetShields(room:GetShields() + RECHARGE_RATE * dt)
+				
+				if room:GetShields() > val then
+					room:SetShields(val)
+				end
 			end
 		end
 	end

@@ -127,7 +127,7 @@ end
 local ply_mt = FindMetaTable("Player")
 function ply_mt:GetShip()
 	if not self:GetNWString("ship") then return nil end
-	return ships.FindByName(self:GetNWString("ship"))
+	return ships.GetByName(self:GetNWString("ship"))
 end
 
 function Ship(name)

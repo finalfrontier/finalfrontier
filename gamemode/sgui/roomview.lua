@@ -25,7 +25,7 @@ if SERVER then
 		self.Super[BASE].UpdateLayout(self, layout)
 
 		if self._room then
-			layout.room = self._room.Index
+			layout.room = self._room:GetIndex()
 		else
 			layout.room = nil
 		end
@@ -51,9 +51,9 @@ if CLIENT then
 		if not self._room then return end
 
 		local roomBounds = Bounds()
-		roomBounds:AddBounds(self._room.Bounds)
-		for _, door in ipairs(self._room.Doors) do
-			roomBounds:AddBounds(door.Bounds)
+		roomBounds:AddBounds(self._room:GetBounds())
+		for _, door in ipairs(self._room:GetDoors()) do
+			roomBounds:AddBounds(door:GetBounds())
 		end
 		local angle = self.Screen:GetAngles().Yaw + 90
 		
@@ -70,14 +70,14 @@ if CLIENT then
 		local newBounds = Bounds()
 
 		self._corners = {}
-		for i, v in ipairs(self._room.Corners) do
+		for i, v in ipairs(self._room:GetCorners()) do
 			x, y = transform:Transform(v.x, v.y)
 			self._corners[i] = { x = x, y = y }
 			newBounds:AddPoint(x, y)
 		end
 
 		self._polys = {}
-		for j, p in ipairs(self._room.ConvexPolys) do
+		for j, p in ipairs(self._room:GetConvexPolys()) do
 			self._polys[j] = {}
 			for i, v in ipairs(p) do
 				x, y = transform:Transform(v.x, v.y)
@@ -86,7 +86,7 @@ if CLIENT then
 		end
 
 		self._iconBounds = Bounds()
-		local cx, cy = self._room.Bounds:GetCentre()
+		local cx, cy = self._room:GetBounds():GetCentre()
 		x, y = cx - 64, cy - 64
 		self._iconBounds:AddPoint(transform:Transform(x, y))
 		x, y = cx + 64, cy + 64
@@ -136,8 +136,8 @@ if CLIENT then
 				lx, ly = v.x, v.y
 			end
 
-			if self._room.System and self._room.System.Icon then
-				surface.SetMaterial(self._room.System.Icon)
+			if self._room:GetSystem() and self._room:GetSystem().Icon then
+				surface.SetMaterial(self._room:GetSystem().Icon)
 				surface.SetDrawColor(Color(255, 255, 255, 32))
 				surface.DrawTexturedRect(self._iconBounds:GetRect())
 			end
@@ -167,7 +167,7 @@ if CLIENT then
 		self.Super[BASE].UpdateLayout(self, layout)
 
 		if layout.room then
-			if not self._room or self._room.Index ~= layout.room then
+			if not self._room or self._room:GetIndex() ~= layout.room then
 				self:SetCurrentRoom(self.Screen.Ship:GetRoomByIndex(layout.room))
 			end
 		else

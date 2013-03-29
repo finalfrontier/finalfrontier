@@ -13,7 +13,7 @@ GUI.Buttons = nil
 
 if SERVER then
 	function GUI:GlobalAction(act)
-		for _, door in ipairs(self:GetShip().Doors) do
+		for _, door in ipairs(self:GetShip():GetDoors()) do
 			if act == action.close then
 				if door:IsOpen() then
 					door:UnlockClose()
@@ -28,10 +28,6 @@ if SERVER then
 				door:Unlock()
 			end
 		end
-
-		timer.Simple(0.1, function()
-			self:GetShip():SendShipRoomStates(self:GetUsingPlayer())
-		end)
 	end
 end
 

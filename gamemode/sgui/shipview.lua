@@ -26,7 +26,7 @@ function GUI:SetCurrentShip(ship)
 	else
 		print(ship:GetName())
 		self._doors = {}
-		for _, door in ipairs(ship.Doors) do
+		for _, door in ipairs(ship:GetDoors()) do
 			local doorview = sgui.Create(self, "doorview")
 			doorview:SetCurrentDoor(door)
 			self._doors[door] = doorview
@@ -76,12 +76,7 @@ if CLIENT then
 	function GUI:FindTransform()
 		if not self._ship then return end
 
-		local shipBounds = Bounds()
-		for _, room in pairs(self._ship.Rooms) do
-			shipBounds:AddBounds(room.Bounds)
-		end
-
-		self:ApplyTransform(FindBestTransform(shipBounds,
+		self:ApplyTransform(FindBestTransform(self._ship:GetBounds(),
 			self:GetGlobalBounds(), true, true))
 	end
 
@@ -103,8 +98,8 @@ if CLIENT then
 		self.Super[BASE].UpdateLayout(self, layout)
 
 		if layout.ship then
-			if not self._ship or self._ship.Name ~= layout.ship then
-				self:SetCurrentShip(ships.FindByName(layout.ship))
+			if not self._ship or self._ship:GetName() ~= layout.ship then
+				self:SetCurrentShip(ships.GetByName(layout.ship))
 			end
 		else
 			self._ship = nil

@@ -42,8 +42,8 @@ function SYS:Initialize()
     if SERVER then
         self._systemWeights = {}
         for _, room in pairs(self.Ship:GetRooms()) do
-            if room.System and room.System.Powered then
-                self:SetSystemWeight(room.System.Name, 0.5)
+            if room:GetSystem() and room:GetSystem().Powered then
+                self:SetSystemWeight(room:GetSystemName(), 0.5)
             end
         end
     end

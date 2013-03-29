@@ -7,8 +7,17 @@ function ships.AddShip(ship)
 	ships._dict[ship:GetName()] = ship
 end
 
-function ships.FindByName(name)
+function ships.GetByName(name)
 	return ships._dict[name]
+end
+
+function ships.GetRoomByName(name)
+    for _, ship in pairs(ships._dict) do
+        local room = ship:GetRoomByName(name)
+        if room then return room end
+    end
+    
+    return nil
 end
 
 function ships.Think()

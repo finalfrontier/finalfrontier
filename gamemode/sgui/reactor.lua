@@ -35,8 +35,9 @@ function GUI:Enter()
     self.Rows = {}
 
     for _, room in pairs(self:GetShip():GetRooms()) do
-        if room.System and room.System.Powered then
-            self:AddRow(room.System)
+        local system = room:GetSystem()
+        if system and system.Powered then
+            self:AddRow(system)
         end
     end
 end
