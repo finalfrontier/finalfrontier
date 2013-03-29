@@ -82,7 +82,7 @@ function sys.Create(name, room)
 
 	if string.len(name) == 0 then return nil end
 	if sys._dict[name] then
-		local system = { Room = room, Ship = room.Ship, Base = _mt }
+		local system = { Room = room, Ship = room:GetShip(), Base = _mt }
 		setmetatable(system, sys._dict[name])
 		system:Initialize()
 		return system

@@ -24,14 +24,18 @@ function ENT:Initialize()
 
 	self._players = {}
 
-	self._nwdata = {}
-	self._nwdata.doornames = {}
-	self._nwdata.corners = {}
+	if not self._nwdata then
+		self._nwdata = {}
+		self._nwdata.doornames = {}
+		self._nwdata.corners = {}
+	end
 
 	self:SetIndex(0)
 end
 
 function ENT:KeyValue(key, value)
+	if not self._nwdata then self._nwdata = {} end
+
 	if key == "ship" then
 		self:_SetShipName(tostring(value))
 	elseif key == "system" then
@@ -56,7 +60,7 @@ function ENT:InitPostEntity()
 	self:_UpdateDoors()
 	self:_UpdateSystem()
 
-	self:SetAirVolume(self.Volume)
+	self:SetAirVolume(self:GetVolume())
 	self:SetTemperature(300)
 	
 	local sysName = self:GetSystemName()
@@ -68,7 +72,7 @@ function ENT:InitPostEntity()
 		
 	self:SetShields(math.random())
 
-	self:NextUpdate()
+	self:_NextUpdate()
 end
 
 local DROWN_SOUNDS = {
@@ -77,7 +81,7 @@ local DROWN_SOUNDS = {
 	"npc/combine_soldier/pain3.wav"
 }
 
-function ENT:NextUpdate()
+function ENT:_NextUpdate()
 	local curTime = CurTime()
 	local dt = curTime - self._lastupdate
 	self._lastupdate = curTime
@@ -86,15 +90,16 @@ function ENT:NextUpdate()
 end
 
 function ENT:Think()
-	local dt = self:NextUpdate()
+	local dt = self:_NextUpdate()
 
-	if self:HasSystem() then self.System:Think(dt) end
+	if self:HasSystem() then self:GetSystem():Think(dt) end
 	
 	self:SetTemperature(self:GetTemperature() * (1 - TEMPERATURE_LOSS_RATE
-		* self.SurfaceArea * dt))
+		* self:GetSurfaceArea() * dt))
 
-	local min = Vector(self.Bounds.l, self.Bounds.t, -65536)
-	local max = Vector(self.Bounds.r, self.Bounds.b, 65536)
+	local bounds = self:GetBounds()
+	local min = Vector(bounds.l, bounds.t, -65536)
+	local max = Vector(bounds.r, bounds.b, 65536)
 
 	for _, ent in pairs(ents.FindInBox(min, max)) do
 		local pos = ent:GetPos()
@@ -210,7 +215,13 @@ function ENT:GetSurfaceArea()
 	return self._nwdata.surfacearea or 0
 end
 
+function ENT:GetBounds()
+	return self._bounds
+end
+
 function ENT:AddCorner(index, x, y)
+	if not self._nwdata.corners then self._nwdata.corners = {} end
+
 	self._nwdata.corners[index] = { x = x, y = y }
 	self:GetBounds():AddPoint(x, y)
 	self:GetShip():GetBounds():AddPoint(x, y)
@@ -222,6 +233,7 @@ function ENT:GetCorners()
 end
 
 function ENT:_AddDoorName(name)
+	if not self._nwdata.doornames then self._nwdata.doornames = {} end
 	if self._nwdata.doornames[name] then return end
 
 	table.insert(self._nwdata.doornames, name)

@@ -100,7 +100,7 @@ function _mt:Think()
 		self:_UpdateDoors()
 	end
 
-	if not self:GetBounds() and and table.Count(self:GetRoomNames()) > 0 and
+	if not self:GetBounds() and table.Count(self:GetRoomNames()) > 0 and
 		table.Count(self:GetRooms()) == table.Count(self:GetRoomNames()) then
 		self:_UpdateBounds()
 	end

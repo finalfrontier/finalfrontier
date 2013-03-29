@@ -41,8 +41,6 @@ function GM:PlayerInitialSpawn(ply)
 	ply:SetCanWalk(true)
 	
 	GAMEMODE:SetPlayerSpeed(ply, 175, 250)
-
-	ships.SendInitShipsData(ply)
 end
 
 function GM:PlayerSpawn(ply)
@@ -52,16 +50,14 @@ function GM:PlayerSpawn(ply)
 end
 
 function GM:Think()
-	for _, ply in ipairs(player.GetAll()) do
-		ships.SendRoomStatesUpdate(ply)
-	end
+	return
 end
 
 function GM:SetupPlayerVisibility(ply)
 	local ship = ply:GetShip()
 	if not ship then return end
 
-	for _, room in pairs(ship.Rooms) do
+	for _, room in pairs(ship:GetRooms()) do
 		if #room:GetPlayers() > 0 then
 			AddOriginToPVS(room:GetPos())
 		end

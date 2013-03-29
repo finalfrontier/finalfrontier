@@ -37,14 +37,14 @@ function ENT:InitPostEntity()
 	trans:Rotate(self:GetAngles().y * math.pi / 180)
 	local pos = self:GetPos()
 	trans:Translate(pos.x, pos.y)
-	
+
 	self._nwdata.corners = {}
 	for i, v in ipairs(coords) do
 		self._nwdata.corners[i] = trans:Transform(v.x, v.y)
 	end
 	self:_UpdateNWData()
 
-	self:NextUpdate()
+	self:_NextUpdate()
 end
 
 function ENT:_SetArea(area)
@@ -53,7 +53,7 @@ function ENT:_SetArea(area)
 end
 
 function ENT:GetArea()
-	return self._nwdata.area
+	return self._nwdata.area or 4
 end
 
 function ENT:SetIndex(index)
@@ -134,7 +134,7 @@ function ENT:UnlockClose()
 	self:Close()
 end
 
-function ENT:NextUpdate()
+function ENT:_NextUpdate()
 	local curTime = CurTime()
 	local dt = curTime - self._lastupdate
 	self._lastupdate = curTime
@@ -143,7 +143,7 @@ function ENT:NextUpdate()
 end
 
 function ENT:Think()
-	local dt = self:NextUpdate()
+	local dt = self:_NextUpdate()
 	
 	local rooms = self:GetRooms()
 

@@ -20,7 +20,8 @@ if SERVER then
 		local totPower = 8
 		local totNeeded = 0
 		for _, room in ipairs(self.Ship:GetRooms()) do
-			totNeeded = totNeeded + room.SurfaceArea * SHIELD_POWER_PER_M2 * (self.Distribution[room] or 0)
+			totNeeded = totNeeded + room:GetSurfaceArea() * SHIELD_POWER_PER_M2
+				* (self.Distribution[room] or 0)
 		end
 		
 		local ratio = math.min(totPower / totNeeded, 1)

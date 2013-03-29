@@ -24,6 +24,7 @@ function ENT:Initialize()
 
 	self._players = {}
 
+	self._nwdata = {}
 	self._nwdata.roomnames = {}
 	self._nwdata.doornames = {}
 	
@@ -32,6 +33,10 @@ end
 
 function ENT:InitPostEntity()
 	ships.Add(self)
+end
+
+function ENT:GetBounds()
+	return self._bounds
 end
 
 function ENT:_SetBaseHealth(health)
@@ -49,11 +54,11 @@ function ENT:AddRoom(room)
 
 	self._roomdict[name] = room
 	table.insert(self._roomlist, room)
-	self.Bounds:AddBounds(room:GetBounds())
+	self:GetBounds():AddBounds(room:GetBounds())
 	
 	room:SetIndex(#self._roomlist)
 
-	self._nwdata.rooms[room:GetIndex()] = name
+	self._nwdata.roomnames[room:GetIndex()] = name
 	self:_UpdateNWData()
 end
 
