@@ -31,7 +31,7 @@ function _mt:GetRoomNames()
 end
 
 function _mt:_UpdateRooms()
-	for index, name in pairs(self:GetDoorNames()) do
+	for index, name in pairs(self:GetRoomNames()) do
 		if self._roomdict[name] then return end
 
 		local room = Room(name, self, index)
@@ -74,6 +74,13 @@ end
 
 function _mt:GetDoorByIndex(index)
 	return self._doorlist[index]
+end
+
+function _mt:GetDoorByName(name)
+	for _, door in pairs(self:GetDoors()) do
+		if door:GetName() == name then return door end
+	end
+	return nil
 end
 
 function _mt:FindTransform(screen, x, y, width, height)
@@ -138,6 +145,7 @@ function Ship(name)
 	ship._doorlist = {}
 
 	ship._nwdata = GetGlobalTable(name)
+	ship._nwdata.name = name
 
 	return setmetatable(ship, _mt)
 end

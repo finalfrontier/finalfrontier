@@ -25,6 +25,7 @@ function ENT:Initialize()
 	self._players = {}
 
 	self._nwdata = {}
+	self._nwdata.name = self:GetName()
 	self._nwdata.roomnames = {}
 	self._nwdata.doornames = {}
 	

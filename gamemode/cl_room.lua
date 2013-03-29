@@ -8,6 +8,7 @@ _mt._ship = nil
 _mt._doorlist = nil
 _mt._bounds = nil
 _mt._system = nil
+_mt._convexPolys = nil
 
 _mt._nwdata = nil
 
@@ -16,7 +17,7 @@ function _mt:GetName()
 end
 
 function _mt:GetIndex()
-	return self._nwdata.index
+	return self._nwdata.index or 0
 end
 
 function _mt:GetShip()
@@ -25,9 +26,11 @@ end
 
 function _mt:_UpdateBounds()
 	self._bounds = Bounds()
-	for _, v in pairs(self:GetCorners()) do
+	for k, v in ipairs(self:GetCorners()) do
 		self._bounds:AddPoint(v.x, v.y)
 	end
+
+	self._convexPolys = FindConvexPolygons(self:GetCorners())
 end
 
 function _mt:GetBounds()
@@ -40,6 +43,10 @@ end
 
 function _mt:_UpdateSystem()
 	self._system = sys.Create(self:GetSystemName(), self)
+end
+
+function _mt:HasSystem()
+	return self._system ~= nil
 end
 
 function _mt:GetSystem()
@@ -79,16 +86,20 @@ function _mt:GetCorners()
 	return self._nwdata.corners
 end
 
+function _mt:GetConvexPolys()
+	return self._convexPolys or {}
+end
+
 function _mt:GetStatusLerp()
 	return math.Clamp((CurTime() - self._lastUpdate) / ROOM_UPDATE_FREQ, 0, 1)
 end
 
 function _mt:GetTemperature()
-	return self._nwdata.temperature * self:GetAtmosphere()
+	return (self._nwdata.temperature or 0) * self:GetAtmosphere()
 end
 
 function _mt:GetAirVolume()
-	return self._nwdata.airvolume
+	return self._nwdata.airvolume or 0
 end
 
 function _mt:GetAtmosphere()
@@ -96,7 +107,7 @@ function _mt:GetAtmosphere()
 end
 
 function _mt:GetShields()
-	return self._nwdata.shields
+	return self._nwdata.shields or 0
 end
 
 function _mt:GetPermissionsName()
@@ -113,8 +124,8 @@ function ply_mt:HasPermission(room, perm)
 end
 
 function ply_mt:HasDoorPermission(door)
-	return self:HasPermission(door.Rooms[1], permission.ACCESS)
-		or self:HasPermission(door.Rooms[2], permission.ACCESS)
+	return self:HasPermission(door:GetRooms()[1], permission.ACCESS)
+		or self:HasPermission(door:GetRooms()[2], permission.ACCESS)
 end
 
 function ply_mt:GetRoom()
@@ -124,23 +135,23 @@ function ply_mt:GetRoom()
 end
 
 function ply_mt:IsInRoom(room)
-	if self:GetNWString("ship") == room.Ship.Name
-		and self:GetNWInt("room") == room.Index then
+	if self:GetNWString("ship") == room:GetShip():GetName()
+		and self:GetNWInt("room") == room:GetIndex() then
 		return true
 	end
 end
 
 function _mt:Think()
 	if self:GetSystemName() and not self:GetSystem() then
-		self._UpdateSystem()
+		self:_UpdateSystem()
 	end
 
 	if not self:GetBounds() and self:GetCorners() then
-		self._UpdateBounds()
+		self:_UpdateBounds()
 	end
 
 	if table.Count(self:GetDoors()) < table.Count(self:GetDoorNames()) then
-		self._UpdateDoors()
+		self:_UpdateDoors()
 	end
 end
 

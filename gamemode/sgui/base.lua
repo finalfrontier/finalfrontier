@@ -34,8 +34,8 @@ function GUI:GetSystem()
 end
 
 function GUI:GetSystemIcon()
-	if self.Screen.Room and self.Screen.Room:GetSystem() then
-		return self.Screen.Room:GetSystem().Icon
+	if self:GetSystem() then
+		return self:GetSystem().Icon
 	end
 
 	return nil

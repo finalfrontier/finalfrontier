@@ -16,6 +16,7 @@ ENT._nwdata = nil
 function ENT:Initialize()
 	self._rooms = {}
 	self._nwdata = {}
+	self._nwdata.name = self:GetName()
 
 	self:_SetArea(4)
 end
@@ -40,7 +41,8 @@ function ENT:InitPostEntity()
 
 	self._nwdata.corners = {}
 	for i, v in ipairs(coords) do
-		self._nwdata.corners[i] = trans:Transform(v.x, v.y)
+		local x, y = trans:Transform(v.x, v.y)
+		self._nwdata.corners[i] = { x = x, y = y }
 	end
 	self:_UpdateNWData()
 

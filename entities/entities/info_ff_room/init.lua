@@ -29,6 +29,8 @@ function ENT:Initialize()
 		self._nwdata.doornames = {}
 		self._nwdata.corners = {}
 	end
+	
+	self._nwdata.name = self:GetName()
 
 	self:SetIndex(0)
 end
@@ -321,12 +323,12 @@ function ENT:TransmitAir(room, delta)
 
 	delta = math.min(delta, self:GetAirVolume())
 	
-	self:SetAirVolume(self._airvolume - delta)
-	room:SetAirVolume(room._airvolume + delta)
+	self:SetAirVolume(self:GetAirVolume() - delta)
+	room:SetAirVolume(room:GetAirVolume() + delta)
 end
 
 function ENT:GetPermissionsName()
-	return "p_" .. self.ShipName .. "_" .. self.Index
+	return "p_" .. self:GetShipName() .. "_" .. self:GetIndex()
 end
 
 local ply_mt = FindMetaTable("Player")
@@ -343,8 +345,8 @@ function ply_mt:SetPermission(room, perm)
 end
 
 function ply_mt:HasDoorPermission(door)
-	return self:HasPermission(door.Rooms[1], permission.ACCESS)
-		or self:HasPermission(door.Rooms[2], permission.ACCESS)
+	return self:HasPermission(door:GetRooms()[1], permission.ACCESS)
+		or self:HasPermission(door:GetRooms()[2], permission.ACCESS)
 end
 
 function ply_mt:SetRoom(room)

@@ -22,7 +22,6 @@ end
 
 function ships.Think()
     -- TODO: only subscribe to the ship that the player is within
-    --[[
     if #ships._nwdata > table.Count(ships._dict) then
         for _, name in pairs(ships._nwdata) do
             if not ships._dict[name] then
@@ -30,7 +29,6 @@ function ships.Think()
             end
         end
     end
-    ]]
 
     for _, ship in pairs(ships._dict) do
         ship:Think()

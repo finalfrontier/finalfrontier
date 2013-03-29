@@ -63,7 +63,7 @@ if SERVER then
 			if #rooms > 0 then
 				self.Room = rooms[1]
 				self.Room:AddScreen(self)
-				self.Ship = self.Room.Ship
+				self.Ship = self.Room:GetShip()
 			end
 		end
 		
@@ -72,7 +72,7 @@ if SERVER then
 			return
 		end
 
-		self:SetNWString("ship", self.Room.ShipName)
+		self:SetNWString("ship", self.Room:GetShipName())
 		self:SetNWString("room", self.RoomName)
 		self:SetNWBool("used", false)
 		self:SetNWEntity("user", nil)
@@ -231,8 +231,8 @@ if SERVER then
 		self.UI:SetCurrentPage(page.ACCESS)
 		self:UpdateLayout()
 
-		if self.Room.System then
-			self.Room.System:StartControlling(self, ply)
+		if self.Room:HasSystem() then
+			self.Room:GetSystem():StartControlling(self, ply)
 		end
 	end
 	
@@ -259,8 +259,8 @@ if SERVER then
 		self.UI:SetCurrentPage(page.STATUS)
 		self:UpdateLayout()
 
-		if self.Room.System then
-			self.Room.System:StopControlling(self, ply)
+		if self.Room:HasSystem() then
+			self.Room:GetSystem():StopControlling(self, ply)
 		end
 	end
 
@@ -306,9 +306,10 @@ elseif CLIENT then
 	function ENT:Think()
 		if not self.Ship and self:GetNWString("ship") then
 			self.Ship = ships.GetByName(self:GetNWString("ship"))
-			if self.Ship then
-				self.Room = self.Ship.Rooms[self:GetNWString("room")]
-			end
+		end
+
+		if not self.Room and self.Ship and self:GetNWString("room") then
+			self.Room = self.Ship:GetRoomByName(self:GetNWString("room"))
 		end
 		
 		self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE
