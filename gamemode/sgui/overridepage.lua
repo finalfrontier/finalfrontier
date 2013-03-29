@@ -1,6 +1,6 @@
 local BASE = "page"
 
-local NODE_SIZE = 36
+local NODE_SIZE = 48
 
 local NODE_LABELS = {
 	"A", "B", "C", "D", "E", "F", "G", "H",

@@ -29,11 +29,6 @@ function _mt:_UpdateBounds()
 	for _, v in ipairs(self:GetCorners()) do
 		bounds:AddPoint(v.x, v.y)
 	end
-
-	for _, door in ipairs(self:GetDoors()) do
-		if not door:GetBounds() then return end
-		bounds:AddBounds(door:GetBounds())
-	end
 	self._bounds = bounds
 end
 
@@ -153,7 +148,6 @@ function _mt:Think()
 
 	if table.Count(self:GetDoors()) < table.Count(self:GetDoorNames()) then
 		self:_UpdateDoors()
-		self:_UpdateBounds()
 	end
 
 	if not self:GetBounds() and self:GetCorners() then
