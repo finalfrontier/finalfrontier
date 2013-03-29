@@ -25,12 +25,16 @@ function _mt:GetShip()
 end
 
 function _mt:_UpdateBounds()
-	self._bounds = Bounds()
-	for k, v in ipairs(self:GetCorners()) do
-		self._bounds:AddPoint(v.x, v.y)
+	local bounds = Bounds()
+	for _, v in ipairs(self:GetCorners()) do
+		bounds:AddPoint(v.x, v.y)
 	end
 
-	self._convexPolys = FindConvexPolygons(self:GetCorners())
+	for _, door in ipairs(self:GetDoors()) do
+		if not door:GetBounds() then return end
+		bounds:AddBounds(door:GetBounds())
+	end
+	self._bounds = bounds
 end
 
 function _mt:GetBounds()
@@ -68,9 +72,10 @@ end
 function _mt:_UpdateDoors()
 	for _, name in pairs(self:GetDoorNames()) do
 		local door = self:GetShip():GetDoorByName(name)
-		if not door then return end
+		if not door or table.HasValue(self._doorlist, door) then return end
 
-		self._doorlist[door:GetIndex()] = door
+		door:AddRoom(self)
+		table.insert(self._doorlist, door)
 	end
 end
 
@@ -78,16 +83,16 @@ function _mt:GetDoors()
 	return self._doorlist
 end
 
-function _mt:GetDoorByIndex(index)
-	return self._doorlist[index]
-end
-
 function _mt:GetCorners()
 	return self._nwdata.corners
 end
 
+function _mt:_UpdateConvexPolys()
+	self._convexPolys = FindConvexPolygons(self:GetCorners())
+end
+
 function _mt:GetConvexPolys()
-	return self._convexPolys or {}
+	return self._convexPolys
 end
 
 function _mt:GetStatusLerp()
@@ -146,12 +151,17 @@ function _mt:Think()
 		self:_UpdateSystem()
 	end
 
+	if table.Count(self:GetDoors()) < table.Count(self:GetDoorNames()) then
+		self:_UpdateDoors()
+		self:_UpdateBounds()
+	end
+
 	if not self:GetBounds() and self:GetCorners() then
 		self:_UpdateBounds()
 	end
 
-	if table.Count(self:GetDoors()) < table.Count(self:GetDoorNames()) then
-		self:_UpdateDoors()
+	if not self:GetConvexPolys() and self:GetCorners() then
+		self:_UpdateConvexPolys()
 	end
 end
 

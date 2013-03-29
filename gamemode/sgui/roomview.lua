@@ -136,7 +136,7 @@ if CLIENT then
 				lx, ly = v.x, v.y
 			end
 
-			if self._room:GetSystem() and self._room:GetSystem().Icon then
+			if self._room:HasSystem() and self._room:GetSystem().Icon then
 				surface.SetMaterial(self._room:GetSystem().Icon)
 				surface.SetDrawColor(Color(255, 255, 255, 32))
 				surface.DrawTexturedRect(self._iconBounds:GetRect())

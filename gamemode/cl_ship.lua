@@ -56,7 +56,7 @@ function _mt:_UpdateDoors()
 	for index, name in pairs(self:GetDoorNames()) do
 		if self._doorlist[index] then return end
 		
-		self._roomdict[name] = Door(name, self, index)
+		self._doorlist[index] = Door(name, self, index)
 	end
 end
 

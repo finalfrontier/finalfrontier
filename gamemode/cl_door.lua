@@ -32,6 +32,17 @@ function _mt:GetAngle()
 	return self._nwdata.angle
 end
 
+function _mt:AddRoom(room)
+	if not self._rooms[1] then
+		self._rooms[1] = room
+	elseif self._rooms[1]:GetIndex() < room:GetIndex() then
+		self._rooms[2] = room
+	else
+		self._rooms[2] = self._rooms[1]
+		self._rooms[1] = room
+	end
+end
+
 function _mt:GetRooms()
 	return self._rooms
 end
@@ -69,7 +80,7 @@ end
 
 function _mt:Think()
 	if not self:GetBounds() and self:GetCorners() then
-		self._UpdateBounds()
+		self:_UpdateBounds()
 	end
 end
 

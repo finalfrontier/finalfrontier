@@ -7,7 +7,7 @@ ENT.Base = "base_point"
 ENT._ship = nil
 ENT._screens = nil
 ENT._system = nil
-ENT._doors = nil
+ENT._doorlist = nil
 ENT._bounds = nil
 
 ENT._lastupdate = 0
@@ -19,7 +19,7 @@ ENT._nwdata = nil
 
 function ENT:Initialize()
 	self._screens = {}
-	self._doors = {}
+	self._doorlist = {}
 	self._bounds = Bounds()
 
 	self._players = {}
@@ -29,7 +29,7 @@ function ENT:Initialize()
 		self._nwdata.doornames = {}
 		self._nwdata.corners = {}
 	end
-	
+
 	self._nwdata.name = self:GetName()
 
 	self:SetIndex(0)
@@ -236,7 +236,7 @@ end
 
 function ENT:_AddDoorName(name)
 	if not self._nwdata.doornames then self._nwdata.doornames = {} end
-	if self._nwdata.doornames[name] then return end
+	if table.HasValue(self._nwdata.doornames, name) then return end
 
 	table.insert(self._nwdata.doornames, name)
 	self:_UpdateNWData()
@@ -246,24 +246,22 @@ function ENT:GetDoorNames()
 	return self._nwdata.doornames
 end
 
-function ENT:_AddDoor(door)
-	self._doors[door:GetIndex()] = door -- may not work
-end
-
 function ENT:_UpdateDoors()
 	for _, name in ipairs(self:GetDoorNames()) do
 		local doors = ents.FindByName(name)
 		if #doors > 0 then
 			local door = doors[1]
+			if table.HasValue(self._doorlist, door) then return end
+
 			self:GetShip():AddDoor(door)
 			door:AddRoom(self)
-			self:_AddDoor(door)
+			table.insert(self._doorlist, door)
 		end
 	end
 end
 
 function ENT:GetDoors()
-	return self._doors
+	return self._doorlist
 end
 
 function ENT:AddScreen(screen)
@@ -289,7 +287,7 @@ function ENT:SetAirVolume(volume)
 end
 
 function ENT:GetAirVolume()
-	return self._nwdata.airvolume
+	return self._nwdata.airvolume or 0
 end
 
 function ENT:SetAtmosphere(atmosphere)

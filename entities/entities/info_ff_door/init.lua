@@ -68,7 +68,14 @@ function ENT:GetIndex()
 end
 
 function ENT:AddRoom(room)
-	table.insert(self._rooms, room)
+	if not self._rooms[1] then
+		self._rooms[1] = room
+	elseif self._rooms[1]:GetIndex() < room:GetIndex() then
+		self._rooms[2] = room
+	else
+		self._rooms[2] = self._rooms[1]
+		self._rooms[1] = room
+	end
 end
 
 function ENT:GetRooms()
