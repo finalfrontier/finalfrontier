@@ -1,4 +1,4 @@
-local ROOM_UPDATE_FREQ = 1
+local ROOM_UPDATE_FREQ = 0.5
 
 local _mt = {}
 _mt.__index = _mt
@@ -9,6 +9,12 @@ _mt._doorlist = nil
 _mt._bounds = nil
 _mt._system = nil
 _mt._convexPolys = nil
+
+_mt._lerptime = 0
+
+_mt._temperature = nil
+_mt._airvolume = nil
+_mt._shields = nil
 
 _mt._nwdata = nil
 
@@ -82,12 +88,21 @@ function _mt:GetConvexPolys()
 	return self._convexPolys
 end
 
-function _mt:GetStatusLerp()
-	return math.Clamp((CurTime() - self._lastUpdate) / ROOM_UPDATE_FREQ, 0, 1)
+function _mt:_GetLerp()
+	return math.Clamp((CurTime() - self._lerptime) / ROOM_UPDATE_FREQ, 0, 1)
+end
+
+function _mt:_GetLerpedValue(value)
+	return value.old + (value.cur - value.old) * self:_GetLerp()
+end
+
+function _mt:_NextValue(value, next)
+	value.old = value.cur
+	value.cur = next or 0
 end
 
 function _mt:GetUnitTemperature()
-	return self._nwdata.temperature or 0
+	return self:_GetLerpedValue(self._temperature)
 end
 
 function _mt:GetTemperature()
@@ -95,7 +110,7 @@ function _mt:GetTemperature()
 end
 
 function _mt:GetAirVolume()
-	return self._nwdata.airvolume or 0
+	return self:_GetLerpedValue(self._airvolume)
 end
 
 function _mt:GetAtmosphere()
@@ -103,7 +118,7 @@ function _mt:GetAtmosphere()
 end
 
 function _mt:GetShields()
-	return self._nwdata.shields or 0
+	return self:_GetLerpedValue(self._shields)
 end
 
 function _mt:GetPermissionsName()
@@ -138,6 +153,14 @@ function ply_mt:IsInRoom(room)
 end
 
 function _mt:Think()
+	if self:_GetLerp() >= 1.0 then
+		self:_NextValue(self._temperature, self._nwdata.temperature)
+		self:_NextValue(self._airvolume, self._nwdata.airvolume)
+		self:_NextValue(self._shields, self._nwdata.shields)
+
+		self._lerptime = CurTime()
+	end
+
 	if self:GetSystemName() and not self:GetSystem() then
 		self:_UpdateSystem()
 	end
@@ -157,6 +180,10 @@ end
 
 function Room(name, ship, index)
 	local room = {}
+
+	room._temperature = { old = 0, cur = 0 }
+	room._airvolume = { old = 0, cur = 0 }
+	room._shields = { old = 0, cur = 0 }
 
 	room._nwdata = GetGlobalTable(name)
 	room._nwdata.name = name
