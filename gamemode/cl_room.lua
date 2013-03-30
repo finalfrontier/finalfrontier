@@ -60,18 +60,10 @@ function _mt:GetSurfaceArea()
 	return self._nwdata.surfacearea or 0
 end
 
-function _mt:GetDoorNames()
-	return self._nwdata.doornames or {}
-end
+function _mt:AddDoor(door)
+	if table.HasValue(self._doorlist, door) then return end
 
-function _mt:_UpdateDoors()
-	for _, name in pairs(self:GetDoorNames()) do
-		local door = self:GetShip():GetDoorByName(name)
-		if not door or table.HasValue(self._doorlist, door) then return end
-
-		door:AddRoom(self)
-		table.insert(self._doorlist, door)
-	end
+	table.insert(self._doorlist, door)
 end
 
 function _mt:GetDoors()
@@ -144,10 +136,6 @@ end
 function _mt:Think()
 	if self:GetSystemName() and not self:GetSystem() then
 		self:_UpdateSystem()
-	end
-
-	if table.Count(self:GetDoors()) < table.Count(self:GetDoorNames()) then
-		self:_UpdateDoors()
 	end
 
 	if not self:GetBounds() and self:GetCorners() then

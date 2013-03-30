@@ -1,8 +1,8 @@
 versioninfo
 {
 	"editorversion" "400"
-	"editorbuild" "5439"
-	"mapversion" "20"
+	"editorbuild" "5845"
+	"mapversion" "22"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "20"
+	"mapversion" "22"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -581,8 +581,25 @@ entity
 	"classname" "info_ff_door"
 	"angles" "0 90 0"
 	"door" "door"
+	"room1" "$room1_name"
+	"room2" "$room2_name"
 	"targetname" "door_info"
 	"origin" "0 0 64"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "139"
+	"classname" "func_instance_parms"
+	"parm1" "$room1_name target_name_or_class"
+	"parm2" "$room2_name target_name_or_class"
+	"origin" "0 0 88"
 	editor
 	{
 		"color" "220 30 220"
@@ -596,8 +613,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[33.058 -44.7188 129.538]"
-		"look" "[32.6614 -44.074 128.884]"
+		"position" "[43.1686 8.33499 56.9279]"
+		"look" "[42.2208 8.01981 56.9833]"
 	}
 }
 cordon

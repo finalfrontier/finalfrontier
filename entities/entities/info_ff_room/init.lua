@@ -26,7 +26,6 @@ function ENT:Initialize()
 
 	if not self._nwdata then
 		self._nwdata = {}
-		self._nwdata.doornames = {}
 		self._nwdata.corners = {}
 	end
 
@@ -45,21 +44,14 @@ function ENT:KeyValue(key, value)
 	elseif key == "volume" then
 		self:_SetVolume(tonumber(value))
 		self:_SetSurfaceArea(math.sqrt(self:GetVolume()) * 6)
-	elseif string.find(key, "^door%d*") then
-		self:_AddDoorName(tostring(value))
 	end
 end
 
-function ENT:InitPostEntity()
-	if #self:GetDoorNames() == 0 then
-		MsgN(self:GetName() .. " has no doors!")
-	end
-	
+function ENT:InitPostEntity()	
 	self:_UpdateShip()
 
 	if not self:GetShip() then return end
 
-	self:_UpdateDoors()
 	self:_UpdateSystem()
 
 	self:SetAirVolume(self:GetVolume())
@@ -234,30 +226,10 @@ function ENT:GetCorners()
 	return self._nwdata.corners
 end
 
-function ENT:_AddDoorName(name)
-	if not self._nwdata.doornames then self._nwdata.doornames = {} end
-	if table.HasValue(self._nwdata.doornames, name) then return end
+function ENT:AddDoor(door)
+	if table.HasValue(self._doorlist, door) then return end
 
-	table.insert(self._nwdata.doornames, name)
-	self:_UpdateNWData()
-end
-
-function ENT:GetDoorNames()
-	return self._nwdata.doornames
-end
-
-function ENT:_UpdateDoors()
-	for _, name in ipairs(self:GetDoorNames()) do
-		local doors = ents.FindByName(name)
-		if #doors > 0 then
-			local door = doors[1]
-			if table.HasValue(self._doorlist, door) then return end
-
-			self:GetShip():AddDoor(door)
-			door:AddRoom(self)
-			table.insert(self._doorlist, door)
-		end
-	end
+	table.insert(self._doorlist, door)
 end
 
 function ENT:GetDoors()

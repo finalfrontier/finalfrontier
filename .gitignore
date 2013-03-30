@@ -4,3 +4,4 @@ content/maps/vmf/*.prt
 content/maps/vmf/*.vmx
 *.ztmp
 *.mdmp
+*.temp.vmf

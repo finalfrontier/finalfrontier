@@ -32,15 +32,20 @@ function _mt:GetAngle()
 	return self._nwdata.angle
 end
 
-function _mt:AddRoom(room)
-	if not self._rooms[1] then
-		self._rooms[1] = room
-	elseif self._rooms[1]:GetIndex() < room:GetIndex() then
-		self._rooms[2] = room
-	else
-		self._rooms[2] = self._rooms[1]
-		self._rooms[1] = room
+function _mt:GetRoomNames()
+	return self._nwdata.roomnames
+end
+
+function _mt:_UpdateRooms()
+	local rooms = {}
+	for i = 1, 2 do
+		local name = self:GetRoomNames()[i]
+		local room = ships.GetRoomByName(name)
+		room:AddDoor(self)
+		rooms[i] = room
+		room:GetShip():AddDoor(self)
 	end
+	self._rooms = rooms
 end
 
 function _mt:GetRooms()
@@ -82,12 +87,15 @@ function _mt:Think()
 	if not self:GetBounds() and self:GetCorners() then
 		self:_UpdateBounds()
 	end
+
+	if not self:GetRooms() and self:GetRoomNames() then
+		self:_UpdateRooms()
+	end
 end
 
 function Door(name, ship, index)
 	door = {}
 	door._ship = ship
-	door._rooms = {}
 
 	door._nwdata = GetGlobalTable(name)
 	door._nwdata.name = name

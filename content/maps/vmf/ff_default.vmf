@@ -1,8 +1,8 @@
 versioninfo
 {
 	"editorversion" "400"
-	"editorbuild" "5439"
-	"mapversion" "80"
+	"editorbuild" "5845"
+	"mapversion" "86"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "80"
+	"mapversion" "86"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -15880,6 +15880,82 @@ world
 			"visgroupautoshown" "1"
 		}
 	}
+	solid
+	{
+		"id" "9837"
+		side
+		{
+			"id" "4474"
+			"plane" "(-32 -1664 112) (64 -1664 112) (64 -1888 112)"
+			"material" "DEV/DEV_BLENDMEASURE"
+			"uaxis" "[1 0 0 0] 0.25"
+			"vaxis" "[0 -1 0 0] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4475"
+			"plane" "(-32 -1888 96) (64 -1888 96) (64 -1664 96)"
+			"material" "DEV/DEV_BLENDMEASURE"
+			"uaxis" "[1 0 0 0] 0.25"
+			"vaxis" "[0 -1 0 0] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4476"
+			"plane" "(-32 -1664 112) (-32 -1888 112) (-32 -1888 96)"
+			"material" "DEV/DEV_BLENDMEASURE"
+			"uaxis" "[0 1 0 0] 0.25"
+			"vaxis" "[0 0 -1 0] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4477"
+			"plane" "(64 -1664 96) (64 -1888 96) (64 -1888 112)"
+			"material" "DEV/REFLECTIVITY_70"
+			"uaxis" "[0 1 0 128] 0.25"
+			"vaxis" "[0 0 -1 448] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4478"
+			"plane" "(64 -1664 112) (-32 -1664 112) (-32 -1664 96)"
+			"material" "DEV/DEV_BLENDMEASURE"
+			"uaxis" "[1 0 0 0] 0.25"
+			"vaxis" "[0 0 -1 0] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4479"
+			"plane" "(64 -1888 96) (-32 -1888 96) (-32 -1888 112)"
+			"material" "DEV/DEV_BLENDMEASURE"
+			"uaxis" "[1 0 0 0] 0.25"
+			"vaxis" "[0 0 -1 0] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		editor
+		{
+			"color" "0 176 117"
+			"visgroupshown" "1"
+			"visgroupautoshown" "1"
+		}
+	}
 }
 entity
 {
@@ -17495,7 +17571,6 @@ entity
 {
 	"id" "4984"
 	"classname" "info_ff_room"
-	"door01" "door_info_2"
 	"height" "160"
 	"ship" "ship_default"
 	"system" "piloting"
@@ -17514,8 +17589,6 @@ entity
 {
 	"id" "5073"
 	"classname" "info_ff_room"
-	"door01" "door_info_1"
-	"door02" "door_info_2"
 	"ship" "ship_default"
 	"system" "sensors"
 	"targetname" "room_sensors"
@@ -17571,9 +17644,13 @@ entity
 {
 	"id" "7171"
 	"classname" "func_instance"
+	"$room1_name" "room_weapons"
+	"$room2_name" "room_sensors"
 	"angles" "-0 0 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_weapons"
+	"replace02" "$room2_name room_sensors"
 	"targetname" "_1"
 	"origin" "-192 -288 0"
 	editor
@@ -17588,9 +17665,13 @@ entity
 {
 	"id" "7270"
 	"classname" "func_instance"
+	"$room1_name" "room_sensors"
+	"$room2_name" "room_piloting"
 	"angles" "-0 0 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_sensors"
+	"replace02" "$room2_name room_piloting"
 	"targetname" "_2"
 	"origin" "-192 32 0"
 	editor
@@ -17605,9 +17686,13 @@ entity
 {
 	"id" "7333"
 	"classname" "func_instance"
+	"$room1_name" "room_hallway1"
+	"$room2_name" "room_medical"
 	"angles" "-0 0 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_hallway1"
+	"replace02" "$room2_name room_medical"
 	"targetname" "_5"
 	"origin" "-672 -1568 96"
 	editor
@@ -17622,9 +17707,13 @@ entity
 {
 	"id" "7336"
 	"classname" "func_instance"
+	"$room1_name" "room_hallway1"
+	"$room2_name" "room_doorcontrol"
 	"angles" "-0 0 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_hallway1"
+	"replace02" "$room2_name room_doorcontrol"
 	"targetname" "_6"
 	"origin" "-672 -928 64"
 	editor
@@ -17639,9 +17728,13 @@ entity
 {
 	"id" "7355"
 	"classname" "func_instance"
+	"$room1_name" "room_shields"
+	"$room2_name" "room_engineering"
 	"angles" "-0 0 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_shields"
+	"replace02" "$room2_name room_engineering"
 	"targetname" "_7"
 	"origin" "-192 -1952 96"
 	editor
@@ -17656,9 +17749,13 @@ entity
 {
 	"id" "7460"
 	"classname" "func_instance"
+	"$room1_name" "room_weapons"
+	"$room2_name" "room_reactor"
 	"angles" "-0 0 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_weapons"
+	"replace02" "$room2_name room_reactor"
 	"targetname" "_8"
 	"origin" "-384 -928 -80"
 	editor
@@ -17673,9 +17770,13 @@ entity
 {
 	"id" "7482"
 	"classname" "func_instance"
+	"$room1_name" "room_weapons"
+	"$room2_name" "room_reactor"
 	"angles" "-0 -180 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_weapons"
+	"replace02" "$room2_name room_reactor"
 	"targetname" "_9"
 	"origin" "0 -928 -80"
 	editor
@@ -17690,9 +17791,13 @@ entity
 {
 	"id" "7498"
 	"classname" "func_instance"
+	"$room1_name" "room_hallway4"
+	"$room2_name" "room_lifesupport"
 	"angles" "-0 180 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_hallway4"
+	"replace02" "$room2_name room_lifesupport"
 	"targetname" "_10"
 	"origin" "288 -928 64"
 	editor
@@ -17707,9 +17812,13 @@ entity
 {
 	"id" "7520"
 	"classname" "func_instance"
+	"$room1_name" "room_hallway4"
+	"$room2_name" "room_transporter"
 	"angles" "-0 -180 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_hallway4"
+	"replace02" "$room2_name room_transporter"
 	"targetname" "_11"
 	"origin" "288 -1568 96"
 	editor
@@ -17724,9 +17833,13 @@ entity
 {
 	"id" "7530"
 	"classname" "func_instance"
+	"$room1_name" "room_lifesupport"
+	"$room2_name" "room_weapons"
 	"angles" "-0 -90 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_lifesupport"
+	"replace02" "$room2_name room_weapons"
 	"targetname" "_12"
 	"origin" "96 -704 64"
 	editor
@@ -17741,9 +17854,13 @@ entity
 {
 	"id" "7546"
 	"classname" "func_instance"
+	"$room1_name" "room_doorcontrol"
+	"$room2_name" "room_weapons"
 	"angles" "-0 -90 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_doorcontrol"
+	"replace02" "$room2_name room_weapons"
 	"targetname" "_13"
 	"origin" "-480 -704 64"
 	editor
@@ -17758,9 +17875,13 @@ entity
 {
 	"id" "7562"
 	"classname" "func_instance"
+	"$room1_name" "room_shields"
+	"$room2_name" "room_hallway1"
 	"angles" "-0 -90 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_shields"
+	"replace02" "$room2_name room_hallway1"
 	"targetname" "_14"
 	"origin" "-480 -1440 96"
 	editor
@@ -17775,9 +17896,13 @@ entity
 {
 	"id" "7565"
 	"classname" "func_instance"
+	"$room1_name" "room_shields"
+	"$room2_name" "room_hallway4"
 	"angles" "-0 -90 0"
 	"file" "ff_default_door.vmf"
 	"fixup_style" "1"
+	"replace01" "$room1_name room_shields"
+	"replace02" "$room2_name room_hallway4"
 	"targetname" "_15"
 	"origin" "96 -1440 96"
 	editor
@@ -17792,9 +17917,11 @@ entity
 {
 	"id" "7687"
 	"classname" "func_instance"
+	"$room_name" "room_engineering"
 	"angles" "-0 -180 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
+	"replace01" "$room_name room_engineering"
 	"targetname" "_engineering"
 	"origin" "-192 -2352 96"
 	editor
@@ -17809,9 +17936,11 @@ entity
 {
 	"id" "7722"
 	"classname" "func_instance"
+	"$room_name" "room_shields"
 	"angles" "-0 0 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
+	"replace01" "$room_name room_shields"
 	"targetname" "_shields"
 	"origin" "-192 -1296 96"
 	editor
@@ -17826,9 +17955,11 @@ entity
 {
 	"id" "7744"
 	"classname" "func_instance"
+	"$room_name" "room_hallway1"
 	"angles" "-0 90 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
+	"replace01" "$room_name room_hallway1"
 	"targetname" "_hallway1"
 	"origin" "-752 -1392 96"
 	editor
@@ -17843,9 +17974,11 @@ entity
 {
 	"id" "7766"
 	"classname" "func_instance"
+	"$room_name" "room_doorcontrol"
 	"angles" "-0 90 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
+	"replace01" "$room_name room_doorcontrol"
 	"targetname" "_doorcontrol"
 	"origin" "-752 -736 64"
 	editor
@@ -17860,9 +17993,11 @@ entity
 {
 	"id" "7785"
 	"classname" "func_instance"
+	"$room_name" "room_lifesupport"
 	"angles" "-0 -90 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
+	"replace01" "$room_name room_lifesupport"
 	"targetname" "_lifesupport"
 	"origin" "368 -736 64"
 	editor
@@ -17877,9 +18012,11 @@ entity
 {
 	"id" "7788"
 	"classname" "func_instance"
+	"$room_name" "room_hallway4"
 	"angles" "-0 -90 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
+	"replace01" "$room_name room_hallway4"
 	"targetname" "_hallway4"
 	"origin" "368 -1392 96"
 	editor
@@ -17894,9 +18031,11 @@ entity
 {
 	"id" "7813"
 	"classname" "func_instance"
+	"$room_name" "room_reactor"
 	"angles" "-0 -180 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
+	"replace01" "$room_name room_reactor"
 	"targetname" "_reactor"
 	"origin" "-192 -1200 -96"
 	editor
@@ -17911,9 +18050,11 @@ entity
 {
 	"id" "7852"
 	"classname" "func_instance"
+	"$room_name" "room_medical"
 	"angles" "-0 -180 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
+	"replace01" "$room_name room_medical"
 	"targetname" "_medical"
 	"origin" "-576 -1872 96"
 	editor
@@ -17928,11 +18069,13 @@ entity
 {
 	"id" "7865"
 	"classname" "func_instance"
-	"angles" "-0 -180 0"
+	"$room_name" "room_transporter"
+	"angles" "-0 180 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
+	"replace01" "$room_name room_transporter"
 	"targetname" "_transporter"
-	"origin" "192 -1872 96"
+	"origin" "256 -1872 96"
 	editor
 	{
 		"color" "220 30 220"
@@ -17945,9 +18088,11 @@ entity
 {
 	"id" "7898"
 	"classname" "func_instance"
+	"$room_name" "room_weapons"
 	"angles" "-0 0 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
+	"replace01" "$room_name room_weapons"
 	"targetname" "_weapons"
 	"origin" "-192 -720 64"
 	editor
@@ -17962,9 +18107,11 @@ entity
 {
 	"id" "7929"
 	"classname" "func_instance"
+	"$room_name" "room_sensors"
 	"angles" "-0 90 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
+	"replace01" "$room_name room_sensors"
 	"targetname" "_sensors"
 	"origin" "-336 -128 0"
 	editor
@@ -17979,9 +18126,11 @@ entity
 {
 	"id" "7951"
 	"classname" "func_instance"
+	"$room_name" "room_piloting"
 	"angles" "-0 3.18772e-006 0"
 	"file" "vmf/ff_default_terminal.vmf"
 	"fixup_style" "1"
+	"replace01" "$room_name room_piloting"
 	"targetname" "_piloting"
 	"origin" "-192 272 0"
 	editor
@@ -17996,11 +18145,6 @@ entity
 {
 	"id" "8072"
 	"classname" "info_ff_room"
-	"door01" "door_info_1"
-	"door02" "door_info_8"
-	"door03" "door_info_9"
-	"door04" "door_info_12"
-	"door05" "door_info_13"
 	"ship" "ship_default"
 	"system" "weapons"
 	"targetname" "room_weapons"
@@ -18018,8 +18162,6 @@ entity
 {
 	"id" "8121"
 	"classname" "info_ff_room"
-	"door01" "door_info_8"
-	"door02" "door_info_9"
 	"ship" "ship_default"
 	"system" "reactor"
 	"targetname" "room_reactor"
@@ -18037,8 +18179,6 @@ entity
 {
 	"id" "8240"
 	"classname" "info_ff_room"
-	"door01" "door_info_6"
-	"door02" "door_info_13"
 	"ship" "ship_default"
 	"system" "doorcontrol"
 	"targetname" "room_doorcontrol"
@@ -18056,8 +18196,6 @@ entity
 {
 	"id" "8249"
 	"classname" "info_ff_room"
-	"door01" "door_info_10"
-	"door02" "door_info_12"
 	"ship" "ship_default"
 	"system" "lifesupport"
 	"targetname" "room_lifesupport"
@@ -18075,9 +18213,6 @@ entity
 {
 	"id" "8267"
 	"classname" "info_ff_room"
-	"door01" "door_info_5"
-	"door02" "door_info_6"
-	"door03" "door_info_14"
 	"ship" "ship_default"
 	"targetname" "room_hallway1"
 	"volume" "430"
@@ -18094,9 +18229,6 @@ entity
 {
 	"id" "8296"
 	"classname" "info_ff_room"
-	"door01" "door_info_10"
-	"door02" "door_info_11"
-	"door03" "door_info_15"
 	"ship" "ship_default"
 	"targetname" "room_hallway4"
 	"volume" "430"
@@ -18113,7 +18245,6 @@ entity
 {
 	"id" "8333"
 	"classname" "info_ff_room"
-	"door01" "door_info_5"
 	"ship" "ship_default"
 	"system" "medical"
 	"targetname" "room_medical"
@@ -18131,7 +18262,6 @@ entity
 {
 	"id" "8346"
 	"classname" "info_ff_room"
-	"door01" "door_info_11"
 	"ship" "ship_default"
 	"system" "transporter"
 	"targetname" "room_transporter"
@@ -18149,9 +18279,6 @@ entity
 {
 	"id" "8372"
 	"classname" "info_ff_room"
-	"door01" "door_info_7"
-	"door02" "door_info_14"
-	"door03" "door_info_15"
 	"ship" "ship_default"
 	"system" "shields"
 	"targetname" "room_shields"
@@ -18169,7 +18296,6 @@ entity
 {
 	"id" "8391"
 	"classname" "info_ff_room"
-	"door01" "door_info_7"
 	"ship" "ship_default"
 	"system" "engineering"
 	"targetname" "room_engineering"
@@ -19652,13 +19778,371 @@ entity
 		"logicalpos" "[0 11500]"
 	}
 }
+entity
+{
+	"id" "9868"
+	"classname" "func_detail"
+	"maxdxlevel" "0"
+	"mindxlevel" "0"
+	solid
+	{
+		"id" "9865"
+		side
+		{
+			"id" "4535"
+			"plane" "(-16 -1824 120) (0 -1808 120) (32 -1808 120)"
+			"material" "DEV/DEV_MEASUREGENERIC01"
+			"uaxis" "[1 0 0 0] 0.25"
+			"vaxis" "[0 -1 0 0] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4534"
+			"plane" "(-24 -1856 112) (0 -1880 112) (32 -1880 112)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[-1 0 0 192] 0.25"
+			"vaxis" "[0 -1 0 -32] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4533"
+			"plane" "(-24 -1824 112) (-16 -1824 120) (-16 -1856 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[0 -1 0 -64] 0.25"
+			"vaxis" "[-0.707107 0 -0.707107 38.1564] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4532"
+			"plane" "(56 -1856 112) (48 -1856 120) (48 -1824 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[0 1 0 64] 0.25"
+			"vaxis" "[0.707107 0 -0.707107 203.647] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4531"
+			"plane" "(32 -1800 112) (32 -1808 120) (0 -1808 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[-1 0 0 192] 0.25"
+			"vaxis" "[0 0.707107 -0.707107 77.2075] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4530"
+			"plane" "(0 -1880 112) (0 -1872 120) (32 -1872 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[1 0 0 64] 0.25"
+			"vaxis" "[0 -0.707107 -0.707107 -91.4043] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4529"
+			"plane" "(56 -1824 112) (48 -1824 120) (32 -1808 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[-0.707107 0.707107 0 1.56055] 0.25"
+			"vaxis" "[0.408248 0.408248 -0.816497 220.114] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4528"
+			"plane" "(32 -1880 112) (32 -1872 120) (48 -1856 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[0.707107 0.707107 0 167.05] 0.25"
+			"vaxis" "[0.408248 -0.408248 -0.816497 -157.301] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4527"
+			"plane" "(-24 -1856 112) (-16 -1856 120) (0 -1872 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[0.707107 -0.707107 0 -1.56006] 0.25"
+			"vaxis" "[-0.408248 -0.408248 -0.816497 -105.045] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4526"
+			"plane" "(0 -1800 112) (0 -1808 120) (-16 -1824 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[-0.707107 -0.707107 0 -167.051] 0.25"
+			"vaxis" "[-0.408248 0.408248 -0.816497 16.3701] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		editor
+		{
+			"color" "0 180 0"
+			"visgroupshown" "1"
+			"visgroupautoshown" "1"
+		}
+	}
+	editor
+	{
+		"color" "0 180 0"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 3500]"
+	}
+}
+entity
+{
+	"id" "9877"
+	"classname" "func_detail"
+	"maxdxlevel" "0"
+	"mindxlevel" "0"
+	solid
+	{
+		"id" "9878"
+		side
+		{
+			"id" "4555"
+			"plane" "(-16 -1696 120) (0 -1680 120) (32 -1680 120)"
+			"material" "DEV/DEV_MEASUREGENERIC01"
+			"uaxis" "[1 0 0 0] 0.25"
+			"vaxis" "[0 -1 0 0] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4554"
+			"plane" "(-24 -1728 112) (0 -1752 112) (32 -1752 112)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[-1 0 0 192] 0.25"
+			"vaxis" "[0 -1 0 -32] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4553"
+			"plane" "(-24 -1696 112) (-16 -1696 120) (-16 -1728 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[0 -1 0 -64] 0.25"
+			"vaxis" "[-0.707107 0 -0.707107 38.1564] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4552"
+			"plane" "(56 -1728 112) (48 -1728 120) (48 -1696 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[0 1 0 64] 0.25"
+			"vaxis" "[0.707107 0 -0.707107 203.647] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4551"
+			"plane" "(32 -1672 112) (32 -1680 120) (0 -1680 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[-1 0 0 192] 0.25"
+			"vaxis" "[0 0.707107 -0.707107 227.168] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4550"
+			"plane" "(0 -1752 112) (0 -1744 120) (32 -1744 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[1 0 0 64] 0.25"
+			"vaxis" "[0 -0.707107 -0.707107 -241.366] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4549"
+			"plane" "(56 -1696 112) (48 -1696 120) (32 -1680 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[-0.707107 0.707107 0 151.521] 0.25"
+			"vaxis" "[0.408248 0.408248 -0.816497 11.0913] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4548"
+			"plane" "(32 -1752 112) (32 -1744 120) (48 -1728 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[0.707107 0.707107 0 61.0117] 0.25"
+			"vaxis" "[0.408248 -0.408248 -0.816497 -204.278] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4547"
+			"plane" "(-24 -1728 112) (-16 -1728 120) (0 -1744 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[0.707107 -0.707107 0 -151.521] 0.25"
+			"vaxis" "[-0.408248 -0.408248 -0.816497 -152.022] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4546"
+			"plane" "(0 -1672 112) (0 -1680 120) (-16 -1696 120)"
+			"material" "DEV/DEV_MEASURECRATE01"
+			"uaxis" "[-0.707107 -0.707107 0 -61.0117] 0.25"
+			"vaxis" "[-0.408248 0.408248 -0.816497 63.3472] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		editor
+		{
+			"color" "0 180 0"
+			"visgroupshown" "1"
+			"visgroupautoshown" "1"
+		}
+	}
+	editor
+	{
+		"color" "0 180 0"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 3500]"
+	}
+}
+entity
+{
+	"id" "9891"
+	"classname" "func_detail"
+	"maxdxlevel" "0"
+	"mindxlevel" "0"
+	solid
+	{
+		"id" "9838"
+		side
+		{
+			"id" "4561"
+			"plane" "(96 -1824 104) (64 -1856 104) (64 -1696 104)"
+			"material" "DEV/DEV_BLENDMEASURE"
+			"uaxis" "[1 0 0 0] 0.25"
+			"vaxis" "[0 -1 0 0] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4560"
+			"plane" "(96 -1728 96) (64 -1696 96) (64 -1856 96)"
+			"material" "DEV/DEV_BLENDMEASURE"
+			"uaxis" "[1 0 0 0] 0.25"
+			"vaxis" "[0 -1 0 0] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4559"
+			"plane" "(64 -1856 96) (64 -1696 96) (64 -1696 104)"
+			"material" "DEV/DEV_BLENDMEASURE"
+			"uaxis" "[0 1 0 0] 0.25"
+			"vaxis" "[0 0 -1 0] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4558"
+			"plane" "(96 -1824 104) (96 -1728 104) (96 -1728 96)"
+			"material" "DEV/REFLECTIVITY_70"
+			"uaxis" "[0 1 0 128] 0.25"
+			"vaxis" "[0 0 -1 416] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4557"
+			"plane" "(64 -1696 96) (96 -1728 96) (96 -1728 104)"
+			"material" "DEV/REFLECTIVITY_70"
+			"uaxis" "[1 0 0 -256] 0.25"
+			"vaxis" "[0 0 -1 416] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4556"
+			"plane" "(64 -1856 104) (96 -1824 104) (96 -1824 96)"
+			"material" "DEV/REFLECTIVITY_70"
+			"uaxis" "[1 0 0 -256] 0.25"
+			"vaxis" "[0 0 -1 416] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		editor
+		{
+			"color" "0 180 0"
+			"visgroupshown" "1"
+			"visgroupautoshown" "1"
+		}
+	}
+	editor
+	{
+		"color" "0 180 0"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 4000]"
+	}
+}
 cameras
 {
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-273.146 -98.7042 78.343]"
-		"look" "[-272.751 -99.558 77.974]"
+		"position" "[-192.46 -439.1 90.6202]"
+		"look" "[-192.827 -438.227 90.2712]"
 	}
 }
 cordon

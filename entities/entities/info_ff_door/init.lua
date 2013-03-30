@@ -15,10 +15,25 @@ ENT._nwdata = nil
 
 function ENT:Initialize()
 	self._rooms = {}
-	self._nwdata = {}
+
+	if not self._nwdata then
+		self._nwdata = {}
+		self._nwdata.roomnames = {}
+	end
+
 	self._nwdata.name = self:GetName()
 
 	self:_SetArea(4)
+end
+
+function ENT:KeyValue(key, value)
+	if not self._nwdata then self._nwdata = {} end
+
+	if key == "room1" then
+		self:_SetRoomName(1, tostring(value))
+	elseif key == "room2" then
+		self:_SetRoomName(2, tostring(value))
+	end
 end
 
 function ENT:InitPostEntity()
@@ -46,6 +61,8 @@ function ENT:InitPostEntity()
 	end
 	self:_UpdateNWData()
 
+	self:_UpdateRooms()
+
 	self:_NextUpdate()
 end
 
@@ -67,14 +84,33 @@ function ENT:GetIndex()
 	return self._nwdata.index
 end
 
-function ENT:AddRoom(room)
-	if not self._rooms[1] then
-		self._rooms[1] = room
-	elseif self._rooms[1]:GetIndex() < room:GetIndex() then
-		self._rooms[2] = room
-	else
-		self._rooms[2] = self._rooms[1]
-		self._rooms[1] = room
+function ENT:_SetRoomName(index, name)
+	if not self._nwdata.roomnames then self._nwdata.roomnames = {} end
+
+	if index < 1 or index > 2 then return end
+
+	self._nwdata.roomnames[index] = name
+end
+
+function ENT:GetRoomNames()
+	return self._nwdata.roomnames
+end
+
+function ENT:_UpdateRooms()
+	for i = 1, 2 do
+		local name = self:GetRoomNames()[i]
+		if not name then
+			print("Door \"" .. self:GetName() ..
+				"\" has a missing room association #" .. tostring(i))
+		else
+			local rooms = ents.FindByName(name)
+			if #rooms > 0 then
+				local room = rooms[1]
+				room:AddDoor(self)
+				self._rooms[i] = room
+				room:GetShip():AddDoor(self)
+			end
+		end
 	end
 end
 
