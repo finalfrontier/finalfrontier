@@ -25,7 +25,7 @@ if SERVER then
 	
 	ENT.RoomName = nil
 
-	ENT.OverrideNodeCount = 3
+	ENT.OverrideNodeCount = 4
 	ENT.OverrideTimePerNode = 0.5
 
 	ENT.OverrideNodePositions = nil
@@ -293,9 +293,15 @@ elseif CLIENT then
 	ENT._lastCursory = 0
 	
 	function ENT:UpdateLayout()
-		if not self.UI then
+		if not self.UI and self.Ship and self.Room and self.Ship == LocalPlayer():GetShip() then
+			print("+ " .. self.Room:GetName() .. " active")
 			self.UI = sgui.Create(self, MAIN_GUI_CLASS)
 			self.Layout = self:GetNWTable("layout")
+		elseif self.UI and self.Ship and self.Room and self.Ship ~= LocalPlayer():GetShip() then
+			print("- " .. self.Room:GetName() .. " inactive")
+			self.UI = nil
+			self.Layout = nil
+			self:ForgetNWTable("layout")
 		end
 
 		if self.Layout and table.Count(self.Layout) > 0 then
@@ -304,6 +310,11 @@ elseif CLIENT then
 	end
 
 	function ENT:Think()
+		if self.Ship and not self.Ship:IsValid() then
+			self.Ship = nil
+			self.Room = nil
+		end
+
 		if not self.Ship and self:GetNWString("ship") then
 			self.Ship = ships.GetByName(self:GetNWString("ship"))
 		end

@@ -9,6 +9,12 @@ _mt._bounds = nil
 
 _mt._nwdata = nil
 
+_mt._valid = true
+
+function _mt:IsValid()
+	return self._valid
+end
+
 function _mt:GetName()
 	return self._nwdata.name
 end
@@ -132,8 +138,9 @@ function _mt:Draw(screen, roomColorFunc, doorColorFunc)
 end
 
 function _mt:Remove()
+	self._valid = false
 	ForgetGlobalTable(self:GetName())
-	
+
 	for _, room in pairs(self:GetRooms()) do
 		room:Remove()
 	end
