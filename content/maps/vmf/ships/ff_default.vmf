@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "86"
+	"mapversion" "94"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "86"
+	"mapversion" "94"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -15962,7 +15962,7 @@ entity
 	"id" "1622"
 	"classname" "light"
 	"_castentityshadow" "1"
-	"_light" "255 255 255 200"
+	"_light" "$light_brightness"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_quadratic_attn" "1"
@@ -15981,7 +15981,7 @@ entity
 	"id" "1647"
 	"classname" "light"
 	"_castentityshadow" "1"
-	"_light" "255 255 255 200"
+	"_light" "$light_brightness"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_quadratic_attn" "1"
@@ -16000,7 +16000,7 @@ entity
 	"id" "1687"
 	"classname" "light"
 	"_castentityshadow" "1"
-	"_light" "255 255 255 200"
+	"_light" "$light_brightness"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_quadratic_attn" "1"
@@ -16019,7 +16019,7 @@ entity
 	"id" "1722"
 	"classname" "light"
 	"_castentityshadow" "1"
-	"_light" "255 255 255 200"
+	"_light" "$light_brightness"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_quadratic_attn" "1"
@@ -16038,7 +16038,7 @@ entity
 	"id" "1772"
 	"classname" "light"
 	"_castentityshadow" "1"
-	"_light" "255 255 255 200"
+	"_light" "$light_brightness"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_quadratic_attn" "1"
@@ -16057,7 +16057,7 @@ entity
 	"id" "1787"
 	"classname" "light"
 	"_castentityshadow" "1"
-	"_light" "255 255 255 200"
+	"_light" "$light_brightness"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_quadratic_attn" "1"
@@ -16073,38 +16073,10 @@ entity
 }
 entity
 {
-	"id" "1812"
-	"classname" "info_player_start"
-	"angles" "0 0 0"
-	"origin" "-263.282 -1375.36 97"
-	editor
-	{
-		"color" "0 255 0"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[500 -11268]"
-	}
-}
-entity
-{
-	"id" "1816"
-	"classname" "info_player_start"
-	"angles" "0 0 0"
-	"origin" "-100.742 -1449.59 97"
-	editor
-	{
-		"color" "0 255 0"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[500 -10268]"
-	}
-}
-entity
-{
 	"id" "1966"
 	"classname" "light"
 	"_castentityshadow" "1"
-	"_light" "255 255 255 200"
+	"_light" "$light_brightness"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_quadratic_attn" "1"
@@ -16123,7 +16095,7 @@ entity
 	"id" "2191"
 	"classname" "light"
 	"_castentityshadow" "1"
-	"_light" "255 255 255 200"
+	"_light" "$light_brightness"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_quadratic_attn" "1"
@@ -16142,7 +16114,7 @@ entity
 	"id" "4435"
 	"classname" "light"
 	"_castentityshadow" "1"
-	"_light" "255 255 255 200"
+	"_light" "$light_brightness"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_quadratic_attn" "1"
@@ -16161,7 +16133,7 @@ entity
 	"id" "4455"
 	"classname" "light"
 	"_castentityshadow" "1"
-	"_light" "255 255 255 200"
+	"_light" "$light_brightness"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_quadratic_attn" "1"
@@ -17572,7 +17544,7 @@ entity
 	"id" "4984"
 	"classname" "info_ff_room"
 	"height" "160"
-	"ship" "ship_default"
+	"ship" "ship"
 	"system" "piloting"
 	"targetname" "room_piloting"
 	"volume" "120"
@@ -17589,7 +17561,7 @@ entity
 {
 	"id" "5073"
 	"classname" "info_ff_room"
-	"ship" "ship_default"
+	"ship" "ship"
 	"system" "sensors"
 	"targetname" "room_sensors"
 	"volume" "160"
@@ -17607,7 +17579,7 @@ entity
 	"id" "6943"
 	"classname" "light"
 	"_castentityshadow" "1"
-	"_light" "255 255 255 200"
+	"_light" "$light_brightness"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_quadratic_attn" "1"
@@ -17626,7 +17598,7 @@ entity
 	"id" "6969"
 	"classname" "light"
 	"_castentityshadow" "1"
-	"_light" "255 255 255 200"
+	"_light" "$light_brightness"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_quadratic_attn" "1"
@@ -17919,7 +17891,7 @@ entity
 	"classname" "func_instance"
 	"$room_name" "room_engineering"
 	"angles" "-0 -180 0"
-	"file" "vmf/ff_default_terminal.vmf"
+	"file" "ff_default_terminal.vmf"
 	"fixup_style" "1"
 	"replace01" "$room_name room_engineering"
 	"targetname" "_engineering"
@@ -17938,7 +17910,7 @@ entity
 	"classname" "func_instance"
 	"$room_name" "room_shields"
 	"angles" "-0 0 0"
-	"file" "vmf/ff_default_terminal.vmf"
+	"file" "ff_default_terminal.vmf"
 	"fixup_style" "1"
 	"replace01" "$room_name room_shields"
 	"targetname" "_shields"
@@ -17957,7 +17929,7 @@ entity
 	"classname" "func_instance"
 	"$room_name" "room_hallway1"
 	"angles" "-0 90 0"
-	"file" "vmf/ff_default_terminal.vmf"
+	"file" "ff_default_terminal.vmf"
 	"fixup_style" "1"
 	"replace01" "$room_name room_hallway1"
 	"targetname" "_hallway1"
@@ -17976,7 +17948,7 @@ entity
 	"classname" "func_instance"
 	"$room_name" "room_doorcontrol"
 	"angles" "-0 90 0"
-	"file" "vmf/ff_default_terminal.vmf"
+	"file" "ff_default_terminal.vmf"
 	"fixup_style" "1"
 	"replace01" "$room_name room_doorcontrol"
 	"targetname" "_doorcontrol"
@@ -17995,7 +17967,7 @@ entity
 	"classname" "func_instance"
 	"$room_name" "room_lifesupport"
 	"angles" "-0 -90 0"
-	"file" "vmf/ff_default_terminal.vmf"
+	"file" "ff_default_terminal.vmf"
 	"fixup_style" "1"
 	"replace01" "$room_name room_lifesupport"
 	"targetname" "_lifesupport"
@@ -18014,7 +17986,7 @@ entity
 	"classname" "func_instance"
 	"$room_name" "room_hallway4"
 	"angles" "-0 -90 0"
-	"file" "vmf/ff_default_terminal.vmf"
+	"file" "ff_default_terminal.vmf"
 	"fixup_style" "1"
 	"replace01" "$room_name room_hallway4"
 	"targetname" "_hallway4"
@@ -18033,7 +18005,7 @@ entity
 	"classname" "func_instance"
 	"$room_name" "room_reactor"
 	"angles" "-0 -180 0"
-	"file" "vmf/ff_default_terminal.vmf"
+	"file" "ff_default_terminal.vmf"
 	"fixup_style" "1"
 	"replace01" "$room_name room_reactor"
 	"targetname" "_reactor"
@@ -18052,7 +18024,7 @@ entity
 	"classname" "func_instance"
 	"$room_name" "room_medical"
 	"angles" "-0 -180 0"
-	"file" "vmf/ff_default_terminal.vmf"
+	"file" "ff_default_terminal.vmf"
 	"fixup_style" "1"
 	"replace01" "$room_name room_medical"
 	"targetname" "_medical"
@@ -18071,7 +18043,7 @@ entity
 	"classname" "func_instance"
 	"$room_name" "room_transporter"
 	"angles" "-0 180 0"
-	"file" "vmf/ff_default_terminal.vmf"
+	"file" "ff_default_terminal.vmf"
 	"fixup_style" "1"
 	"replace01" "$room_name room_transporter"
 	"targetname" "_transporter"
@@ -18090,7 +18062,7 @@ entity
 	"classname" "func_instance"
 	"$room_name" "room_weapons"
 	"angles" "-0 0 0"
-	"file" "vmf/ff_default_terminal.vmf"
+	"file" "ff_default_terminal.vmf"
 	"fixup_style" "1"
 	"replace01" "$room_name room_weapons"
 	"targetname" "_weapons"
@@ -18109,7 +18081,7 @@ entity
 	"classname" "func_instance"
 	"$room_name" "room_sensors"
 	"angles" "-0 90 0"
-	"file" "vmf/ff_default_terminal.vmf"
+	"file" "ff_default_terminal.vmf"
 	"fixup_style" "1"
 	"replace01" "$room_name room_sensors"
 	"targetname" "_sensors"
@@ -18128,7 +18100,7 @@ entity
 	"classname" "func_instance"
 	"$room_name" "room_piloting"
 	"angles" "-0 3.18772e-006 0"
-	"file" "vmf/ff_default_terminal.vmf"
+	"file" "ff_default_terminal.vmf"
 	"fixup_style" "1"
 	"replace01" "$room_name room_piloting"
 	"targetname" "_piloting"
@@ -18145,7 +18117,7 @@ entity
 {
 	"id" "8072"
 	"classname" "info_ff_room"
-	"ship" "ship_default"
+	"ship" "ship"
 	"system" "weapons"
 	"targetname" "room_weapons"
 	"volume" "2400"
@@ -18162,7 +18134,7 @@ entity
 {
 	"id" "8121"
 	"classname" "info_ff_room"
-	"ship" "ship_default"
+	"ship" "ship"
 	"system" "reactor"
 	"targetname" "room_reactor"
 	"volume" "450"
@@ -18179,7 +18151,7 @@ entity
 {
 	"id" "8240"
 	"classname" "info_ff_room"
-	"ship" "ship_default"
+	"ship" "ship"
 	"system" "doorcontrol"
 	"targetname" "room_doorcontrol"
 	"volume" "180"
@@ -18196,7 +18168,7 @@ entity
 {
 	"id" "8249"
 	"classname" "info_ff_room"
-	"ship" "ship_default"
+	"ship" "ship"
 	"system" "lifesupport"
 	"targetname" "room_lifesupport"
 	"volume" "180"
@@ -18213,7 +18185,7 @@ entity
 {
 	"id" "8267"
 	"classname" "info_ff_room"
-	"ship" "ship_default"
+	"ship" "ship"
 	"targetname" "room_hallway1"
 	"volume" "430"
 	"origin" "-656 -1440 160"
@@ -18229,7 +18201,7 @@ entity
 {
 	"id" "8296"
 	"classname" "info_ff_room"
-	"ship" "ship_default"
+	"ship" "ship"
 	"targetname" "room_hallway4"
 	"volume" "430"
 	"origin" "272 -1440 160"
@@ -18245,7 +18217,7 @@ entity
 {
 	"id" "8333"
 	"classname" "info_ff_room"
-	"ship" "ship_default"
+	"ship" "ship"
 	"system" "medical"
 	"targetname" "room_medical"
 	"volume" "450"
@@ -18262,7 +18234,7 @@ entity
 {
 	"id" "8346"
 	"classname" "info_ff_room"
-	"ship" "ship_default"
+	"ship" "ship"
 	"system" "transporter"
 	"targetname" "room_transporter"
 	"volume" "450"
@@ -18279,7 +18251,7 @@ entity
 {
 	"id" "8372"
 	"classname" "info_ff_room"
-	"ship" "ship_default"
+	"ship" "ship"
 	"system" "shields"
 	"targetname" "room_shields"
 	"volume" "1200"
@@ -18296,7 +18268,7 @@ entity
 {
 	"id" "8391"
 	"classname" "info_ff_room"
-	"ship" "ship_default"
+	"ship" "ship"
 	"system" "engineering"
 	"targetname" "room_engineering"
 	"volume" "1800"
@@ -18313,8 +18285,8 @@ entity
 {
 	"id" "8494"
 	"classname" "info_ff_ship"
-	"hullHealth" "20"
-	"targetName" "ship_default"
+	"health" "20"
+	"targetname" "ship"
 	"origin" "-192 -608 128"
 	editor
 	{
@@ -20136,13 +20108,41 @@ entity
 		"logicalpos" "[0 4000]"
 	}
 }
+entity
+{
+	"id" "10092"
+	"classname" "info_player_start"
+	"angles" "0 0 0"
+	"origin" "15.4586 -1840 120"
+	editor
+	{
+		"color" "0 255 0"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "10096"
+	"classname" "info_player_start"
+	"angles" "0 0 0"
+	"origin" "16 -1712 120"
+	editor
+	{
+		"color" "0 255 0"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 500]"
+	}
+}
 cameras
 {
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-192.46 -439.1 90.6202]"
-		"look" "[-192.827 -438.227 90.2712]"
+		"position" "[-317.432 -560.046 201.843]"
+		"look" "[-316.728 -560.698 201.533]"
 	}
 }
 cordon

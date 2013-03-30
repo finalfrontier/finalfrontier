@@ -57,13 +57,15 @@ function ENT:InitPostEntity()
 	self:SetAirVolume(self:GetVolume())
 	self:SetTemperature(300)
 	
+--[[
 	local sysName = self:GetSystemName()
 	if sysName == "medical" then
 		self:SetTemperature(600)
 	elseif sysName == "transporter" then
 		self:SetAirVolume(0)
 	end
-		
+--]]
+
 	self:SetShields(math.random())
 
 	self:_NextUpdate()

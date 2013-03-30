@@ -11,7 +11,7 @@ ENT._players = nil
 ENT._nwdata = nil
 
 function ENT:KeyValue(key, value)
-	if key == "hullhealth" then
+	if key == "health" then
 		self:_SetBaseHealth(tonumber(value))
 	end
 end
@@ -24,12 +24,18 @@ function ENT:Initialize()
 
 	self._players = {}
 
-	self._nwdata = {}
-	self._nwdata.name = self:GetName()
+	if not self._nwdata then
+		self._nwdata = {}
+	end
+
 	self._nwdata.roomnames = {}
 	self._nwdata.doornames = {}
+
+	self._nwdata.name = self:GetName()
 	
-	self:_SetBaseHealth(1)
+	if not self:GetBaseHealth() then
+		self:_SetBaseHealth(1)
+	end
 end
 
 function ENT:InitPostEntity()
@@ -41,6 +47,8 @@ function ENT:GetBounds()
 end
 
 function ENT:_SetBaseHealth(health)
+	if not self._nwdata then self._nwdata = {} end
+
 	self._nwdata.basehealth = health
 	self:_UpdateNWData()
 end

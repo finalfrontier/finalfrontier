@@ -5,3 +5,4 @@ content/maps/vmf/*.vmx
 *.ztmp
 *.mdmp
 *.temp.vmf
+*.vmx

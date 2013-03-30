@@ -2,7 +2,7 @@
 {
 	"base"		"base"
 	"title"		"Final Frontier"
-	"maps"		"^ff_"
+	"maps"		"^finalfrontier"
 	"menusystem"	"1"
 
 	"settings"

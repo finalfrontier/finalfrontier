@@ -132,6 +132,10 @@ function _mt:Draw(screen, roomColorFunc, doorColorFunc)
 end
 
 local ply_mt = FindMetaTable("Player")
+function ply_mt:GetShipName()
+	return self:GetNWString("ship")
+end
+
 function ply_mt:GetShip()
 	if not self:GetNWString("ship") then return nil end
 	return ships.GetByName(self:GetNWString("ship"))
