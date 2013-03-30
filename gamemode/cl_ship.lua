@@ -131,6 +131,18 @@ function _mt:Draw(screen, roomColorFunc, doorColorFunc)
 	end
 end
 
+function _mt:Remove()
+	ForgetGlobalTable(self:GetName())
+	
+	for _, room in pairs(self:GetRooms()) do
+		room:Remove()
+	end
+
+	for _, door in ipairs(self:GetDoors()) do
+		door:Remove()
+	end
+end
+
 local ply_mt = FindMetaTable("Player")
 function ply_mt:GetShipName()
 	return self:GetNWString("ship")

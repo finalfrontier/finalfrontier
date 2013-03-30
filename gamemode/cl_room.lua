@@ -147,6 +147,10 @@ function _mt:Think()
 	end
 end
 
+function _mt:Remove()
+	ForgetGlobalTable(self:GetName())
+end
+
 function Room(name, ship, index)
 	local room = {}
 

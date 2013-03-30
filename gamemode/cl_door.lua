@@ -93,6 +93,10 @@ function _mt:Think()
 	end
 end
 
+function _mt:Remove()
+	ForgetGlobalTable(self:GetName())
+end
+
 function Door(name, ship, index)
 	door = {}
 	door._ship = ship
