@@ -10,12 +10,20 @@ ENT._system = nil
 ENT._doorlist = nil
 ENT._bounds = nil
 
+ENT._airvolume = 0
+ENT._temperature = 0
+ENT._shields = 0
+
 ENT._lastupdate = 0
 ENT._lastdamage = 0
 
 ENT._players = nil
 
 ENT._nwdata = nil
+
+local function ShouldSync(a, b, delta)
+	return math.abs(a - b) >= delta
+end
 
 function ENT:Initialize()
 	self._screens = {}
@@ -29,6 +37,9 @@ function ENT:Initialize()
 		self._nwdata.corners = {}
 	end
 
+	self._nwdata.temperature = 0
+	self._nwdata.airvolume = 0
+	self._nwdata.shields = 0
 	self._nwdata.name = self:GetName()
 
 	self:SetIndex(0)
@@ -55,16 +66,14 @@ function ENT:InitPostEntity()
 	self:_UpdateSystem()
 
 	self:SetAirVolume(self:GetVolume())
-	self:SetTemperature(300)
+	self:SetUnitTemperature(300)
 	
---[[
 	local sysName = self:GetSystemName()
 	if sysName == "medical" then
-		self:SetTemperature(600)
-	elseif sysName == "transporter" then
+		self:SetUnitTemperature(600)
+	elseif sysName == "piloting" then
 		self:SetAirVolume(0)
 	end
---]]
 
 	self:SetShields(math.random())
 
@@ -90,8 +99,8 @@ function ENT:Think()
 
 	if self:HasSystem() then self:GetSystem():Think(dt) end
 	
-	self:SetTemperature(self:GetTemperature() * (1 - TEMPERATURE_LOSS_RATE
-		* self:GetSurfaceArea() * dt))
+	self:SetUnitTemperature(self:GetUnitTemperature() *
+		(1 - TEMPERATURE_LOSS_RATE * self:GetSurfaceArea() * dt))
 
 	local bounds = self:GetBounds()
 	local min = Vector(bounds.l, bounds.t, -65536)
@@ -246,22 +255,34 @@ function ENT:GetScreens()
 	return self._screens
 end
 
-function ENT:SetTemperature(temp)
-	self._nwdata.temperature = math.Clamp(temp / self:GetAtmosphere(), 0, 600)
-	self:_UpdateNWData()
+function ENT:SetUnitTemperature(temp)
+	self._temperature = math.Clamp(temp, 0, 600)
+
+	if ShouldSync(self._temperature, self._nwdata.temperature, 6) then
+		self._nwdata.temperature = self._temperature
+		self:_UpdateNWData()
+	end
+end
+
+function ENT:GetUnitTemperature()
+	return self._temperature
 end
 
 function ENT:GetTemperature()
-	return self._nwdata.temperature * self:GetAtmosphere()
+	return self:GetUnitTemperature() * self:GetAtmosphere()
 end
 
 function ENT:SetAirVolume(volume)
-	self._nwdata.airvolume = math.Clamp(volume, 0, self:GetVolume())
-	self:_UpdateNWData()
+	self._airvolume = math.Clamp(volume, 0, self:GetVolume())
+
+	if ShouldSync(self._airvolume, self._nwdata.airvolume, self:GetVolume() / 100) then
+		self._nwdata.airvolume = self._airvolume
+		self:_UpdateNWData()
+	end
 end
 
 function ENT:GetAirVolume()
-	return self._nwdata.airvolume or 0
+	return self._airvolume or 0
 end
 
 function ENT:SetAtmosphere(atmosphere)
@@ -273,8 +294,12 @@ function ENT:GetAtmosphere()
 end
 
 function ENT:SetShields(shields)
-	self._nwdata.shields = math.Clamp(shields, 0, 1)
-	self:_UpdateNWData()
+	self._shields = math.Clamp(shields, 0, 1)
+
+	if ShouldSync(self._shields, self._nwdata.shields, 1 / 100) then
+		self._nwdata.shields = self._shields
+		self:_UpdateNWData()
+	end
 end
 
 function ENT:GetShields()
@@ -284,10 +309,10 @@ end
 function ENT:TransmitTemperature(room, delta)
 	if delta < 0 then room:TransmitTemperature(self, delta) return end
 
-	delta = math.min(delta, self:GetTemperature())
+	delta = math.min(delta, self:GetUnitTemperature())
 	
-	self:SetTemperature(self:GetTemperature() - delta)
-	room:SetTemperature(room:GetTemperature() + delta)
+	self:SetUnitTemperature(self:GetUnitTemperature() - delta)
+	room:SetUnitTemperature(room:GetUnitTemperature() + delta)
 end
 
 function ENT:TransmitAir(room, delta)

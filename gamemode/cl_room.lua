@@ -86,8 +86,12 @@ function _mt:GetStatusLerp()
 	return math.Clamp((CurTime() - self._lastUpdate) / ROOM_UPDATE_FREQ, 0, 1)
 end
 
+function _mt:GetUnitTemperature()
+	return self._nwdata.temperature or 0
+end
+
 function _mt:GetTemperature()
-	return (self._nwdata.temperature or 0) * self:GetAtmosphere()
+	return self:GetUnitTemperature() * self:GetAtmosphere()
 end
 
 function _mt:GetAirVolume()
