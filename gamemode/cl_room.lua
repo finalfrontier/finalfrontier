@@ -80,6 +80,10 @@ function _mt:GetCorners()
 	return self._nwdata.corners
 end
 
+function _mt:GetDetails()
+	return self._nwdata.details
+end
+
 function _mt:_UpdateConvexPolys()
 	self._convexPolys = FindConvexPolygons(self:GetCorners())
 end
@@ -146,10 +150,8 @@ function ply_mt:GetRoom()
 end
 
 function ply_mt:IsInRoom(room)
-	if self:GetNWString("ship") == room:GetShip():GetName()
-		and self:GetNWInt("room") == room:GetIndex() then
-		return true
-	end
+	return self:GetNWString("ship") == room:GetShip():GetName()
+		and self:GetNWInt("room") == room:GetIndex()
 end
 
 function _mt:Think()

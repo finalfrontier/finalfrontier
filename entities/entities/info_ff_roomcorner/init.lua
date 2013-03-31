@@ -24,10 +24,3 @@ function ENT:InitPostEntity()
 	
 	self:Remove()
 end
-
-function ENT:AddRoom(room)
-	local name = room:GetName()
-	if not name then return end
-
-	self.Rooms[name] = room
-end

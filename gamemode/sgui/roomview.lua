@@ -36,6 +36,7 @@ if CLIENT then
 	GUI._transform = nil
 
 	GUI._corners = nil
+	GUI._details = nil
 	GUI._polys = nil
 
 	GUI._iconBounds = nil
@@ -74,6 +75,16 @@ if CLIENT then
 			x, y = transform:Transform(v.x, v.y)
 			self._corners[i] = { x = x, y = y }
 			newBounds:AddPoint(x, y)
+		end
+
+		self._details = {}
+		if self._room:GetDetails() then
+			for i, v in ipairs(self._room:GetDetails()) do
+				x, y = transform:Transform(v.a.x, v.a.y)
+				self._details[i] = { a = { x = x, y = y } }
+				x, y = transform:Transform(v.b.x, v.b.y)
+				self._details[i].b = { x = x, y = y }
+			end
 		end
 
 		self._polys = {}
@@ -126,6 +137,11 @@ if CLIENT then
 				for i, poly in ipairs(self._polys) do
 					surface.DrawPoly(poly)
 				end
+			end
+
+			surface.SetDrawColor(Color(255, 255, 255, 32))
+			for _, v in ipairs(self._details) do
+				surface.DrawLine(v.a.x, v.a.y, v.b.x, v.b.y)
 			end
 
 			surface.SetDrawColor(Color(255, 255, 255, 255))

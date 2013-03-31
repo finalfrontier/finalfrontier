@@ -9,6 +9,8 @@ ENT._screens = nil
 ENT._system = nil
 ENT._doorlist = nil
 ENT._bounds = nil
+ENT._details = nil
+ENT._detailindices = nil
 
 ENT._airvolume = 0
 ENT._temperature = 0
@@ -29,6 +31,8 @@ function ENT:Initialize()
 	self._screens = {}
 	self._doorlist = {}
 	self._bounds = Bounds()
+	self._details = {}
+	self._detailindices = {}
 
 	self._players = {}
 
@@ -36,6 +40,9 @@ function ENT:Initialize()
 		self._nwdata = {}
 		self._nwdata.corners = {}
 	end
+
+	if not self._nwdata.corners then self._nwdata.corners = {} end
+	if not self._nwdata.details then self._nwdata.details = {} end
 
 	self._nwdata.temperature = 0
 	self._nwdata.airvolume = 0
@@ -235,6 +242,36 @@ end
 
 function ENT:GetCorners()
 	return self._nwdata.corners
+end
+
+function ENT:_GetDetailIndex(name)
+	if not self._detailindices[name] then
+		local index = table.Count(self._detailindices) + 1
+		self._detailindices[name] = index
+		self._details[index] = { x = 0, y = 0 }
+		return index
+	end
+
+	return self._detailindices[name]
+end
+
+function ENT:AddDetail(name, x, y, nextnames)
+	if not self._nwdata.details then self._nwdata.details = {} end
+
+	local index = self:_GetDetailIndex(name)
+	self._details[index].x = x
+	self._details[index].y = y
+
+	for _, v in pairs(nextnames) do
+		local otherIndex = self:_GetDetailIndex(v)
+		table.insert(self._nwdata.details, {
+			a = self._details[index], b = self._details[otherIndex]
+		} )
+	end
+end
+
+function ENT:GetDetails()
+	return self._nwdata.details
 end
 
 function ENT:AddDoor(door)
