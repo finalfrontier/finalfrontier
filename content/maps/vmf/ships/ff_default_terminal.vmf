@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "41"
+	"mapversion" "42"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "41"
+	"mapversion" "42"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -863,13 +863,204 @@ entity
 		"logicalpos" "[0 0]"
 	}
 }
+entity
+{
+	"id" "2501"
+	"classname" "info_ff_roomdetail"
+	"next1" "detail_2"
+	"room" "$room_name"
+	"targetname" "detail_1"
+	"origin" "-48 16 8"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "2523"
+	"classname" "info_ff_roomdetail"
+	"next1" "detail_3"
+	"room" "$room_name"
+	"targetname" "detail_2"
+	"origin" "-48 -32 8"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "2536"
+	"classname" "info_ff_roomdetail"
+	"next1" "detail_4"
+	"room" "$room_name"
+	"targetname" "detail_3"
+	"origin" "-32 -48 8"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "2543"
+	"classname" "info_ff_roomdetail"
+	"next1" "detail_5"
+	"room" "$room_name"
+	"targetname" "detail_4"
+	"origin" "32 -48 8"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "2548"
+	"classname" "info_ff_roomdetail"
+	"next1" "detail_6"
+	"room" "$room_name"
+	"targetname" "detail_5"
+	"origin" "48 -32 8"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "2553"
+	"classname" "info_ff_roomdetail"
+	"next1" "detail_1"
+	"room" "$room_name"
+	"targetname" "detail_6"
+	"origin" "48 16 8"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "2594"
+	"classname" "info_ff_roomdetail"
+	"next1" "detail_8"
+	"room" "$room_name"
+	"targetname" "detail_7"
+	"origin" "-32 16 8"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "2602"
+	"classname" "info_ff_roomdetail"
+	"next1" "detail_9"
+	"room" "$room_name"
+	"targetname" "detail_8"
+	"origin" "-32 -8 8"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "2610"
+	"classname" "info_ff_roomdetail"
+	"next1" "detail_10"
+	"room" "$room_name"
+	"targetname" "detail_9"
+	"origin" "-24 -16 8"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "2618"
+	"classname" "info_ff_roomdetail"
+	"next1" "detail_11"
+	"room" "$room_name"
+	"targetname" "detail_10"
+	"origin" "24 -16 8"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "2626"
+	"classname" "info_ff_roomdetail"
+	"next1" "detail_12"
+	"room" "$room_name"
+	"targetname" "detail_11"
+	"origin" "32 -8 8"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "2634"
+	"classname" "info_ff_roomdetail"
+	"room" "$room_name"
+	"targetname" "detail_12"
+	"origin" "32 16 8"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
 cameras
 {
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-68.5632 -99.0981 100.263]"
-		"look" "[-41.8816 -60.0023 75.2198]"
+		"position" "[-63.7359 -95.5342 142.663]"
+		"look" "[-53.9238 -63.6625 100.765]"
 	}
 }
 cordon
