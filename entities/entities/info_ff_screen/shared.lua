@@ -158,25 +158,51 @@ if SERVER then
 		end
 	end
 
-	function ENT:IsOverrideWellShuffled()
+	function ENT:GetCurrentOverrideSequenceScore()
 		local correct = 0
-		local limit = 1
 		for i = 1, #self.OverrideGoalSequence do
 			if self.OverrideGoalSequence[i] == self.OverrideCurrSequence[i] then
 				correct = correct + 1
-				if correct > limit then return false end
 			end
 		end
+		return correct
+	end
 
-		return true
+	function ENT:IsOverrideWellShuffled(score)
+		score = score or self:GetCurrentOverrideSequenceScore()
+		local limit = 1 + math.max(0, #self.OverrideGoalSequence / 4)
+		return self:GetCurrentOverrideSequenceScore() <= limit
+	end
+
+	function ENT:CloneCurrentOverrideSequence()
+		local clone = {}
+		for i, v in ipairs(self.OverrideCurrSequence) do
+			clone[i] = v
+		end
+		return clone
 	end
 
 	function ENT:ShuffleCurrentOverrideSequence()
 		local tries = 0
-		while tries < 256 or (not self:IsOverrideWellShuffled() and tries < 512) do
+		local best = self:CloneCurrentOverrideSequence()
+		local bestScore = self:GetCurrentOverrideSequenceScore()
+		while tries < 256 do
 			self:SwapOverrideNodes(math.random(1, #self.OverrideCurrSequence))
+
+			if tries >= 2 * #self.OverrideCurrSequence then
+				local score = self:GetCurrentOverrideSequenceScore()
+				if self:IsOverrideWellShuffled(score) then
+					return
+				elseif score < bestScore then
+					best = self:CloneCurrentOverrideSequence()
+					bestScore = score
+				end
+			end
+
 			tries = tries + 1
 		end
+
+		self.OverrideCurrSequence = best
 	end
 
 	function ENT:SetOverrideSequence()
