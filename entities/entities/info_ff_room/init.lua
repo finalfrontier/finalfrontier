@@ -268,6 +268,8 @@ function ENT:AddDetail(name, x, y, nextnames)
 			a = self._details[index], b = self._details[otherIndex]
 		} )
 	end
+
+	self:_UpdateNWData()
 end
 
 function ENT:GetDetails()

@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "42"
+	"mapversion" "44"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "42"
+	"mapversion" "44"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -865,102 +865,6 @@ entity
 }
 entity
 {
-	"id" "2501"
-	"classname" "info_ff_roomdetail"
-	"next1" "detail_2"
-	"room" "$room_name"
-	"targetname" "detail_1"
-	"origin" "-48 16 8"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 0]"
-	}
-}
-entity
-{
-	"id" "2523"
-	"classname" "info_ff_roomdetail"
-	"next1" "detail_3"
-	"room" "$room_name"
-	"targetname" "detail_2"
-	"origin" "-48 -32 8"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 0]"
-	}
-}
-entity
-{
-	"id" "2536"
-	"classname" "info_ff_roomdetail"
-	"next1" "detail_4"
-	"room" "$room_name"
-	"targetname" "detail_3"
-	"origin" "-32 -48 8"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 0]"
-	}
-}
-entity
-{
-	"id" "2543"
-	"classname" "info_ff_roomdetail"
-	"next1" "detail_5"
-	"room" "$room_name"
-	"targetname" "detail_4"
-	"origin" "32 -48 8"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 0]"
-	}
-}
-entity
-{
-	"id" "2548"
-	"classname" "info_ff_roomdetail"
-	"next1" "detail_6"
-	"room" "$room_name"
-	"targetname" "detail_5"
-	"origin" "48 -32 8"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 0]"
-	}
-}
-entity
-{
-	"id" "2553"
-	"classname" "info_ff_roomdetail"
-	"next1" "detail_1"
-	"room" "$room_name"
-	"targetname" "detail_6"
-	"origin" "48 16 8"
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 0]"
-	}
-}
-entity
-{
 	"id" "2594"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_8"
@@ -1043,6 +947,7 @@ entity
 {
 	"id" "2634"
 	"classname" "info_ff_roomdetail"
+	"next1" "detail_7"
 	"room" "$room_name"
 	"targetname" "detail_12"
 	"origin" "32 16 8"
@@ -1059,8 +964,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-63.7359 -95.5342 142.663]"
-		"look" "[-53.9238 -63.6625 100.765]"
+		"position" "[-49.5327 118.248 86.4618]"
+		"look" "[-45.7942 87.3008 42.921]"
 	}
 }
 cordon
