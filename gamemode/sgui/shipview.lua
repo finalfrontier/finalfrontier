@@ -16,15 +16,12 @@ function GUI:SetCurrentShip(ship)
 
 	self._ship = ship
 
-	print(ship:GetName())
-
 	if not ship then
 		self:RemoveAllChildren()
 
 		self._rooms = nil
 		self._doors = nil
 	else
-		print(ship:GetName())
 		self._doors = {}
 		for _, door in ipairs(ship:GetDoors()) do
 			local doorview = sgui.Create(self, "doorview")
