@@ -293,15 +293,17 @@ elseif CLIENT then
 	ENT._lastCursory = 0
 	
 	function ENT:UpdateLayout()
-		if not self.UI and self.Ship and self.Room and self.Ship == LocalPlayer():GetShip() then
-			print("+ " .. self.Room:GetName() .. " active")
-			self.UI = sgui.Create(self, MAIN_GUI_CLASS)
+		if not self.Layout and self.Ship and self.Room and self.Ship == LocalPlayer():GetShip() then
 			self.Layout = self:GetNWTable("layout")
 		elseif self.UI and self.Ship and self.Room and self.Ship ~= LocalPlayer():GetShip() then
-			print("- " .. self.Room:GetName() .. " inactive")
-			self.UI = nil
 			self.Layout = nil
 			self:ForgetNWTable("layout")
+		end
+
+		if not self.UI and self.Layout and self:IsNWTableCurrent("layout") then
+			self.UI = sgui.Create(self, MAIN_GUI_CLASS)
+		elseif self.UI and not self.Layout then
+			self.UI = nil
 		end
 
 		if self.Layout and table.Count(self.Layout) > 0 then
