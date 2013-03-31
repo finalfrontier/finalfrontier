@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "107"
+	"mapversion" "108"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "107"
+	"mapversion" "108"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -2801,7 +2801,7 @@ world
 		side
 		{
 			"id" "730"
-			"plane" "(64 -640 64) (128 -640 64) (128 -768 64)"
+			"plane" "(64 -768 64) (64 -640 64) (128 -640 64)"
 			"material" "DEV/REFLECTIVITY_70"
 			"uaxis" "[1 0 0 128] 0.25"
 			"vaxis" "[0 -1 0 128] 0.25"
@@ -2812,7 +2812,7 @@ world
 		side
 		{
 			"id" "729"
-			"plane" "(64 -768 0) (128 -768 0) (128 -640 0)"
+			"plane" "(64 -640 -96) (64 -768 -96) (128 -768 -96)"
 			"material" "DEV/REFLECTIVITY_70"
 			"uaxis" "[1 0 0 128] 0.25"
 			"vaxis" "[0 -1 0 128] 0.25"
@@ -2823,7 +2823,7 @@ world
 		side
 		{
 			"id" "728"
-			"plane" "(64 -640 64) (64 -768 64) (64 -768 0)"
+			"plane" "(64 -768 -96) (64 -640 -96) (64 -640 64)"
 			"material" "DEV/REFLECTIVITY_70"
 			"uaxis" "[0 1 0 256] 0.25"
 			"vaxis" "[0 0 -1 128] 0.25"
@@ -2834,7 +2834,7 @@ world
 		side
 		{
 			"id" "727"
-			"plane" "(128 -640 0) (128 -768 0) (128 -768 64)"
+			"plane" "(128 -640 -96) (128 -768 -96) (128 -768 64)"
 			"material" "DEV/REFLECTIVITY_70"
 			"uaxis" "[0 1 0 256] 0.25"
 			"vaxis" "[0 0 -1 128] 0.25"
@@ -2845,7 +2845,7 @@ world
 		side
 		{
 			"id" "726"
-			"plane" "(128 -640 64) (64 -640 64) (64 -640 0)"
+			"plane" "(64 -640 -96) (128 -640 -96) (128 -640 64)"
 			"material" "DEV/REFLECTIVITY_70"
 			"uaxis" "[1 0 0 128] 0.25"
 			"vaxis" "[0 0 -1 128] 0.25"
@@ -2856,7 +2856,7 @@ world
 		side
 		{
 			"id" "725"
-			"plane" "(128 -768 0) (64 -768 0) (64 -768 64)"
+			"plane" "(128 -768 -96) (64 -768 -96) (64 -768 64)"
 			"material" "DEV/REFLECTIVITY_70"
 			"uaxis" "[1 0 0 128] 0.25"
 			"vaxis" "[0 0 -1 128] 0.25"
@@ -2877,7 +2877,7 @@ world
 		side
 		{
 			"id" "742"
-			"plane" "(-512 -640 64) (-448 -640 64) (-448 -768 64)"
+			"plane" "(-512 -768 64) (-512 -640 64) (-448 -640 64)"
 			"material" "DEV/REFLECTIVITY_70"
 			"uaxis" "[1 0 0 128] 0.25"
 			"vaxis" "[0 -1 0 128] 0.25"
@@ -2888,7 +2888,7 @@ world
 		side
 		{
 			"id" "741"
-			"plane" "(-512 -768 0) (-448 -768 0) (-448 -640 0)"
+			"plane" "(-512 -640 -96) (-512 -768 -96) (-448 -768 -96)"
 			"material" "DEV/REFLECTIVITY_70"
 			"uaxis" "[1 0 0 128] 0.25"
 			"vaxis" "[0 -1 0 128] 0.25"
@@ -2899,7 +2899,7 @@ world
 		side
 		{
 			"id" "740"
-			"plane" "(-512 -640 64) (-512 -768 64) (-512 -768 0)"
+			"plane" "(-512 -768 -96) (-512 -640 -96) (-512 -640 64)"
 			"material" "DEV/REFLECTIVITY_70"
 			"uaxis" "[0 1 0 256] 0.25"
 			"vaxis" "[0 0 -1 128] 0.25"
@@ -2910,7 +2910,7 @@ world
 		side
 		{
 			"id" "739"
-			"plane" "(-448 -640 0) (-448 -768 0) (-448 -768 64)"
+			"plane" "(-448 -640 -96) (-448 -768 -96) (-448 -768 64)"
 			"material" "DEV/REFLECTIVITY_70"
 			"uaxis" "[0 1 0 256] 0.25"
 			"vaxis" "[0 0 -1 128] 0.25"
@@ -2921,7 +2921,7 @@ world
 		side
 		{
 			"id" "738"
-			"plane" "(-448 -640 64) (-512 -640 64) (-512 -640 0)"
+			"plane" "(-512 -640 -96) (-448 -640 -96) (-448 -640 64)"
 			"material" "DEV/REFLECTIVITY_70"
 			"uaxis" "[1 0 0 128] 0.25"
 			"vaxis" "[0 0 -1 128] 0.25"
@@ -2932,7 +2932,7 @@ world
 		side
 		{
 			"id" "737"
-			"plane" "(-448 -768 0) (-512 -768 0) (-512 -768 64)"
+			"plane" "(-448 -768 -96) (-512 -768 -96) (-512 -768 64)"
 			"material" "DEV/REFLECTIVITY_70"
 			"uaxis" "[1 0 0 128] 0.25"
 			"vaxis" "[0 0 -1 128] 0.25"
@@ -19219,8 +19219,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-32.3761 -620.124 119.554]"
-		"look" "[-33.0849 -620.465 118.922]"
+		"position" "[-88.2499 -842.839 59.7137]"
+		"look" "[-88.8487 -842.238 59.1674]"
 	}
 }
 cordon

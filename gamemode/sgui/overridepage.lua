@@ -102,8 +102,11 @@ function GUI:Enter()
 
 			local index = i
 			node.OnClick = function(node, button)
-				self.Screen:SwapOverrideNodes(table.KeyFromValue(self.CurrSequence, index))
-				self.Screen:UpdateLayout()
+				local key = table.KeyFromValue(self.CurrSequence, index)
+				if key then
+					self.Screen:SwapOverrideNodes(key)
+					self.Screen:UpdateLayout()
+				end
 			end
 
 			self.Nodes[i] = node
