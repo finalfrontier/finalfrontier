@@ -170,7 +170,7 @@ if SERVER then
 
 	function ENT:IsOverrideWellShuffled(score)
 		score = score or self:GetCurrentOverrideSequenceScore()
-		local limit = 1 + math.max(0, #self.OverrideGoalSequence / 4)
+		local limit = 0
 		return self:GetCurrentOverrideSequenceScore() <= limit
 	end
 
