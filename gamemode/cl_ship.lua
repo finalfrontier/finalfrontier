@@ -11,6 +11,10 @@ _mt._nwdata = nil
 
 _mt._valid = true
 
+function _mt:IsCurrent()
+	return self._valid and self:GetName() and IsGlobalTableCurrent(self:GetName())
+end
+
 function _mt:IsValid()
 	return self._valid
 end

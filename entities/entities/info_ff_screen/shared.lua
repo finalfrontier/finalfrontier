@@ -293,7 +293,7 @@ elseif CLIENT then
 	ENT._lastCursory = 0
 	
 	function ENT:UpdateLayout()
-		if not self.Layout and self.Ship and self.Room and self.Ship == LocalPlayer():GetShip() then
+		if not self.Layout and self.Room and self.Room:IsCurrent() and self.Ship == LocalPlayer():GetShip() then
 			self.Layout = self:GetNWTable("layout")
 		elseif self.UI and self.Ship and self.Room and self.Ship ~= LocalPlayer():GetShip() then
 			self.Layout = nil

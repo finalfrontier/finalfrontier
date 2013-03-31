@@ -18,6 +18,11 @@ _mt._shields = nil
 
 _mt._nwdata = nil
 
+function _mt:IsCurrent()
+	return self:GetShip() and self:GetShip():IsValid() and self:GetName()
+		and IsGlobalTableCurrent(self:GetName())
+end
+
 function _mt:GetName()
 	return self._nwdata.name
 end
