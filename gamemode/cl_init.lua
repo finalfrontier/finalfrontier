@@ -26,9 +26,7 @@ function FormatNum(num, leading, trailing)
 	
 	local num = index - 1
 	
-	if num > leading then
-		str = string.sub(str, num - leading + 1)
-	elseif num < leading then
+	if num < leading then
 		str = string.rep("0", leading - num) .. str
 	end
 	

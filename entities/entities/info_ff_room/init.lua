@@ -344,7 +344,7 @@ function ENT:SetShields(shields)
 end
 
 function ENT:GetShields()
-	return self._nwdata.shields
+	return self._shields or 0
 end
 
 function ENT:TransmitTemperature(room, delta)

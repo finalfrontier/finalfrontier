@@ -5,8 +5,10 @@ DEBUG = false
 MOUSE1 = 1
 MOUSE2 = 2
 
-sgui = {}
-sgui._dict = {}
+if not sgui then
+	sgui = {}
+	sgui._dict = {}
+else return end
 
 local _mt = {}
 _mt.__index = _mt

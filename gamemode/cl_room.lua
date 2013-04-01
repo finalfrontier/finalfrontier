@@ -183,6 +183,10 @@ end
 
 function _mt:Remove()
 	ForgetGlobalTable(self:GetName())
+
+	if self:GetSystem() then
+		self:GetSystem():Remove()
+	end
 end
 
 function Room(name, ship, index)

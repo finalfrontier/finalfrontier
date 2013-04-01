@@ -76,7 +76,7 @@ elseif CLIENT then
             end
         end
 
-        local text = tostring(math.Round(self.Value * 100))
+        local text = tostring(math.Round(self.Value * 100)) .. "%"
 
         surface.SetFont("CTextSmall")
         local wid, hei = surface.GetTextSize(text)

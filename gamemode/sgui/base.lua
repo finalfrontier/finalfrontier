@@ -129,6 +129,9 @@ function GUI:GetGlobalLeft() return self._globBounds.l end
 function GUI:GetGlobalTop() return self._globBounds.t end
 function GUI:GetGlobalRight() return self._globBounds.r end
 function GUI:GetGlobalBottom() return self._globBounds.b end
+function GUI:GetGlobalOrigin()
+	return self._globBounds.l, self._globBounds.t
+end
 function GUI:GetGlobalCentre()
 	return
 		(self._globBounds.r + self._globBounds.l) * 0.5,
