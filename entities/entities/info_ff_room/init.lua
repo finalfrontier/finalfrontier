@@ -131,12 +131,14 @@ function ENT:Think()
 			dmg:SetDamage(math.min(math.ceil((self:GetTemperature() - 350) / 25), 10))
 		elseif self:GetAtmosphere() < 0.75 then
 			dmg = DamageInfo()
-			dmg:SetDamageType(DMG_POISON)
+			dmg:SetDamageType(DMG_ACID)
 			dmg:SetDamage(math.min(math.ceil((0.75 - self:GetAtmosphere()) * 10), 10))
 			sounds = DROWN_SOUNDS
 		end
 
 		if dmg then
+			dmg:SetAttacker(self)
+			dmg:SetInflictor(self)
 			for _, ply in pairs(self._players) do
 				if ply and ply:IsValid() and ply:Alive() then
 					ply:TakeDamageInfo(dmg)
