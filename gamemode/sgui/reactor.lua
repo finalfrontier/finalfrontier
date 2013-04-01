@@ -12,7 +12,7 @@ function GUI:AddRow(system)
     row.System = system
 
     row.Icon = sgui.Create(self, "image")
-    row.Icon:SetOrigin(ICON_PADDING, ICON_PADDING + #self.Rows * (ICON_SIZE + ICON_PADDING))
+    row.Icon:SetOrigin(ICON_PADDING, ICON_PADDING + (#self.Rows + 1) * (ICON_SIZE + ICON_PADDING))
     row.Icon:SetSize(ICON_SIZE, ICON_SIZE)
     if CLIENT then row.Icon.Material = system.Icon end
 
@@ -51,6 +51,32 @@ end
 function GUI:Enter()
     self.Super[BASE].Enter(self)
 
+    local limitLabel = sgui.Create(self, "label")
+    limitLabel:SetOrigin(ICON_PADDING * 2 + ICON_SIZE, ICON_PADDING)
+    limitLabel:SetSize(self:GetWidth() / 2 - limitLabel:GetLeft() - ICON_PADDING, ICON_SIZE)
+
+    local neededLabel = sgui.Create(self, "label")
+    neededLabel:SetOrigin(limitLabel:GetRight() + ICON_PADDING, ICON_PADDING)
+    neededLabel:SetSize(self:GetWidth() * 3 / 4 - neededLabel:GetLeft() - ICON_PADDING, ICON_SIZE)
+
+    local suppliedLabel = sgui.Create(self, "label")
+    suppliedLabel:SetOrigin(neededLabel:GetRight() + ICON_PADDING, ICON_PADDING)
+    suppliedLabel:SetSize(self:GetWidth() - suppliedLabel:GetLeft() - ICON_PADDING, ICON_SIZE)
+
+    if CLIENT then
+        limitLabel.AlignX = TEXT_ALIGN_CENTER
+        limitLabel.AlignY = TEXT_ALIGN_CENTER
+        limitLabel.Text = "LIMIT PERCENT"
+
+        neededLabel.AlignX = TEXT_ALIGN_CENTER
+        neededLabel.AlignY = TEXT_ALIGN_CENTER
+        neededLabel.Text = "NEEDED"
+
+        suppliedLabel.AlignX = TEXT_ALIGN_CENTER
+        suppliedLabel.AlignY = TEXT_ALIGN_CENTER
+        suppliedLabel.Text = "SUPPLIED"
+    end
+
     self.Rows = {}
 
     for _, room in pairs(self:GetShip():GetRooms()) do
@@ -75,8 +101,8 @@ elseif CLIENT then
     function GUI:UpdateLayout(layout)
         for i, row in ipairs(layout.rows) do
             if self.Rows[i] then
-                self.Rows[i].Needed.Text = FormatNum(row, 1, 2)
-                self.Rows[i].Limit.Text = FormatNum(self.Rows[i].System:GetPower(), 1, 2)
+                self.Rows[i].Needed.Text = FormatNum(row, 1, 2) .. "kW"
+                self.Rows[i].Limit.Text = FormatNum(self.Rows[i].System:GetPower(), 1, 2) .. "kW"
             end
         end
 

@@ -5,7 +5,7 @@ SYS.Powered = true
 if SERVER then
 	resource.AddFile("materials/systems/shields.png")
 
-	local RECHARGE_RATE = 1 / 60.0
+	local RECHARGE_RATE = 1 / 20
 	local SHIELD_POWER_PER_M2 = 0.01462
 	
 	SYS._distrib = nil

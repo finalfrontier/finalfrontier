@@ -82,7 +82,7 @@ function ENT:InitPostEntity()
 		self:SetAirVolume(0)
 	end
 
-	self:SetShields(math.random())
+	self:SetShields(1)
 
 	self:_NextUpdate()
 end

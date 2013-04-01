@@ -56,6 +56,10 @@ if SERVER then
             end
         end
     end
+
+    function SYS:Think(dt)
+        self:CaculatePower()
+    end
 elseif CLIENT then
     SYS.Icon = Material("systems/reactor.png", "smooth")    
 end
