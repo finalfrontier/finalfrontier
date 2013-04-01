@@ -392,7 +392,7 @@ function ply_mt:SetRoom(room)
 	end
 	room:_AddPlayer(self)
 	self._room = room
-	self:SetNWInt("room", room.Index)
+	self:SetNWInt("room", room:GetIndex())
 end
 
 function ply_mt:GetRoom()
