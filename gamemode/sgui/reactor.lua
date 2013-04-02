@@ -8,21 +8,10 @@ GUI.BaseName = BASE
 GUI._shipview = nil
 GUI._curroom = nil
 
-GUI._closedshipheight = 0
-GUI._openshipheight = 0
-
-if CLIENT then
-    GUI._changeroomtime = 0
-end
-
 GUI._roomelems = nil
+GUI._totalbar = nil
 
 function GUI:SetCurrentRoom(room)
-    if CLIENT and ((room and not self._curroom)
-        or (not room and self._curroom)) then
-        self._changeroomtime = CurTime()
-    end
-
     self._curroom = room
 
     if self._roomelems then
@@ -33,6 +22,13 @@ function GUI:SetCurrentRoom(room)
     end
 
     if room then
+        if self._totalbar then
+            self._totalbar:Remove()
+            self._totaltext:Remove()
+            self._totalbar = nil
+            self._totaltext = nil
+        end
+
         local system = room:GetSystem()
 
         self._roomelems = {}
@@ -46,29 +42,20 @@ function GUI:SetCurrentRoom(room)
         self._roomelems.slider:SetSize(self:GetWidth() / 2 - self._roomelems.slider:GetLeft() - ICON_PADDING, ICON_SIZE)
         if SERVER then
             self._roomelems.slider.Value = self:GetSystem():GetSystemLimitRatio(system)
-            self._roomelems.slider.OnValueChanged = function(slider, value)
+            function self._roomelems.slider.OnValueChanged(slider, value)
                 self:GetSystem():SetSystemLimitRatio(system, value)
             end
         elseif CLIENT then
-            self._roomelems.slider.GetValueText = function(slider, value)
+            function self._roomelems.slider.GetValueText(slider, value)
                 return FormatNum(self:GetSystem():GetTotalPower() * value, 1, 2) .. "kW"
             end
         end
-
-        self._roomelems.needed = sgui.Create(self, "label")
-        self._roomelems.needed:SetOrigin(self._roomelems.slider:GetRight() + ICON_PADDING, self._roomelems.icon:GetTop())
-        self._roomelems.needed:SetSize(self:GetWidth() * 3 / 4 - self._roomelems.needed:GetLeft() - ICON_PADDING * 2 - ICON_SIZE, ICON_SIZE)
-
         self._roomelems.supplied = sgui.Create(self, "label")
-        self._roomelems.supplied:SetOrigin(self._roomelems.needed:GetRight() + ICON_PADDING, self._roomelems.icon:GetTop())
+        self._roomelems.supplied:SetOrigin(self._roomelems.slider:GetRight() + ICON_PADDING, self._roomelems.icon:GetTop())
         self._roomelems.supplied:SetSize(self:GetWidth() - self._roomelems.supplied:GetLeft() - ICON_PADDING * 2 - ICON_SIZE, ICON_SIZE)
 
         if CLIENT then
-            self._roomelems.needed.AlignX = TEXT_ALIGN_RIGHT
-            self._roomelems.needed.AlignY = TEXT_ALIGN_CENTER
-            self._roomelems.needed.Text = "0"
-
-            self._roomelems.supplied.AlignX = TEXT_ALIGN_RIGHT
+            self._roomelems.supplied.AlignX = TEXT_ALIGN_CENTER
             self._roomelems.supplied.AlignY = TEXT_ALIGN_CENTER
             self._roomelems.supplied.Text = "0"
         end
@@ -81,6 +68,32 @@ function GUI:SetCurrentRoom(room)
         if SERVER then
             function self._roomelems.close.OnClick(btn)
                 self:SetCurrentRoom(nil)
+            end
+        end
+    else
+        if not self._totalbar then
+            self._totalbar = sgui.Create(self, "slider")
+            self._totalbar:SetOrigin(ICON_PADDING, self:GetHeight() - ICON_SIZE - ICON_PADDING)
+            self._totalbar:SetSize(self:GetWidth() - ICON_PADDING * 2, ICON_SIZE)
+            self._totalbar.CanClick = false
+
+            local total = self:GetSystem():GetTotalPower()
+            if total > 0 then
+                self._totalbar.Value = math.min(1, self:GetSystem():GetTotalNeeded() / total)
+            else
+                self._totalbar.Value = 0
+            end
+
+            self._totaltext = sgui.Create(self, "label")
+            self._totaltext:SetBounds(self._totalbar:GetBounds())
+            if CLIENT then
+                function self._totalbar.GetValueText(slider, value)
+                    return ""
+                end
+
+                self._totaltext.AlignX = TEXT_ALIGN_CENTER
+                self._totaltext.AlignY = TEXT_ALIGN_CENTER
+                self._totaltext.Text = ""
             end
         end
     end
@@ -111,7 +124,8 @@ function GUI:Enter()
         elseif CLIENT then
             function room.GetRoomColor(room)
                 if room:GetCurrentRoom() == self._curroom then
-                    return Color(48, 64, 32, 255)
+                    local glow = Glow(0.5) * 32 + 32
+                    return Color(glow, glow, glow, 255)
                 elseif room.CanClick then
                     return room.Color
                 else
@@ -121,21 +135,16 @@ function GUI:Enter()
         end
     end
 
-    self._closedshipheight = self:GetHeight() - ICON_PADDING * 1.5
-    self._openshipheight = self:GetHeight() - ICON_PADDING * 2.5 - ICON_SIZE
-
     self._shipview:SetBounds(Bounds(
         ICON_PADDING,
         ICON_PADDING * 0.5,
         self:GetWidth() - ICON_PADDING * 2,
-        self._closedshipheight
+        self:GetHeight() - ICON_PADDING * 2.5 - ICON_SIZE
     ))
-end
 
-function GUI:Leave()
+    self._totalbar = nil
+
     self:SetCurrentRoom(nil)
-
-    self.Super[BASE].Leave(self)
 end
 
 if SERVER then
@@ -150,21 +159,6 @@ if SERVER then
         end
     end
 elseif CLIENT then
-    function GUI:Draw()
-        local dt = (CurTime() - self._changeroomtime) / 0.125
-        if dt >= 0 and dt <= 1 then
-            if self._curroom then dt = 1 - dt end
-            self._shipview:SetHeight(self._openshipheight
-                + (self._closedshipheight - self._openshipheight) * dt)
-        elseif self._curroom and self._shipview:GetHeight() ~= self._openshipheight then
-            self._shipview:SetHeight(self._openshipheight)
-        elseif not self._curroom and self._shipview:GetHeight() ~= self._closedshipheight then
-            self._shipview:SetHeight(self._closedshipheight)
-        end
-
-        self.Super[BASE].Draw(self)
-    end
-
     function GUI:UpdateLayout(layout)
         if layout.room and (not self._curroom or
             self._curroom:GetName() ~= layout.room) then
@@ -174,8 +168,11 @@ elseif CLIENT then
         end
 
         if layout.room then
-            self._roomelems.needed.Text = FormatNum(layout.needed, 1, 2) .. "kW"
-            self._roomelems.supplied.Text = FormatNum(self._curroom:GetSystem():GetPower(), 1, 2) .. "kW"
+            self._roomelems.supplied.Text = FormatNum(self._curroom:GetSystem():GetPower(), 1, 2) 
+                .. "kW / " .. FormatNum(layout.needed, 1, 2) .. "kW"
+        else
+            self._totaltext.Text = FormatNum(self:GetSystem():GetTotalNeeded(), 1, 2) .. "kW / "
+                .. FormatNum(self:GetSystem():GetTotalPower(), 1, 2) .. "kW"
         end
 
         self.Super[BASE].UpdateLayout(self, layout)
