@@ -42,6 +42,10 @@ if SERVER then
         layout.value = self.Value
     end
 elseif CLIENT then
+    function GUI:GetValueText(value)
+        return tostring(math.Round(value * 100)) .. "%"
+    end
+
     function GUI:Draw()
         if self.CanClick then
             surface.SetDrawColor(self.Color)
@@ -76,7 +80,7 @@ elseif CLIENT then
             end
         end
 
-        local text = tostring(math.Round(self.Value * 100)) .. "%"
+        local text = self:GetValueText(self.Value)
 
         surface.SetFont("CTextSmall")
         local wid, hei = surface.GetTextSize(text)

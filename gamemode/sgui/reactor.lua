@@ -21,9 +21,12 @@ function GUI:AddRow(system)
     row.Slider:SetSize(self:GetWidth() / 2 - row.Slider:GetLeft() - ICON_PADDING, ICON_SIZE)
     if SERVER then
         row.Slider.Value = self:GetSystem():GetSystemLimitRatio(system)
-        row.Slider._sys = system
         row.Slider.OnValueChanged = function(slider, value)
             self:GetSystem():SetSystemLimitRatio(system, value)
+        end
+    elseif CLIENT then
+        row.Slider.GetValueText = function(slider, value)
+            return FormatNum(self:GetSystem():GetTotalPower() * value, 1, 2) .. "kW"
         end
     end
 
@@ -66,7 +69,7 @@ function GUI:Enter()
     if CLIENT then
         limitLabel.AlignX = TEXT_ALIGN_CENTER
         limitLabel.AlignY = TEXT_ALIGN_CENTER
-        limitLabel.Text = "LIMIT PERCENT"
+        limitLabel.Text = "POWER LIMIT"
 
         neededLabel.AlignX = TEXT_ALIGN_CENTER
         neededLabel.AlignY = TEXT_ALIGN_CENTER
