@@ -121,12 +121,16 @@ if CLIENT then
 			and IsPointInsidePolyGroup(self._polys, x - xo, y - yo)
 	end
 
+	function GUI:GetRoomColor()
+		return self.Color
+	end
+
 	local PLAYER_DOT = Material("playerdot.png", "smooth")
 	function GUI:Draw()
 		if self._transform then
 			local last, lx, ly = nil, 0, 0
 
-			surface.SetDrawColor(self.Color)
+			surface.SetDrawColor(self:GetRoomColor())
 
 			for i, poly in ipairs(self._polys) do
 				surface.DrawPoly(poly)
