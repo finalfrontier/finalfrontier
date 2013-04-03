@@ -13,9 +13,12 @@ include("cl_room.lua")
 include("cl_ship.lua")
 include("cl_ships.lua")
 
+
+WHITE = Material("vgui/white")
+
 -- Global Functions
 
-function Glow(period)
+function Pulse(period)
 	return (math.sin(CurTime() * math.pi * 2 / period) + 1) * 0.5
 end
 

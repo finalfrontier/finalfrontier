@@ -69,7 +69,7 @@ if SERVER then
         self:CaculatePower()
     end
 elseif CLIENT then
-    SYS.Icon = Material("systems/reactor.png", "smooth")    
+    SYS.Icon = Material("systems/reactor.png", "smooth")
 end
 
 function SYS:GetTotalNeeded()

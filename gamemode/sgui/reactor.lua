@@ -124,7 +124,7 @@ function GUI:Enter()
         elseif CLIENT then
             function room.GetRoomColor(room)
                 if room:GetCurrentRoom() == self._curroom then
-                    local glow = Glow(0.5) * 32 + 32
+                    local glow = Pulse(0.5) * 32 + 32
                     return Color(glow, glow, glow, 255)
                 elseif room.CanClick then
                     return room.Color

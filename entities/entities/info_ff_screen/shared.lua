@@ -308,8 +308,6 @@ if SERVER then
 		end
 	end)
 elseif CLIENT then
-	local WHITE = Material("vgui/white")
-
 	ENT._using = false
 
 	ENT._lastCursorUpdate = 0

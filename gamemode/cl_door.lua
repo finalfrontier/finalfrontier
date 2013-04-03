@@ -20,6 +20,10 @@ function _mt:GetIndex()
 	return self._nwdata.index
 end
 
+function _mt:IsPowered()
+	return self._nwdata.powered or false
+end
+
 function _mt:GetArea()
 	return self._nwdata.area
 end

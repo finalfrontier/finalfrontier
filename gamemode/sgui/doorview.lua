@@ -1,5 +1,11 @@
 local BASE = "base"
 
+if SERVER then
+    resource.AddFile("materials/power.png")
+else
+	GUI._powerImage = Material("power.png", "smooth")
+end
+
 GUI.BaseName = BASE
 
 GUI._door = nil
@@ -130,6 +136,18 @@ if CLIENT then
 					self._poly[3].x, self._poly[3].y)
 				surface.DrawLine(self._poly[2].x, self._poly[2].y,
 					self._poly[4].x, self._poly[4].y)
+			end
+
+			if self:GetCurrentDoor():IsUnlocked() and
+				not self:GetCurrentDoor():IsPowered() and Pulse(1) >= 0.5 then
+				local size = math.min(self:GetWidth(), self:GetHeight())
+				local x, y = self:GetGlobalOrigin()
+				x = x + (self:GetWidth() - size) * 0.5
+				y = y + (self:GetHeight() - size) * 0.5
+				surface.SetMaterial(self._powerImage)
+				surface.SetDrawColor(Color(255, 219, 89, 255))
+				surface.DrawTexturedRect(x, y, size, size)
+				surface.SetMaterial(WHITE)
 			end
 		end
 

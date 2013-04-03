@@ -15,7 +15,7 @@ GUI.Pages = nil
 GUI.TabMenu = nil
 GUI.Tabs = nil
 
-GUI.TabHeight = 64
+GUI.TabHeight = 48
 GUI.TabMargin = 8
 
 GUI._curpage = 0

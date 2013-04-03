@@ -66,6 +66,15 @@ function ENT:InitPostEntity()
 	self:_NextUpdate()
 end
 
+function ENT:SetIsPowered(powered)
+	self._nwdata.powered = powered
+	self:_UpdateNWData()
+end
+
+function ENT:IsPowered()
+	return self._nwdata.powered or false
+end
+
 function ENT:_SetArea(area)
 	self._nwdata.area = value
 	self:_UpdateNWData()
