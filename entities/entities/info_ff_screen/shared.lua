@@ -317,6 +317,8 @@ elseif CLIENT then
 	ENT._cursory = 0
 	ENT._lastCursorx = 0
 	ENT._lastCursory = 0
+	ENT._nextCursorx = 0
+	ENT._nextCursory = 0
 	
 	function ENT:UpdateLayout()
 		if not self.Layout and self.Room and self.Room:IsCurrent() and self.Ship == LocalPlayer():GetShip() then
@@ -402,12 +404,16 @@ elseif CLIENT then
 				local t = (CurTime() - self._lastCursorUpdate) / CURSOR_UPDATE_FREQ
 				
 				if t >= 1 then
-					self._lastCursorx = cx
-					self._lastCursory = cy
+					self._lastCursorx = self._nextCursorx
+					self._lastCursory = self._nextCursory
+					self._cursorx = self._nextCursorx
+					self._cursory = self._nextCursory
+					self._nextCursorx = cx
+					self._nextCursory = cy
 					self._lastCursorUpdate = CurTime()
 				else
-					self._cursorx = self._lastCursorx + (cx - self._lastCursorx) * t
-					self._cursory = self._lastCursory + (cy - self._lastCursory) * t
+					self._cursorx = self._lastCursorx + (self._nextCursorx - self._lastCursorx) * t
+					self._cursory = self._lastCursory + (self._nextCursory - self._lastCursory) * t
 				end
 			end
 		end
