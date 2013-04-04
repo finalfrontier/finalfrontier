@@ -32,7 +32,7 @@ if SERVER then
 	end
 end
 
-if CLIENT then
+if CLIENT then	
 	GUI._transform = nil
 
 	GUI._corners = nil
@@ -126,6 +126,7 @@ if CLIENT then
 	end
 
 	local PLAYER_DOT = Material("playerdot.png", "smooth")
+	local POWER = Material("power.png", "smooth")
 	function GUI:Draw()
 		if self._transform then
 			local last, lx, ly = nil, 0, 0
@@ -156,10 +157,20 @@ if CLIENT then
 				lx, ly = v.x, v.y
 			end
 
-			if self._room:HasSystem() and self._room:GetSystem().Icon then
-				surface.SetMaterial(self._room:GetSystem().Icon)
-				surface.SetDrawColor(Color(255, 255, 255, 32))
-				surface.DrawTexturedRect(self._iconBounds:GetRect())
+			local sys = self._room:GetSystem()
+			if sys then
+				if sys.Icon then
+					surface.SetMaterial(sys.Icon)
+					surface.SetDrawColor(Color(255, 255, 255, 32))
+					surface.DrawTexturedRect(self._iconBounds:GetRect())
+				end
+
+				if sys.Powered and sys:GetPower() < sys:GetPowerNeeded()
+					and Pulse(1) >= 0.5 then
+					surface.SetMaterial(POWER)
+					surface.SetDrawColor(Color(255, 219, 89, 255))
+					surface.DrawTexturedRect(self._iconBounds:GetRect())
+				end
 			end
 
 			surface.SetMaterial(PLAYER_DOT)
