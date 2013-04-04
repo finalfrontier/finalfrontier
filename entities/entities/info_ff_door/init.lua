@@ -1,8 +1,6 @@
 local TEMPERATURE_TRANSMIT_RATE = 0.05
 local ATMOSPHERE_TRANSMIT_RATE = 20.0
 
-local OPEN_DISTANCE = 160
-
 ENT.Type = "point"
 ENT.Base = "base_point"
 
@@ -232,34 +230,6 @@ function ENT:Think()
 
 		if delta > 0 then
 			roomA:TransmitAir(roomB, delta)
-		end
-		
-		if self:IsUnlocked() then
-			local shouldClose = true
-			local pos = self:GetPos()
-			for _, ply in ipairs(player.GetAll()) do
-				if ply:GetPos():Distance(pos) <= OPEN_DISTANCE then
-					shouldClose = false
-					break
-				end
-			end
-			
-			if shouldClose then
-				self:Close()
-			end
-		end
-	elseif self:IsUnlocked() then
-		local shouldOpen = false
-		local pos = self:GetPos()
-		for _, ply in ipairs(player.GetAll()) do
-			if ply:GetPos():Distance(pos) <= OPEN_DISTANCE then
-				shouldOpen = true
-				break
-			end
-		end
-		
-		if shouldOpen then
-			self:Open()
 		end
 	end
 end

@@ -15,7 +15,7 @@ if SERVER then
 	end
 
 	function SYS:GetDistrib(room)
-		return self._distrib[room:GetName()] or 1.0
+		return self._distrib[room:GetName()] or 0
 	end
 	
 	function SYS:GetPowerNeeded()
