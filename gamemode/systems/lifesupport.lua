@@ -5,7 +5,7 @@ SYS.Powered = true
 if SERVER then
 	resource.AddFile("materials/systems/lifesupport.png")
 
-    function SYS:GetPowerNeeded()
+    function SYS:CalculatePowerNeeded()
         return #self.Ship:GetRooms()
     end
 elseif CLIENT then

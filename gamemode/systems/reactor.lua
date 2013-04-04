@@ -39,7 +39,8 @@ if SERVER then
         local totalneeded = 0
         for _, room in pairs(self.Ship:GetRooms()) do
             if room:GetSystem() and room:GetSystem().Powered then
-                local needed = room:GetSystem():GetPowerNeeded()
+                local needed = room:GetSystem():CalculatePowerNeeded()
+                room:GetSystem():SetPowerNeeded(needed)
                 local limit = self:GetSystemLimit(room:GetSystem())
                 totalneeded = totalneeded + math.min(needed, limit)
             end

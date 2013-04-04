@@ -18,7 +18,7 @@ if SERVER then
 		return self._distrib[room:GetName()] or 0
 	end
 	
-	function SYS:GetPowerNeeded()
+	function SYS:CalculatePowerNeeded()
 		local totNeeded = 0
 		for _, room in ipairs(self.Ship:GetRooms()) do
 			totNeeded = totNeeded + room:GetSurfaceArea() * SHIELD_POWER_PER_M2

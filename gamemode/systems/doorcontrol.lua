@@ -11,7 +11,7 @@ if SERVER then
 
     SYS._sorted = nil
 
-    function SYS:GetPowerNeeded()
+    function SYS:CalculatePowerNeeded()
         local needed = 0
         for _, door in pairs(self:GetShip():GetDoors()) do
             if door:IsUnlocked() then
@@ -42,6 +42,36 @@ if SERVER then
             end
             table.insert(self._sorted, doors[mini])
             table.remove(doors, mini)
+        end
+    end
+
+    function SYS:ToggleAllOpen()
+        local open = false
+        for _, door in ipairs(self:GetShip():GetDoors()) do
+            if door:IsClosed() then
+                open = true
+                break
+            end
+        end
+
+        for _, door in ipairs(self:GetShip():GetDoors()) do
+            if not door:IsLocked() or door:IsOpen() then
+                if open then door:LockOpen() else door:UnlockClose() end
+            end
+        end
+    end
+
+    function SYS:ToggleAllLocked()
+        local lock = false
+        for _, door in ipairs(self:GetShip():GetDoors()) do
+            if door:IsUnlocked() then
+                lock = true
+                break
+            end
+        end
+
+        for _, door in ipairs(self:GetShip():GetDoors()) do
+            if lock then door:Lock() else door:Unlock() end
         end
     end
 

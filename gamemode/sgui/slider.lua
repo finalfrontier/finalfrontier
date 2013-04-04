@@ -46,6 +46,21 @@ elseif CLIENT then
         return tostring(math.Round(value * 100)) .. "%"
     end
 
+    function GUI:DrawValueText(text)
+        surface.SetFont("CTextSmall")
+        local x, y, w, h = self:GetGlobalRect()
+        local a = x + self.Margin + (w - self.Margin * 2) * self.Value
+        local wid, hei = surface.GetTextSize(text)
+        if wid < a - x - self.Margin * 2 then
+            surface.SetTextColor(self.TextColorNeg)
+            surface.SetTextPos(a - self.Margin - wid, y + (h - hei) / 2)
+        elseif wid < self:GetGlobalRight() - a - self.Margin * 2 then
+            surface.SetTextColor(self.TextColorPos)
+            surface.SetTextPos(a + self.Margin, y + (h - hei) / 2)
+        end
+        surface.DrawText(text)
+    end
+
     function GUI:Draw()
         if self.CanClick then
             surface.SetDrawColor(self.Color)
@@ -80,18 +95,7 @@ elseif CLIENT then
             end
         end
 
-        local text = self:GetValueText(self.Value)
-
-        surface.SetFont("CTextSmall")
-        local wid, hei = surface.GetTextSize(text)
-        if wid < a - x - self.Margin * 2 then
-            surface.SetTextColor(self.TextColorNeg)
-            surface.SetTextPos(a - self.Margin - wid, y + (h - hei) / 2)
-        elseif wid < self:GetGlobalRight() - a - self.Margin * 2 then
-            surface.SetTextColor(self.TextColorPos)
-            surface.SetTextPos(a + self.Margin, y + (h - hei) / 2)
-        end
-        surface.DrawText(text)
+        self:DrawValueText(self:GetValueText(self.Value))
 
         self.Super[BASE].Draw(self)
     end

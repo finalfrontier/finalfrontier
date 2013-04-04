@@ -35,6 +35,10 @@ function _mt:GetPower()
 	return self._nwdata.power or 0
 end
 
+function _mt:GetPowerNeeded()
+	return self._nwdata.needed or 0
+end
+
 if SERVER then
 	resource.AddFile("materials/systems/noicon.png")
 
@@ -48,13 +52,18 @@ if SERVER then
 		return
 	end
 	
-	function _mt:GetPowerNeeded()
+	function _mt:CalculatePowerNeeded()
 		return 0
 	end
 
 	function _mt:SetPower(value)
 		self._nwdata.power = value
 		self:_UpdateNWData()
+	end
+
+	function _mt:SetPowerNeeded(value)
+		self._nwdata.needed = value
+        self:_UpdateNWData()
 	end
 
 	function _mt:GetScreens()
