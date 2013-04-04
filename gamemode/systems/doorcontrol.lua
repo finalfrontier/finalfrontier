@@ -48,7 +48,7 @@ if SERVER then
     function SYS:ToggleAllOpen()
         local open = false
         for _, door in ipairs(self:GetShip():GetDoors()) do
-            if door:IsClosed() then
+            if door:IsUnlocked() and door:IsClosed() then
                 open = true
                 break
             end
