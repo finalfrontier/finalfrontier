@@ -7,8 +7,9 @@ GUI.CanClick = true
 GUI.Margin = 4
 
 GUI.Value = 0
-GUI.Snap = 0.05
+GUI.Snap = 0.01
 
+GUI.Font = "CTextSmall"
 GUI.Color = Color(191, 191, 191, 255)
 GUI.DisabledColor = Color(64, 64, 64, 255)
 GUI.HighlightColorNeg = Color(0, 0, 0, 127)
@@ -48,7 +49,7 @@ elseif CLIENT then
 
     function GUI:DrawValueText(value)
         local text = self:GetValueText(value)
-        surface.SetFont("CTextSmall")
+        surface.SetFont(self.Font)
         local x, y, w, h = self:GetGlobalRect()
         local a = x + self.Margin + (w - self.Margin * 2) * value
         local wid, hei = surface.GetTextSize(text)

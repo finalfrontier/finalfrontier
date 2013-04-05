@@ -6,8 +6,8 @@ SYS.Powered = true
 if SERVER then
 	resource.AddFile("materials/systems/shields.png")
 
-	local RECHARGE_RATE = 5.37
-	local SHIELD_POWER_PER_M2 = 0.01462
+	local RECHARGE_RATE = 2.5
+	local SHIELD_POWER_PER_M2 = 0.008
 	
 	SYS._distrib = nil
 	
@@ -26,8 +26,14 @@ if SERVER then
 	function SYS:CalculatePowerNeeded()
 		local totNeeded = 0
 		for _, room in ipairs(self.Ship:GetRooms()) do
-			totNeeded = totNeeded + room:GetSurfaceArea() * SHIELD_POWER_PER_M2
-				* self:GetDistrib(room)
+			if self:GetDistrib(room) > 0 then
+				local needed = room:GetSurfaceArea() * SHIELD_POWER_PER_M2
+				if room:GetShields() < self:GetDistrib(room) - 0.001 then
+					totNeeded = totNeeded + needed * 2
+				elseif room:GetShields() < self:GetDistrib(room) + 0.001 then
+					totNeeded = totNeeded + needed
+				end
+			end
 		end
 		return totNeeded
 	end
@@ -40,13 +46,14 @@ if SERVER then
 		end
 
 		for _, room in ipairs(self.Ship:GetRooms()) do
-			local val = self:GetDistrib(room) * ratio
-			if room:GetShields() < val then
-				room:SetUnitShields(room:GetUnitShields() + RECHARGE_RATE * dt)
+			if self:GetDistrib(room) > 0 then
+				local rate = ratio * 2 - 1
+				if room:GetShields() < self:GetDistrib(room) - 0.001 or rate < 0 then
+					room:SetUnitShields(room:GetUnitShields() + RECHARGE_RATE * rate * dt)
+				end
 			end
-
-			if room:GetShields() > val then
-				room:SetUnitShields(val * room:GetSurfaceArea())
+			if room:GetShields() > self:GetDistrib(room) then
+				room:SetUnitShields(self:GetDistrib(room) * room:GetSurfaceArea())
 			end
 		end
 	end
