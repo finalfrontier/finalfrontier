@@ -126,7 +126,7 @@ if SERVER then
 
 			if curr and table.HasValue(goal, curr) then
 				curr = table.KeyFromValue(goal, curr)
-			else curr = math.ceil(#self.CurrSequence / 2) end
+			else curr = nil end
 			if last and table.HasValue(goal, last) then
 				last = table.KeyFromValue(goal, last)
 			else last = 0 end
@@ -135,9 +135,12 @@ if SERVER then
 			else next = #self.CurrSequence + 1 end
 
 			local score = 0
-			if last < curr then score = score + 1 end
-			if curr < next then score = score + 1 end
-
+			if curr then
+				if last < curr then score = score + 1 end
+				if curr < next then score = score + 1 end
+			else
+				if i == 1 or i == #self.CurrSequence or math.random() < 0.5 then score = 1 end
+			end
 			self.CheckSequence[i] = score
 		end
 	end
