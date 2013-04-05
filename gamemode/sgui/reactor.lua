@@ -10,6 +10,7 @@ GUI._curroom = nil
 
 GUI._roomelems = nil
 GUI._totalbar = nil
+GUI._totaltext = nil
 
 function GUI:SetCurrentRoom(room)
     self._curroom = room
@@ -57,7 +58,7 @@ function GUI:SetCurrentRoom(room)
         if CLIENT then
             self._roomelems.supplied.AlignX = TEXT_ALIGN_CENTER
             self._roomelems.supplied.AlignY = TEXT_ALIGN_CENTER
-            self._roomelems.supplied.Text = "0"
+            self._roomelems.supplied.Text = ""
         end
 
         self._roomelems.close = sgui.Create(self, "button")

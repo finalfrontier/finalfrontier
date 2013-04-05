@@ -1,17 +1,22 @@
 SYS.FullName = "Shield Control"
+SYS.SGUIName = "shields"
 
 SYS.Powered = true
 
 if SERVER then
 	resource.AddFile("materials/systems/shields.png")
 
-	local RECHARGE_RATE = 1 / 20
+	local RECHARGE_RATE = 5.37
 	local SHIELD_POWER_PER_M2 = 0.01462
 	
 	SYS._distrib = nil
 	
 	function SYS:Initialize()
 		self._distrib = {}
+	end
+
+	function SYS:SetDistrib(room, value)
+		self._distrib[room:GetName()] = math.Clamp(value, 0, 1)
 	end
 
 	function SYS:GetDistrib(room)
@@ -35,13 +40,13 @@ if SERVER then
 		end
 
 		for _, room in ipairs(self.Ship:GetRooms()) do
-			local val = (self:GetDistrib(room) or 0) * ratio
+			local val = self:GetDistrib(room) * ratio
 			if room:GetShields() < val then
-				room:SetShields(room:GetShields() + RECHARGE_RATE * dt)
+				room:SetUnitShields(room:GetUnitShields() + RECHARGE_RATE * dt)
 			end
 
 			if room:GetShields() > val then
-				room:SetShields(val)
+				room:SetUnitShields(val * room:GetSurfaceArea())
 			end
 		end
 	end

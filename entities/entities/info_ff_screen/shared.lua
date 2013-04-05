@@ -78,7 +78,7 @@ if SERVER then
 		self:SetNWEntity("user", nil)
 
 		self:GenerateOverrideSequence()
-		if not DEBUG then self:ShuffleCurrentOverrideSequence() end
+		-- if not DEBUG then self:ShuffleCurrentOverrideSequence() end
 
 		self.FreeGUIIDs = {}
 

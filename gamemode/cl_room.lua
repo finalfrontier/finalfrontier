@@ -126,8 +126,12 @@ function _mt:GetAtmosphere()
 	return self:GetAirVolume() / self:GetVolume()
 end
 
-function _mt:GetShields()
+function _mt:GetUnitShields()
 	return self:_GetLerpedValue(self._shields)
+end
+
+function _mt:GetShields()
+	return self:GetUnitShields() / self:GetSurfaceArea()
 end
 
 function _mt:GetPermissionsName()

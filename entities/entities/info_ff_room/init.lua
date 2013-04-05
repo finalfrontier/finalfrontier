@@ -82,7 +82,7 @@ function ENT:InitPostEntity()
 		self:SetAirVolume(0)
 	end
 
-	self:SetShields(1)
+	self:SetUnitShields(self:GetSurfaceArea())
 
 	self:_NextUpdate()
 end
@@ -334,8 +334,8 @@ function ENT:GetAtmosphere()
 	return self:GetAirVolume() / self:GetVolume()
 end
 
-function ENT:SetShields(shields)
-	self._shields = math.Clamp(shields, 0, 1)
+function ENT:SetUnitShields(shields)
+	self._shields = math.Clamp(shields, 0, self:GetSurfaceArea())
 
 	if ShouldSync(self._shields, self._nwdata.shields, 1 / 100) then
 		self._nwdata.shields = self._shields
@@ -343,8 +343,12 @@ function ENT:SetShields(shields)
 	end
 end
 
-function ENT:GetShields()
+function ENT:GetUnitShields()
 	return self._shields or 0
+end
+
+function ENT:GetShields()
+	return self:GetUnitShields() / self:GetSurfaceArea()
 end
 
 function ENT:TransmitTemperature(room, delta)
