@@ -11,7 +11,8 @@ if CLIENT then
             FormatNum(self:GetSystem():GetPowerNeeded(), 1, 2) .. "kW"
     end
 
-    function GUI:DrawValueText(text)
+    function GUI:DrawValueText(value)
+        local text = self:GetValueText(value)
         surface.SetFont("CTextSmall")
         local x, y = self:GetGlobalCentre()
         local wid, hei = surface.GetTextSize(text)
