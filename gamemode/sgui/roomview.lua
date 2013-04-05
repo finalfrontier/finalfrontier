@@ -168,7 +168,9 @@ if CLIENT then
 				if sys.Powered and sys:GetPower() < sys:GetPowerNeeded()
 					and Pulse(1) >= 0.5 then
 					surface.SetMaterial(POWER)
-					surface.SetDrawColor(Color(255, 219, 89, 255))
+					surface.SetDrawColor(LerpColour(Color(255, 44, 33, 255),
+						Color(255, 219, 89, 255),
+						sys:GetPower() / sys:GetPowerNeeded()))
 					surface.DrawTexturedRect(self._iconBounds:GetRect())
 				end
 			end

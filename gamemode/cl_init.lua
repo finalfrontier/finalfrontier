@@ -22,6 +22,15 @@ function Pulse(period)
 	return (math.sin(CurTime() * math.pi * 2 / period) + 1) * 0.5
 end
 
+function LerpColour(a, b, t)
+	return Color(
+		a.r + (b.r - a.r) * t,
+		a.g + (b.g - a.g) * t,
+		a.b + (b.b - a.b) * t,
+		a.a + (b.a - a.a) * t
+	)
+end
+
 function FormatNum(num, leading, trailing)
 	local mul = math.pow(10, trailing)
 	num = math.Round(num * mul) / mul
