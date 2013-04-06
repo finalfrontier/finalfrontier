@@ -1,4 +1,5 @@
 local TEMPERATURE_LOSS_RATE = 0.00000382
+local AIR_LOSS_RATE = 0.5
 local DAMAGE_INTERVAL = 1.0
 
 ENT.Type = "point"
@@ -73,11 +74,11 @@ function ENT:InitPostEntity()
 	self:_UpdateSystem()
 
 	self:SetAirVolume(self:GetVolume())
-	self:SetUnitTemperature(300)
+	self:SetUnitTemperature(self:GetVolume() / 2)
 	
 	local sysName = self:GetSystemName()
 	if sysName == "medical" then
-		self:SetUnitTemperature(600)
+		self:SetUnitTemperature(self:GetVolume())
 	elseif sysName == "piloting" then
 		self:SetAirVolume(0)
 	end
@@ -107,7 +108,9 @@ function ENT:Think()
 	if self:HasSystem() then self:GetSystem():Think(dt) end
 	
 	self:SetUnitTemperature(self:GetUnitTemperature() *
-		(1 - TEMPERATURE_LOSS_RATE * self:GetSurfaceArea() * dt))
+		math.max(0, 1 - self:GetSurfaceArea() * TEMPERATURE_LOSS_RATE * dt))
+
+	self:SetAirVolume(self:GetAirVolume() - #self:GetPlayers() * AIR_LOSS_RATE * dt)
 
 	local bounds = self:GetBounds()
 	local min = Vector(bounds.l, bounds.t, -65536)
@@ -297,9 +300,9 @@ function ENT:GetScreens()
 end
 
 function ENT:SetUnitTemperature(temp)
-	self._temperature = math.Clamp(temp, 0, 600)
+	self._temperature = math.Clamp(temp, 0, self:GetVolume())
 
-	if ShouldSync(self._temperature, self._nwdata.temperature, 6) then
+	if ShouldSync(self._temperature, self._nwdata.temperature, self:GetVolume() / 100) then
 		self._nwdata.temperature = self._temperature
 		self:_UpdateNWData()
 	end
@@ -310,7 +313,7 @@ function ENT:GetUnitTemperature()
 end
 
 function ENT:GetTemperature()
-	return self:GetUnitTemperature() * self:GetAtmosphere()
+	return self:GetUnitTemperature() * 600 / self:GetVolume()
 end
 
 function ENT:SetAirVolume(volume)

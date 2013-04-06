@@ -6,7 +6,7 @@ SYS.Powered = true
 if SERVER then
 	resource.AddFile("materials/systems/shields.png")
 
-	local RECHARGE_RATE = 2.5
+	local SHIELD_RECHARGE_RATE = 2.5
 	local SHIELD_POWER_PER_M2 = 0.008
 	
 	SYS._distrib = nil
@@ -49,7 +49,7 @@ if SERVER then
 			if self:GetDistrib(room) > 0 then
 				local rate = ratio * 2 - 1
 				if room:GetShields() < self:GetDistrib(room) - 0.001 or rate < 0 then
-					room:SetUnitShields(room:GetUnitShields() + RECHARGE_RATE * rate * dt)
+					room:SetUnitShields(room:GetUnitShields() + SHIELD_RECHARGE_RATE * rate * dt)
 				end
 			end
 			if room:GetShields() > self:GetDistrib(room) then

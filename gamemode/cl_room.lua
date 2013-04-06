@@ -115,7 +115,7 @@ function _mt:GetUnitTemperature()
 end
 
 function _mt:GetTemperature()
-	return self:GetUnitTemperature() * self:GetAtmosphere()
+	return self:GetUnitTemperature() * 600 / self:GetVolume()
 end
 
 function _mt:GetAirVolume()

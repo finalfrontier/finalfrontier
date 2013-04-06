@@ -205,12 +205,12 @@ function ENT:Think()
 		-- Temperature transfer
 		local roomA = rooms[1]
 		local roomB = rooms[2]
-		if roomA:GetUnitTemperature() < roomB:GetUnitTemperature() then
+		if roomA:GetTemperature() < roomB:GetTemperature() then
 			roomA = rooms[2]
 			roomB = rooms[1]
 		end
 
-		local delta = (roomA:GetUnitTemperature() - roomB:GetUnitTemperature())
+		local delta = (roomA:GetTemperature() - roomB:GetTemperature())
 			* self:GetArea() * TEMPERATURE_TRANSMIT_RATE * dt
 
 		if delta > 0 then
