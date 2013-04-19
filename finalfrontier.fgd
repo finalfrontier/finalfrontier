@@ -30,6 +30,9 @@
 	door(target_destination) : "Door Parts" : "" : "Targetname of the door object to open and close"
 	room1(target_destination) : "Room" : "" : "Targetname of a room this door is connected to"
 	room2(target_destination) : "Room" : "" : "Targetname of a room this door is connected to"
+
+	input Opened(void) : "Door object finished opening"
+	input Closed(void) : "Door object finished closing"
 ]
 
 @PointClass base(Targetname, Origin, Angles) = info_ff_screen : "screen"
