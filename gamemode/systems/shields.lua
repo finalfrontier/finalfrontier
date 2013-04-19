@@ -27,6 +27,7 @@ if SERVER then
 		local totNeeded = 0
 		for _, room in ipairs(self.Ship:GetRooms()) do
 			if self:GetDistrib(room) > 0 then
+				-- TODO: make continuous
 				local needed = room:GetSurfaceArea() * SHIELD_POWER_PER_M2
 				if room:GetShields() < self:GetDistrib(room) - 0.001 then
 					totNeeded = totNeeded + needed * 2

@@ -1,5 +1,6 @@
 local TEMPERATURE_LOSS_RATE = 0.00000382
 local AIR_LOSS_RATE = 0.5
+local PLAYER_HEAT_RATE = 0.002
 local DAMAGE_INTERVAL = 1.0
 
 ENT.Type = "point"
@@ -108,7 +109,8 @@ function ENT:Think()
 	if self:HasSystem() then self:GetSystem():Think(dt) end
 	
 	self:SetUnitTemperature(self:GetUnitTemperature() *
-		math.max(0, 1 - self:GetSurfaceArea() * TEMPERATURE_LOSS_RATE * dt))
+		math.max(0, 1 - self:GetSurfaceArea() * TEMPERATURE_LOSS_RATE * dt) +
+		#self:GetPlayers() * PLAYER_HEAT_RATE * dt)
 
 	self:SetAirVolume(self:GetAirVolume() - #self:GetPlayers() * AIR_LOSS_RATE * dt)
 

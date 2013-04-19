@@ -38,18 +38,12 @@ if SERVER then
 	function ENT:KeyValue(key, value)
 		if key == "room" then
 			self.RoomName = tostring(value)
-		elseif key == "size" then
-			local split = string.Explode(" ", tostring(value))
-			if #split >= 1 then
-				self:SetNWFloat("width", tonumber(split[1]))
-				if #split >= 2 then
-					self:SetNWFloat("height", tonumber(split[2]))
-				else
-					self:SetNWFloat("height", tonumber(split[1]))
-				end
-				self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE
-				self.Height = self:GetNWFloat("height") * SCREEN_DRAWSCALE
-			end
+		elseif key == "width" then
+			self:SetNWFloat("width", tonumber(value))
+			self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE
+		elseif key == "height" then
+			self:SetNWFloat("height", tonumber(value))
+			self.Height = self:GetNWFloat("height") * SCREEN_DRAWSCALE
 		end
 	end
 	

@@ -31,18 +31,13 @@ function _mt:GetShip()
 	return self.Room:GetShip()
 end
 
-function _mt:GetPower()
-	return self._nwdata.power or 0
-end
-
-function _mt:GetPowerNeeded()
-	return self._nwdata.needed or 0
-end
-
 if SERVER then
 	resource.AddFile("materials/systems/noicon.png")
 
 	_mt._nwtablename = nil
+
+	_mt._power = 0
+	_mt._needed = 0
 
 	function _mt:StartControlling(screen, ply)
 		return
@@ -57,13 +52,29 @@ if SERVER then
 	end
 
 	function _mt:SetPower(value)
-		self._nwdata.power = value
-		self:_UpdateNWData()
+		self._power = value
+
+		if math.abs(self._power - (self._nwdata.power or 0)) >= 0.01 then
+			self._nwdata.power = value
+			self:_UpdateNWData()
+		end
+	end
+
+	function _mt:GetPower()
+		return self._power
 	end
 
 	function _mt:SetPowerNeeded(value)
-		self._nwdata.needed = value
-        self:_UpdateNWData()
+		self._needed = value
+
+		if math.abs(self._needed - (self._nwdata.needed or 0)) >= 0.01 then
+			self._nwdata.needed = value
+	        self:_UpdateNWData()
+	    end
+	end
+
+	function _mt:GetPowerNeeded()
+		return self._needed
 	end
 
 	function _mt:GetScreens()
@@ -78,6 +89,14 @@ if SERVER then
 		SetGlobalTable(self._nwtablename, self._nwdata)
 	end
 elseif CLIENT then
+	function _mt:GetPower()
+		return self._nwdata.power or 0
+	end
+
+	function _mt:GetPowerNeeded()
+		return self._nwdata.needed or 0
+	end
+
 	function _mt:Remove()
 		ForgetGlobalTable(self._nwtablename)
 	end

@@ -154,7 +154,6 @@ if SERVER then
 
         if self._curroom then
             layout.room = self._curroom:GetName()
-            layout.needed = self._curroom:GetSystem():GetPowerNeeded()
         else
             layout.room = nil
         end
@@ -168,14 +167,21 @@ elseif CLIENT then
             self:SetCurrentRoom(nil)
         end
 
+        self.Super[BASE].UpdateLayout(self, layout)
+
         if layout.room then
             self._roomelems.supplied.Text = FormatNum(self._curroom:GetSystem():GetPower(), 1, 2) 
-                .. "kW / " .. FormatNum(layout.needed, 1, 2) .. "kW"
+                .. "kW / " .. FormatNum(self._curroom:GetSystem():GetPowerNeeded(), 1, 2) .. "kW"
         else
             self._totaltext.Text = FormatNum(self:GetSystem():GetTotalNeeded(), 1, 2) .. "kW / "
                 .. FormatNum(self:GetSystem():GetTotalPower(), 1, 2) .. "kW"
+                
+            local total = self:GetSystem():GetTotalPower()
+            if total > 0 then
+                self._totalbar.Value = math.min(1, self:GetSystem():GetTotalNeeded() / total)
+            else
+                self._totalbar.Value = 0
+            end
         end
-
-        self.Super[BASE].UpdateLayout(self, layout)
     end
 end

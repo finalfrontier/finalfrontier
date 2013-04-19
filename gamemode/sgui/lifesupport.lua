@@ -5,7 +5,6 @@ local ICON_PADDING = 16
 
 GUI.BaseName = BASE
 
---[[
 GUI._shipview = nil
 GUI._curroom = nil
 
@@ -27,28 +26,55 @@ function GUI:SetCurrentRoom(room)
             self._powerbar:Remove()
             self._powerbar = nil
         end
+
+        local totalWidth = self:GetWidth() - ICON_PADDING * 6 - ICON_SIZE
+        local sliderWidth = totalWidth / 2 * 0.6
+        local labelWidth = totalWidth / 2 * 0.4
+
         self._roomelems = {}
-        self._roomelems.slider = sgui.Create(self, "slider")
-        self._roomelems.slider:SetOrigin(ICON_PADDING, self:GetHeight() - ICON_SIZE - ICON_PADDING)
-        self._roomelems.slider:SetSize(self:GetWidth() / 2 - ICON_PADDING, ICON_SIZE)
+        self._roomelems.atmoslider = sgui.Create(self, "slider")
+        self._roomelems.atmoslider:SetOrigin(ICON_PADDING, self:GetHeight() - ICON_SIZE - ICON_PADDING)
+        self._roomelems.atmoslider:SetSize(sliderWidth, ICON_SIZE)
         if SERVER then
-            self._roomelems.slider.Value = self:GetSystem():GetDistrib(room)
-            function self._roomelems.slider.OnValueChanged(slider, value)
-                self:GetSystem():SetDistrib(room, value)
+            self._roomelems.atmoslider.Value = self:GetSystem():GetGoalAtmosphere(room)
+            function self._roomelems.atmoslider.OnValueChanged(slider, value)
+                self:GetSystem():SetGoalAtmosphere(room, value)
             end
         end
-        self._roomelems.supplied = sgui.Create(self, "label")
-        self._roomelems.supplied:SetOrigin(self._roomelems.slider:GetRight() + ICON_PADDING, self._roomelems.slider:GetTop())
-        self._roomelems.supplied:SetSize(self:GetWidth() - self._roomelems.supplied:GetLeft() - ICON_PADDING * 2 - ICON_SIZE, ICON_SIZE)
-
+        self._roomelems.atmolabel = sgui.Create(self, "label")
+        self._roomelems.atmolabel:SetOrigin(self._roomelems.atmoslider:GetRight() + ICON_PADDING, self._roomelems.atmoslider:GetTop())
+        self._roomelems.atmolabel:SetSize(labelWidth, ICON_SIZE)
         if CLIENT then
-            self._roomelems.supplied.AlignX = TEXT_ALIGN_CENTER
-            self._roomelems.supplied.AlignY = TEXT_ALIGN_CENTER
-            self._roomelems.supplied.Text = ""
+            self._roomelems.atmolabel.AlignX = TEXT_ALIGN_CENTER
+            self._roomelems.atmolabel.AlignY = TEXT_ALIGN_CENTER
+            self._roomelems.atmolabel.Text = ""
+        end
+
+        self._roomelems.tempslider = sgui.Create(self, "slider")
+        self._roomelems.tempslider:SetOrigin(self._roomelems.atmolabel:GetRight() + ICON_PADDING, self:GetHeight() - ICON_SIZE - ICON_PADDING)
+        self._roomelems.tempslider:SetSize(sliderWidth, ICON_SIZE)
+        self._roomelems.tempslider.Snap = 1 / 24
+        if SERVER then
+            self._roomelems.tempslider.Value = self:GetSystem():GetGoalTemperature(room) / 600
+            function self._roomelems.tempslider.OnValueChanged(slider, value)
+                self:GetSystem():SetGoalTemperature(room, value * 600)
+            end
+        elseif CLIENT then
+            function self._roomelems.tempslider.GetValueText(slider, value)
+                return tostring(math.Round(value * 600)) .. "K"
+            end
+        end
+        self._roomelems.templabel = sgui.Create(self, "label")
+        self._roomelems.templabel:SetOrigin(self._roomelems.tempslider:GetRight() + ICON_PADDING, self._roomelems.atmoslider:GetTop())
+        self._roomelems.templabel:SetSize(labelWidth, ICON_SIZE)
+        if CLIENT then
+            self._roomelems.templabel.AlignX = TEXT_ALIGN_CENTER
+            self._roomelems.templabel.AlignY = TEXT_ALIGN_CENTER
+            self._roomelems.templabel.Text = ""
         end
 
         self._roomelems.close = sgui.Create(self, "button")
-        self._roomelems.close:SetOrigin(self:GetWidth() - ICON_PADDING - ICON_SIZE, self._roomelems.slider:GetTop())
+        self._roomelems.close:SetOrigin(self:GetWidth() - ICON_PADDING - ICON_SIZE, self._roomelems.atmoslider:GetTop())
         self._roomelems.close:SetSize(ICON_SIZE, ICON_SIZE)
         self._roomelems.close.Text = "X"
 
@@ -88,13 +114,11 @@ function GUI:Enter()
             end
         elseif CLIENT then
             function room.GetRoomColor(room)
-                local clr = LerpColour(room.Color, Color(45, 51, 172, 255),
-                    room:GetCurrentRoom():GetShields())
                 if room:GetCurrentRoom() == self._curroom then
                     local glow = Pulse(0.5) * 32 + 32
-                    return LerpColour(clr, Color(64, 64, 64, 255), Pulse(0.5) * 0.5 + 0.5)
+                    return Color(glow, glow, glow, 255)
                 else
-                    return clr
+                    return Color(32, 32, 32, 255)
                 end
             end
         end
@@ -132,11 +156,9 @@ elseif CLIENT then
         end
 
         if layout.room then
-            self._roomelems.supplied.Text = FormatNum(self._curroom:GetUnitShields(), 1, 2) 
-                .. "kT / " .. FormatNum(self._curroom:GetSurfaceArea(), 1, 2) .. "kT"
+            -- TODO update current atmo / temp
         end
 
         self.Super[BASE].UpdateLayout(self, layout)
     end
 end
---]]

@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "44"
+	"mapversion" "45"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "44"
+	"mapversion" "45"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -32,9 +32,10 @@ entity
 	"id" "150"
 	"classname" "info_ff_screen"
 	"angles" "315 270 0"
+	"height" "28"
 	"room" "$room_name"
-	"size" "48 28"
 	"targetname" "screen"
+	"width" "48"
 	"origin" "0 -2 46"
 	editor
 	{
@@ -868,9 +869,9 @@ entity
 	"id" "2594"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_8"
+	"origin" "-32 16 8"
 	"room" "$room_name"
 	"targetname" "detail_7"
-	"origin" "-32 16 8"
 	editor
 	{
 		"color" "220 30 220"
@@ -884,9 +885,9 @@ entity
 	"id" "2602"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_9"
+	"origin" "-32 -8 8"
 	"room" "$room_name"
 	"targetname" "detail_8"
-	"origin" "-32 -8 8"
 	editor
 	{
 		"color" "220 30 220"
@@ -900,9 +901,9 @@ entity
 	"id" "2610"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_10"
+	"origin" "-24 -16 8"
 	"room" "$room_name"
 	"targetname" "detail_9"
-	"origin" "-24 -16 8"
 	editor
 	{
 		"color" "220 30 220"
@@ -916,9 +917,9 @@ entity
 	"id" "2618"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_11"
+	"origin" "24 -16 8"
 	"room" "$room_name"
 	"targetname" "detail_10"
-	"origin" "24 -16 8"
 	editor
 	{
 		"color" "220 30 220"
@@ -932,9 +933,9 @@ entity
 	"id" "2626"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_12"
+	"origin" "32 -8 8"
 	"room" "$room_name"
 	"targetname" "detail_11"
-	"origin" "32 -8 8"
 	editor
 	{
 		"color" "220 30 220"
@@ -948,9 +949,9 @@ entity
 	"id" "2634"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_7"
+	"origin" "32 16 8"
 	"room" "$room_name"
 	"targetname" "detail_12"
-	"origin" "32 16 8"
 	editor
 	{
 		"color" "220 30 220"

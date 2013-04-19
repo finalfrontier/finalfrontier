@@ -24,7 +24,6 @@ if SERVER then
 
     function SYS:SetSystemLimitRatio(system, limit)
         self._limits[system.Name] = limit
-        self:CaculatePower()
     end
 
     function SYS:GetSystemLimitRatio(system)
@@ -35,11 +34,11 @@ if SERVER then
         return self:GetSystemLimitRatio(system) * self:GetTotalPower()
     end
 
-    function SYS:CaculatePower()
+    function SYS:CaculatePower(dt)
         local totalneeded = 0
         for _, room in pairs(self.Ship:GetRooms()) do
             if room:GetSystem() and room:GetSystem().Powered then
-                local needed = room:GetSystem():CalculatePowerNeeded()
+                local needed = room:GetSystem():CalculatePowerNeeded(dt)
                 room:GetSystem():SetPowerNeeded(needed)
                 local limit = self:GetSystemLimit(room:GetSystem())
                 totalneeded = totalneeded + math.min(needed, limit)
@@ -67,7 +66,7 @@ if SERVER then
     end
 
     function SYS:Think(dt)
-        self:CaculatePower()
+        self:CaculatePower(dt)
     end
 elseif CLIENT then
     SYS.Icon = Material("systems/reactor.png", "smooth")
