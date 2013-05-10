@@ -189,7 +189,8 @@ elseif CLIENT then
         end
 
         if layout.room then
-            -- TODO update current atmo / temp
+            self._roomelems.templabel.Text = FormatNum(self._curroom:GetTemperature(), 1, 1) .. "K"
+            self._roomelems.atmolabel.Text = FormatNum(self._curroom:GetAtmosphere() * 100, 1, 1) .. "%"
         end
 
         self.Super[BASE].UpdateLayout(self, layout)
