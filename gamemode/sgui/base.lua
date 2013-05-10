@@ -18,6 +18,10 @@ function GUI:GetPermission()
 	return self.Screen.UI.Permission
 end
 
+function GUI:GetScreen()
+	return self.Screen
+end
+
 function GUI:GetRoom()
 	return self.Screen.Room
 end
@@ -141,6 +145,15 @@ function GUI:GetGlobalRect()
 	return self._globBounds.l, self._globBounds.t,
 		self._bounds.r - self._bounds.l,
 		self._bounds.b - self._bounds.t
+end
+
+function GUI:SetGlobalBounds(bounds)
+	if self:HasParent() then
+		bounds = Bounds(bounds:GetRect())
+		bounds:Move(-self._parent._globBounds.l, -self._parent._globBounds.t)
+	end
+
+	self:SetBounds(bounds)
 end
 
 function GUI:UpdateGlobalBounds()

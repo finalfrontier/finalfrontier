@@ -48,6 +48,10 @@ if CLIENT then
 		self:FindTransform()
 	end
 
+	function GUI:GetIconBounds()
+		return self._iconBounds
+	end
+
 	function GUI:FindTransform()
 		if not self._room then return end
 
@@ -194,9 +198,9 @@ if CLIENT then
 						(l + r) * 0.5, (t + b) * 0.5, r - l, b - t, ang)
 				end
 			end
-		end
 
-		surface.SetMaterial(WHITE)
+			surface.SetMaterial(WHITE)
+		end
 		
 		self.Super[BASE].Draw(self)
 	end

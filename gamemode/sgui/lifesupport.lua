@@ -33,6 +33,7 @@ function GUI:SetCurrentRoom(room)
 
         self._roomelems = {}
         self._roomelems.atmoslider = sgui.Create(self, "slider")
+        self._roomelems.atmoslider.Color = Color(51, 172, 45, 191)
         self._roomelems.atmoslider:SetOrigin(ICON_PADDING, self:GetHeight() - ICON_SIZE - ICON_PADDING)
         self._roomelems.atmoslider:SetSize(sliderWidth, ICON_SIZE)
         if SERVER then
@@ -51,6 +52,7 @@ function GUI:SetCurrentRoom(room)
         end
 
         self._roomelems.tempslider = sgui.Create(self, "slider")
+        self._roomelems.tempslider.Color = Color(172, 45, 51, 191)
         self._roomelems.tempslider:SetOrigin(self._roomelems.atmolabel:GetRight() + ICON_PADDING, self:GetHeight() - ICON_SIZE - ICON_PADDING)
         self._roomelems.tempslider:SetSize(sliderWidth, ICON_SIZE)
         self._roomelems.tempslider.Snap = 1 / 24
@@ -102,8 +104,18 @@ function GUI:Enter()
     self._shipview = sgui.Create(self, "shipview")
     self._shipview:SetCurrentShip(self:GetShip())
 
-    for _, room in pairs(self._shipview:GetRoomElements()) do
+    self._shipview:SetBounds(Bounds(
+        ICON_PADDING,
+        ICON_PADDING * 0.5,
+        self:GetWidth() - ICON_PADDING * 2,
+        self:GetHeight() - ICON_PADDING * 2.5 - ICON_SIZE
+    ))
+
+    for _, room in ipairs(self._shipview:GetRoomElements()) do
         room.CanClick = true
+        room.atmoDial = sgui.Create(self, "dualdial")
+        room.tempDial = sgui.Create(self, "dualdial")
+
         if SERVER then
             function room.OnClick(room)
                 if self._curroom == room:GetCurrentRoom() then
@@ -112,6 +124,11 @@ function GUI:Enter()
                     self:SetCurrentRoom(room:GetCurrentRoom())
                 end
             end
+
+            room.atmoDial:SetTargetValue(self:GetSystem():GetGoalAtmosphere(room:GetCurrentRoom()))
+            room.atmoDial:SetCurrentValue(room:GetCurrentRoom():GetAtmosphere())
+            room.tempDial:SetTargetValue(self:GetSystem():GetGoalTemperature(room:GetCurrentRoom()) / 600)
+            room.tempDial:SetCurrentValue(room:GetCurrentRoom():GetTemperature() / 600)
         elseif CLIENT then
             function room.GetRoomColor(room)
                 if room:GetCurrentRoom() == self._curroom then
@@ -121,15 +138,26 @@ function GUI:Enter()
                     return Color(32, 32, 32, 255)
                 end
             end
+
+            room.atmoDial:SetGlobalBounds(room:GetIconBounds())
+            room.tempDial:SetGlobalBounds(room:GetIconBounds())
+
+            local w, h = room.atmoDial:GetSize()
+
+            room.atmoDial:SetSize(w * 2, h * 2)
+            room.atmoDial:SetInnerRatio(0.625)
+            room.atmoDial:SetCentre(room.atmoDial:GetLeft() + w / 2,
+                room.atmoDial:GetTop() + h / 2)
+            room.atmoDial.TargetColour = Color(51, 172, 45, 32)
+            room.atmoDial.CurrentColour = Color(51, 172, 45, 127)
+            
+            room.tempDial:SetSize(w * 3, h * 3)
+            room.tempDial:SetCentre(room.tempDial:GetLeft() + w / 2,
+                room.tempDial:GetTop() + h / 2)
+            room.tempDial.TargetColour = Color(172, 45, 51, 32)
+            room.tempDial.CurrentColour = Color(172, 45, 51, 127)
         end
     end
-
-    self._shipview:SetBounds(Bounds(
-        ICON_PADDING,
-        ICON_PADDING * 0.5,
-        self:GetWidth() - ICON_PADDING * 2,
-        self:GetHeight() - ICON_PADDING * 2.5 - ICON_SIZE
-    ))
 
     self._powerbar = nil
 
@@ -138,13 +166,18 @@ end
 
 if SERVER then
     function GUI:UpdateLayout(layout)
-        self.Super[BASE].UpdateLayout(self, layout)
+        for _, room in ipairs(self._shipview:GetRoomElements()) do
+            room.atmoDial:SetTargetValue(self:GetSystem():GetGoalAtmosphere(room:GetCurrentRoom()))
+            room.tempDial:SetTargetValue(self:GetSystem():GetGoalTemperature(room:GetCurrentRoom()) / 600)
+        end
 
         if self._curroom then
             layout.room = self._curroom:GetName()
         else
             layout.room = nil
         end
+
+        self.Super[BASE].UpdateLayout(self, layout)
     end
 elseif CLIENT then
     function GUI:UpdateLayout(layout)
@@ -160,5 +193,10 @@ elseif CLIENT then
         end
 
         self.Super[BASE].UpdateLayout(self, layout)
+
+        for _, room in ipairs(self._shipview:GetRoomElements()) do
+            room.atmoDial:SetCurrentValue(room:GetCurrentRoom():GetAtmosphere())
+            room.tempDial:SetCurrentValue(room:GetCurrentRoom():GetTemperature() / 600)
+        end
     end
 end

@@ -6,10 +6,10 @@ SYS.Powered = true
 if SERVER then
 	resource.AddFile("materials/systems/lifesupport.png")
 
-    local TEMP_POWER_PER_METER3 = 0.005
-    local TEMP_RECHARGE_RATE = 10
-    local ATMO_POWER_PER_METER3 = 0.005
-    local ATMO_RECHARGE_RATE = 5
+    local TEMP_POWER_PER_METER3 = 2
+    local TEMP_RECHARGE_RATE = 2
+    local ATMO_POWER_PER_METER3 = 1
+    local ATMO_RECHARGE_RATE = 10
 
     SYS._atmo = nil
     SYS._temp = nil
@@ -36,66 +36,42 @@ if SERVER then
     end
 
     function SYS:CalculatePowerNeeded(dt)
-        --[[
         local totNeeded = 0
         for _, room in ipairs(self.Ship:GetRooms()) do
-            local goalUnits = self:GetGoalTemperature(room) / 600 * room:GetVolume()
-            local needed = math.Clamp(math.abs(room:GetUnitTemperature() - goalUnits) / TEMP_RECHARGE_RATE * dt, 0, 1)
-            totNeeded = totNeeded + TEMP_POWER_PER_METER3 * needed
-
-            goalUnits = self:GetGoalAtmosphere(room) * room:GetVolume()
-            needed = math.Clamp(math.abs(room:GetAirVolume() - goalUnits) / ATMO_RECHARGE_RATE * dt, 0, 1)
-            totNeeded = totNeeded + ATMO_POWER_PER_METER3 * needed
+            totNeeded = totNeeded + CalculatePowerCost(
+                room:GetUnitTemperature(),
+                self:GetGoalTemperature(room) / 600 * room:GetVolume(),
+                TEMP_RECHARGE_RATE * dt,
+                TEMP_POWER_PER_METER3) + CalculatePowerCost(
+                room:GetAirVolume(),
+                self:GetGoalAtmosphere(room) * room:GetVolume(),
+                ATMO_RECHARGE_RATE * dt,
+                ATMO_POWER_PER_METER3)
         end
         return totNeeded
-        --]]
-
-        return #self.Ship:GetRooms()
     end
 
     function SYS:Think(dt)
         if self:GetPower() <= 0 then return end
 
-        --[[
         local needed = self:GetPowerNeeded()
         local ratio = 0
         if needed > 0 then
             ratio = math.min(self:GetPower() / needed, 1)
         end
-        --]]
+
         for _, room in ipairs(self.Ship:GetRooms()) do
-            --[[
-            if math.abs(room:GetTemperature() - self:GetGoalTemperature(room)) > 0.001 then
-                if room:GetTemperature() < self:GetGoalTemperature(room) then
-                    room:SetUnitTemperature(room:GetUnitTemperature() + TEMP_RECHARGE_RATE * ratio * dt)
-                    if room:GetTemperature() > self:GetGoalTemperature(room) then
-                        room:SetUnitTemperature(room:GetVolume() * self:GetGoalTemperature(room) / 600)
-                    end
-                else
-                    room:SetUnitTemperature(room:GetUnitTemperature() - TEMP_RECHARGE_RATE * ratio * dt)
-                    if room:GetTemperature() < self:GetGoalTemperature(room) then
-                        room:SetUnitTemperature(room:GetVolume() * self:GetGoalTemperature(room) / 600)
-                    end
-                end
-            end
-            if math.abs(room:GetAtmosphere() - self:GetGoalAtmosphere(room)) > 0.001 then
-                if room:GetAtmosphere() < self:GetGoalAtmosphere(room) then
-                    room:SetAirVolume(room:GetAirVolume() + ATMO_RECHARGE_RATE * ratio * dt)
-                    if room:GetAtmosphere() > self:GetGoalAtmosphere(room) then
-                        room:SetAirVolume(room:GetVolume() * self:GetGoalAtmosphere(room))
-                    end
-                else
-                    room:SetAirVolume(room:GetAirVolume() - ATMO_RECHARGE_RATE * ratio * dt)
-                    if room:GetAtmosphere() < self:GetGoalAtmosphere(room) then
-                        room:SetAirVolume(room:GetVolume() * self:GetGoalAtmosphere(room))
-                    end
-                end
-            end
-            --]]
-            room:SetUnitTemperature(room:GetVolume() * self:GetGoalTemperature(room) / 600)
-            room:SetAirVolume(room:GetVolume() * self:GetGoalAtmosphere(room))
+            room:SetUnitTemperature(CalculateNextValue(
+                room:GetUnitTemperature(),
+                self:GetGoalTemperature(room) / 600 * room:GetVolume(),
+                TEMP_RECHARGE_RATE * dt,
+                ratio))
+            room:SetAirVolume(CalculateNextValue(
+                room:GetAirVolume(),
+                self:GetGoalAtmosphere(room) * room:GetVolume(),
+                ATMO_RECHARGE_RATE * dt,
+                ratio))
         end
-        --]]
     end
 elseif CLIENT then
 	SYS.Icon = Material("systems/lifesupport.png", "smooth")

@@ -23,6 +23,28 @@ _mt.Powered = false
 
 _mt.SGUIName = "page"
 
+function FindIncrement(current, target, increment)
+	if target < current then
+		return math.max(target - current, -increment)
+	else
+		return math.min(target - current, increment)
+	end
+end
+
+function CalculatePowerCost(current, target, increment, powerPerUnit)
+	return powerPerUnit * math.abs(FindIncrement(current, target, increment))
+end
+
+function CalculateNextValue(current, target, increment, ratio)
+	local inc = FindIncrement(current, target, increment)
+
+	if ratio > 0 then
+		return current + inc * ratio
+	else
+		return current
+	end
+end
+
 function _mt:Initialize()
 	return
 end

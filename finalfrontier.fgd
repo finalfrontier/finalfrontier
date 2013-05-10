@@ -1,4 +1,4 @@
-@include "halflife2.fgd"
+@include "base.fgd"
 
 @PointClass base(Targetname, Origin) = info_ff_ship : "ship"
 [

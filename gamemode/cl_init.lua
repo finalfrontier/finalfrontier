@@ -111,6 +111,12 @@ function surface.DrawCircle(x, y, radius)
 	surface.SetMaterial(WHITE)
 end
 
+function surface.DrawPoints(points)
+    for _, v in ipairs(points) do
+        surface.DrawRect(v.x - 0.5, v.y - 0.5, 1, 1)
+    end
+end
+
 local CONNECTOR = Material("connector.png", "smooth")
 function surface.DrawConnector(sx, sy, ex, ey, width)
 	local dx = ex - sx
