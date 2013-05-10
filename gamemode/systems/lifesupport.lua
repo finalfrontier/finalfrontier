@@ -38,15 +38,20 @@ if SERVER then
     function SYS:CalculatePowerNeeded(dt)
         local totNeeded = 0
         for _, room in ipairs(self.Ship:GetRooms()) do
-            totNeeded = totNeeded + CalculatePowerCost(
-                room:GetUnitTemperature(),
-                self:GetGoalTemperature(room) / 600 * room:GetVolume(),
-                TEMP_RECHARGE_RATE * dt,
-                TEMP_POWER_PER_METER3) + CalculatePowerCost(
-                room:GetAirVolume(),
-                self:GetGoalAtmosphere(room) * room:GetVolume(),
-                ATMO_RECHARGE_RATE * dt,
-                ATMO_POWER_PER_METER3)
+            if self:GetGoalTemperature(room) ~= -1 then
+                totNeeded = totNeeded + CalculatePowerCost(
+                    room:GetUnitTemperature(),
+                    self:GetGoalTemperature(room) / 600 * room:GetVolume(),
+                    TEMP_RECHARGE_RATE * dt,
+                    TEMP_POWER_PER_METER3)
+            end
+            if self:GetGoalAtmosphere(room) ~= -1 then
+                totNeeded = totNeeded + CalculatePowerCost(
+                    room:GetAirVolume(),
+                    self:GetGoalAtmosphere(room) * room:GetVolume(),
+                    ATMO_RECHARGE_RATE * dt,
+                    ATMO_POWER_PER_METER3)
+            end
         end
         return totNeeded
     end
@@ -61,16 +66,20 @@ if SERVER then
         end
 
         for _, room in ipairs(self.Ship:GetRooms()) do
-            room:SetUnitTemperature(CalculateNextValue(
-                room:GetUnitTemperature(),
-                self:GetGoalTemperature(room) / 600 * room:GetVolume(),
-                TEMP_RECHARGE_RATE * dt,
-                ratio))
-            room:SetAirVolume(CalculateNextValue(
-                room:GetAirVolume(),
-                self:GetGoalAtmosphere(room) * room:GetVolume(),
-                ATMO_RECHARGE_RATE * dt,
-                ratio))
+            if self:GetGoalTemperature(room) ~= -1 then
+                room:SetUnitTemperature(CalculateNextValue(
+                    room:GetUnitTemperature(),
+                    self:GetGoalTemperature(room) / 600 * room:GetVolume(),
+                    TEMP_RECHARGE_RATE * dt,
+                    ratio))
+            end
+            if self:GetGoalAtmosphere(room) ~= -1 then
+                room:SetAirVolume(CalculateNextValue(
+                    room:GetAirVolume(),
+                    self:GetGoalAtmosphere(room) * room:GetVolume(),
+                    ATMO_RECHARGE_RATE * dt,
+                    ratio))
+            end
         end
     end
 elseif CLIENT then

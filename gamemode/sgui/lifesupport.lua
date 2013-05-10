@@ -11,6 +11,19 @@ GUI._curroom = nil
 GUI._roomelems = nil
 GUI._powerbar = nil
 
+if SERVER then
+    function GUI:_updateSliders()
+        if self._roomelems and self._curroom then
+            self._roomelems.atmoslider.Value = self:GetSystem():GetGoalAtmosphere(self._curroom)
+            self._roomelems.tempslider.Value = self:GetSystem():GetGoalTemperature(self._curroom) / 600
+        end
+    end
+end
+
+function GUI:GetCurrentRoom()
+    return self._curroom
+end
+
 function GUI:SetCurrentRoom(room)
     self._curroom = room
 
@@ -37,9 +50,13 @@ function GUI:SetCurrentRoom(room)
         self._roomelems.atmoslider:SetOrigin(ICON_PADDING, self:GetHeight() - ICON_SIZE - ICON_PADDING)
         self._roomelems.atmoslider:SetSize(sliderWidth, ICON_SIZE)
         if SERVER then
-            self._roomelems.atmoslider.Value = self:GetSystem():GetGoalAtmosphere(room)
             function self._roomelems.atmoslider.OnValueChanged(slider, value)
                 self:GetSystem():SetGoalAtmosphere(room, value)
+            end
+        elseif CLIENT then
+            function self._roomelems.atmoslider.GetValueText(slider, value)
+                if value < 0 then return "DISABLED" end
+                return tostring(math.Round(value * 100)) .. "%"
             end
         end
         self._roomelems.atmolabel = sgui.Create(self, "label")
@@ -57,12 +74,12 @@ function GUI:SetCurrentRoom(room)
         self._roomelems.tempslider:SetSize(sliderWidth, ICON_SIZE)
         self._roomelems.tempslider.Snap = 1 / 24
         if SERVER then
-            self._roomelems.tempslider.Value = self:GetSystem():GetGoalTemperature(room) / 600
             function self._roomelems.tempslider.OnValueChanged(slider, value)
                 self:GetSystem():SetGoalTemperature(room, value * 600)
             end
         elseif CLIENT then
             function self._roomelems.tempslider.GetValueText(slider, value)
+                if value < 0 then return "DISABLED" end
                 return tostring(math.Round(value * 600)) .. "K"
             end
         end
@@ -81,6 +98,8 @@ function GUI:SetCurrentRoom(room)
         self._roomelems.close.Text = "X"
 
         if SERVER then
+            self:_updateSliders()
+
             function self._roomelems.close.OnClick(btn)
                 self:SetCurrentRoom(nil)
             end
@@ -117,17 +136,32 @@ function GUI:Enter()
         room.tempDial = sgui.Create(self, "dualdial")
 
         if SERVER then
-            function room.OnClick(room)
-                if self._curroom == room:GetCurrentRoom() then
+            function room.OnClick(room, x, y, button)
+                if button == MOUSE1 and self._curroom == room:GetCurrentRoom() then
                     self:SetCurrentRoom(nil)
-                else
+                elseif button == MOUSE1 then
                     self:SetCurrentRoom(room:GetCurrentRoom())
+                else
+                    if self:GetSystem():GetGoalAtmosphere(room:GetCurrentRoom()) < 0 or
+                        self:GetSystem():GetGoalTemperature(room:GetCurrentRoom()) < 0 then
+                        self:GetSystem():SetGoalAtmosphere(room:GetCurrentRoom(), 1.0)
+                        self:GetSystem():SetGoalTemperature(room:GetCurrentRoom(), 300)
+                    else
+                        self:GetSystem():SetGoalAtmosphere(room:GetCurrentRoom(), -1)
+                        self:GetSystem():SetGoalTemperature(room:GetCurrentRoom(), -1)
+                    end
+
+                    if room:GetCurrentRoom() == self:GetCurrentRoom() then
+                        self:_updateSliders()
+                    end
                 end
+
+                self:GetScreen():UpdateLayout()
             end
 
-            room.atmoDial:SetTargetValue(self:GetSystem():GetGoalAtmosphere(room:GetCurrentRoom()))
+            room.atmoDial:SetTargetValue(math.max(self:GetSystem():GetGoalAtmosphere(room:GetCurrentRoom())))
             room.atmoDial:SetCurrentValue(room:GetCurrentRoom():GetAtmosphere())
-            room.tempDial:SetTargetValue(self:GetSystem():GetGoalTemperature(room:GetCurrentRoom()) / 600)
+            room.tempDial:SetTargetValue(math.max(0, self:GetSystem():GetGoalTemperature(room:GetCurrentRoom())) / 600)
             room.tempDial:SetCurrentValue(room:GetCurrentRoom():GetTemperature() / 600)
         elseif CLIENT then
             function room.GetRoomColor(room)
@@ -167,8 +201,8 @@ end
 if SERVER then
     function GUI:UpdateLayout(layout)
         for _, room in ipairs(self._shipview:GetRoomElements()) do
-            room.atmoDial:SetTargetValue(self:GetSystem():GetGoalAtmosphere(room:GetCurrentRoom()))
-            room.tempDial:SetTargetValue(self:GetSystem():GetGoalTemperature(room:GetCurrentRoom()) / 600)
+            room.atmoDial:SetTargetValue(math.max(0, self:GetSystem():GetGoalAtmosphere(room:GetCurrentRoom())))
+            room.tempDial:SetTargetValue(math.max(0, self:GetSystem():GetGoalTemperature(room:GetCurrentRoom())) / 600)
         end
 
         if self._curroom then

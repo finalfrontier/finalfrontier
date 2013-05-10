@@ -53,7 +53,10 @@ elseif CLIENT then
         local x, y, w, h = self:GetGlobalRect()
         local a = x + self.Margin + (w - self.Margin * 2) * value
         local wid, hei = surface.GetTextSize(text)
-        if wid < a - x - self.Margin * 2 then
+        if value < 0 then
+            surface.SetTextColor(self.TextColorPos)
+            surface.SetTextPos(x + (w - wid) / 2, y + (h - hei) / 2)
+        elseif wid < a - x - self.Margin * 2 then
             surface.SetTextColor(self.TextColorNeg)
             surface.SetTextPos(a - self.Margin - wid, y + (h - hei) / 2)
         elseif wid < self:GetGlobalRight() - a - self.Margin * 2 then
@@ -69,12 +72,13 @@ elseif CLIENT then
         else
             surface.SetDrawColor(self.DisabledColor)
         end
+        local val = math.Clamp(self.Value, 0, 1)
         local x, y, w, h = self:GetGlobalRect()
         surface.DrawOutlinedRect(x, y, w, h)
         surface.DrawRect(x + self.Margin, y + self.Margin,
-            (w - self.Margin * 2) * self.Value, h - self.Margin * 2)
+            (w - self.Margin * 2) * val, h - self.Margin * 2)
 
-        local a = x + self.Margin + (w - self.Margin * 2) * self.Value
+        local a = x + self.Margin + (w - self.Margin * 2) * val
 
         if self.CanClick and self:IsCursorInside() then
             local cx = self:GetCursorPos() - self:GetLeft()
