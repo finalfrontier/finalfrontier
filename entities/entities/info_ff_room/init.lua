@@ -134,10 +134,10 @@ function ENT:Think()
 			dmg = DamageInfo()
 			dmg:SetDamageType(DMG_BURN)
 			dmg:SetDamage(math.min(math.ceil((self:GetTemperature() - 350) / 25), 10))
-		elseif self:GetAtmosphere() < 0.75 then
+		elseif self:GetAtmosphere() < 0.5 then
 			dmg = DamageInfo()
 			dmg:SetDamageType(DMG_ACID)
-			dmg:SetDamage(math.min(math.ceil((0.75 - self:GetAtmosphere()) * 10), 10))
+			dmg:SetDamage(math.min(math.ceil((0.5 - self:GetAtmosphere()) * 10), 10))
 			sounds = DROWN_SOUNDS
 		end
 

@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "9"
+	"mapversion" "21"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -14,13 +14,13 @@ viewsettings
 	"bSnapToGrid" "1"
 	"bShowGrid" "1"
 	"bShowLogicalGrid" "0"
-	"nGridSpacing" "64"
+	"nGridSpacing" "16"
 	"bShow3DGrid" "0"
 }
 world
 {
 	"id" "1"
-	"mapversion" "9"
+	"mapversion" "21"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -31,11 +31,11 @@ entity
 {
 	"id" "2"
 	"classname" "func_instance"
-	"angles" "0 0 0"
+	"angles" "-0 0 0"
 	"file" "ships/ff_default.vmf"
 	"replace01" "$light_brightness 255 191 191 200"
 	"targetname" "ship01_"
-	"origin" "0 0 0"
+	"origin" "-832 0 896"
 	editor
 	{
 		"color" "220 30 220"
@@ -52,7 +52,23 @@ entity
 	"file" "ships/ff_default.vmf"
 	"replace01" "$light_brightness 191 191 255 200"
 	"targetname" "ship02_"
-	"origin" "2048 0 0"
+	"origin" "1216 0 896"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "735"
+	"classname" "func_instance"
+	"angles" "-0 0 0"
+	"file" "sector_array.vmf"
+	"fixup_style" "2"
+	"origin" "0 0 64"
 	editor
 	{
 		"color" "220 30 220"
@@ -63,7 +79,12 @@ entity
 }
 cameras
 {
-	"activecamera" "-1"
+	"activecamera" "0"
+	camera
+	{
+		"position" "[167.141 162.717 93.5699]"
+		"look" "[167.826 163.329 93.17]"
+	}
 }
 cordon
 {

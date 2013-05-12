@@ -6,3 +6,4 @@ content/maps/vmf/*.vmx
 *.mdmp
 *.temp.vmf
 *.vmx
+*.gl

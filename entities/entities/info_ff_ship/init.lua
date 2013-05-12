@@ -5,6 +5,7 @@ ENT._roomdict = nil
 ENT._roomlist = nil
 ENT._doors = nil
 ENT._bounds = nil
+ENT._object = nil
 
 ENT._players = nil
 
@@ -22,6 +23,9 @@ function ENT:Initialize()
 	self._doors = {}
 	self._bounds = Bounds()
 
+	self._object = obj.Create("ship", math.random() * 24, math.random() * 24)
+	self._object:SetShip(self)
+
 	self._players = {}
 
 	if not self._nwdata then
@@ -30,6 +34,9 @@ function ENT:Initialize()
 
 	self._nwdata.roomnames = {}
 	self._nwdata.doornames = {}
+
+	self._nwdata.x, self._nwdata.y = self._object:GetOrigin()
+	self._nwdata.range = 1
 
 	self._nwdata.name = self:GetName()
 	
@@ -44,6 +51,14 @@ end
 
 function ENT:GetBounds()
 	return self._bounds
+end
+
+function _mt:GetOrigin()
+	return self._nwdata.x, self._nwdata.y
+end
+
+function ENT:GetObject()
+	return self._object
 end
 
 function ENT:_SetBaseHealth(health)
