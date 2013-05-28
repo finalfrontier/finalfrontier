@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "13"
+	"mapversion" "15"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "13"
+	"mapversion" "15"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -5827,6 +5827,24 @@ entity
 	"fixup_style" "1"
 	"targetname" "_24"
 	"origin" "0 5888 0"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "1040"
+	"classname" "info_ff_universe"
+	"height" "6144"
+	"horzSectors" "24"
+	"origin" "3072 3072 0"
+	"targetname" "universe"
+	"vertSectors" "24"
+	"width" "6144"
 	editor
 	{
 		"color" "220 30 220"

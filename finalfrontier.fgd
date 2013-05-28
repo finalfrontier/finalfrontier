@@ -1,7 +1,11 @@
 @include "base.fgd"
 
-@PointClass base(Targetname, Origin) = info_ff_sector : "sector"
+@PointClass base(Targetname, Origin) = info_ff_universe : "universe"
 [
+	width(integer) : "Universe Width" : 1024 : "Width of the observable universe (inches)"
+	height(integer) : "Universe height" : 1024 : "Height of the observable universe (inches)"
+	horzSectors(integer) : "Horizontal sectors" : 8 : "Number of sectors along the X axis"
+	vertSectors(integer) : "Vertical sectors" : 8 : "Number of sectors along the Y axis"
 ]
 
 @PointClass base(Targetname, Origin) = info_ff_ship : "ship"
