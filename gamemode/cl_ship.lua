@@ -27,8 +27,8 @@ function _mt:GetCoordinates()
 	return self._nwdata.x, self._nwdata.y
 end
 
-function _mt:GetSectorName()
-	return self._nwdata.sectorname
+function _mt:GetRange()
+	return self._nwdata.range
 end
 
 function _mt:_UpdateBounds()

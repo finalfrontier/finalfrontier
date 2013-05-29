@@ -16,13 +16,13 @@ if CLIENT then
         local sectors = ents.FindByClass("info_ff_sector")
 
         if #sectors > 0 then
-            self._label.Text = tostring(#sectors) .. " sectors detected :D"
+            self._label.Text = tostring(#sectors) .. " sector(s) detected :"
+            for _, sector in pairs(sectors) do
+                self._label.Text = self._label.Text .. " " .. sector:GetSectorName()
+            end
         else
             self._label.Text = "No sectors detected :("
         end
-
-        self._label.Text = self._label.Text .. "\n Coordinates: " .. LocalPlayer():GetShip():GetCoordinates()
-        self._label.Text = self._label.Text .. "\n Current sector: " .. LocalPlayer():GetShip():GetSectorName()
 
         self.Super[BASE].UpdateLayout(self, layout)
     end

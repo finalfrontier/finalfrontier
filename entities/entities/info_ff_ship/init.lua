@@ -28,13 +28,11 @@ function ENT:Initialize()
 		self._nwdata = {}
 	end
 
-	self._nwdata.sectorname = "?-?"
-
 	self._nwdata.roomnames = {}
 	self._nwdata.doornames = {}
 
 	self._nwdata.x, self._nwdata.y = 0, 0
-	self._nwdata.range = 1
+	self._nwdata.range = 0.5
 
 	self._nwdata.name = self:GetName()
 	
@@ -51,7 +49,16 @@ function ENT:SetCoordinates(x, y)
 	x, y = universe:WrapCoordinates(x, y)
 	self._nwdata.x, self._nwdata.y = x, y
 	self:SetPos(universe:GetWorldPos(x, y))
-	self._nwdata.sectorname = universe:GetSector(x, y):GetSectorName()
+	self:_UpdateNWData()
+end
+
+function ENT:GetRange()
+	return self._nwdata.range
+end
+
+function ENT:SetRange(range)
+	self._nwdata.range = value
+	self:_UpdateNWData()
 end
 
 function ENT:InitPostEntity()
