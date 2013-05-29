@@ -6,9 +6,6 @@ include("gmtools/nwtable.lua")
 include("sh_bounds.lua")
 include("sh_matrix.lua")
 include("sh_transform2d.lua")
-include("sh_sector.lua")
-include("sh_object.lua")
-include("sh_universe.lua")
 include("sh_sgui.lua")
 include("sh_systems.lua")
 include("sv_ships.lua")
@@ -59,6 +56,8 @@ end
 function GM:SetupPlayerVisibility(ply)
 	local ship = ply:GetShip()
 	if not ship then return end
+
+	AddOriginToPVS(universe:GetWorldPos(universe:GetSectorPos(ship:GetPos())) + Vector(0, 0, 8))
 
 	for _, room in pairs(ship:GetRooms()) do
 		if #room:GetPlayers() > 0 then

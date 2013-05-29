@@ -11,7 +11,8 @@ function ships.Add(ship)
 	table.insert(ships._nwdata, name)
 	ships._UpdateNWData()
 
-	MsgN("Ship added at " .. tostring(ship:GetPos()) .. " (" .. name .. ")")
+	local x, y = ship:GetCoordinates()
+	MsgN("Ship added at " .. tostring(x) .. ", " .. tostring(y) .. " (" .. name .. ")")
 end
 
 function ships.GetByName(name)
@@ -29,6 +30,7 @@ end
 
 function ships.InitPostEntity()
 	local classOrder = {
+		"info_ff_universe",
 		"info_ff_ship",
 		"info_ff_room",
 		"info_ff_roomcorner",

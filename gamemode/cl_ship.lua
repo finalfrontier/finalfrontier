@@ -4,7 +4,6 @@ _mt.__index = _mt
 _mt._roomdict = nil
 _mt._roomlist = nil
 _mt._doorlist = nil
-_mt._object = nil
 
 _mt._bounds = nil
 
@@ -35,10 +34,6 @@ end
 
 function _mt:GetBounds()
 	return self._bounds
-end
-
-function _mt:GetObject()
-	return self._object
 end
 
 function _mt:GetOrigin()

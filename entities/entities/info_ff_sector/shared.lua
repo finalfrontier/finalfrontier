@@ -16,7 +16,7 @@ ENT.Type = "anim"
 ENT.Base = "base_anim"
 
 function ENT:GetCoordinates()
-    return self:GetNWInt("x", 0), self:GetNWInt("y", 0)
+    return self:GetNWInt("x", 1), self:GetNWInt("y", 1)
 end
 
 function ENT:GetSectorName()

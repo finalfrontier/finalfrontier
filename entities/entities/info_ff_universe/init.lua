@@ -1,3 +1,5 @@
+universe = nil
+
 ENT.Type = "point"
 ENT.Base = "base_point"
 
@@ -36,15 +38,45 @@ function ENT:Initialize()
     self._nwdata.vertSectors = self._vertSectors
 end
 
+function ENT:WrapCoordinates(x, y)
+    return x - math.floor(x / self._horzSectors) * self._horzSectors,
+        y - math.floor(y / self._vertSectors) * self._vertSectors
+end
+
+function ENT:GetWorldPos(x, y)
+    x, y = ((x / self._horzSectors) - 0.5) * self._width,
+        ((y / self._vertSectors) - 0.5) * self._height
+    return Vector(x, y, 0) + self:GetPos()
+end
+
+function ENT:GetUniversePos(vec)
+    local diff = (vec - self:GetPos())
+    return ((diff.x / self._width) + 0.5) * self._horzSectors,
+        ((diff.y / self._height) + 0.5) * self._vertSectors
+end
+
+function ENT:GetSectorPos(vec)
+    local x, y = self:GetUniversePos(vec)
+    return math.floor(x) + 0.5, math.floor(y) + 0.5
+end
+
 function ENT:InitPostEntity()
-    return
+    for x = 0, self._horzSectors - 1 do
+        for y = 0, self._vertSectors - 1 do
+            local sector = ents.Create("info_ff_sector")
+            local index, xi, yi = self:GetSectorIndex(x, y)
+            sector:SetCoordinates(xi, yi)
+            sector:SetPos(self:GetWorldPos(xi + 0.5, yi + 0.5))
+            self._sectors[index] = sector
+        end
+    end
+
+    universe = self
 end
 
 function ENT:GetSectorIndex(x, y)
-    local xi = math.floor(x) - math.floor(x / self._horzSectors) * self._horzSectors
-    local yi = math.floor(y) - math.floor(y / self._vertSectors) * self._vertSectors
-
-    return xi + yi * self._horzSectors, xi, yi
+    local xi, yi = self:WrapCoordinates(math.floor(x), math.floor(y))
+    return xi + yi * self._horzSectors + 1, xi, yi
 end
 
 function ENT:GetSector(x, y)
