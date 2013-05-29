@@ -52,7 +52,7 @@ function ENT:SetCoordinates(x, y)
 end
 
 function ENT:InitPostEntity()
-	self:SetCoordinates(12 + math.random(), 12 + math.random())
+	self:SetCoordinates(math.random() * 24, math.random() * 24)
 	ships.Add(self)
 end
 

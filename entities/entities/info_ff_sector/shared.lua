@@ -29,4 +29,8 @@ if SERVER then
         self:SetNWInt("y", y)
         self:SetNWString("name", horzNames[x + 1] .. "-" .. vertNames[y + 1])
     end
+elseif CLIENT then
+    function ENT:Think()
+        print("Hello from " .. self:GetSectorName())
+    end
 end
