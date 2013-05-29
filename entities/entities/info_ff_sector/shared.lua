@@ -24,6 +24,10 @@ function ENT:GetSectorName()
 end
 
 if SERVER then
+    function ENT:GetPVSPos()
+        return self:GetPos()-- + Vector(0, 0, 128)
+    end
+
     function ENT:SetCoordinates(x, y)
         self:SetNWInt("x", x)
         self:SetNWInt("y", y)

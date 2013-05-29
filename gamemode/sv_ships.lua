@@ -12,7 +12,9 @@ function ships.Add(ship)
 	ships._UpdateNWData()
 
 	local x, y = ship:GetCoordinates()
-	MsgN("Ship added in sector " .. universe:GetSector(x, y):GetSectorName() .. " (" .. name .. ")")
+	local sector = universe:GetSector(x, y)
+	MsgN("Ship added in sector " .. sector:GetSectorName()
+		.. " : " .. tostring(sector:GetPVSPos()) .. " (" .. name .. ")")
 end
 
 function ships.GetByName(name)

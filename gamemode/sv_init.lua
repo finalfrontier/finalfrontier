@@ -57,7 +57,7 @@ function GM:SetupPlayerVisibility(ply)
 	local ship = ply:GetShip()
 	if not ship then return end
 
-	AddOriginToPVS(universe:GetWorldPos(universe:GetSectorPos(ship:GetPos())))
+	AddOriginToPVS(universe:GetSector(ship:GetCoordinates()):GetPVSPos())
 
 	for _, room in pairs(ship:GetRooms()) do
 		if #room:GetPlayers() > 0 then

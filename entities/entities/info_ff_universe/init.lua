@@ -67,6 +67,9 @@ function ENT:InitPostEntity()
             local index, xi, yi = self:GetSectorIndex(x, y)
             sector:SetCoordinates(xi, yi)
             sector:SetPos(self:GetWorldPos(xi + 0.5, yi + 0.5))
+            --sector:SetPos(Vector(1024, -128, 960))
+            print(sector:GetSectorName() .. ": " .. tostring(sector:GetPos()))
+            sector:Spawn()
             self._sectors[index] = sector
         end
     end

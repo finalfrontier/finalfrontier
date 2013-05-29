@@ -23,6 +23,14 @@ function _mt:GetName()
 	return self._nwdata.name
 end
 
+function _mt:GetCoordinates()
+	return self._nwdata.x, self._nwdata.y
+end
+
+function _mt:GetSectorName()
+	return self._nwdata.sectorname
+end
+
 function _mt:_UpdateBounds()
 	local bounds = Bounds()
 	for _, room in pairs(self:GetRooms()) do

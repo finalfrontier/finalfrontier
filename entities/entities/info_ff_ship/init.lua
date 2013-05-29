@@ -28,6 +28,8 @@ function ENT:Initialize()
 		self._nwdata = {}
 	end
 
+	self._nwdata.sectorname = "?-?"
+
 	self._nwdata.roomnames = {}
 	self._nwdata.doornames = {}
 
@@ -49,6 +51,7 @@ function ENT:SetCoordinates(x, y)
 	x, y = universe:WrapCoordinates(x, y)
 	self._nwdata.x, self._nwdata.y = x, y
 	self:SetPos(universe:GetWorldPos(x, y))
+	self._nwdata.sectorname = universe:GetSector(x, y):GetSectorName()
 end
 
 function ENT:InitPostEntity()
