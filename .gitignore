@@ -7,3 +7,4 @@ content/maps/vmf/*.vmx
 *.temp.vmf
 *.vmx
 *.gl
+*.cache

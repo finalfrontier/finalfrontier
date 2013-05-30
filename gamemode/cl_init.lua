@@ -12,6 +12,7 @@ include("cl_door.lua")
 include("cl_room.lua")
 include("cl_ship.lua")
 include("cl_ships.lua")
+include("cl_universe.lua")
 
 WHITE = Material("vgui/white")
 PLAYER_DOT = Material("playerdot.png", "smooth")

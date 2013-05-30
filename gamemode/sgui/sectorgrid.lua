@@ -45,8 +45,8 @@ elseif CLIENT then
 
     function GUI:ScreenToCoordinate(x, y)
         local cx, cy = self:GetCentreCoordinates()
-        return (x - self:GetWidth() * 0.5) / self:GetScale() + cx,
-            (y - self:GetHeight() * 0.5) / self:GetScale() + cy
+        return universe:WrapCoordinates((x - self:GetWidth() * 0.5) / self:GetScale() + cx,
+            (y - self:GetHeight() * 0.5) / self:GetScale() + cy)
     end
 
     function GUI:Draw()
