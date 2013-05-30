@@ -14,6 +14,8 @@ include("sv_ships.lua")
 
 resource.AddFile("materials/circle.png")
 resource.AddFile("materials/connector.png")
+resource.AddFile("materials/playerdot.png")
+resource.AddFile("materials/objects/ship.png")
 
 -- Gamemode Overrides
 

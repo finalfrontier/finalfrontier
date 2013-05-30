@@ -32,6 +32,7 @@ function ENT:Initialize()
 	self._nwdata.doornames = {}
 
 	self._nwdata.x, self._nwdata.y = 0, 0
+	self._nwdata.angle = 0
 	self._nwdata.range = 0.5
 
 	self._nwdata.name = self:GetName()
@@ -52,6 +53,15 @@ function ENT:SetCoordinates(x, y)
 	self:_UpdateNWData()
 end
 
+function ENT:GetRotation()
+	return self._nwdata.angle
+end
+
+function ENT:SetRotation(angle)
+	self._nwdata.angle = angle
+	self:_UpdateNWData()
+end
+
 function ENT:GetRange()
 	return self._nwdata.range
 end
@@ -63,6 +73,7 @@ end
 
 function ENT:InitPostEntity()
 	self:SetCoordinates(math.random() * 24, math.random() * 24)
+	self:SetRotation(math.random() * 360)
 	ships.Add(self)
 end
 

@@ -2,28 +2,38 @@ local BASE = "page"
 
 GUI.BaseName = BASE
 
-GUI._label = nil
+GUI._coordLabel = nil
+GUI._grid = nil
 
 function GUI:Enter()
     self.Super[BASE].Enter(self)
 
-    self._label = sgui.Create(self, "label")
-    self._label:SetOrigin(8, 8)
+    self._grid = sgui.Create(self, "sectorgrid")
+    self._grid:SetCentreCoordinates(self:GetShip():GetCoordinates())
+    self._grid:SetOrigin(8, 8)
+    self._grid:SetSize(self:GetWidth() * 0.6 - 16, self:GetHeight() - 16)
+
+    self._coordLabel = sgui.Create(self, "label")
+    self._coordLabel.AlignX = TEXT_ALIGN_CENTER
+    self._coordLabel.AlignY = TEXT_ALIGN_CENTER
+    self._coordLabel:SetOrigin(self._grid:GetRight() + 16, self:GetHeight() - 48)
+    self._coordLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
 end
 
 if CLIENT then
-    function GUI:UpdateLayout(layout)
-        local sectors = ents.FindByClass("info_ff_sector")
-
-        if #sectors > 0 then
-            self._label.Text = tostring(#sectors) .. " sector(s) detected :"
-            for _, sector in pairs(sectors) do
-                self._label.Text = self._label.Text .. " " .. sector:GetSectorName()
-            end
+    function GUI:Draw()
+        local x, y = 0, 0
+        if self._grid:IsCursorInside() then
+            x, y = self._grid:GetCursorPos()
+            x = x - self._grid:GetLeft()
+            y = y - self._grid:GetTop()
+            x, y = self._grid:ScreenToCoordinate(x, y)
         else
-            self._label.Text = "No sectors detected :("
+            x, y = self:GetShip():GetCoordinates()
         end
 
-        self.Super[BASE].UpdateLayout(self, layout)
+        self._coordLabel.Text = "x: " .. FormatNum(x, 1, 2) .. ", y: " .. FormatNum(y, 1, 2)
+
+        self.Super[BASE].Draw(self)
     end
 end

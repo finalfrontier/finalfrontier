@@ -19,7 +19,6 @@ function GUI:GetCurrentRoom()
 end
 
 if SERVER then
-	resource.AddFile("materials/playerdot.png")
 
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)
@@ -30,9 +29,7 @@ if SERVER then
 			layout.room = nil
 		end
 	end
-end
-
-if CLIENT then	
+elseif CLIENT then
 	GUI._transform = nil
 
 	GUI._corners = nil
@@ -128,9 +125,7 @@ if CLIENT then
 	function GUI:GetRoomColor()
 		return self.Color
 	end
-
-	local PLAYER_DOT = Material("playerdot.png", "smooth")
-	local POWER = Material("power.png", "smooth")
+	
 	function GUI:Draw()
 		if self._transform then
 			local last, lx, ly = nil, 0, 0

@@ -13,8 +13,10 @@ include("cl_room.lua")
 include("cl_ship.lua")
 include("cl_ships.lua")
 
-
 WHITE = Material("vgui/white")
+PLAYER_DOT = Material("playerdot.png", "smooth")
+SHIP_ICON = Material("objects/ship.png", "smooth")
+POWER = Material("power.png", "smooth")
 
 -- Global Functions
 

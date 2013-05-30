@@ -250,13 +250,11 @@ if DEBUG then
 		surface.SetTextPos(self:GetGlobalLeft() + 8, self:GetGlobalTop() + 4)
 		surface.DrawText(self.Name .. " (" .. self:GetID() .. ")")
 
-		surface.DrawOutlinedRect(self:GetGlobalLeft(), self:GetGlobalTop(),
-			self:GetWidth(), self:GetHeight())
+		surface.DrawOutlinedRect(self:GetGlobalRect())
 
 		color.a = 4
 		surface.SetDrawColor(color)
-		surface.DrawRect(self:GetGlobalLeft(), self:GetGlobalTop(),
-			self:GetWidth(), self:GetHeight())
+		surface.DrawRect(self:GetGlobalRect())
 	end
 end
 

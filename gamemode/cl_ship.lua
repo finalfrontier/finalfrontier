@@ -27,6 +27,10 @@ function _mt:GetCoordinates()
 	return self._nwdata.x, self._nwdata.y
 end
 
+function _mt:GetRotation()
+	return self._nwdata.angle
+end
+
 function _mt:GetRange()
 	return self._nwdata.range
 end
