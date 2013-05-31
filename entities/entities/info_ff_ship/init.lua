@@ -9,6 +9,7 @@ ENT._bounds = nil
 ENT._players = nil
 
 ENT._nwdata = nil
+ENT._object = nil
 
 function ENT:KeyValue(key, value)
 	if key == "health" then
@@ -31,8 +32,6 @@ function ENT:Initialize()
 	self._nwdata.roomnames = {}
 	self._nwdata.doornames = {}
 
-	self._nwdata.x, self._nwdata.y = 0, 0
-	self._nwdata.angle = 0
 	self._nwdata.range = 0.5
 
 	self._nwdata.name = self:GetName()
@@ -43,23 +42,11 @@ function ENT:Initialize()
 end
 
 function ENT:GetCoordinates()
-	return self._nwdata.x, self._nwdata.y
-end
-
-function ENT:SetCoordinates(x, y)
-	x, y = universe:WrapCoordinates(x, y)
-	self._nwdata.x, self._nwdata.y = x, y
-	self:SetPos(universe:GetWorldPos(x, y))
-	self:_UpdateNWData()
+	return self._object:GetCoordinates()
 end
 
 function ENT:GetRotation()
-	return self._nwdata.angle
-end
-
-function ENT:SetRotation(angle)
-	self._nwdata.angle = angle
-	self:_UpdateNWData()
+	return self._object:GetRotation()
 end
 
 function ENT:GetRange()
@@ -72,8 +59,9 @@ function ENT:SetRange(range)
 end
 
 function ENT:InitPostEntity()
-	self:SetCoordinates(math.random() * 24, math.random() * 24)
-	self:SetRotation(math.random() * 360)
+	self._object = ents.Create("info_ff_object")
+	self._object:SetPos(universe:GetWorldPos())
+	self._object:Spawn()
 	ships.Add(self)
 end
 
