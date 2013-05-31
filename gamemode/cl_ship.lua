@@ -23,12 +23,16 @@ function _mt:GetName()
 	return self._nwdata.name
 end
 
+function _mt:GetObject()
+	return self._nwdata.object
+end
+
 function _mt:GetCoordinates()
-	return self._nwdata.x, self._nwdata.y
+	return self:GetObject():GetCoordinates()
 end
 
 function _mt:GetRotation()
-	return self._nwdata.angle
+	return self:GetObject():GetRotation()
 end
 
 function _mt:GetRange()

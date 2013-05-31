@@ -41,12 +41,16 @@ function ENT:Initialize()
 	end
 end
 
+function ENT:GetObject()
+	return self._nwdata.object
+end
+
 function ENT:GetCoordinates()
-	return self._object:GetCoordinates()
+	return self._nwdata.object:GetCoordinates()
 end
 
 function ENT:GetRotation()
-	return self._object:GetRotation()
+	return self._nwdata.object:GetRotation()
 end
 
 function ENT:GetRange()
@@ -59,10 +63,10 @@ function ENT:SetRange(range)
 end
 
 function ENT:InitPostEntity()
-	self._object = ents.Create("info_ff_object")
-	self._object:SetPos(universe:GetWorldPos(4 + math.random(), 9 + math.random()))
-	self._object:SetAngles(Angle(0, math.random() * 360, 0))
-	self._object:Spawn()
+	self._nwdata.object = ents.Create("info_ff_object")
+	self._nwdata.object:SetPos(universe:GetWorldPos(4 + math.random(), 9 + math.random()))
+	self._nwdata.object:SetAngles(Angle(0, math.random() * 360, 0))
+	self._nwdata.object:Spawn()
 	ships.Add(self)
 end
 

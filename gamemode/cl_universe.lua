@@ -18,6 +18,10 @@ function universe:GetWorldHeight()
     return self._nwdata.height
 end
 
+function universe:GetPos()
+    return Vector(self._nwdata.x, self._nwdata.y, self._nwdata.z)
+end
+
 function universe:WrapCoordinates(x, y)
     return x - math.floor(x / self:GetHorizontalSectors()) * self:GetHorizontalSectors(),
         y - math.floor(y / self:GetVerticalSectors()) * self:GetVerticalSectors()

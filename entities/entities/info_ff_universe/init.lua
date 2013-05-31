@@ -31,6 +31,9 @@ function ENT:Initialize()
 
     if not self._nwdata then self._nwdata = {} end
 
+    self._nwdata.x = self:GetPos().x
+    self._nwdata.y = self:GetPos().y
+    self._nwdata.z = self:GetPos().z
     self:_UpdateNWData()
 end
 
