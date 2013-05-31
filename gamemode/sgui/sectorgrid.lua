@@ -2,7 +2,7 @@ local BASE = "base"
 
 GUI.BaseName = BASE
 
-GUI._scale = 32
+GUI._scale = 128
 
 GUI._centreX = 0
 GUI._centreY = 0
@@ -57,11 +57,29 @@ elseif CLIENT then
         local r = l + self:GetWidth() / self:GetScale()
         local b = t + self:GetHeight() / self:GetScale()
 
+        render.ClearStencil()
+        render.SetStencilEnable(true)
+
+        render.SetStencilFailOperation(STENCILOPERATION_KEEP)
+        render.SetStencilZFailOperation(STENCILOPERATION_REPLACE)
+        render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
+        render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
+        render.SetStencilReferenceValue(1)
+
+        surface.SetDrawColor(Color(0, 0, 0, 255))
+        surface.DrawRect(self:GetGlobalRect())
+
+        render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
+        render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
+     
         local ship = self:GetShip()
+        local sx, sy = self:CoordinateToScreen(ship:GetCoordinates())
+        surface.SetDrawColor(Color(51, 172, 45, 8))
+        surface.DrawCircle(sx + ox, sy + oy, ship:GetRange() * 4 * self:GetScale())
         surface.SetMaterial(SHIP_ICON)
         surface.SetDrawColor(Color(51, 172, 45, 255))
-        local sx, sy = self:CoordinateToScreen(ship:GetCoordinates())
         surface.DrawTexturedRectRotated(sx + ox, sy + oy, 32, 32, ship:GetRotation())
+        surface.SetMaterial(WHITE)
 
         surface.SetDrawColor(Color(255, 255, 255, 8))
         for i = math.ceil(l), math.floor(r) do
@@ -74,6 +92,8 @@ elseif CLIENT then
         end
         surface.SetDrawColor(Color(255, 255, 255, 127))
         surface.DrawOutlinedRect(self:GetGlobalRect())
+
+        render.SetStencilEnable(false)
 
         self.Super[BASE].Draw(self)
     end
