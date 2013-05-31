@@ -60,7 +60,8 @@ end
 
 function ENT:InitPostEntity()
 	self._object = ents.Create("info_ff_object")
-	self._object:SetPos(universe:GetWorldPos())
+	self._object:SetPos(universe:GetWorldPos(4 + math.random(), 9 + math.random()))
+	self._object:SetAngles(Angle(0, math.random() * 360, 0))
 	self._object:Spawn()
 	ships.Add(self)
 end

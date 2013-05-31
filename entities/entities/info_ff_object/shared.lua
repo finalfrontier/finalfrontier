@@ -5,7 +5,7 @@ ENT.Base = "base_anim"
 
 function ENT:Initialize()
     local phys = self:GetPhysicsObject()
-    if phys then
+    if phys:IsValid() then
         print("init phys")
         phys:EnableGravity(false)
         phys:EnableCollisions(false)

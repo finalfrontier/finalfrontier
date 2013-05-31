@@ -14,7 +14,7 @@ function ships.Add(ship)
 	local x, y = ship:GetCoordinates()
 	local sector = universe:GetSector(x, y)
 	MsgN("Ship added in sector " .. sector:GetSectorName()
-		.. " : " .. tostring(sector:GetPVSPos()) .. " (" .. name .. ")")
+		.. " : [" .. x .. ", " .. y .. "] (" .. name .. ")")
 end
 
 function ships.GetByName(name)
