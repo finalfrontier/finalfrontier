@@ -4,7 +4,7 @@ ENT.Type = "anim"
 ENT.Base = "base_anim"
 
 function ENT:GetCoordinates()
-    return self:GetNWInt("x", 1), self:GetNWInt("y", 1)
+    return universe:GetUniversePos(self:GetPos())
 end
 
 function ENT:GetSectorName()
@@ -29,8 +29,7 @@ if SERVER then
     end
 
     function ENT:SetCoordinates(x, y)
-        self:SetNWInt("x", x)
-        self:SetNWInt("y", y)
+        self:SetPos(universe:GetWorldPos(universe:WrapCoordinates(x, y)))
         self:SetNWString("name", horzNames[x + 1] .. "-" .. vertNames[y + 1])
     end
 elseif CLIENT then
