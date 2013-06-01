@@ -32,7 +32,7 @@ function ENT:Initialize()
 	self._nwdata.roomnames = {}
 	self._nwdata.doornames = {}
 
-	self._nwdata.range = 0.5
+	self._nwdata.range = 1.0
 
 	self._nwdata.name = self:GetName()
 	
@@ -45,12 +45,22 @@ function ENT:GetObject()
 	return self._nwdata.object
 end
 
+function ENT:IsObjectInRange(obj)
+	local ox, oy = obj:GetCoordinates()
+	local sx, sy = self:GetCoordinates()
+	return universe:GetDistance(ox, oy, sx, sy) <= self:GetRange()
+end
+
 function ENT:GetCoordinates()
 	return self._nwdata.object:GetCoordinates()
 end
 
 function ENT:GetRotation()
 	return self._nwdata.object:GetRotation()
+end
+
+function ENT:GetRotationRadians()
+	return self._nwdata.object:GetRotationRadians()
 end
 
 function ENT:GetRange()
@@ -64,9 +74,11 @@ end
 
 function ENT:InitPostEntity()
 	self._nwdata.object = ents.Create("info_ff_object")
-	self._nwdata.object:SetPos(universe:GetWorldPos(4 + math.random(), 9 + math.random()))
-	self._nwdata.object:SetAngles(Angle(0, math.random() * 360, 0))
+	self._nwdata.object:SetCoordinates(4 + math.random(), 9 + math.random())
+	self._nwdata.object:SetRotation(math.random() * 360)
+	self._nwdata.object:SetVel(math.cos(self:GetRotationRadians()) * 0.5, -math.sin(self:GetRotationRadians()) * 0.5)
 	self._nwdata.object:Spawn()
+
 	ships.Add(self)
 end
 

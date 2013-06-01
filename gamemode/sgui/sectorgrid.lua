@@ -39,8 +39,26 @@ elseif CLIENT then
 
     function GUI:CoordinateToScreen(x, y)
         local cx, cy = self:GetCentreCoordinates()
-        return (x - cx) * self:GetScale() + self:GetWidth() * 0.5,
-            (y - cy) * self:GetScale() + self:GetHeight() * 0.5
+
+        x = (x - cx) * self:GetScale() + self:GetWidth() * 0.5
+        y = (y - cy) * self:GetScale() + self:GetHeight() * 0.5
+
+        local xstep = self:GetScale() * universe:GetHorizontalSectors()
+        local ystep = self:GetScale() * universe:GetVerticalSectors()
+
+        if x < self:GetWidth() - xstep then
+            x = x + xstep
+        elseif x >= xstep then
+            x = x - xstep
+        end
+
+        if y < self:GetHeight() - ystep then
+            y = y + ystep
+        elseif x >= ystep then
+            y = y - ystep
+        end
+
+        return x, y
     end
 
     function GUI:ScreenToCoordinate(x, y)
@@ -75,11 +93,20 @@ elseif CLIENT then
         local ship = self:GetShip()
         local sx, sy = self:CoordinateToScreen(ship:GetCoordinates())
         surface.SetDrawColor(Color(51, 172, 45, 8))
-        surface.DrawCircle(sx + ox, sy + oy, ship:GetRange() * 4 * self:GetScale())
+        surface.DrawCircle(sx + ox, sy + oy, ship:GetRange() * self:GetScale())
         surface.SetMaterial(SHIP_ICON)
         surface.SetDrawColor(Color(51, 172, 45, 255))
-        surface.DrawTexturedRectRotated(sx + ox, sy + oy, 32, 32, ship:GetRotation())
+        surface.DrawTexturedRectRotated(sx + ox, sy + oy, 16, 16, ship:GetRotation())
         surface.SetMaterial(WHITE)
+
+        surface.SetDrawColor(Color(172, 45, 51, 32))
+        local objects = ents.FindByClass("info_ff_object")
+        for _, obj in pairs(objects) do
+            if obj ~= ship:GetObject() and ship:IsObjectInRange(obj) then
+                sx, sy = self:CoordinateToScreen(obj:GetCoordinates())
+                surface.DrawCircle(sx + ox, sy + oy, 6)
+            end
+        end
 
         surface.SetDrawColor(Color(255, 255, 255, 8))
         for i = math.ceil(l), math.floor(r) do

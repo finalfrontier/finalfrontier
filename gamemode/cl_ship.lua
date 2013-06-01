@@ -27,12 +27,22 @@ function _mt:GetObject()
 	return self._nwdata.object
 end
 
+function _mt:IsObjectInRange(obj)
+	local ox, oy = obj:GetCoordinates()
+	local sx, sy = self:GetCoordinates()
+	return universe:GetDistance(ox, oy, sx, sy) <= self:GetRange()
+end
+
 function _mt:GetCoordinates()
 	return self:GetObject():GetCoordinates()
 end
 
 function _mt:GetRotation()
 	return self:GetObject():GetRotation()
+end
+
+function _mt:GetRotationRadians()
+	return self._nwdata.object:GetRotationRadians()
 end
 
 function _mt:GetRange()

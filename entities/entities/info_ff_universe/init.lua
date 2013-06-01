@@ -58,6 +58,22 @@ function ENT:WrapCoordinates(x, y)
         y - math.floor(y / self:GetVerticalSectors()) * self:GetVerticalSectors()
 end
 
+function ENT:GetDifference(xa, ya, xb, yb)
+    xa, ya = self:WrapCoordinates(xa, ya)
+    xb, yb = self:WrapCoordinates(xb, yb)
+    local dxa, dya = xb - xa, yb - ya
+    local dxb, dyb = xa - xb, ya - yb
+    local dx, dy = dxa, dya
+    if math.abs(dxa) > math.abs(dxb) then dx = dxb end
+    if math.abs(dya) > math.abs(dyb) then dy = dyb end
+    return dx, dy
+end
+
+function ENT:GetDistance(xa, ya, xb, yb)
+    local dx, dy = self:GetDifference(xa, ya, xb, yb)
+    return math.sqrt(dx * dx + dy * dy)
+end
+
 function ENT:GetWorldPos(x, y)
     x, y = ((x / self:GetHorizontalSectors()) - 0.5) * self:GetWorldWidth(),
         ((y / self:GetVerticalSectors()) - 0.5) * self:GetWorldHeight()
@@ -81,13 +97,7 @@ function ENT:GetSectorIndex(x, y)
 end
 
 function ENT:GetSector(x, y)
-    local sector, xi, yi = self._sectors[self:GetSectorIndex(x, y)]
-
-    if not sector then
-        sector = Sector(self, xi, yi)
-    end
-
-    return sector
+    return self._sectors[self:GetSectorIndex(x, y)]
 end
 
 function ENT:InitPostEntity()
@@ -97,9 +107,16 @@ function ENT:InitPostEntity()
             local index, xi, yi = self:GetSectorIndex(x, y)
             sector:SetCoordinates(xi, yi)
             sector:SetPos(self:GetWorldPos(xi + 0.5, yi + 0.5))
-            -- print(sector:GetSectorName() .. ": " .. tostring(sector:GetPos()))
             sector:Spawn()
             self._sectors[index] = sector
+
+            local objs = math.floor(math.random() * 4) + 1
+            for i = 1, objs do
+                local obj = ents.Create("info_ff_object")
+                obj:SetPos(self:GetWorldPos(xi + math.random(), yi + math.random()))
+                obj:SetRotation(0)
+                obj:Spawn()
+            end
         end
     end
 

@@ -27,6 +27,22 @@ function universe:WrapCoordinates(x, y)
         y - math.floor(y / self:GetVerticalSectors()) * self:GetVerticalSectors()
 end
 
+function universe:GetDifference(xa, ya, xb, yb)
+    xa, ya = self:WrapCoordinates(xa, ya)
+    xb, yb = self:WrapCoordinates(xb, yb)
+    local dxa, dya = xb - xa, yb - ya
+    local dxb, dyb = xa - xb, ya - yb
+    local dx, dy = dxa, dya
+    if math.abs(dxa) > math.abs(dxb) then dx = dxb end
+    if math.abs(dya) > math.abs(dyb) then dy = dyb end
+    return dx, dy
+end
+
+function universe:GetDistance(xa, ya, xb, yb)
+    local dx, dy = self:GetDifference(xa, ya, xb, yb)
+    return math.sqrt(dx * dx + dy * dy)
+end
+
 function universe:GetWorldPos(x, y)
     x, y = ((x / self:GetHorizontalSectors()) - 0.5) * self:GetWorldWidth(),
         ((y / self:GetVerticalSectors()) - 0.5) * self:GetWorldHeight()
