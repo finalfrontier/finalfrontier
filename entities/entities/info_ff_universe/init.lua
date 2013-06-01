@@ -101,6 +101,7 @@ function ENT:GetSector(x, y)
 end
 
 function ENT:InitPostEntity()
+    universe = self
     for x = 0, self:GetHorizontalSectors() - 1 do
         for y = 0, self:GetVerticalSectors() - 1 do
             local sector = ents.Create("info_ff_sector")
@@ -115,12 +116,11 @@ function ENT:InitPostEntity()
                 local obj = ents.Create("info_ff_object")
                 obj:SetPos(self:GetWorldPos(xi + math.random(), yi + math.random()))
                 obj:SetRotation(0)
+                obj:SetVel(math.random() - 0.5, math.random() - 0.5)
                 obj:Spawn()
             end
         end
     end
-
-    universe = self
 end
 
 function ENT:_UpdateNWData()

@@ -104,7 +104,7 @@ elseif CLIENT then
         for _, obj in pairs(objects) do
             if obj ~= ship:GetObject() and ship:IsObjectInRange(obj) then
                 sx, sy = self:CoordinateToScreen(obj:GetCoordinates())
-                surface.DrawCircle(sx + ox, sy + oy, 6)
+                surface.DrawCircle(sx + ox, sy + oy, 2)
             end
         end
 
