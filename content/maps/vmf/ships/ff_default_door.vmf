@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "33"
+	"mapversion" "36"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "33"
+	"mapversion" "36"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -270,10 +270,10 @@ entity
 		{
 			"id" "84"
 			"plane" "(-56 -16 8) (-56 16 8) (56 16 8)"
-			"material" "METAL/METALFLOOR002A"
-			"uaxis" "[1 0 0 0] 0.25"
-			"vaxis" "[0 -1 0 0] 0.25"
-			"rotation" "0"
+			"material" "/FF_FLOOR"
+			"uaxis" "[0 1 0 256] 0.125"
+			"vaxis" "[1 0 0 256] 0.125"
+			"rotation" "90"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
 		}
@@ -314,9 +314,9 @@ entity
 		{
 			"id" "80"
 			"plane" "(56 16 8) (-56 16 8) (-64 32 0)"
-			"material" "/FF_WALLCONCRETE_STRIPE0D"
-			"uaxis" "[0 1 0 160] 0.25"
-			"vaxis" "[1 0 0 256] 0.25"
+			"material" "/FF_FLOOR"
+			"uaxis" "[0 1 0 256] 0.125"
+			"vaxis" "[1 0 0 256] 0.125"
 			"rotation" "90"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -325,9 +325,9 @@ entity
 		{
 			"id" "79"
 			"plane" "(64 -32 0) (-64 -32 0) (-56 -16 8)"
-			"material" "/FF_WALLCONCRETE_STRIPE0D"
-			"uaxis" "[0 1 0 352] 0.25"
-			"vaxis" "[1 0 0 256] 0.25"
+			"material" "/FF_FLOOR"
+			"uaxis" "[0 1 0 256] 0.125"
+			"vaxis" "[1 0 0 256] 0.125"
 			"rotation" "90"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -613,8 +613,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-28.36 -203.151 118.12]"
-		"look" "[-28.0068 -202.24 117.905]"
+		"position" "[11.7762 -2.8179 58.6044]"
+		"look" "[11.7209 -2.81002 57.6055]"
 	}
 }
 cordon
