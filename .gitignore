@@ -8,3 +8,6 @@ content/maps/vmf/*.vmx
 *.vmx
 *.gl
 *.cache
+content/maps/vmf/ships/*.log
+content/maps/vmf/ships/*.lin
+content/maps/vmf/ships/*.bsp
