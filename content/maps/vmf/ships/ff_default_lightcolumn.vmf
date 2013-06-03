@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "2"
+	"mapversion" "3"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "2"
+	"mapversion" "3"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -55,7 +55,7 @@ world
 		{
 			"id" "9"
 			"plane" "(-32 -32 160) (-32 -64 160) (-32 -64 0)"
-			"material" "/FF_WALLCONCRETE"
+			"material" "/FF_WALLCONCRETE_STRIPE0A"
 			"uaxis" "[0 1 0 448] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -88,7 +88,7 @@ world
 		{
 			"id" "12"
 			"plane" "(0 -64 0) (-32 -64 0) (-32 -64 160)"
-			"material" "/FF_WALLCONCRETE"
+			"material" "/FF_WALLCONCRETE_STRIPE0A"
 			"uaxis" "[1 0 0 320] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -131,7 +131,7 @@ world
 		{
 			"id" "22"
 			"plane" "(-32 64 160) (-32 32 160) (-32 32 0)"
-			"material" "/FF_WALLCONCRETE"
+			"material" "/FF_WALLCONCRETE_STRIPE0A"
 			"uaxis" "[0 1 0 64] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -153,7 +153,7 @@ world
 		{
 			"id" "20"
 			"plane" "(0 64 160) (-32 64 160) (-32 64 0)"
-			"material" "/FF_WALLCONCRETE"
+			"material" "/FF_WALLCONCRETE_STRIPE0A"
 			"uaxis" "[1 0 0 320] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
@@ -207,7 +207,7 @@ world
 		{
 			"id" "27"
 			"plane" "(-32 32 160) (-32 -32 160) (-32 -32 0)"
-			"material" "/FF_WALLCONCRETE"
+			"material" "/FF_WALLCONCRETE_STRIPE0A"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
