@@ -61,11 +61,21 @@ end
 function ENT:GetDifference(xa, ya, xb, yb)
     xa, ya = self:WrapCoordinates(xa, ya)
     xb, yb = self:WrapCoordinates(xb, yb)
-    local dxa, dya = xb - xa, yb - ya
-    local dxb, dyb = xa - xb, ya - yb
-    local dx, dy = dxa, dya
-    if math.abs(dxa) > math.abs(dxb) then dx = dxb end
-    if math.abs(dya) > math.abs(dyb) then dy = dyb end
+    local dx, dy = xb - xa, yb - ya
+    local wid, hei = self:GetHorizontalSectors(), self:GetVerticalSectors()
+    
+    if dx >= wid * 0.5 then
+        dx = dx - wid
+    elseif dx < -wid * 0.5 then
+        dx = dx + wid
+    end
+
+    if dy >= hei * 0.5 then
+        dy = dy - hei
+    elseif dy < -hei * 0.5 then
+        dy = dy + hei
+    end
+
     return dx, dy
 end
 
@@ -110,14 +120,14 @@ function ENT:InitPostEntity()
             sector:Spawn()
             self._sectors[index] = sector
 
-            --[[local objs = math.floor(math.random() * 4) + 1
+            local objs = math.floor(math.random() * 4) + 1
             for i = 1, objs do
                 local obj = ents.Create("info_ff_object")
-                obj:SetPos(self:GetWorldPos(xi + math.random(), yi + math.random()))
+                obj:SetCoordinates(x + math.random(), y + math.random())
                 obj:SetRotation(0)
                 obj:SetVel(math.random() - 0.5, math.random() - 0.5)
                 obj:Spawn()
-            end]]
+            end
         end
     end
 end

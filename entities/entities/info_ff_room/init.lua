@@ -76,13 +76,6 @@ function ENT:InitPostEntity()
 
 	self:SetAirVolume(self:GetVolume())
 	self:SetUnitTemperature(self:GetVolume() / 2)
-	
-	local sysName = self:GetSystemName()
-	if sysName == "medical" then
-		self:SetUnitTemperature(self:GetVolume())
-	elseif sysName == "piloting" then
-		self:SetAirVolume(0)
-	end
 
 	self:SetUnitShields(self:GetSurfaceArea())
 

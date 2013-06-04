@@ -39,24 +39,10 @@ elseif CLIENT then
 
     function GUI:CoordinateToScreen(x, y)
         local cx, cy = self:GetCentreCoordinates()
+        x, y = universe:GetDifference(cx, cy, x, y)
 
-        x = (x - cx) * self:GetScale() + self:GetWidth() * 0.5
-        y = (y - cy) * self:GetScale() + self:GetHeight() * 0.5
-
-        local xstep = self:GetScale() * universe:GetHorizontalSectors()
-        local ystep = self:GetScale() * universe:GetVerticalSectors()
-
-        if x < self:GetWidth() - xstep then
-            x = x + xstep
-        elseif x >= xstep then
-            x = x - xstep
-        end
-
-        if y < self:GetHeight() - ystep then
-            y = y + ystep
-        elseif x >= ystep then
-            y = y - ystep
-        end
+        x = x * self:GetScale() + self:GetWidth() * 0.5
+        y = y * self:GetScale() + self:GetHeight() * 0.5
 
         return x, y
     end

@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "53"
+	"mapversion" "54"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "53"
+	"mapversion" "54"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -772,7 +772,7 @@ entity
 		side
 		{
 			"id" "376"
-			"plane" "(-24 12 56) (24 12 56) (24 10 56)"
+			"plane" "(-24 12 56) (24 12 56) (24 8 56)"
 			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 -1 0 0] 0.25"
@@ -783,7 +783,7 @@ entity
 		side
 		{
 			"id" "375"
-			"plane" "(-24 -10 36) (24 -10 36) (24 -8 36)"
+			"plane" "(-24 -12 36) (24 -12 36) (24 -8 36)"
 			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 -1 0 0] 0.25"
@@ -794,7 +794,7 @@ entity
 		side
 		{
 			"id" "374"
-			"plane" "(-24 -8 36) (-24 12 56) (-24 10 56)"
+			"plane" "(-24 -8 36) (-24 12 56) (-24 8 56)"
 			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
@@ -805,7 +805,7 @@ entity
 		side
 		{
 			"id" "373"
-			"plane" "(24 -10 36) (24 10 56) (24 12 56)"
+			"plane" "(24 -12 36) (24 8 56) (24 12 56)"
 			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
@@ -827,7 +827,7 @@ entity
 		side
 		{
 			"id" "371"
-			"plane" "(-24 -10 36) (-24 10 56) (24 10 56)"
+			"plane" "(-24 -12 36) (-24 8 56) (24 8 56)"
 			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
@@ -965,8 +965,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-39.1375 -22.1394 71.3504]"
-		"look" "[-27.5918 22.7917 44.6032]"
+		"position" "[143.32 -80.4156 144.914]"
+		"look" "[108.835 -64.7663 107.053]"
 	}
 }
 cordon
