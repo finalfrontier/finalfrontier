@@ -1,7 +1,7 @@
 -- Server Initialization
 -- Includes
 
-jit.on()
+-- jit.on()
 
 include("gmtools/nwtable.lua")
 
