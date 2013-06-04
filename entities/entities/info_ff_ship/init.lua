@@ -32,10 +32,9 @@ function ENT:Initialize()
 	self._nwdata.roomnames = {}
 	self._nwdata.doornames = {}
 
-	self._nwdata.range = 1.0
-
 	self._nwdata.name = self:GetName()
-	
+	self._nwdata.range = 0.25
+
 	if not self:GetBaseHealth() then
 		self:_SetBaseHealth(1)
 	end
@@ -74,10 +73,12 @@ end
 
 function ENT:InitPostEntity()
 	self._nwdata.object = ents.Create("info_ff_object")
-	self._nwdata.object:SetCoordinates(4 + math.random(), 9 + math.random())
+	self._nwdata.object:SetCoordinates(4 + math.random() * 0.2 - 0.1, 9 + math.random() * 0.2 - 0.1)
 	self._nwdata.object:SetRotation(math.random() * 360)
-	self._nwdata.object:SetVel(math.cos(self:GetRotationRadians()) * 0.5, -math.sin(self:GetRotationRadians()) * 0.5)
+	--self._nwdata.object:SetVel(math.cos(self:GetRotationRadians()) * 0.2, -math.sin(self:GetRotationRadians()) * 0.2)
+	self._nwdata.object:SetObjectType(objtype.ship)
 	self._nwdata.object:Spawn()
+	self:_UpdateNWData()
 
 	ships.Add(self)
 end

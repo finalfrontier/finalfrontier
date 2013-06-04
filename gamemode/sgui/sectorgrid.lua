@@ -94,19 +94,27 @@ elseif CLIENT then
         local sx, sy = self:CoordinateToScreen(ship:GetCoordinates())
         surface.SetDrawColor(Color(51, 172, 45, 8))
         surface.DrawCircle(sx + ox, sy + oy, ship:GetRange() * self:GetScale())
-        surface.SetMaterial(SHIP_ICON)
-        surface.SetDrawColor(Color(51, 172, 45, 255))
-        surface.DrawTexturedRectRotated(sx + ox, sy + oy, 16, 16, ship:GetRotation())
-        draw.NoTexture()
-
-        surface.SetDrawColor(Color(172, 45, 51, 32))
+        
         local objects = ents.FindByClass("info_ff_object")
         for _, obj in pairs(objects) do
-            if obj ~= ship:GetObject() and ship:IsObjectInRange(obj) then
+            if ship:IsObjectInRange(obj) then
                 sx, sy = self:CoordinateToScreen(obj:GetCoordinates())
-                surface.DrawCircle(sx + ox, sy + oy, 2)
+
+                if obj:GetObjectType() == objtype.ship then
+                    surface.SetMaterial(SHIP_ICON)
+                    if obj == ship:GetObject() then
+                        surface.SetDrawColor(Color(51, 172, 45, 255))
+                    else 
+                        surface.SetDrawColor(Color(172, 45, 51, 191))
+                    end
+                    surface.DrawTexturedRectRotated(sx + ox, sy + oy, 16, 16, obj:GetRotation())
+                else
+                    surface.SetDrawColor(Color(172, 45, 51, 127))
+                    surface.DrawCircle(sx + ox, sy + oy, 2)
+                end
             end
         end
+        draw.NoTexture()
 
         surface.SetDrawColor(Color(255, 255, 255, 8))
         for i = math.ceil(l), math.floor(r) do

@@ -3,6 +3,10 @@ if SERVER then AddCSLuaFile("shared.lua") end
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 
+objtype = {}
+objtype.unknown = 0
+objtype.ship = 1
+
 function ENT:Initialize()
     local phys = self:GetPhysicsObject()
     if phys:IsValid() then
@@ -29,6 +33,10 @@ if SERVER then
         local next = universe:GetWorldPos(dx, dy)
         self:SetLocalVelocity(next - orig)
     end
+
+    function ENT:SetObjectType(type)
+        self:SetNWInt("objtype", type)
+    end
 end
 
 function ENT:GetCoordinates()
@@ -41,6 +49,10 @@ end
 
 function ENT:GetRotationRadians()
     return self:GetAngles().y * math.pi / 180.0
+end
+
+function ENT:GetObjectType()
+    return self:GetNWInt("objtype", objtype.unknown)
 end
 
 if SERVER then

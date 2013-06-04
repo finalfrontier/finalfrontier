@@ -45,10 +45,12 @@ if CLIENT then
 
         local sectors = ents.FindByClass("info_ff_sector")
         local sx, sy = self:GetShip():GetCoordinates()
-        sx = math.floor(sx) + 0.5
-        sy = math.floor(sy) + 0.5
+        sx = math.floor(sx)
+        sy = math.floor(sy)
         for _, sector in pairs(sectors) do
             local x, y = sector:GetCoordinates()
+            x = math.floor(x)
+            y = math.floor(y)
             if math.abs(x - sx) < 0.5 and math.abs(y - sy) < 0.5 then
                 self._sectorLabel.Text = sector:GetSectorName()
                 break

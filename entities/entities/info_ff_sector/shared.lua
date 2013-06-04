@@ -29,7 +29,7 @@ if SERVER then
     end
 
     function ENT:SetCoordinates(x, y)
-        self:SetPos(universe:GetWorldPos(universe:WrapCoordinates(x, y)))
+        self:SetPos(universe:GetWorldPos(universe:WrapCoordinates(x + 0.5, y + 0.5)))
         self:SetNWString("name", horzNames[x + 1] .. "-" .. vertNames[y + 1])
     end
 elseif CLIENT then

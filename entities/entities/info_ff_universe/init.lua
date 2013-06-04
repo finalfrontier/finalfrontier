@@ -107,7 +107,6 @@ function ENT:InitPostEntity()
             local sector = ents.Create("info_ff_sector")
             local index, xi, yi = self:GetSectorIndex(x, y)
             sector:SetCoordinates(xi, yi)
-            sector:SetPos(self:GetWorldPos(xi + 0.5, yi + 0.5))
             sector:Spawn()
             self._sectors[index] = sector
 
