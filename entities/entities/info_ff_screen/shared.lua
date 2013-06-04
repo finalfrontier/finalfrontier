@@ -436,7 +436,7 @@ elseif CLIENT then
 		ang:RotateAroundAxis(ang:Up(), 90)
 		ang:RotateAroundAxis(ang:Forward(), 90)
 		
-		surface.SetMaterial(WHITE)
+		draw.NoTexture()
 		
 		cam.Start3D2D(self:GetPos(), ang, 1 / SCREEN_DRAWSCALE)
 			if self.UI then

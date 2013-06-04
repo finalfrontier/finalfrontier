@@ -97,7 +97,7 @@ elseif CLIENT then
         surface.SetMaterial(SHIP_ICON)
         surface.SetDrawColor(Color(51, 172, 45, 255))
         surface.DrawTexturedRectRotated(sx + ox, sy + oy, 16, 16, ship:GetRotation())
-        surface.SetMaterial(WHITE)
+        draw.NoTexture()
 
         surface.SetDrawColor(Color(172, 45, 51, 32))
         local objects = ents.FindByClass("info_ff_object")

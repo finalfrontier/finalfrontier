@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "2"
+	"mapversion" "3"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "2"
+	"mapversion" "3"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -40,9 +40,9 @@ entity
 		{
 			"id" "1"
 			"plane" "(-32 -16 8) (-32 16 8) (-16 32 8)"
-			"material" "DEV/DEV_MEASUREGENERIC01"
-			"uaxis" "[1 0 0 64] 0.25"
-			"vaxis" "[0 -1 0 64] 0.25"
+			"material" "METAL/METALPIPEENDCAP001A"
+			"uaxis" "[1 0 0 128] 0.25"
+			"vaxis" "[0 -1 0 128] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -62,9 +62,9 @@ entity
 		{
 			"id" "3"
 			"plane" "(-40 -16 0) (-40 16 0) (-32 16 8)"
-			"material" "DEV/DEV_MEASURECRATE01"
-			"uaxis" "[0 -1 0 128] 0.25"
-			"vaxis" "[-0.707107 0 -0.707107 -67.8825] 0.25"
+			"material" "METAL/METALGRATE017A"
+			"uaxis" "[0 -1 0 64] 0.25"
+			"vaxis" "[-0.707107 0 -0.707107 -10.5097] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -73,9 +73,9 @@ entity
 		{
 			"id" "4"
 			"plane" "(40 16 0) (40 -16 0) (32 -16 8)"
-			"material" "DEV/DEV_MEASURECRATE01"
-			"uaxis" "[0 1 0 -128] 0.25"
-			"vaxis" "[0.707107 0 -0.707107 188.118] 0.25"
+			"material" "METAL/METALGRATE017A"
+			"uaxis" "[0 1 0 64] 0.25"
+			"vaxis" "[0.707107 0 -0.707107 -10.5097] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -84,9 +84,9 @@ entity
 		{
 			"id" "5"
 			"plane" "(-16 40 0) (16 40 0) (16 32 8)"
-			"material" "DEV/DEV_MEASURECRATE01"
-			"uaxis" "[-1 0 0 -128] 0.25"
-			"vaxis" "[0 0.707107 -0.707107 -67.8839] 0.25"
+			"material" "METAL/METALGRATE017A"
+			"uaxis" "[-1 0 0 64] 0.25"
+			"vaxis" "[0 0.707107 -0.707107 -10.5097] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -95,9 +95,9 @@ entity
 		{
 			"id" "6"
 			"plane" "(16 -40 0) (-16 -40 0) (-16 -32 8)"
-			"material" "DEV/DEV_MEASURECRATE01"
-			"uaxis" "[1 0 0 128] 0.25"
-			"vaxis" "[0 -0.707107 -0.707107 188.119] 0.25"
+			"material" "METAL/METALGRATE017A"
+			"uaxis" "[1 0 0 64] 0.25"
+			"vaxis" "[0 -0.707107 -0.707107 -10.5097] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -106,9 +106,9 @@ entity
 		{
 			"id" "7"
 			"plane" "(16 40 0) (40 16 0) (32 16 8)"
-			"material" "DEV/DEV_MEASURECRATE01"
-			"uaxis" "[-0.707107 0.707107 0 -128.002] 0.25"
-			"vaxis" "[0.408248 0.408248 -0.816497 203.746] 0.25"
+			"material" "METAL/METALGRATE017A"
+			"uaxis" "[-0.707107 0.707107 0 64] 0.25"
+			"vaxis" "[0.408248 0.408248 -0.816497 -23.8516] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -117,9 +117,9 @@ entity
 		{
 			"id" "8"
 			"plane" "(40 -16 0) (16 -40 0) (16 -32 8)"
-			"material" "DEV/DEV_MEASURECRATE01"
-			"uaxis" "[0.707107 0.707107 0 127.997] 0.25"
-			"vaxis" "[0.408248 -0.408248 -0.816497 203.742] 0.25"
+			"material" "METAL/METALGRATE017A"
+			"uaxis" "[0.707107 0.707107 0 64] 0.25"
+			"vaxis" "[0.408248 -0.408248 -0.816497 -23.8516] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -128,9 +128,9 @@ entity
 		{
 			"id" "9"
 			"plane" "(-16 -40 0) (-40 -16 0) (-32 -16 8)"
-			"material" "DEV/DEV_MEASURECRATE01"
-			"uaxis" "[0.707107 -0.707107 0 128.002] 0.25"
-			"vaxis" "[-0.408248 -0.408248 -0.816497 -52.2579] 0.25"
+			"material" "METAL/METALGRATE017A"
+			"uaxis" "[0.707107 -0.707107 0 63.9834] 0.25"
+			"vaxis" "[-0.408248 -0.408248 -0.816497 -23.8612] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -139,9 +139,9 @@ entity
 		{
 			"id" "10"
 			"plane" "(-40 16 0) (-16 40 0) (-16 32 8)"
-			"material" "DEV/DEV_MEASURECRATE01"
-			"uaxis" "[-0.707107 -0.707107 0 -127.998] 0.25"
-			"vaxis" "[-0.408248 0.408248 -0.816497 -52.2537] 0.25"
+			"material" "METAL/METALGRATE017A"
+			"uaxis" "[-0.707107 -0.707107 0 64] 0.25"
+			"vaxis" "[-0.408248 0.408248 -0.816497 -23.8516] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -166,9 +166,9 @@ entity
 	"id" "10"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_2"
+	"origin" "16 32 8"
 	"room" "$room_name"
 	"targetname" "detail_1"
-	"origin" "16 32 8"
 	editor
 	{
 		"color" "220 30 220"
@@ -182,9 +182,9 @@ entity
 	"id" "28"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_3"
+	"origin" "32 16 8"
 	"room" "$room_name"
 	"targetname" "detail_2"
-	"origin" "32 16 8"
 	editor
 	{
 		"color" "220 30 220"
@@ -198,9 +198,9 @@ entity
 	"id" "33"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_4"
+	"origin" "32 -16 8"
 	"room" "$room_name"
 	"targetname" "detail_3"
-	"origin" "32 -16 8"
 	editor
 	{
 		"color" "220 30 220"
@@ -214,9 +214,9 @@ entity
 	"id" "38"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_5"
+	"origin" "16 -32 8"
 	"room" "$room_name"
 	"targetname" "detail_4"
-	"origin" "16 -32 8"
 	editor
 	{
 		"color" "220 30 220"
@@ -230,9 +230,9 @@ entity
 	"id" "43"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_6"
+	"origin" "-16 -32 8"
 	"room" "$room_name"
 	"targetname" "detail_5"
-	"origin" "-16 -32 8"
 	editor
 	{
 		"color" "220 30 220"
@@ -246,9 +246,9 @@ entity
 	"id" "48"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_7"
+	"origin" "-32 -16 8"
 	"room" "$room_name"
 	"targetname" "detail_6"
-	"origin" "-32 -16 8"
 	editor
 	{
 		"color" "220 30 220"
@@ -262,9 +262,9 @@ entity
 	"id" "53"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_8"
+	"origin" "-32 16 8"
 	"room" "$room_name"
 	"targetname" "detail_7"
-	"origin" "-32 16 8"
 	editor
 	{
 		"color" "220 30 220"
@@ -278,9 +278,9 @@ entity
 	"id" "58"
 	"classname" "info_ff_roomdetail"
 	"next1" "detail_1"
+	"origin" "-16 32 8"
 	"room" "$room_name"
 	"targetname" "detail_8"
-	"origin" "-16 32 8"
 	editor
 	{
 		"color" "220 30 220"

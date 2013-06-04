@@ -1,6 +1,8 @@
 -- Client Initialization
 -- Includes
 
+jit.on()
+
 include("gmtools/nwtable.lua")
 
 include("sh_bounds.lua")
@@ -15,6 +17,7 @@ include("cl_ships.lua")
 include("cl_universe.lua")
 
 WHITE = Material("vgui/white")
+CIRCLE = Material("circle.png", "smooth")
 PLAYER_DOT = Material("playerdot.png", "smooth")
 SHIP_ICON = Material("objects/ship.png", "smooth")
 POWER = Material("power.png", "smooth")
@@ -106,12 +109,10 @@ function surface.DrawCentredText(x, y, text)
 	surface.DrawText(text)
 end
 
-local WHITE = Material("vgui/white")
-local CIRCLE = Material("circle.png", "smooth")
 function surface.DrawCircle(x, y, radius)
 	surface.SetMaterial(CIRCLE)
 	surface.DrawTexturedRect(x - radius, y - radius, radius * 2, radius * 2)
-	surface.SetMaterial(WHITE)
+	draw.NoTexture()
 end
 
 function surface.DrawPoints(points)
@@ -128,7 +129,7 @@ function surface.DrawConnector(sx, sy, ex, ey, width)
 	local ang = -math.atan2(dy, dx) / math.pi * 180
 	surface.SetMaterial(CONNECTOR)
 	surface.DrawTexturedRectRotated(sx + dx * 0.5, sy + dy * 0.5, diff, width, ang)
-	surface.SetMaterial(WHITE)
+	draw.NoTexture()
 end
 
 -- TODO: Add check to avoid complex polys in output
@@ -225,4 +226,12 @@ function GM:PlayerBindPress(ply, bind, pressed)
 			end
 		end
 	end
+end
+
+function GM:HUDDrawTargetID()
+	return false
+end
+
+function GM:DrawDeathNotice(x, y)
+	return false
 end

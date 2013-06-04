@@ -87,7 +87,7 @@ if CLIENT then
     end
 
     function GUI:Draw()
-        surface.SetMaterial(WHITE)
+        draw.NoTexture()
         surface.SetDrawColor(self.TargetColour)
         for _, v in ipairs(self._targCircle) do
             surface.DrawPoly(v)

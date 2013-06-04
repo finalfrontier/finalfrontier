@@ -147,7 +147,7 @@ if CLIENT then
 				surface.SetMaterial(self._powerImage)
 				surface.SetDrawColor(Color(255, 219, 89, 255))
 				surface.DrawTexturedRect(x, y, size, size)
-				surface.SetMaterial(WHITE)
+				draw.NoTexture()
 			end
 		end
 

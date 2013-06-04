@@ -194,7 +194,7 @@ elseif CLIENT then
 				end
 			end
 
-			surface.SetMaterial(WHITE)
+			draw.NoTexture()
 		end
 		
 		self.Super[BASE].Draw(self)

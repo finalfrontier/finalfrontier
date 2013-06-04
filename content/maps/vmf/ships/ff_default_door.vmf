@@ -275,7 +275,7 @@ entity
 			"vaxis" "[1 0 0 256] 0.125"
 			"rotation" "90"
 			"lightmapscale" "16"
-			"smoothing_groups" "0"
+			"smoothing_groups" "8"
 		}
 		side
 		{
@@ -319,7 +319,7 @@ entity
 			"vaxis" "[1 0 0 256] 0.125"
 			"rotation" "90"
 			"lightmapscale" "16"
-			"smoothing_groups" "0"
+			"smoothing_groups" "8"
 		}
 		side
 		{
@@ -330,7 +330,7 @@ entity
 			"vaxis" "[1 0 0 256] 0.125"
 			"rotation" "90"
 			"lightmapscale" "16"
-			"smoothing_groups" "0"
+			"smoothing_groups" "8"
 		}
 		editor
 		{
@@ -351,7 +351,7 @@ entity
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
-			"smoothing_groups" "0"
+			"smoothing_groups" "4"
 		}
 		side
 		{
@@ -395,7 +395,7 @@ entity
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
-			"smoothing_groups" "0"
+			"smoothing_groups" "4"
 		}
 		side
 		{
@@ -406,7 +406,7 @@ entity
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
-			"smoothing_groups" "0"
+			"smoothing_groups" "4"
 		}
 		editor
 		{
@@ -427,7 +427,7 @@ entity
 			"vaxis" "[0 -1 0 0] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
-			"smoothing_groups" "0"
+			"smoothing_groups" "8"
 		}
 		side
 		{
@@ -471,7 +471,7 @@ entity
 			"vaxis" "[1 0 0 256] 0.25"
 			"rotation" "90"
 			"lightmapscale" "16"
-			"smoothing_groups" "0"
+			"smoothing_groups" "8"
 		}
 		side
 		{
@@ -482,7 +482,7 @@ entity
 			"vaxis" "[1 0 0 256] 0.25"
 			"rotation" "90"
 			"lightmapscale" "16"
-			"smoothing_groups" "0"
+			"smoothing_groups" "8"
 		}
 		editor
 		{
@@ -503,7 +503,7 @@ entity
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
-			"smoothing_groups" "0"
+			"smoothing_groups" "4"
 		}
 		side
 		{
@@ -547,7 +547,7 @@ entity
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
-			"smoothing_groups" "0"
+			"smoothing_groups" "4"
 		}
 		side
 		{
@@ -558,7 +558,7 @@ entity
 			"vaxis" "[0 0 -1 0] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
-			"smoothing_groups" "0"
+			"smoothing_groups" "4"
 		}
 		editor
 		{
@@ -613,8 +613,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[11.7762 -2.8179 58.6044]"
-		"look" "[11.7209 -2.81002 57.6055]"
+		"position" "[-45.7905 42.734 71.8821]"
+		"look" "[-45.2505 42.3423 71.1365]"
 	}
 }
 cordon

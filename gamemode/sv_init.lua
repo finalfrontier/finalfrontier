@@ -1,6 +1,8 @@
 -- Server Initialization
 -- Includes
 
+jit.on()
+
 include("gmtools/nwtable.lua")
 
 include("sh_bounds.lua")

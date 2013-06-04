@@ -16,7 +16,7 @@ if CLIENT then
 				self:GetWidth(),
 				self:GetHeight()
 			)
-			surface.SetMaterial(WHITE)
+			draw.NoTexture()
 		end
 		
 		self.Super[BASE].Draw(self)
