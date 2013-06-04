@@ -62,9 +62,9 @@ function GM:SetupPlayerVisibility(ply)
 	if not ship then return end
 
 	local sx, sy = ship:GetCoordinates()
-	local range = ship:GetRange() + 1
-	for x = math.floor(sx - range), math.ceil(sx + range) do
-		for y = math.floor(sy - range), math.ceil(sy + range) do
+	local range = ship:GetRange()
+	for x = math.floor(sx - range), math.floor(sx + range) do
+		for y = math.floor(sy - range), math.floor(sy + range) do
 			AddOriginToPVS(universe:GetSector(x, y):GetPVSPos())
 		end
 	end
