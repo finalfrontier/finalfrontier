@@ -13,6 +13,10 @@ function GUI:Enter()
     self._grid:SetOrigin(8, 8)
     self._grid:SetSize(self:GetWidth() * 0.6 - 16, self:GetHeight() - 16)
 
+    local rangeSize = self:GetShip():GetRange() * 2
+    self._grid:SetScale(math.min(self._grid:GetWidth() / rangeSize,
+        self._grid:GetHeight() / rangeSize))
+
     self._coordLabel = sgui.Create(self, "label")
     self._coordLabel.AlignX = TEXT_ALIGN_CENTER
     self._coordLabel.AlignY = TEXT_ALIGN_CENTER
@@ -29,12 +33,6 @@ end
 if CLIENT then
     function GUI:Draw()
         local x, y = self:GetShip():GetCoordinates()
-        --[[if self._grid:IsCursorInside() then
-            x, y = self._grid:GetCursorPos()
-            x = x - self._grid:GetLeft()
-            y = y - self._grid:GetTop()
-            x, y = self._grid:ScreenToCoordinate(x, y)
-        end]]
 
         self._coordLabel.Text = "x: " .. FormatNum(x, 1, 2) .. ", y: " .. FormatNum(y, 1, 2)
 
