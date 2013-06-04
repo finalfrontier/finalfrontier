@@ -216,7 +216,8 @@ if SERVER then
 	function ENT:Think()
 		if self:GetNWBool("used") then
 			local ply = self:GetNWEntity("user")
-			if not ply:IsValid() or self:GetPos():Distance(ply:EyePos()) > MAX_USE_DISTANCE then
+			if not ply:IsValid() or self:GetPos():Distance(ply:EyePos()) > MAX_USE_DISTANCE
+				or self:GetAngles():Forward():Dot(ply:GetAimVector()) >= 0 then
 				self:StopUsing()
 			end
 		end

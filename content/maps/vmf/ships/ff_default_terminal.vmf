@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "52"
+	"mapversion" "53"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -14,13 +14,13 @@ viewsettings
 	"bSnapToGrid" "1"
 	"bShowGrid" "1"
 	"bShowLogicalGrid" "0"
-	"nGridSpacing" "4"
+	"nGridSpacing" "2"
 	"bShow3DGrid" "0"
 }
 world
 {
 	"id" "1"
-	"mapversion" "52"
+	"mapversion" "53"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -772,7 +772,7 @@ entity
 		side
 		{
 			"id" "376"
-			"plane" "(24 12 56) (24 8 56) (-24 8 56)"
+			"plane" "(-24 12 56) (24 12 56) (24 10 56)"
 			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 -1 0 0] 0.25"
@@ -783,7 +783,7 @@ entity
 		side
 		{
 			"id" "375"
-			"plane" "(24 -12 36) (24 -8 36) (-24 -8 36)"
+			"plane" "(-24 -10 36) (24 -10 36) (24 -8 36)"
 			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 -1 0 0] 0.25"
@@ -794,7 +794,7 @@ entity
 		side
 		{
 			"id" "374"
-			"plane" "(-24 8 56) (-24 -12 36) (-24 -8 36)"
+			"plane" "(-24 -8 36) (-24 12 56) (-24 10 56)"
 			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
@@ -805,7 +805,7 @@ entity
 		side
 		{
 			"id" "373"
-			"plane" "(24 -12 36) (24 8 56) (24 12 56)"
+			"plane" "(24 -10 36) (24 10 56) (24 12 56)"
 			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[0 1 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
@@ -816,7 +816,7 @@ entity
 		side
 		{
 			"id" "372"
-			"plane" "(-24 12 56) (-24 -8 36) (24 -8 36)"
+			"plane" "(24 -8 36) (24 12 56) (-24 12 56)"
 			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
@@ -827,7 +827,7 @@ entity
 		side
 		{
 			"id" "371"
-			"plane" "(-24 -12 36) (-24 8 56) (24 8 56)"
+			"plane" "(-24 -10 36) (-24 10 56) (24 10 56)"
 			"material" "TOOLS/TOOLSNODRAW"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 0 -1 0] 0.25"
@@ -965,8 +965,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-13.7428 -70.0363 75.4529]"
-		"look" "[-13.3296 -40.0876 31.0634]"
+		"position" "[-39.1375 -22.1394 71.3504]"
+		"look" "[-27.5918 22.7917 44.6032]"
 	}
 }
 cordon
