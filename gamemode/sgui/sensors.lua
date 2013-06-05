@@ -3,6 +3,7 @@ local BASE = "page"
 GUI.BaseName = BASE
 
 GUI._inspected = nil
+GUI._oldScale = 0
 
 GUI._zoomLabel = nil
 GUI._zoomSlider = nil
@@ -13,11 +14,14 @@ GUI._sectorLabel = nil
 GUI._grid = nil
 
 GUI._shipView = nil
+GUI._closeButton = nil
 
 function GUI:Inspect(obj)
     self:RemoveAllChildren()
     if obj then
         self._inspected = obj
+        self._oldScale = self._grid:GetScale()
+
         self._zoomLabel = nil
         self._zoomSlider = nil
         self._selectedLabel = nil
@@ -30,16 +34,28 @@ function GUI:Inspect(obj)
         self._shipView:SetCurrentShip(ships.GetByName(obj:GetObjectName()))
         self._shipView:SetBounds(Bounds(16, 8, self:GetWidth() - 32, self:GetHeight() - 88))
 
-        print("Hello world!")
+        self._closeButton = sgui.Create(self, "button")
+        self._closeButton:SetOrigin(16, self:GetHeight() - 48 - 16)
+        self._closeButton:SetSize(self:GetWidth() - 32, 48)
+        self._closeButton.Text = "Return to Sector View"
+
+        if SERVER then
+            function self._closeButton.OnClick(btn, x, y, button)
+                self:Inspect(nil)
+                self._grid:SetCentreObject(obj)
+                self:GetScreen():UpdateLayout()
+            end
+        end
     else
         self._inspected = nil
         self._shipView = nil
+        self._closeButton = nil
 
         self._grid = sgui.Create(self, "sectorgrid")
         self._grid:SetOrigin(8, 8)
         self._grid:SetSize(self:GetWidth() * 0.6 - 16, self:GetHeight() - 16)
         self._grid:SetCentreObject(nil)
-        self._grid:SetScale(self._grid:GetMinScale())
+        self._grid:SetScale(math.max(self._grid:GetMinScale(), self._oldScale))
 
         self._zoomLabel = sgui.Create(self, "label")
         self._zoomLabel.AlignX = TEXT_ALIGN_CENTER
@@ -53,10 +69,12 @@ function GUI:Inspect(obj)
         self._zoomSlider:SetSize(self:GetWidth() * 0.4 - 16, 48)
 
         if SERVER then
-            self._zoomSlider.Value = 0
+            local min = self._grid:GetMinScale()
+            local max = self._grid:GetMaxScale()
+            self._zoomSlider.Value = math.sqrt((self._grid:GetScale() - min) / (max - min))
             function self._zoomSlider.OnValueChanged(slider, value)
-                local min = self._grid:GetMinScale()
-                local max = self._grid:GetMaxScale()
+                min = self._grid:GetMinScale()
+                max = self._grid:GetMaxScale()
                 self._grid:SetScale(min + math.pow(value, 2) * (max - min))
             end
         end
@@ -117,7 +135,7 @@ elseif CLIENT then
             self._selectedLabel.Text = obj:GetObjectName()
             self._coordLabel.Text = "x: " .. FormatNum(x, 1, 2) .. ", y: " .. FormatNum(y, 1, 2)
         end
-        
+
         self.Super[BASE].Draw(self)
     end
 
