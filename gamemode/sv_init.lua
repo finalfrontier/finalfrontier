@@ -69,9 +69,11 @@ function GM:SetupPlayerVisibility(ply)
 		end
 	end
 
-	for _, room in pairs(ship:GetRooms()) do
-		if #room:GetPlayers() > 0 then
-			AddOriginToPVS(room:GetPos())
+	for _, ship in pairs(ships.GetAll()) do
+		for _, room in pairs(ship:GetRooms()) do
+			if #room:GetPlayers() > 0 then
+				AddOriginToPVS(room:GetPos())
+			end
 		end
 	end
 end

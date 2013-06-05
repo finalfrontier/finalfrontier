@@ -17,6 +17,10 @@ function ships.Add(ship)
 		.. " : [" .. x .. ", " .. y .. "] (" .. name .. ")")
 end
 
+function ships.GetAll()
+    return ships._dict
+end
+
 function ships.GetByName(name)
 	return ships._dict[name]
 end

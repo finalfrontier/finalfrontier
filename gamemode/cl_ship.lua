@@ -13,7 +13,7 @@ _mt._valid = true
 
 function _mt:IsCurrent()
 	return self._valid and self:GetName() and IsGlobalTableCurrent(self:GetName())
-		and self:GetBounds()
+		and self:GetBounds() and self:GetRange()
 		and table.Count(self:GetRooms()) >= table.Count(self:GetRoomNames())
 		and table.Count(self:GetDoors()) >= table.Count(self:GetDoorNames())
 end
@@ -37,7 +37,11 @@ function _mt:IsObjectInRange(obj)
 end
 
 function _mt:GetCoordinates()
-	return self:GetObject():GetCoordinates()
+	if self:GetObject() and self:GetObject():IsValid() then
+		return self:GetObject():GetCoordinates()
+	else
+		return 0, 0
+	end
 end
 
 function _mt:GetRotation()
@@ -142,6 +146,13 @@ function _mt:ApplyTransform(transform)
 end
 
 function _mt:Think()
+	if self:IsCurrent() and LocalPlayer():GetShipName()
+		and self:GetName() ~= LocalPlayer():GetShipName()
+		and LocalPlayer():GetShip() and LocalPlayer():GetShip():IsCurrent()
+		and not LocalPlayer():GetShip():IsObjectInRange(self:GetObject()) then
+		self:Remove()
+	end
+
 	if not self._valid then return end
 
 	if table.Count(self:GetRooms()) < table.Count(self:GetRoomNames()) then

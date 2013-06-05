@@ -12,9 +12,14 @@ function ships.Remove(ship)
     ships._dict[ship:GetName()] = nil
 end
 
+function ships.GetAll()
+    return ships._dict
+end
+
 function ships.GetByName(name)
     local ship = ships._dict[name]
-    if not ship then
+    if not ship and name and string.len(name) > 0 then
+        print("Loading new ship " .. name)
         ship = Ship(name)
         ships._dict[name] = ship
     end
