@@ -37,6 +37,10 @@ if SERVER then
     function ENT:SetObjectType(type)
         self:SetNWInt("objtype", type)
     end
+
+    function ENT:SetObjectName(name)
+        self:SetNWString("objname", name)
+    end
 end
 
 function ENT:GetCoordinates()
@@ -53,6 +57,10 @@ end
 
 function ENT:GetObjectType()
     return self:GetNWInt("objtype", objtype.unknown)
+end
+
+function ENT:GetObjectName()
+    return self:GetNWString("objname", nil)
 end
 
 if SERVER then

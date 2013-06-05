@@ -138,6 +138,12 @@ function _mt:ApplyTransform(transform)
 	end
 end
 
+function _mt:IsSynchronised()
+	return table.Count(self:GetRooms()) >= table.Count(self:GetRoomNames())
+		and table.Count(self:GetDoors()) >= table.Count(self:GetDoorNames())
+		and self:GetBounds()
+end
+
 function _mt:Think()
 	if table.Count(self:GetRooms()) < table.Count(self:GetRoomNames()) then
 		self:_UpdateRooms()
@@ -158,16 +164,6 @@ function _mt:Think()
 
 	for _, door in ipairs(self:GetDoors()) do
 		door:Think()
-	end
-end
-
-function _mt:Draw(screen, roomColorFunc, doorColorFunc)
-	for _, room in pairs(self:GetRooms()) do
-		room:Draw(screen, roomColorFunc)
-	end
-
-	for _, door in ipairs(self:GetDoors()) do
-		door:Draw(screen, doorColorFunc)
 	end
 end
 
@@ -195,10 +191,7 @@ function ply_mt:GetShip()
 end
 
 function Ship(name)
-	local ship = ships.GetByName(name)
-	if ship then return ship end
-	
-	ship = {}
+	local ship = {}
 
 	ship._roomdict = {}
 	ship._roomlist = {}

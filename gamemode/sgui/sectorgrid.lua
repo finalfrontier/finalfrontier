@@ -14,6 +14,7 @@ GUI._centreObj = nil
 GUI.CanClick = true
 
 function GUI:SetCentreObject(obj)
+    obj = obj or self:GetShip():GetObject()
     if not self._centreObj then
         self._curX, self._curY = obj:GetCoordinates()
     end
@@ -92,11 +93,8 @@ end
 
 if SERVER then
     function GUI:OnSelectObject(obj, button)
-        if button == MOUSE2 then
-            print("Hello world!")
-            self:SetCentreObject(obj)
-            self:GetScreen():UpdateLayout()
-        end
+        self:SetCentreObject(obj)
+        self:GetScreen():UpdateLayout()
     end
 
     function GUI:OnClick(x, y, button)

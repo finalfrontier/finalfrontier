@@ -13,7 +13,12 @@ function ships.Remove(ship)
 end
 
 function ships.GetByName(name)
-	return ships._dict[name]
+    local ship = ships._dict[name]
+    if not ship then
+        ship = Ship(name)
+        ships._dict[name] = ship
+    end
+	return ship
 end
 
 function ships.GetRoomByName(name)

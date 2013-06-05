@@ -77,6 +77,7 @@ function ENT:InitPostEntity()
 	self._nwdata.object:SetRotation(math.random() * 360)
 	--self._nwdata.object:SetVel(math.cos(self:GetRotationRadians()) * 0.2, -math.sin(self:GetRotationRadians()) * 0.2)
 	self._nwdata.object:SetObjectType(objtype.ship)
+	self._nwdata.object:SetObjectName(self:GetName())
 	self._nwdata.object:Spawn()
 	self:_UpdateNWData()
 
