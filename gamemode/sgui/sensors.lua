@@ -2,6 +2,8 @@ local BASE = "page"
 
 GUI.BaseName = BASE
 
+GUI._zoomLabel = nil
+GUI._zoomSlider = nil
 GUI._coordLabel = nil
 GUI._sectorLabel = nil
 GUI._grid = nil
@@ -13,9 +15,27 @@ function GUI:Enter()
     self._grid:SetOrigin(8, 8)
     self._grid:SetSize(self:GetWidth() * 0.6 - 16, self:GetHeight() - 16)
 
-    local rangeSize = self:GetShip():GetRange() * 2
-    self._grid:SetScale(math.min(self._grid:GetWidth() / rangeSize,
-        self._grid:GetHeight() / rangeSize))
+    self._grid:SetCentreObject(self:GetShip():GetObject())
+    self._grid:SetScale(self._grid:GetMinScale())
+
+    self._zoomLabel = sgui.Create(self, "label")
+    self._zoomLabel.AlignX = TEXT_ALIGN_CENTER
+    self._zoomLabel.AlignY = TEXT_ALIGN_CENTER
+    self._zoomLabel:SetOrigin(self._grid:GetRight() + 16, 16)
+    self._zoomLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
+    self._zoomLabel.Text = "View Zoom"
+
+    self._zoomSlider = sgui.Create(self, "slider")
+    self._zoomSlider:SetOrigin(self._grid:GetRight() + 16, self._zoomLabel:GetBottom() + 8)
+    self._zoomSlider:SetSize(self:GetWidth() * 0.4 - 16, 48)
+    if SERVER then
+        self._zoomSlider.Value = 0
+        function self._zoomSlider.OnValueChanged(slider, value)
+            local min = self._grid:GetMinScale()
+            local max = self._grid:GetMaxScale()
+            self._grid:SetScale(min + math.pow(value, 2) * (max - min))
+        end
+    end
 
     self._coordLabel = sgui.Create(self, "label")
     self._coordLabel.AlignX = TEXT_ALIGN_CENTER
@@ -36,7 +56,6 @@ if CLIENT then
 
         self._coordLabel.Text = "x: " .. FormatNum(x, 1, 2) .. ", y: " .. FormatNum(y, 1, 2)
 
-        self._grid:SetCentreCoordinates(self:GetShip():GetCoordinates())
         self.Super[BASE].Draw(self)
     end
 

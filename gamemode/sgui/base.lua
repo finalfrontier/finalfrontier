@@ -200,6 +200,15 @@ if CLIENT then
 		return x, y
 	end
 
+	function GUI:GetLocalCursorPos()
+		local x, y = self:GetCursorPos()
+
+		x = x - self:GetLeft()
+		y = y - self:GetTop()
+
+		return x, y
+	end
+
 	function GUI:SendIDHierarchy()
 		if self:HasParent() then
 			self:GetParent():SendIDHierarchy()

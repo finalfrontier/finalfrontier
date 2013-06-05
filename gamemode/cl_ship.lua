@@ -195,7 +195,10 @@ function ply_mt:GetShip()
 end
 
 function Ship(name)
-	local ship = {}
+	local ship = ships.GetByName(name)
+	if ship then return ship end
+	
+	ship = {}
 
 	ship._roomdict = {}
 	ship._roomlist = {}
