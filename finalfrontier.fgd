@@ -72,4 +72,9 @@
 @PointClass base(Origin) = info_ff_transtarget : "transporter target"
 [
 	room(target_destination) : "Parent room" : "" : "Targetname of the room containing this transporter target"
+	transpad(choices) : "Transporter Pad" : "0" =
+	[
+		0 : "Nope"
+		1 : "Yessir"
+	]
 ]
