@@ -13,6 +13,9 @@ _mt._valid = true
 
 function _mt:IsCurrent()
 	return self._valid and self:GetName() and IsGlobalTableCurrent(self:GetName())
+		and self:GetBounds()
+		and table.Count(self:GetRooms()) >= table.Count(self:GetRoomNames())
+		and table.Count(self:GetDoors()) >= table.Count(self:GetDoorNames())
 end
 
 function _mt:IsValid()
@@ -138,13 +141,9 @@ function _mt:ApplyTransform(transform)
 	end
 end
 
-function _mt:IsSynchronised()
-	return table.Count(self:GetRooms()) >= table.Count(self:GetRoomNames())
-		and table.Count(self:GetDoors()) >= table.Count(self:GetDoorNames())
-		and self:GetBounds()
-end
-
 function _mt:Think()
+	if not self._valid then return end
+
 	if table.Count(self:GetRooms()) < table.Count(self:GetRoomNames()) then
 		self:_UpdateRooms()
 	end

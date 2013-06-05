@@ -32,7 +32,7 @@ function GUI:SetCurrentShip(ship)
 		self._doors = {}
 		self._rooms = {}
 
-		if SERVER or ship:IsSynchronised() then
+		if SERVER or ship:IsCurrent() then
 			self:_SetupShip()
 		end
 	end
@@ -117,7 +117,7 @@ if CLIENT then
 			self._ship = nil
 		end
 
-		if self._ship and not self._shipSynced and self._ship:IsSynchronised() then
+		if self._ship and not self._shipSynced and self._ship:IsCurrent() then
 			self:_SetupShip()
 		end
 	end
