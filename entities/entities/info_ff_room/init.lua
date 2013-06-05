@@ -13,6 +13,7 @@ ENT._doorlist = nil
 ENT._bounds = nil
 ENT._details = nil
 ENT._detailindices = nil
+ENT._transtargets = nil
 
 ENT._airvolume = 0
 ENT._temperature = 0
@@ -35,6 +36,7 @@ function ENT:Initialize()
 	self._bounds = Bounds()
 	self._details = {}
 	self._detailindices = {}
+	self._transtargets = {}
 
 	self._players = {}
 
@@ -274,6 +276,15 @@ end
 
 function ENT:GetDetails()
 	return self._nwdata.details
+end
+
+function ENT:AddTransporterTarget(pos)
+	table.insert(self._transtargets, pos)
+end
+
+function ENT:GetTransporterTarget()
+	-- TODO: check for obstructions
+	return table.Random(self._transtargets)
 end
 
 function ENT:AddDoor(door)

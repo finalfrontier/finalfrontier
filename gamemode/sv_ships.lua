@@ -41,6 +41,7 @@ function ships.InitPostEntity()
 		"info_ff_room",
 		"info_ff_roomcorner",
 		"info_ff_roomdetail",
+		"info_ff_transtarget",
 		"info_ff_door",
 		"info_ff_screen"
 	}

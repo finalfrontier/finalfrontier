@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "281"
+	"mapversion" "295"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "281"
+	"mapversion" "295"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -32581,7 +32581,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 199 104"
+			"color" "0 180 0"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -32657,7 +32657,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 199 184"
+			"color" "0 180 0"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -39867,13 +39867,1217 @@ entity
 		"logicalpos" "[0 6500]"
 	}
 }
+entity
+{
+	"id" "38487"
+	"classname" "info_ff_transtarget"
+	"origin" "-192 -1792 104"
+	"room" "room_shields"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "38502"
+	"classname" "info_ff_transtarget"
+	"origin" "-192 -1664 104"
+	"room" "room_shields"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 500]"
+	}
+}
+entity
+{
+	"id" "38505"
+	"classname" "info_ff_transtarget"
+	"origin" "-192 -1536 104"
+	"room" "room_shields"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 1000]"
+	}
+}
+entity
+{
+	"id" "38508"
+	"classname" "info_ff_transtarget"
+	"origin" "-64 -1536 104"
+	"room" "room_shields"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 1500]"
+	}
+}
+entity
+{
+	"id" "38511"
+	"classname" "info_ff_transtarget"
+	"origin" "-320 -1536 104"
+	"room" "room_shields"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 2000]"
+	}
+}
+entity
+{
+	"id" "38514"
+	"classname" "info_ff_transtarget"
+	"origin" "0 -1440 104"
+	"room" "room_shields"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 2500]"
+	}
+}
+entity
+{
+	"id" "38517"
+	"classname" "info_ff_transtarget"
+	"origin" "-64 -1344 104"
+	"room" "room_shields"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 3000]"
+	}
+}
+entity
+{
+	"id" "38520"
+	"classname" "info_ff_transtarget"
+	"origin" "-192 -1344 88"
+	"room" "room_shields"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 3500]"
+	}
+}
+entity
+{
+	"id" "38523"
+	"classname" "info_ff_transtarget"
+	"origin" "-320 -1344 104"
+	"room" "room_shields"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 4000]"
+	}
+}
+entity
+{
+	"id" "38526"
+	"classname" "info_ff_transtarget"
+	"origin" "-384 -1440 104"
+	"room" "room_shields"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 4500]"
+	}
+}
+entity
+{
+	"id" "38583"
+	"classname" "info_ff_transtarget"
+	"origin" "-224 -2048 104"
+	"room" "room_engineering"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 5000]"
+	}
+}
+entity
+{
+	"id" "38589"
+	"classname" "info_ff_transtarget"
+	"origin" "-160 -2112 104"
+	"room" "room_engineering"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 5500]"
+	}
+}
+entity
+{
+	"id" "38592"
+	"classname" "info_ff_transtarget"
+	"origin" "-224 -2176 104"
+	"room" "room_engineering"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 6000]"
+	}
+}
+entity
+{
+	"id" "38595"
+	"classname" "info_ff_transtarget"
+	"origin" "-160 -2240 104"
+	"room" "room_engineering"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 6500]"
+	}
+}
+entity
+{
+	"id" "38598"
+	"classname" "info_ff_transtarget"
+	"origin" "64 -2048 88"
+	"room" "room_engineering"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 7000]"
+	}
+}
+entity
+{
+	"id" "38601"
+	"classname" "info_ff_transtarget"
+	"origin" "-448 -2048 88"
+	"room" "room_engineering"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 7500]"
+	}
+}
+entity
+{
+	"id" "38604"
+	"classname" "info_ff_transtarget"
+	"origin" "-384 -2176 56"
+	"room" "room_engineering"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 8000]"
+	}
+}
+entity
+{
+	"id" "38607"
+	"classname" "info_ff_transtarget"
+	"origin" "0 -2176 56"
+	"room" "room_engineering"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 8500]"
+	}
+}
+entity
+{
+	"id" "38658"
+	"classname" "info_ff_transtarget"
+	"origin" "-576 -1376 104"
+	"room" "room_hallway1"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 9000]"
+	}
+}
+entity
+{
+	"id" "38661"
+	"classname" "info_ff_transtarget"
+	"origin" "-576 -1472 104"
+	"room" "room_hallway1"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 9500]"
+	}
+}
+entity
+{
+	"id" "38664"
+	"classname" "info_ff_transtarget"
+	"origin" "-704 -1472 104"
+	"room" "room_hallway1"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 10000]"
+	}
+}
+entity
+{
+	"id" "38667"
+	"classname" "info_ff_transtarget"
+	"origin" "-704 -1376 104"
+	"room" "room_hallway1"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 10500]"
+	}
+}
+entity
+{
+	"id" "38670"
+	"classname" "info_ff_transtarget"
+	"origin" "-704 -1280 104"
+	"room" "room_hallway1"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 11000]"
+	}
+}
+entity
+{
+	"id" "38673"
+	"classname" "info_ff_transtarget"
+	"origin" "-640 -1280 104"
+	"room" "room_hallway1"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 11500]"
+	}
+}
+entity
+{
+	"id" "38676"
+	"classname" "info_ff_transtarget"
+	"origin" "-640 -1152 104"
+	"room" "room_hallway1"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 12000]"
+	}
+}
+entity
+{
+	"id" "38679"
+	"classname" "info_ff_transtarget"
+	"origin" "-672 -1056 104"
+	"room" "room_hallway1"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 12500]"
+	}
+}
+entity
+{
+	"id" "38754"
+	"classname" "info_ff_transtarget"
+	"origin" "288 -1056 104"
+	"room" "room_hallway4"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 12500]"
+	}
+}
+entity
+{
+	"id" "38757"
+	"classname" "info_ff_transtarget"
+	"origin" "256 -1152 104"
+	"room" "room_hallway4"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 12000]"
+	}
+}
+entity
+{
+	"id" "38760"
+	"classname" "info_ff_transtarget"
+	"origin" "256 -1280 104"
+	"room" "room_hallway4"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 11500]"
+	}
+}
+entity
+{
+	"id" "38763"
+	"classname" "info_ff_transtarget"
+	"origin" "320 -1280 104"
+	"room" "room_hallway4"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 11000]"
+	}
+}
+entity
+{
+	"id" "38766"
+	"classname" "info_ff_transtarget"
+	"origin" "320 -1376 104"
+	"room" "room_hallway4"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 10500]"
+	}
+}
+entity
+{
+	"id" "38769"
+	"classname" "info_ff_transtarget"
+	"origin" "320 -1472 104"
+	"room" "room_hallway4"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 10000]"
+	}
+}
+entity
+{
+	"id" "38772"
+	"classname" "info_ff_transtarget"
+	"origin" "192 -1472 104"
+	"room" "room_hallway4"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 9500]"
+	}
+}
+entity
+{
+	"id" "38775"
+	"classname" "info_ff_transtarget"
+	"origin" "192 -1376 104"
+	"room" "room_hallway4"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 9000]"
+	}
+}
+entity
+{
+	"id" "38878"
+	"classname" "info_ff_transtarget"
+	"origin" "160 -1824 112"
+	"room" "room_transporter"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 13000]"
+	}
+}
+entity
+{
+	"id" "38881"
+	"classname" "info_ff_transtarget"
+	"origin" "160 -1696 112"
+	"room" "room_transporter"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 13500]"
+	}
+}
+entity
+{
+	"id" "38884"
+	"classname" "info_ff_transtarget"
+	"origin" "320 -1696 112"
+	"room" "room_transporter"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 14000]"
+	}
+}
+entity
+{
+	"id" "38914"
+	"classname" "info_ff_transtarget"
+	"origin" "-704 -1824 112"
+	"room" "room_medical"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 14500]"
+	}
+}
+entity
+{
+	"id" "38917"
+	"classname" "info_ff_transtarget"
+	"origin" "-704 -1664 112"
+	"room" "room_medical"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 15000]"
+	}
+}
+entity
+{
+	"id" "38920"
+	"classname" "info_ff_transtarget"
+	"origin" "-544 -1664 112"
+	"room" "room_medical"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 15500]"
+	}
+}
+entity
+{
+	"id" "38923"
+	"classname" "info_ff_transtarget"
+	"origin" "-544 -1824 112"
+	"room" "room_medical"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 16000]"
+	}
+}
+entity
+{
+	"id" "38926"
+	"classname" "info_ff_transtarget"
+	"origin" "-448 -1776 112"
+	"room" "room_medical"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -16268]"
+	}
+}
+entity
+{
+	"id" "38929"
+	"classname" "info_ff_transtarget"
+	"origin" "-624 -1744 112"
+	"room" "room_medical"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -15768]"
+	}
+}
+entity
+{
+	"id" "38968"
+	"classname" "info_ff_transtarget"
+	"origin" "-384 -1008 -104"
+	"room" "room_reactor"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -15268]"
+	}
+}
+entity
+{
+	"id" "38971"
+	"classname" "info_ff_transtarget"
+	"origin" "0 -1008 -104"
+	"room" "room_reactor"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -14768]"
+	}
+}
+entity
+{
+	"id" "38974"
+	"classname" "info_ff_transtarget"
+	"origin" "0 -1120 -88"
+	"room" "room_reactor"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -14268]"
+	}
+}
+entity
+{
+	"id" "38977"
+	"classname" "info_ff_transtarget"
+	"origin" "-384 -1120 -88"
+	"room" "room_reactor"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -13768]"
+	}
+}
+entity
+{
+	"id" "38980"
+	"classname" "info_ff_transtarget"
+	"origin" "-288 -1120 -88"
+	"room" "room_reactor"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -13268]"
+	}
+}
+entity
+{
+	"id" "38983"
+	"classname" "info_ff_transtarget"
+	"origin" "-96 -1120 -88"
+	"room" "room_reactor"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -12768]"
+	}
+}
+entity
+{
+	"id" "38986"
+	"classname" "info_ff_transtarget"
+	"origin" "-192 -1072 -88"
+	"room" "room_reactor"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -12268]"
+	}
+}
+entity
+{
+	"id" "39031"
+	"classname" "info_ff_transtarget"
+	"origin" "-672 -672 72"
+	"room" "room_doorcontrol"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -11768]"
+	}
+}
+entity
+{
+	"id" "39034"
+	"classname" "info_ff_transtarget"
+	"origin" "-576 -672 72"
+	"room" "room_doorcontrol"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -11268]"
+	}
+}
+entity
+{
+	"id" "39037"
+	"classname" "info_ff_transtarget"
+	"origin" "-576 -800 72"
+	"room" "room_doorcontrol"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -10768]"
+	}
+}
+entity
+{
+	"id" "39040"
+	"classname" "info_ff_transtarget"
+	"origin" "-672 -800 72"
+	"room" "room_doorcontrol"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -10268]"
+	}
+}
+entity
+{
+	"id" "39043"
+	"classname" "info_ff_transtarget"
+	"origin" "-624 -736 72"
+	"room" "room_doorcontrol"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -9768]"
+	}
+}
+entity
+{
+	"id" "39106"
+	"classname" "info_ff_transtarget"
+	"origin" "288 -800 72"
+	"room" "room_lifesupport"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -10768]"
+	}
+}
+entity
+{
+	"id" "39109"
+	"classname" "info_ff_transtarget"
+	"origin" "192 -800 72"
+	"room" "room_lifesupport"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -10268]"
+	}
+}
+entity
+{
+	"id" "39112"
+	"classname" "info_ff_transtarget"
+	"origin" "240 -736 72"
+	"room" "room_lifesupport"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -9768]"
+	}
+}
+entity
+{
+	"id" "39115"
+	"classname" "info_ff_transtarget"
+	"origin" "288 -672 72"
+	"room" "room_lifesupport"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -11268]"
+	}
+}
+entity
+{
+	"id" "39118"
+	"classname" "info_ff_transtarget"
+	"origin" "192 -672 72"
+	"room" "room_lifesupport"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -11768]"
+	}
+}
+entity
+{
+	"id" "39167"
+	"classname" "info_ff_transtarget"
+	"origin" "0 -640 72"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -9268]"
+	}
+}
+entity
+{
+	"id" "39170"
+	"classname" "info_ff_transtarget"
+	"origin" "0 -768 72"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -8768]"
+	}
+}
+entity
+{
+	"id" "39173"
+	"classname" "info_ff_transtarget"
+	"origin" "-64 -832 72"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -8268]"
+	}
+}
+entity
+{
+	"id" "39176"
+	"classname" "info_ff_transtarget"
+	"origin" "-192 -832 72"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -7768]"
+	}
+}
+entity
+{
+	"id" "39179"
+	"classname" "info_ff_transtarget"
+	"origin" "-320 -832 72"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -7268]"
+	}
+}
+entity
+{
+	"id" "39182"
+	"classname" "info_ff_transtarget"
+	"origin" "-384 -768 72"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -6768]"
+	}
+}
+entity
+{
+	"id" "39185"
+	"classname" "info_ff_transtarget"
+	"origin" "-384 -640 72"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -6268]"
+	}
+}
+entity
+{
+	"id" "39188"
+	"classname" "info_ff_transtarget"
+	"origin" "-384 -448 16"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -5768]"
+	}
+}
+entity
+{
+	"id" "39191"
+	"classname" "info_ff_transtarget"
+	"origin" "-320 -384 16"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -5268]"
+	}
+}
+entity
+{
+	"id" "39194"
+	"classname" "info_ff_transtarget"
+	"origin" "-64 -384 16"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -4768]"
+	}
+}
+entity
+{
+	"id" "39197"
+	"classname" "info_ff_transtarget"
+	"origin" "0 -448 16"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -4268]"
+	}
+}
+entity
+{
+	"id" "39200"
+	"classname" "info_ff_transtarget"
+	"origin" "-192 -384 16"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -3768]"
+	}
+}
+entity
+{
+	"id" "39206"
+	"classname" "info_ff_transtarget"
+	"origin" "-192 -576 -32"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -2768]"
+	}
+}
+entity
+{
+	"id" "39209"
+	"classname" "info_ff_transtarget"
+	"origin" "-192 -768 -104"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -2268]"
+	}
+}
+entity
+{
+	"id" "39212"
+	"classname" "info_ff_transtarget"
+	"origin" "-320 -768 -104"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -1768]"
+	}
+}
+entity
+{
+	"id" "39215"
+	"classname" "info_ff_transtarget"
+	"origin" "-64 -768 -104"
+	"room" "room_weapons"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -1268]"
+	}
+}
+entity
+{
+	"id" "39314"
+	"classname" "info_ff_transtarget"
+	"origin" "-192 -192 8"
+	"room" "room_sensors"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 -768]"
+	}
+}
+entity
+{
+	"id" "39317"
+	"classname" "info_ff_transtarget"
+	"origin" "-288 -192 8"
+	"room" "room_sensors"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[500 0]"
+	}
+}
+entity
+{
+	"id" "39320"
+	"classname" "info_ff_transtarget"
+	"origin" "-96 -192 8"
+	"room" "room_sensors"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[500 500]"
+	}
+}
+entity
+{
+	"id" "39323"
+	"classname" "info_ff_transtarget"
+	"origin" "-96 -64 8"
+	"room" "room_sensors"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[500 1000]"
+	}
+}
+entity
+{
+	"id" "39326"
+	"classname" "info_ff_transtarget"
+	"origin" "-288 -64 8"
+	"room" "room_sensors"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[500 1500]"
+	}
+}
+entity
+{
+	"id" "39368"
+	"classname" "info_ff_transtarget"
+	"origin" "-192 128 8"
+	"room" "room_piloting"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[500 3500]"
+	}
+}
+entity
+{
+	"id" "39371"
+	"classname" "info_ff_transtarget"
+	"origin" "-128 192 8"
+	"room" "room_piloting"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[500 4000]"
+	}
+}
+entity
+{
+	"id" "39374"
+	"classname" "info_ff_transtarget"
+	"origin" "-256 192 8"
+	"room" "room_piloting"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[500 4500]"
+	}
+}
+entity
+{
+	"id" "39383"
+	"classname" "info_ff_transtarget"
+	"origin" "-256 288 8"
+	"room" "room_piloting"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[500 6000]"
+	}
+}
+entity
+{
+	"id" "39386"
+	"classname" "info_ff_transtarget"
+	"origin" "-128 288 8"
+	"room" "room_piloting"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[500 6500]"
+	}
+}
 cameras
 {
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-472.39 -2207.09 187.99]"
-		"look" "[-450.025 -2209.72 185.001]"
+		"position" "[-274.601 306.069 144.387]"
+		"look" "[-263.638 303.777 124.622]"
 	}
 }
 cordon

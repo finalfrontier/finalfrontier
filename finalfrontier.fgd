@@ -68,3 +68,8 @@
 	next7(target_destination) : "Next detail" : "" : "Targetname of a detail connected to this one"
 	next8(target_destination) : "Next detail" : "" : "Targetname of a detail connected to this one"
 ]
+
+@PointClass base(Origin) = info_ff_transtarget : "transporter target"
+[
+	room(target_destination) : "Parent room" : "" : "Targetname of the room containing this transporter target"
+]
