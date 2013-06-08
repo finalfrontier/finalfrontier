@@ -62,6 +62,10 @@ function ENT:GetRotationRadians()
 	return self._nwdata.object:GetRotationRadians()
 end
 
+function ENT:GetVel()
+    return self._nwdata.object:GetVel()
+end
+
 function ENT:GetRange()
 	return self._nwdata.range
 end
@@ -75,7 +79,7 @@ function ENT:InitPostEntity()
 	self._nwdata.object = ents.Create("info_ff_object")
 	self._nwdata.object:SetCoordinates(5 + math.random() * 0.2 - 0.1, 9 + math.random() * 0.2 - 0.1)
 	self._nwdata.object:SetRotation(38)
-	self._nwdata.object:SetVel(math.cos(self:GetRotationRadians()) * 0.2, -math.sin(self:GetRotationRadians()) * 0.2)
+	-- self._nwdata.object:SetVel(math.cos(self:GetRotationRadians()) * 0.2, -math.sin(self:GetRotationRadians()) * 0.2)
 	self._nwdata.object:SetObjectType(objtype.ship)
 	self._nwdata.object:SetObjectName(self:GetName())
 	self._nwdata.object:Spawn()

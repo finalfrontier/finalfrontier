@@ -8,14 +8,6 @@ objtype.unknown = 0
 objtype.ship = 1
 
 function ENT:Initialize()
-    local phys = self:GetPhysicsObject()
-    if phys:IsValid() then
-        print("init phys")
-        phys:EnableGravity(false)
-        phys:EnableCollisions(false)
-        phys:EnableDrag(false)
-        phys:EnableMotion(true)
-    end
     self:SetMoveType(MOVETYPE_NOCLIP)
 end
 
@@ -32,6 +24,14 @@ if SERVER then
         local orig = universe:GetWorldPos(0, 0)
         local next = universe:GetWorldPos(dx, dy)
         self:SetLocalVelocity(next - orig)
+    end
+
+    function ENT:SetAngleVel(vel)
+        local phys = self:GetPhysicsObject()
+        local curr = phys:GetAngleVelocity()
+        if phys:IsValid() then
+            phys:AddAngleVelocity(vel - curr)
+        end
     end
 
     function ENT:SetObjectType(type)
@@ -53,6 +53,12 @@ end
 
 function ENT:GetRotationRadians()
     return self:GetAngles().y * math.pi / 180.0
+end
+
+function ENT:GetVel()
+    local ox, oy = universe:GetUniversePos(Vector(0, 0, 0))
+    local nx, ny = universe:GetUniversePos(self:GetVelocity())
+    return nx - ox, ny - oy
 end
 
 function ENT:GetObjectType()

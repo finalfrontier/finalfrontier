@@ -96,7 +96,7 @@ if SERVER then
         self:SetCentreObject(obj)
         self:GetScreen():UpdateLayout()
     end
-
+    
     function GUI:OnClick(x, y, button)
         x = x - self:GetLeft()
         y = y - self:GetTop()

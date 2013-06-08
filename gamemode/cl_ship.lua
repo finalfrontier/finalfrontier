@@ -45,11 +45,15 @@ function _mt:GetCoordinates()
 end
 
 function _mt:GetRotation()
-	return self:GetObject():GetRotation()
+	return self._nwdata.object:GetRotation()
 end
 
 function _mt:GetRotationRadians()
 	return self._nwdata.object:GetRotationRadians()
+end
+
+function _mt:GetVel()
+    return self._nwdata.object:GetVel()
 end
 
 function _mt:GetRange()
@@ -146,12 +150,12 @@ function _mt:ApplyTransform(transform)
 end
 
 function _mt:Think()
-	if self:IsCurrent() and LocalPlayer():GetShipName()
+	--[[if self:IsCurrent() and LocalPlayer():GetShipName()
 		and self:GetName() ~= LocalPlayer():GetShipName()
 		and LocalPlayer():GetShip() and LocalPlayer():GetShip():IsCurrent()
 		and not LocalPlayer():GetShip():IsObjectInRange(self:GetObject()) then
 		self:Remove()
-	end
+	end]]
 
 	if not self._valid then return end
 
