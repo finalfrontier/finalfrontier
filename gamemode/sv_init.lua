@@ -33,6 +33,14 @@ function GM:InitPostEntity()
 	MsgN("Final Frontier server-side is initializing post-entity...")
 	
 	ships.InitPostEntity()
+	for _, ship in pairs(ships.GetAll()) do
+		for _,room in pairs(ship:GetRooms()) do
+			local prop = ents.Create("prop_physics")
+			prop:SetModel("models/props_c17/oildrum001.mdl")
+			prop:SetPos(room:GetTransporterTarget())
+			prop:Spawn()
+		end
+	end
 end
 
 function GM:PlayerNoClip(ply)

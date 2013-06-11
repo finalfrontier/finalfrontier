@@ -38,6 +38,7 @@ function ENT:Initialize()
 	if not self:GetBaseHealth() then
 		self:_SetBaseHealth(1)
 	end
+
 end
 
 function ENT:GetObject()

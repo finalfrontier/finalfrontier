@@ -292,6 +292,10 @@ function ENT:AddTransporterTarget(pos, isTransPad)
 	end
 end
 
+function ENT:GetTransporterPads()
+	return self._transpads
+end
+
 function ENT:GetTransporterTarget()
 	-- TODO: check for obstructions
 	if #self._transpads > 0 then
