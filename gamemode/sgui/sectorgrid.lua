@@ -34,6 +34,12 @@ function GUI:GetCentreCoordinates()
 end
 
 function GUI:GetMinScale()
+    local rangeSize = 8
+    return math.min((self:GetWidth() - 16) / rangeSize,
+        (self:GetHeight() - 16) / rangeSize)
+end
+
+function GUI:GetMinSensorScale()
     local rangeSize = math.max(self:GetShip():GetRange() * 2, 0.1)
     return math.min((self:GetWidth() - 16) / rangeSize,
         (self:GetHeight() - 16) / rangeSize)

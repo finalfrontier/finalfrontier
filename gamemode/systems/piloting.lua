@@ -20,7 +20,11 @@ if SERVER then
     end
 
     function SYS:GetAcceleration()
-        return 0.05
+        return 0.01
+    end
+
+    function SYS:GetAngleAcceleration()
+        return 1.0
     end
 
     function SYS:Initialize()
@@ -34,6 +38,16 @@ if SERVER then
         return 0
     end
 
+    function FindAngleDifference(a, b)
+        local diff = b - a
+        if diff >= 180 then
+            return diff - 360
+        elseif diff < -180 then
+            return diff + 360
+        end
+        return diff
+    end
+
     function SYS:_FindAccel1D(g, a, p, u)
         local s = g - p
         local v = math.sqrt(2 * a * math.abs(s)) * math.sign(s)
@@ -43,14 +57,16 @@ if SERVER then
     end
 
     function SYS:Think(dt)
-        local x, y = self:GetShip():GetCoordinates()
-        local dx, dy = self._targetX - x, self._targetY - y
-        local vx, vy = self:GetShip():GetVel()
-        if dx * dx + dy * dy <= 1.0 / 1024.0 and vx * vx + vy * vy <= 1.0 / 8192.0 then
-            self:GetShip():GetObject():SetCoordinates(self._targetX, self._targetY)
-            self:GetShip():GetObject():SetVel(0, 0)
+        local obj = self:GetShip():GetObject()
+
+        local x, y = obj:GetCoordinates()
+        local dx, dy = universe:GetDifference(x, y, self._targetX, self._targetY)
+        local vx, vy = obj:GetVel()
+        --[[if dx * dx + dy * dy <= 1.0 / 1024.0 and vx * vx + vy * vy <= 1.0 / 8192.0 then
+            obj:SetCoordinates(self._targetX, self._targetY)
+            obj:SetVel(0, 0)
             return
-        end
+        end]]
         vx = vx * 0.99
         vy = vy * 0.99
 
@@ -59,10 +75,8 @@ if SERVER then
         local ax = self:_FindAccel1D(self._targetX, a, x, vx)
         local ay = self:_FindAccel1D(self._targetY, a, y, vy)
 
-        local angle = math.atan2(-vy, vx) / math.pi * 180.0
-        self:GetShip():GetObject():SetRotation(angle)
-
-        self:GetShip():GetObject():SetVel(vx + ax, vy + ay)
+        obj:SetVel(vx + ax, vy + ay)
+        obj:SetRotation(math.atan2(-vy, vx) / math.pi * 180.0)
     end
 elseif CLIENT then
     -- SYS.Icon = Material("systems/piloting.png", "smooth")

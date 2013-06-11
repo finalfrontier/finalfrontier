@@ -7,8 +7,17 @@ objtype = {}
 objtype.unknown = 0
 objtype.ship = 1
 
+function ENT:SetupDataTables()
+    self:NetworkVar("Float", 0, "TargetRotation")
+    self:NetworkVar("Float", 1, "AngularVel")
+end
+
 function ENT:Initialize()
     self:SetMoveType(MOVETYPE_NOCLIP)
+    self:PhysicsInit(SOLID_NONE)
+
+    self:SetTargetRotation(0)
+    self:SetAngularVel(45)
 end
 
 if SERVER then
@@ -28,8 +37,8 @@ if SERVER then
 
     function ENT:SetAngleVel(vel)
         local phys = self:GetPhysicsObject()
-        local curr = phys:GetAngleVelocity()
         if phys:IsValid() then
+            local curr = phys:GetAngleVelocity()
             phys:AddAngleVelocity(vel - curr)
         end
     end
@@ -48,7 +57,7 @@ function ENT:GetCoordinates()
 end
 
 function ENT:GetRotation()
-    return self:GetAngles().y
+    return self:GetTargetRotation()
 end
 
 function ENT:GetRotationRadians()
@@ -59,6 +68,14 @@ function ENT:GetVel()
     local ox, oy = universe:GetUniversePos(Vector(0, 0, 0))
     local nx, ny = universe:GetUniversePos(self:GetVelocity())
     return nx - ox, ny - oy
+end
+
+function ENT:GetAngleVel(vel)
+    local phys = self:GetPhysicsObject()
+    if phys:IsValid() then
+        return phys:GetAngleVelocity()
+    end
+    return 0
 end
 
 function ENT:GetObjectType()

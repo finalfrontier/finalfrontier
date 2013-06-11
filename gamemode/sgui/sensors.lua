@@ -3,7 +3,7 @@ local BASE = "page"
 GUI.BaseName = BASE
 
 GUI._inspected = nil
-GUI._oldScale = 0
+GUI._oldScale = nil
 
 GUI._zoomLabel = nil
 GUI._zoomSlider = nil
@@ -55,7 +55,7 @@ function GUI:Inspect(obj)
         self._grid:SetOrigin(8, 8)
         self._grid:SetSize(self:GetWidth() * 0.6 - 16, self:GetHeight() - 16)
         self._grid:SetCentreObject(nil)
-        self._grid:SetScale(math.max(self._grid:GetMinScale(), self._oldScale))
+        self._grid:SetScale(math.max(self._grid:GetMinScale(), self._oldScale or self._grid:GetMinSensorScale()))
 
         self._zoomLabel = sgui.Create(self, "label")
         self._zoomLabel.AlignX = TEXT_ALIGN_CENTER

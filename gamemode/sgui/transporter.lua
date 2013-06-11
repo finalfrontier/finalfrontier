@@ -21,122 +21,103 @@ local delay_beamdown = 1
 local zap = Sound("ambient/levels/labs/electric_explosion4.wav")
 local unzap = Sound("ambient/levels/labs/electric_explosion2.wav")
 
-
 local function ShouldCollide(ent)
-   local g = ent:GetCollisionGroup()
-   return (g != COLLISION_GROUP_WEAPON and
-           g != COLLISION_GROUP_DEBRIS and
-           g != COLLISION_GROUP_DEBRIS_TRIGGER and
-           g != COLLISION_GROUP_INTERACTIVE_DEBRIS)
+    local g = ent:GetCollisionGroup()
+    return (g != COLLISION_GROUP_WEAPON and
+        g != COLLISION_GROUP_DEBRIS and
+        g != COLLISION_GROUP_DEBRIS_TRIGGER and
+        g != COLLISION_GROUP_INTERACTIVE_DEBRIS)
 end
 
 local function CanTeleportToPos(ply, pos)
-   -- first check if we can teleport here at all, because any solid object or
-   -- brush will make us stuck and therefore kills/blocks us instead, so the
-   -- trace checks for anything solid to players that isn't a player
-   local tr = nil
-   local tres = {start=pos, endpos=pos, mask=MASK_PLAYERSOLID, filter=player.GetAll()}
-   local collide = false
+    -- first check if we can teleport here at all, because any solid object or
+    -- brush will make us stuck and therefore kills/blocks us instead, so the
+    -- trace checks for anything solid to players that isn't a player
+    local tr = nil
+    local tres = {start=pos, endpos=pos, mask=MASK_PLAYERSOLID, filter=player.GetAll()}
+    local collide = false
 
-   -- This thing is unnecessary if we can supply a collision group to trace
-   -- functions, like we can in source and sanity suggests we should be able
-   -- to do so, but I have not found a way to do so yet. Until then, re-trace
-   -- while extending our filter whenever we hit something we don't want to
-   -- hit (like weapons or ragdolls).
-   repeat
-      tr = util.TraceEntity(tres, ply)
+    -- This thing is unnecessary if we can supply a collision group to trace
+    -- functions, like we can in source and sanity suggests we should be able
+    -- to do so, but I have not found a way to do so yet. Until then, re-trace
+    -- while extending our filter whenever we hit something we don't want to
+    -- hit (like weapons or ragdolls).
+    repeat
+        tr = util.TraceEntity(tres, ply)
 
-      if tr.HitWorld then
-         collide = true
-      elseif IsValid(tr.Entity) then
-         if ShouldCollide(tr.Entity) then
-            collide = true
-         else
-            table.insert(tres.filter, tr.Entity)
-         end
-      end
-   until (not tr.Hit) or collide
+        if tr.HitWorld then
+        collide = true
+        elseif IsValid(tr.Entity) then
+        if ShouldCollide(tr.Entity) then
+        collide = true
+        else
+        table.insert(tres.filter, tr.Entity)
+        end
+        end
+    until (not tr.Hit) or collide
 
-   if collide then
-      --Telefrag(ply, ply)
-      return true, nil
-   else
+    if collide then
+        --Telefrag(ply, ply)
+        return true, nil
+    else
+        -- find all players in the place where we will be and telefrag them
+        local blockers = ents.FindInBox(pos + Vector(-16, -16, 0),
+        pos + Vector(16, 16, 64))
 
-      -- find all players in the place where we will be and telefrag them
-      local blockers = ents.FindInBox(pos + Vector(-16, -16, 0),
-                                      pos + Vector(16, 16, 64))
+        local blocking_plys = {}
 
-      local blocking_plys = {}
-
-      for _, block in pairs(blockers) do
-         if IsValid(block) then
-            if block:IsPlayer() and block != ply then
-               if block:Alive() then
-                  table.insert(blocking_plys, block)
-                  -- telefrag blocker
-                  --Telefrag(block, ply)
-               end
+        for _, block in pairs(blockers) do
+            if IsValid(block) and block:IsPlayer() and block != ply and block:Alive() then
+                table.insert(blocking_plys, block)
             end
-         end
-      end
+        end
 
-      return false, blocking_plys
-   end
+        return false, blocking_plys
+    end
 
-   return false, nil
+    return false, nil
 end
 
-
 local function TeleportPlayer(ply, teleport)
-   local oldpos = ply:GetPos()
-   local pos = teleport.pos
-   local ang = teleport.ang
+    local oldpos = ply:GetPos()
+    local pos = teleport.pos
+    local ang = teleport.ang
 
-
-
-   -- perform teleport
-   ply:SetPos(pos)
+    -- perform teleport
+    ply:SetPos(pos)
     if ply:IsPlayer() then
         ply:SetEyeAngles(ang) -- ineffective due to freeze...
-    else 
-        ply:GetPhysicsObject():Wake()
+    else
+        local phys = ply:GetPhysicsObject()
+        if phys:IsValid() then phys:Wake() end
     end
-   timer.Simple(delay_beamdown, function ()
-                                   if IsValid(ply) and ply:IsPlayer() then
-                                      ply:Freeze(false)
-                                   end
-                                end)
 
-   sound.Play(zap, oldpos, 65, 100)
-   sound.Play(unzap, pos, 55, 100)
+    timer.Simple(delay_beamdown, function ()
+        if IsValid(ply) and ply:IsPlayer() then
+            ply:Freeze(false)
+        end
+    end)
 
+    sound.Play(zap, oldpos, 65, 100)
+    sound.Play(unzap, pos, 55, 100)
 end
 
 local function DoTeleport(ply, teleport)
-   if IsValid(ply) and teleport then
-      local fail = false
+    if IsValid(ply) and teleport then
+        local fail = false
 
-      local block_world, block_plys = CanTeleportToPos(ply, teleport.pos)
+        local block_world, block_plys = CanTeleportToPos(ply, teleport.pos)
 
-      if block_world then
-         -- if blocked by prop/world, always fail
-         fail = true
-      elseif block_plys and #block_plys > 0 then
-         -- if blocked by player, maybe telefrag
-         
+        if block_world or (block_plys and #block_plys > 0) then
             fail = true
-         
-      end
+        end
 
-      if not fail then
-         TeleportPlayer(ply, teleport)
-         return
-      
-         
-      end
+        if not fail then
+            TeleportPlayer(ply, teleport)
+            return         
+        end
     elseif not IsValid(ply) then
-        return 
-      
+        return
     end
     if ply:IsPlayer() then
         ply:Freeze(false)
@@ -145,39 +126,34 @@ local function DoTeleport(ply, teleport)
 end
 
 local function StartTeleport(ply, teleport)
-   if (not IsValid(ply)) or (not teleport) then
-      return end
+    if (not IsValid(ply)) or (not teleport) then return end
 
-   teleport.ang = ply:EyeAngles()
+    teleport.ang = ply:EyeAngles()
 
-   timer.Simple(delay_beamup, function() DoTeleport(ply, teleport) end)
+    timer.Simple(delay_beamup, function() DoTeleport(ply, teleport) end)
 
-   local ang = ply:GetAngles()
+    local ang = ply:GetAngles()
 
-   local edata_up = EffectData()
-   edata_up:SetOrigin(ply:GetPos())
-   ang = Angle(0, ang.y, ang.r) -- deep copy
-   edata_up:SetAngles(ang)
-   edata_up:SetEntity(ply)
-   edata_up:SetMagnitude(delay_beamup)
-   edata_up:SetRadius(delay_beamdown)
+    local edata_up = EffectData()
+    edata_up:SetOrigin(ply:GetPos())
+    ang = Angle(0, ang.y, ang.r) -- deep copy
+    edata_up:SetAngles(ang)
+    edata_up:SetEntity(ply)
+    edata_up:SetMagnitude(delay_beamup)
+    edata_up:SetRadius(delay_beamdown)
 
-   util.Effect("teleport_beamup", edata_up)
+    util.Effect("teleport_beamup", edata_up)
 
-   local edata_dn = EffectData()
-   edata_up:SetOrigin(teleport.pos)
-   ang = Angle(0, ang.y, ang.r) -- deep copy
-   edata_up:SetAngles(ang)
-   edata_up:SetEntity(ply)
-   edata_up:SetMagnitude(delay_beamup)
-   edata_up:SetRadius(delay_beamdown)
+    local edata_dn = EffectData()
+    edata_up:SetOrigin(teleport.pos)
+    ang = Angle(0, ang.y, ang.r) -- deep copy
+    edata_up:SetAngles(ang)
+    edata_up:SetEntity(ply)
+    edata_up:SetMagnitude(delay_beamup)
+    edata_up:SetRadius(delay_beamdown)
 
-   util.Effect("teleport_beamdown", edata_dn)
+    util.Effect("teleport_beamdown", edata_dn)
 end
-
-
-
-
 
 function GUI:Inspect(obj)
     self:RemoveAllChildren()
