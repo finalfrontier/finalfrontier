@@ -10,8 +10,46 @@ end
 GUI._rooms = nil
 GUI._doors = nil
 
+GUI._canClickRooms = false
+GUI._canClickDoors = false
+
+if SERVER then
+	GUI._roomOnClickHandler = nil
+	GUI._doorOnClickHandler = nil
+end
+
+function GUI:GetCanClickRooms()
+	return self._canClickRooms
+end
+
+function GUI:SetCanClickRooms(canClick)
+	self._canClickRooms = canClick
+	self:_UpdateElementClickyness()
+end
+
+function GUI:GetCanClickDoors()
+	return self._canClickDoors
+end
+
+function GUI:SetCanClickDoors(canClick)
+	self._canClickDoors = canClick
+	self:_UpdateElementClickyness()
+end
+
 function GUI:GetCurrentShip()
 	return self._ship
+end
+
+if SERVER then
+	function GUI:SetRoomOnClickHandler(func)
+		self._roomOnClickHandler = func
+		self:_UpdateElementClickyness()
+	end
+
+	function GUI:SetDoorOnClickHandler(func)
+		self._doorOnClickHandler = func
+		self:_UpdateElementClickyness()
+	end
 end
 
 function GUI:SetCurrentShip(ship)
@@ -54,6 +92,29 @@ function GUI:_SetupShip()
 	if CLIENT then
 		self._shipSynced = true
 		self:FindTransform()
+	end
+
+	self:_UpdateElementClickyness()
+end
+
+function GUI:_UpdateElementClickyness()
+	if CLIENT and not self._shipSynced then return end
+
+	for i, door in ipairs(self._doors) do
+		door.Enabled = self._canClickDoors
+		door.NeedsPermission = not self._canClickDoors
+
+		if self._canClickDoors and self._doorOnClickHandler then
+			door.OnClick = self._doorOnClickHandler
+		end
+	end
+
+	for i, room in ipairs(self._rooms) do
+		room.CanClick = self._canClickRooms
+
+		if self._canClickRooms and self._roomOnClickHandler then
+			room.OnClick = self._roomOnClickHandler
+		end
 	end
 end
 

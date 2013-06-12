@@ -298,10 +298,10 @@ end
 
 function ENT:GetTransporterTarget()
 	-- TODO: check for obstructions
-	if #self._transpads > 0 then
-		return table.Random(self._transpads)
-	else
+	if #self._transtargets > 0 then
 		return table.Random(self._transtargets)
+	else
+		return table.Random(self._transpads)
 	end
 end
 

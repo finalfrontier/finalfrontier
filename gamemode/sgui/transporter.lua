@@ -16,143 +16,85 @@ GUI._grid = nil
 GUI._shipView = nil
 GUI._closeButton = nil
 
-local delay_beamup = 1
-local delay_beamdown = 1
-local zap = Sound("ambient/levels/labs/electric_explosion4.wav")
-local unzap = Sound("ambient/levels/labs/electric_explosion2.wav")
+if SERVER then
+    function GUI:CanTeleportEntity(ent)
+        return IsValid(ent) and (ent:IsPlayer(ent) or ent:GetClass() == "prop_physics")
+    end
 
-local function ShouldCollide(ent)
-    local g = ent:GetCollisionGroup()
-    return (g != COLLISION_GROUP_WEAPON and
-        g != COLLISION_GROUP_DEBRIS and
-        g != COLLISION_GROUP_DEBRIS_TRIGGER and
-        g != COLLISION_GROUP_INTERACTIVE_DEBRIS)
-end
+    local warmupSounds = {
+        "ambient/levels/citadel/zapper_warmup1.wav",
+        "ambient/levels/citadel/zapper_warmup4.wav"
+    }
 
-local function CanTeleportToPos(ply, pos)
-    -- first check if we can teleport here at all, because any solid object or
-    -- brush will make us stuck and therefore kills/blocks us instead, so the
-    -- trace checks for anything solid to players that isn't a player
-    local tr = nil
-    local tres = {start=pos, endpos=pos, mask=MASK_PLAYERSOLID, filter=player.GetAll()}
-    local collide = false
+    local failedSounds = {
+        "ambient/energy/zap7.wav",
+        "ambient/energy/zap8.wav"
+    }
 
-    -- This thing is unnecessary if we can supply a collision group to trace
-    -- functions, like we can in source and sanity suggests we should be able
-    -- to do so, but I have not found a way to do so yet. Until then, re-trace
-    -- while extending our filter whenever we hit something we don't want to
-    -- hit (like weapons or ragdolls).
-    repeat
-        tr = util.TraceEntity(tres, ply)
+    local transmitSounds = {
+        "ambient/machines/teleport1.wav",
+        "ambient/machines/teleport3.wav",
+        "ambient/machines/teleport4.wav"
+    }
 
-        if tr.HitWorld then
-        collide = true
-        elseif IsValid(tr.Entity) then
-        if ShouldCollide(tr.Entity) then
-        collide = true
+    local receiveSounds = {
+        "ambient/levels/labs/electric_explosion1.wav",
+        "ambient/levels/labs/electric_explosion2.wav",
+        "ambient/levels/labs/electric_explosion3.wav",
+        "ambient/levels/labs/electric_explosion4.wav"
+    }
+
+    function GUI:StartTeleport(room)
+        sound.Play(table.Random(warmupSounds), self:GetScreen():GetPos(), 100, 70)
+
+        timer.Simple(2.5, function()
+            for _, pad in pairs(self:GetRoom():GetTransporterPads()) do
+                for _, ent in pairs(ents.FindInSphere(pad, 64)) do
+                    if self:TeleportEntity(ent, room) then
+                        return
+                    end
+                end
+            end
+
+            for _, pad in pairs(self:GetRoom():GetTransporterPads()) do
+                sound.Play(table.Random(failedSounds), pad, 70, 110)
+            end
+        end)
+    end
+
+    function GUI:TeleportEntity(ent, room)
+        if not self:CanTeleportEntity(ent) then return false end
+
+        local oldpos = ent:GetPos()
+        local newpos = room:GetTransporterTarget()
+
+        ent:SetPos(newpos)
+
+        if ent:IsPlayer() then
+            local ship = ships.FindCurrentShip(ent)
+            if ship then ent:SetShip(ship) end
         else
-        table.insert(tres.filter, tr.Entity)
-        end
-        end
-    until (not tr.Hit) or collide
-
-    if collide then
-        --Telefrag(ply, ply)
-        return true, nil
-    else
-        -- find all players in the place where we will be and telefrag them
-        local blockers = ents.FindInBox(pos + Vector(-16, -16, 0),
-        pos + Vector(16, 16, 64))
-
-        local blocking_plys = {}
-
-        for _, block in pairs(blockers) do
-            if IsValid(block) and block:IsPlayer() and block != ply and block:Alive() then
-                table.insert(blocking_plys, block)
+            local phys = ent:GetPhysicsObject()
+            if phys and IsValid(phys) then
+                phys:Wake()
             end
         end
 
-        return false, blocking_plys
+        sound.Play(table.Random(transmitSounds), oldpos, 75, 100 + math.random() * 20)
+        sound.Play(table.Random(receiveSounds), newpos, 85, 100 + math.random() * 20)
+
+        local ed = EffectData()
+        ed:SetEntity(ent)
+        ed:SetOrigin(oldpos)
+        util.Effect("entity_remove", ed, true, true)
+
+        ed = EffectData()
+        ed:SetEntity(ent)
+        ed:SetOrigin(newpos)
+        util.Effect("propspawn", ed, true, true)
+
+        return true
     end
-
-    return false, nil
-end
-
-local function TeleportPlayer(ply, teleport)
-    local oldpos = ply:GetPos()
-    local pos = teleport.pos
-    local ang = teleport.ang
-
-    -- perform teleport
-    ply:SetPos(pos)
-    if ply:IsPlayer() then
-        ply:SetEyeAngles(ang) -- ineffective due to freeze...
-    else
-        local phys = ply:GetPhysicsObject()
-        if phys:IsValid() then phys:Wake() end
-    end
-
-    timer.Simple(delay_beamdown, function ()
-        if IsValid(ply) and ply:IsPlayer() then
-            ply:Freeze(false)
-        end
-    end)
-
-    sound.Play(zap, oldpos, 65, 100)
-    sound.Play(unzap, pos, 55, 100)
-end
-
-local function DoTeleport(ply, teleport)
-    if IsValid(ply) and teleport then
-        local fail = false
-
-        local block_world, block_plys = CanTeleportToPos(ply, teleport.pos)
-
-        if block_world or (block_plys and #block_plys > 0) then
-            fail = true
-        end
-
-        if not fail then
-            TeleportPlayer(ply, teleport)
-            return         
-        end
-    elseif not IsValid(ply) then
-        return
-    end
-    if ply:IsPlayer() then
-        ply:Freeze(false)
-        LANG.Msg(ply, "tele_failed")
-    end
-end
-
-local function StartTeleport(ply, teleport)
-    if (not IsValid(ply)) or (not teleport) then return end
-
-    teleport.ang = ply:EyeAngles()
-
-    timer.Simple(delay_beamup, function() DoTeleport(ply, teleport) end)
-
-    local ang = ply:GetAngles()
-
-    local edata_up = EffectData()
-    edata_up:SetOrigin(ply:GetPos())
-    ang = Angle(0, ang.y, ang.r) -- deep copy
-    edata_up:SetAngles(ang)
-    edata_up:SetEntity(ply)
-    edata_up:SetMagnitude(delay_beamup)
-    edata_up:SetRadius(delay_beamdown)
-
-    util.Effect("teleport_beamup", edata_up)
-
-    local edata_dn = EffectData()
-    edata_up:SetOrigin(teleport.pos)
-    ang = Angle(0, ang.y, ang.r) -- deep copy
-    edata_up:SetAngles(ang)
-    edata_up:SetEntity(ply)
-    edata_up:SetMagnitude(delay_beamup)
-    edata_up:SetRadius(delay_beamdown)
-
-    util.Effect("teleport_beamdown", edata_dn)
 end
 
 function GUI:Inspect(obj)
@@ -172,21 +114,12 @@ function GUI:Inspect(obj)
         self._shipView = sgui.Create(self, "shipview")
         self._shipView:SetCurrentShip(ships.GetByName(obj:GetObjectName()))
         self._shipView:SetBounds(Bounds(16, 8, self:GetWidth() - 32, self:GetHeight() - 88))
+        self._shipView:SetCanClickRooms(true)
 
-        for _ , room in pairs(self._shipView:GetRoomElements()) do
-           --print(room:GetCurrentRoom():GetName())
-            room.CanClick = true
-            if SERVER then
-                function room.OnClick(this, x, y, button)
-                    for _, pad in pairs(self:GetRoom():GetTransporterPads()) do
-                        for _, ent in pairs(ents.FindInSphere(pad, 64)) do
-                            StartTeleport(ent, {pos = room:GetCurrentRoom():GetTransporterTarget(), ang = 0})
-                        end
-                    end
-                   --print(room:GetCurrentRoom():GetName()) 
-                end
-            end
-
+        if SERVER then
+            self._shipView:SetRoomOnClickHandler(function(room, x, y, button)
+                self:StartTeleport(room:GetCurrentRoom())
+            end)
         end
 
         self._closeButton = sgui.Create(self, "button")
@@ -210,7 +143,7 @@ function GUI:Inspect(obj)
         self._grid:SetOrigin(8, 8)
         self._grid:SetSize(self:GetWidth() * 0.6 - 16, self:GetHeight() - 16)
         self._grid:SetCentreObject(nil)
-        self._grid:SetScale(math.max(self._grid:GetMinScale(), self._oldScale))
+        self._grid:SetScale(math.max(self._grid:GetMinSensorScale(), self._oldScale))
 
         self._zoomLabel = sgui.Create(self, "label")
         self._zoomLabel.AlignX = TEXT_ALIGN_CENTER
