@@ -14,7 +14,7 @@ function EFFECT:Init( data )
 	High = High - TargetEntity:GetPos() + vOffset
 
 	local NumParticles = TargetEntity:BoundingRadius()
-	NumParticles = NumParticles * 4
+	NumParticles = NumParticles * 8
 	
 	NumParticles = math.Clamp( NumParticles, 32, 256 )
 		
@@ -25,10 +25,19 @@ function EFFECT:Init( data )
 			local vPos = Vector( math.Rand(Low.x,High.x), math.Rand(Low.y,High.y), math.Rand(Low.z,High.z) )
 			local particle = emitter:Add( "effects/spark", vPos )
 			if (particle) then
-			
-				particle:SetVelocity( (vPos - vOffset) * 1 )
+				if math.random() < 0.5 then
+					particle:SetVelocity( (vPos - vOffset) * (5 + math.random() * 10))
+					particle:SetGravity( Vector( 0, 0, -600 ) )
+					particle:SetAirResistance( 25 )
+					particle:SetDieTime( math.Rand( 1.5, 2.5 ) )
+				else
+					particle:SetVelocity( (vPos - vOffset) * 1 )
+					particle:SetGravity( Vector( 0, 0, -100 ) )
+					particle:SetAirResistance( 100 )
+					particle:SetDieTime( math.Rand( 0.5, 1.0 ) )
+				end
+
 				particle:SetLifeTime( 0 )
-				particle:SetDieTime( math.Rand( 0.5, 1.0 ) )
 				particle:SetStartAlpha( math.Rand( 200, 255 ) )
 				particle:SetEndAlpha( 0 )
 				particle:SetStartSize( 2 )
@@ -36,8 +45,6 @@ function EFFECT:Init( data )
 				particle:SetRoll( math.Rand(0, 360) )
 				particle:SetRollDelta( 0 )
 				
-				particle:SetAirResistance( 100 )
-				particle:SetGravity( Vector( 0, 0, -100 ) )
 				particle:SetCollide( true )
 				particle:SetBounce( 0.3 )
 				

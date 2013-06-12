@@ -93,6 +93,11 @@ if SERVER then
         ed:SetOrigin(newpos)
         util.Effect("propspawn", ed, true, true)
 
+        ed = EffectData()
+        ed:SetEntity(ent)
+        ed:SetOrigin(newpos)
+        util.Effect("entity_remove", ed, true, true)
+
         return true
     end
 end

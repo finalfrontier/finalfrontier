@@ -113,7 +113,7 @@ if CLIENT then
 			local last, lx, ly = nil, 0, 0
 			local ply = self:GetUsingPlayer()
 			self.CanClick = self.Enabled and (not self.NeedsPermission or
-				(ply and ply:HasDoorPermission(self._door)))
+				(ply and ply.HasDoorPermission and ply:HasDoorPermission(self._door)))
 
 			surface.SetDrawColor(self:GetDoorColor())
 			surface.DrawPoly(self._poly)
