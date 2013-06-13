@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "90"
+	"mapversion" "93"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "90"
+	"mapversion" "93"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -81,7 +81,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 0 0"
 	"file" "ships/ff_default.vmf"
-	"replace01" "$light_brightness 255 223 159 100"
+	"replace01" "$light_brightness 191 191 255 100"
 	"replace02" "#/FF_WALLCONCRETE_STRIPE0A /FF_WALLCONCRETE_STRIPE1A"
 	"replace03" "#/FF_WALLCONCRETE_STRIPE0B /FF_WALLCONCRETE_STRIPE1B"
 	"replace04" "#/FF_WALLCONCRETE_STRIPE0C /FF_WALLCONCRETE_STRIPE1C"

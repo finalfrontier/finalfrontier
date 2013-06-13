@@ -86,17 +86,17 @@ if SERVER then
         local ed = EffectData()
         ed:SetEntity(ent)
         ed:SetOrigin(oldpos)
-        util.Effect("entity_remove", ed, true, true)
+        util.Effect("trans_sparks", ed, true, true)
+
+        ed = EffectData()
+        ed:SetEntity(ent)
+        ed:SetOrigin(oldpos)
+        util.Effect("trans_spawn", ed, true, true)
 
         ed = EffectData()
         ed:SetEntity(ent)
         ed:SetOrigin(newpos)
-        util.Effect("propspawn", ed, true, true)
-
-        ed = EffectData()
-        ed:SetEntity(ent)
-        ed:SetOrigin(newpos)
-        util.Effect("entity_remove", ed, true, true)
+        util.Effect("trans_sparks", ed, true, true)
 
         return true
     end
