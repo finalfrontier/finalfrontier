@@ -9,8 +9,8 @@ GUI._zoomLabel = nil
 GUI._zoomSlider = nil
 GUI._selectedLabel = nil
 GUI._inspectButton = nil
-GUI._coordLabel = nil
-GUI._sectorLabel = nil
+GUI._powerBar = nil
+GUI._chargeSlider = nil
 GUI._grid = nil
 
 GUI._shipView = nil
@@ -18,6 +18,9 @@ GUI._closeButton = nil
 
 function GUI:Inspect(obj)
     self:RemoveAllChildren()
+
+    local colWidth = self:GetWidth() * 0.4 - 16
+
     if obj then
         self._inspected = obj
         self._oldScale = self._grid:GetScale()
@@ -39,12 +42,22 @@ function GUI:Inspect(obj)
             self._shipView:SetRoomOnClickHandler(function(room, x, y, button)
                 self:GetSystem():StartTeleport(room:GetCurrentRoom())
             end)
+        elseif CLIENT then
+            if obj ~= self:GetShip():GetObject() then
+                self._shipView:SetRoomColourFunction(function(room)
+                    if room:GetCurrentRoom():GetShields() >= self:GetSystem():GetShieldThreshold() then
+                        return Color(64, 32, 32, 255)
+                    else
+                        return room.Color
+                    end
+                end)
+            end
         end
 
         self._closeButton = sgui.Create(self, "button")
         self._closeButton:SetOrigin(16, self:GetHeight() - 48 - 16)
-        self._closeButton:SetSize(self:GetWidth() - 32, 48)
-        self._closeButton.Text = "Return to Sector View"
+        self._closeButton:SetSize(self:GetWidth() - 56 - colWidth * 2, 48)
+        self._closeButton.Text = "Back"
 
         if SERVER then
             function self._closeButton.OnClick(btn, x, y, button)
@@ -68,12 +81,12 @@ function GUI:Inspect(obj)
         self._zoomLabel.AlignX = TEXT_ALIGN_CENTER
         self._zoomLabel.AlignY = TEXT_ALIGN_CENTER
         self._zoomLabel:SetOrigin(self._grid:GetRight() + 16, 16)
-        self._zoomLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
+        self._zoomLabel:SetSize(colWidth, 32)
         self._zoomLabel.Text = "View Zoom"
 
         self._zoomSlider = sgui.Create(self, "slider")
         self._zoomSlider:SetOrigin(self._grid:GetRight() + 16, self._zoomLabel:GetBottom() + 8)
-        self._zoomSlider:SetSize(self:GetWidth() * 0.4 - 16, 48)
+        self._zoomSlider:SetSize(colWidth, 48)
 
         if SERVER then
             local min = self._grid:GetMinScale()
@@ -90,13 +103,13 @@ function GUI:Inspect(obj)
         self._selectedLabel.AlignX = TEXT_ALIGN_CENTER
         self._selectedLabel.AlignY = TEXT_ALIGN_CENTER
         self._selectedLabel:SetOrigin(self._grid:GetRight() + 16, self._zoomSlider:GetBottom() + 48)
-        self._selectedLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
+        self._selectedLabel:SetSize(colWidth, 32)
         self._selectedLabel.Text = "This Ship"
 
         self._inspectButton = sgui.Create(self, "button")
         self._inspectButton:SetOrigin(self._grid:GetRight() + 16, self._selectedLabel:GetBottom() + 8)
-        self._inspectButton:SetSize(self:GetWidth() * 0.4 - 16, 48)
-        self._inspectButton.Text = "Inspect"
+        self._inspectButton:SetSize(colWidth, 48)
+        self._inspectButton.Text = "Select Room"
 
         if SERVER then
             self._inspectButton.OnClick = function(btn, button)
@@ -106,6 +119,29 @@ function GUI:Inspect(obj)
                 end
             end
         end
+    end
+
+    self._chargeSlider = sgui.Create(self, "slider")
+    self._chargeSlider:SetSize(colWidth, 48)
+    self._chargeSlider.CanClick = false
+    self._chargeSlider.TextColorNeg = self._chargeSlider.TextColorPos
+    self._chargeSlider.Value = self:GetSystem():GetCurrentCharge() / self:GetSystem():GetMaximumCharge()
+
+    if CLIENT then
+        function self._chargeSlider.GetValueText(slider, value)
+            return FormatNum(value * self:GetSystem():GetMaximumCharge(), 1, 2) .. "MC"
+        end
+    end
+
+    self._powerBar = sgui.Create(self, "powerbar")
+    self._powerBar:SetSize(colWidth, 48)
+
+    if obj then
+        self._chargeSlider:SetOrigin(self._closeButton:GetRight() + 16, self._closeButton:GetTop())
+        self._powerBar:SetOrigin(self._chargeSlider:GetRight() + 8, self._closeButton:GetTop())
+    else
+        self._chargeSlider:SetOrigin(self._grid:GetRight() + 16, self._inspectButton:GetBottom() + 32)
+        self._powerBar:SetOrigin(self._grid:GetRight() + 16, self._chargeSlider:GetBottom() + 8)
     end
 end
 
@@ -125,8 +161,16 @@ elseif CLIENT then
     function GUI:Draw()
         if not self._inspected then
             local obj = self._grid:GetCentreObject()
-            self._selectedLabel.Text = obj:GetObjectName()
+            if obj ~= self:GetShip():GetObject() then
+                self._selectedLabel.Text = obj:GetObjectName()
+            else
+                self._selectedLabel.Text = "This Ship"
+            end
         end
+
+        local dest = self:GetSystem():GetCurrentCharge() / self:GetSystem():GetMaximumCharge()
+
+        self._chargeSlider.Value = self._chargeSlider.Value + (dest - self._chargeSlider.Value) * 0.1
 
         self.Super[BASE].Draw(self)
     end
@@ -136,12 +180,14 @@ elseif CLIENT then
             self:Inspect(layout.inspected)
         end
 
+        local old = self._chargeSlider.Value
+
         self.Super[BASE].UpdateLayout(self, layout)
+
+        self._chargeSlider.Value = old
 
         if not self._inspected then
             self._inspectButton.CanClick = self._grid:GetCentreObject():GetObjectType() == objtype.ship
         end
     end
 end
-
-

@@ -16,6 +16,8 @@ GUI._canClickDoors = false
 if SERVER then
 	GUI._roomOnClickHandler = nil
 	GUI._doorOnClickHandler = nil
+elseif CLIENT then
+	GUI._roomColourFunction = nil
 end
 
 function GUI:GetCanClickRooms()
@@ -24,7 +26,7 @@ end
 
 function GUI:SetCanClickRooms(canClick)
 	self._canClickRooms = canClick
-	self:_UpdateElementClickyness()
+	self:_UpdateElements()
 end
 
 function GUI:GetCanClickDoors()
@@ -33,7 +35,7 @@ end
 
 function GUI:SetCanClickDoors(canClick)
 	self._canClickDoors = canClick
-	self:_UpdateElementClickyness()
+	self:_UpdateElements()
 end
 
 function GUI:GetCurrentShip()
@@ -43,12 +45,17 @@ end
 if SERVER then
 	function GUI:SetRoomOnClickHandler(func)
 		self._roomOnClickHandler = func
-		self:_UpdateElementClickyness()
+		self:_UpdateElements()
 	end
 
 	function GUI:SetDoorOnClickHandler(func)
 		self._doorOnClickHandler = func
-		self:_UpdateElementClickyness()
+		self:_UpdateElements()
+	end
+elseif CLIENT then
+	function GUI:SetRoomColourFunction(func)
+		self._roomColourFunction = func
+		self:_UpdateElements()
 	end
 end
 
@@ -94,26 +101,32 @@ function GUI:_SetupShip()
 		self:FindTransform()
 	end
 
-	self:_UpdateElementClickyness()
+	self:_UpdateElements()
 end
 
-function GUI:_UpdateElementClickyness()
+function GUI:_UpdateElements()
 	if CLIENT and not self._shipSynced then return end
 
 	for i, door in ipairs(self._doors) do
 		door.Enabled = self._canClickDoors
 		door.NeedsPermission = not self._canClickDoors
 
-		if self._canClickDoors and self._doorOnClickHandler then
-			door.OnClick = self._doorOnClickHandler
+		if SERVER then
+			if self._canClickDoors and self._doorOnClickHandler then
+				door.OnClick = self._doorOnClickHandler
+			end
 		end
 	end
 
 	for i, room in ipairs(self._rooms) do
 		room.CanClick = self._canClickRooms
 
-		if self._canClickRooms and self._roomOnClickHandler then
-			room.OnClick = self._roomOnClickHandler
+		if SERVER then
+			if self._canClickRooms and self._roomOnClickHandler then
+				room.OnClick = self._roomOnClickHandler
+			end
+		elseif CLIENT and self._roomColourFunction then
+			room.GetRoomColor = self._roomColourFunction
 		end
 	end
 end

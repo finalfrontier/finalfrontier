@@ -19,7 +19,6 @@ function GUI:GetCurrentRoom()
 end
 
 if SERVER then
-
 	function GUI:UpdateLayout(layout)
 		self.Super[BASE].UpdateLayout(self, layout)
 
@@ -164,7 +163,7 @@ elseif CLIENT then
 					surface.DrawTexturedRect(self._iconBounds:GetRect())
 				end
 
-				if sys.Powered and sys:GetPower() < sys:GetPowerNeeded()
+				if sys.Powered and sys:GetPower() < sys:GetPowerNeeded() - 0.005
 					and Pulse(1) >= 0.5 then
 					surface.SetMaterial(POWER)
 					surface.SetDrawColor(LerpColour(Color(255, 44, 33, 255),
