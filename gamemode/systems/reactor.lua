@@ -36,7 +36,7 @@ if SERVER then
 
     function SYS:CaculatePower(dt)
         local totalneeded = 0
-        for _, room in pairs(self.Ship:GetRooms()) do
+        for _, room in pairs(self:GetShip():GetRooms()) do
             if room:GetSystem() and room:GetSystem().Powered then
                 local needed = room:GetSystem():CalculatePowerNeeded(dt)
                 room:GetSystem():SetPowerNeeded(needed)
@@ -54,7 +54,7 @@ if SERVER then
 
         self._nwdata.supplied = ratio * totalneeded
 
-        for _, room in pairs(self.Ship:GetRooms()) do
+        for _, room in pairs(self:GetShip():GetRooms()) do
             if room:GetSystem() and room:GetSystem().Powered then
                 local needed = room:GetSystem():GetPowerNeeded()
                 local limit = self:GetSystemLimit(room:GetSystem())

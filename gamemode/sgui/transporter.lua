@@ -16,92 +16,6 @@ GUI._grid = nil
 GUI._shipView = nil
 GUI._closeButton = nil
 
-if SERVER then
-    function GUI:CanTeleportEntity(ent)
-        return IsValid(ent) and (ent:IsPlayer(ent) or ent:GetClass() == "prop_physics")
-    end
-
-    local warmupSounds = {
-        "ambient/levels/citadel/zapper_warmup1.wav",
-        "ambient/levels/citadel/zapper_warmup4.wav"
-    }
-
-    local failedSounds = {
-        "ambient/energy/zap7.wav",
-        "ambient/energy/zap8.wav"
-    }
-
-    local transmitSounds = {
-        "ambient/machines/teleport1.wav",
-        "ambient/machines/teleport3.wav",
-        "ambient/machines/teleport4.wav"
-    }
-
-    local receiveSounds = {
-        "ambient/levels/labs/electric_explosion1.wav",
-        "ambient/levels/labs/electric_explosion2.wav",
-        "ambient/levels/labs/electric_explosion3.wav",
-        "ambient/levels/labs/electric_explosion4.wav"
-    }
-
-    function GUI:StartTeleport(room)
-        sound.Play(table.Random(warmupSounds), self:GetScreen():GetPos(), 100, 70)
-
-        timer.Simple(2.5, function()
-            for _, pad in pairs(self:GetRoom():GetTransporterPads()) do
-                for _, ent in pairs(ents.FindInSphere(pad, 64)) do
-                    if self:TeleportEntity(ent, room) then
-                        return
-                    end
-                end
-            end
-
-            for _, pad in pairs(self:GetRoom():GetTransporterPads()) do
-                sound.Play(table.Random(failedSounds), pad, 70, 110)
-            end
-        end)
-    end
-
-    function GUI:TeleportEntity(ent, room)
-        if not self:CanTeleportEntity(ent) then return false end
-
-        local oldpos = ent:GetPos()
-        local newpos = room:GetTransporterTarget()
-
-        ent:SetPos(newpos)
-
-        if ent:IsPlayer() then
-            local ship = ships.FindCurrentShip(ent)
-            if ship then ent:SetShip(ship) end
-        else
-            local phys = ent:GetPhysicsObject()
-            if phys and IsValid(phys) then
-                phys:Wake()
-            end
-        end
-
-        sound.Play(table.Random(transmitSounds), oldpos, 75, 100 + math.random() * 20)
-        sound.Play(table.Random(receiveSounds), newpos, 85, 100 + math.random() * 20)
-
-        local ed = EffectData()
-        ed:SetEntity(ent)
-        ed:SetOrigin(oldpos)
-        util.Effect("trans_sparks", ed, true, true)
-
-        ed = EffectData()
-        ed:SetEntity(ent)
-        ed:SetOrigin(oldpos)
-        util.Effect("trans_spawn", ed, true, true)
-
-        ed = EffectData()
-        ed:SetEntity(ent)
-        ed:SetOrigin(newpos)
-        util.Effect("trans_sparks", ed, true, true)
-
-        return true
-    end
-end
-
 function GUI:Inspect(obj)
     self:RemoveAllChildren()
     if obj then
@@ -123,7 +37,7 @@ function GUI:Inspect(obj)
 
         if SERVER then
             self._shipView:SetRoomOnClickHandler(function(room, x, y, button)
-                self:StartTeleport(room:GetCurrentRoom())
+                self:GetSystem():StartTeleport(room:GetCurrentRoom())
             end)
         end
 
@@ -192,18 +106,6 @@ function GUI:Inspect(obj)
                 end
             end
         end
-
-        self._coordLabel = sgui.Create(self, "label")
-        self._coordLabel.AlignX = TEXT_ALIGN_CENTER
-        self._coordLabel.AlignY = TEXT_ALIGN_CENTER
-        self._coordLabel:SetOrigin(self._grid:GetRight() + 16, self:GetHeight() - 48)
-        self._coordLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
-
-        self._sectorLabel = sgui.Create(self, "label")
-        self._sectorLabel.AlignX = TEXT_ALIGN_CENTER
-        self._sectorLabel.AlignY = TEXT_ALIGN_CENTER
-        self._sectorLabel:SetOrigin(self._grid:GetRight() + 16, self._coordLabel:GetTop() - 48)
-        self._sectorLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
     end
 end
 
@@ -223,10 +125,7 @@ elseif CLIENT then
     function GUI:Draw()
         if not self._inspected then
             local obj = self._grid:GetCentreObject()
-            local x, y = obj:GetCoordinates()
-
             self._selectedLabel.Text = obj:GetObjectName()
-            self._coordLabel.Text = "x: " .. FormatNum(x, 1, 2) .. ", y: " .. FormatNum(y, 1, 2)
         end
 
         self.Super[BASE].Draw(self)
@@ -240,20 +139,6 @@ elseif CLIENT then
         self.Super[BASE].UpdateLayout(self, layout)
 
         if not self._inspected then
-            local sectors = ents.FindByClass("info_ff_sector")
-            local sx, sy = self:GetShip():GetCoordinates()
-            sx = math.floor(sx)
-            sy = math.floor(sy)
-            for _, sector in pairs(sectors) do
-                local x, y = sector:GetCoordinates()
-                x = math.floor(x)
-                y = math.floor(y)
-                if math.abs(x - sx) < 0.5 and math.abs(y - sy) < 0.5 then
-                    self._sectorLabel.Text = sector:GetSectorName()
-                    break
-                end
-            end
-
             self._inspectButton.CanClick = self._grid:GetCentreObject():GetObjectType() == objtype.ship
         end
     end

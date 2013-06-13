@@ -5,8 +5,8 @@ GUI.BaseName = BASE
 function GUI:Initialize()
 	self.Super[BASE].Initialize(self)
 
-	self:SetWidth(self.Screen.Width)
-	self:SetHeight(self.Screen.Height)
+	self:SetWidth(self:GetScreen().Width)
+	self:SetHeight(self:GetScreen().Height)
 end
 
 function GUI:Enter() end

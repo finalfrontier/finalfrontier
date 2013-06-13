@@ -25,7 +25,7 @@ if SERVER then
 	
 	function SYS:CalculatePowerNeeded()
 		local totNeeded = 0
-		for _, room in ipairs(self.Ship:GetRooms()) do
+		for _, room in ipairs(self:GetShip():GetRooms()) do
 			if self:GetDistrib(room) > 0 then
 				-- TODO: make continuous
 				local needed = room:GetSurfaceArea() * SHIELD_POWER_PER_M2
@@ -46,7 +46,7 @@ if SERVER then
 			ratio = math.min(self:GetPower() / needed, 1)
 		end
 
-		for _, room in ipairs(self.Ship:GetRooms()) do
+		for _, room in ipairs(self:GetShip():GetRooms()) do
 			if self:GetDistrib(room) > 0 then
 				local rate = ratio * 2 - 1
 				if room:GetShields() < self:GetDistrib(room) - 0.001 or rate < 0 then

@@ -15,24 +15,20 @@ function GUI:Initialize()
 end
 
 function GUI:GetPermission()
-	return self.Screen.UI.Permission
-end
-
-function GUI:GetScreen()
-	return self.Screen
+	return self:GetScreen().UI.Permission
 end
 
 function GUI:GetRoom()
-	return self.Screen.Room
+	return self:GetScreen():GetRoom()
 end
 
 function GUI:GetShip()
-	return self.Screen.Ship
+	return self:GetScreen():GetShip()
 end
 
 function GUI:GetSystem()
-	if self.Screen.Room then
-		return self.Screen.Room:GetSystem()
+	if self:GetScreen():GetRoom() then
+		return self:GetScreen():GetRoom():GetSystem()
 	end
 	return nil
 end
@@ -46,8 +42,8 @@ function GUI:GetSystemIcon()
 end
 
 function GUI:GetUsingPlayer()
-	if not self.Screen:GetNWBool("used") then return nil end
-	return self.Screen:GetNWEntity("user")
+	if not self:GetScreen():GetNWBool("used") then return nil end
+	return self:GetScreen():GetNWEntity("user")
 end
 
 function GUI:GetBounds() return self._bounds end
@@ -190,7 +186,7 @@ end
 
 if CLIENT then
 	function GUI:GetCursorPos()
-		local x, y = self.Screen:GetCursorPos()
+		local x, y = self:GetScreen():GetCursorPos()
 
 		if self:HasParent() then
 			x = x - self._parent._globBounds.l
@@ -230,8 +226,8 @@ if DEBUG then
 			print("click@" .. self:GetRoom():GetName() .. ":" .. self.Name .. "(" .. self:GetID() .. ")")
 end
 			net.Start("Click")
-			net.WriteEntity(self.Screen)
-			net.WriteFloat(self.Screen:GetNWFloat("layout"))
+			net.WriteEntity(self:GetScreen())
+			net.WriteFloat(self:GetScreen():GetNWFloat("layout"))
 			self:SendIDHierarchy()
 			net.WriteUInt(0, 16)
 			net.WriteInt(button, 8)
@@ -248,7 +244,7 @@ end
 if DEBUG then
 	function GUI:Draw()
 		local color = Color(255, 0, 0, 255)
-		if self.Screen:GetNWBool("used") and self:IsPointInside(self:GetCursorPos()) then
+		if self:GetScreen():GetNWBool("used") and self:IsPointInside(self:GetCursorPos()) then
 			color = Color(0, 255, 0, 255)
 		end
 
@@ -282,12 +278,12 @@ end
 
 if SERVER then
 	function GUI:AllocateNewID()
-		self._id = self.Screen.NextGUIID
-		self.Screen.NextGUIID = self.Screen.NextGUIID + 1
+		self._id = self:GetScreen().NextGUIID
+		self:GetScreen().NextGUIID = self:GetScreen().NextGUIID + 1
 	end
 
 	function GUI:InvalidateID()
-		self.Screen:FreeGUIID(self._id)
+		self:GetScreen():FreeGUIID(self._id)
 		self._id = 0
 	end
 
@@ -328,7 +324,7 @@ if SERVER then
 				local button = net.ReadInt(8)
 				local x, y = net.ReadFloat(), net.ReadFloat()
 if DEBUG then
-			print("click@" .. screen.Room:GetName() .. ":" .. element.Name ..
+			print("click@" .. screen:GetRoom():GetName() .. ":" .. element.Name ..
 				"(" .. element:GetID() .. ")")
 end
 				element:OnClick(x, y, button)

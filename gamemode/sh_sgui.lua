@@ -14,15 +14,19 @@ local _mt = {}
 _mt.__index = _mt
 
 _mt._id = 0
+_mt._screen = nil
 
 _mt.BaseName = nil
 _mt.Base = nil
 
-_mt.Screen = nil
 _mt.Name = nil
 
 function _mt:GetID()
 	return self._id
+end
+
+function _mt:GetScreen()
+	return self._screen
 end
 
 function _mt:Initialize() return end
@@ -92,10 +96,10 @@ function sgui.Create(parent, name)
 	if sgui._dict[name] then
 		local screen = parent
 		if not parent.GetClass or parent:GetClass() ~= "info_ff_screen" then
-			screen = parent.Screen
+			screen = parent:GetScreen()
 		end
 
-		local element = { Screen = screen }
+		local element = { _screen = screen }
 
 		setmetatable(element, sgui._dict[name])
 

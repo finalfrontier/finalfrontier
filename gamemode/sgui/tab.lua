@@ -14,7 +14,7 @@ function GUI:OnClick(x, y, button)
 
 	if SERVER and self:GetParent():GetCurrent() ~= self then
 		self:GetParent():SetCurrent(self)
-		self.Screen:UpdateLayout()
+		self:GetScreen():UpdateLayout()
 	end
 end
 

@@ -23,20 +23,20 @@ GUI._curpage = 0
 function GUI:Initialize()
 	self.Super[BASE].Initialize(self)
 
-	self:SetWidth(self.Screen.Width)
-	self:SetHeight(self.Screen.Height)
+	self:SetWidth(self:GetScreen().Width)
+	self:SetHeight(self:GetScreen().Height)
 	self:SetCentre(0, 0)
 
 	self.Pages = {}
-	self.Pages[page.STATUS] = sgui.Create(self.Screen, "statuspage")
-	self.Pages[page.ACCESS] = sgui.Create(self.Screen, "accesspage")
+	self.Pages[page.STATUS] = sgui.Create(self:GetScreen(), "statuspage")
+	self.Pages[page.ACCESS] = sgui.Create(self:GetScreen(), "accesspage")
 	if self:GetSystem() and self:GetSystem().SGUIName ~= "page" then
-		self.Pages[page.SYSTEM] = sgui.Create(self.Screen, self:GetSystem().SGUIName)
+		self.Pages[page.SYSTEM] = sgui.Create(self:GetScreen(), self:GetSystem().SGUIName)
 	end
-	self.Pages[page.SECURITY] = sgui.Create(self.Screen, "securitypage")
-	self.Pages[page.OVERRIDE] = sgui.Create(self.Screen, "overridepage")
+	self.Pages[page.SECURITY] = sgui.Create(self:GetScreen(), "securitypage")
+	self.Pages[page.OVERRIDE] = sgui.Create(self:GetScreen(), "overridepage")
 
-	self.TabMenu = sgui.Create(self.Screen, "tabmenu")
+	self.TabMenu = sgui.Create(self:GetScreen(), "tabmenu")
 	self.TabMenu:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)
 	self.TabMenu:SetCentre(self:GetWidth() / 2, self.TabHeight / 2 + self.TabMargin)
 
@@ -107,7 +107,7 @@ function GUI:SetCurrentPage(newpage)
 	self.TabMenu:SetCurrent(self.Tabs[newpage])
 
 	if SERVER then
-		self.Screen:UpdateLayout()
+		self:GetScreen():UpdateLayout()
 	end
 end
 

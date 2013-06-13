@@ -2,31 +2,31 @@ local BASE = "page"
 
 GUI.BaseName = BASE
 
-GUI.RoomView = nil
-GUI.DoorViews = nil
+GUI._roomView = nil
+GUI._doorViews = nil
 
 function GUI:Enter()
 	self.Super[BASE].Enter(self)
 
-	self.RoomView = sgui.Create(self.Screen, "roomview")
-	self.RoomView:SetCurrentRoom(self:GetRoom())
+	self._roomView = sgui.Create(self:GetScreen(), "roomview")
+	self._roomView:SetCurrentRoom(self:GetRoom())
 
-	self.DoorViews = {}
+	self._doorViews = {}
 	if self:GetRoom() then
 		for _, door in ipairs(self:GetRoom():GetDoors()) do
 			local doorview = sgui.Create(self, "doorview")
 			doorview:SetCurrentDoor(door)
 			doorview.Enabled = true
 			doorview.NeedsPermission = true
-			self.DoorViews[door] = doorview
+			self._doorViews[door] = doorview
 		end
 	end
 
-	self:AddChild(self.RoomView)
+	self:AddChild(self._roomView)
 
 	local margin = 16
 
-	self.RoomView:SetBounds(Bounds(
+	self._roomView:SetBounds(Bounds(
 		margin,
 		margin,
 		self:GetWidth() - margin * 2,
@@ -34,8 +34,8 @@ function GUI:Enter()
 	))
 
 	if CLIENT then
-		for door, doorview in pairs(self.DoorViews) do
-			doorview:ApplyTransform(self.RoomView:GetAppliedTransform())
+		for door, doorview in pairs(self._doorViews) do
+			doorview:ApplyTransform(self._roomView:GetAppliedTransform())
 		end
 	end
 end

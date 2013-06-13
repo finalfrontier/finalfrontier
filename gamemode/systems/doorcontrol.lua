@@ -27,7 +27,7 @@ if SERVER then
             table.insert(doors, v)
         end
 
-        local pos = self.Room:GetPos()
+        local pos = self:GetRoom():GetPos()
         self._sorted = {}
 
         while table.Count(doors) > 0 do

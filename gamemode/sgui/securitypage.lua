@@ -31,8 +31,8 @@ function GUI:Enter()
 	if SERVER then
 		self.PlayerList = player.GetAll()
 		table.sort(self.PlayerList, function(a, b)
-			return self.Screen:GetPos():DistToSqr(a:GetPos())
-				< self.Screen:GetPos():DistToSqr(b:GetPos())
+			return self:GetScreen():GetPos():DistToSqr(a:GetPos())
+				< self:GetScreen():GetPos():DistToSqr(b:GetPos())
 		end)
 
 		self:UpdateButtons()

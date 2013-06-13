@@ -159,7 +159,7 @@ if CLIENT then
 
 		if layout.door then
 			if not self._door or self._door:GetIndex() ~= layout.door then
-				self:SetCurrentDoor(self.Screen.Ship:GetDoorByIndex(layout.door))
+				self:SetCurrentDoor(self:GetScreen():GetShip():GetDoorByIndex(layout.door))
 			end
 		else
 			self._door = nil

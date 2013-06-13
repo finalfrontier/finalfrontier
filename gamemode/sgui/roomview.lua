@@ -57,7 +57,7 @@ elseif CLIENT then
 		for _, door in ipairs(self._room:GetDoors()) do
 			roomBounds:AddBounds(door:GetBounds())
 		end
-		local angle = self.Screen:GetAngles().Yaw + 90
+		local angle = self:GetScreen():GetAngles().Yaw + 90
 		
 		self:ApplyTransform(FindBestTransform(roomBounds,
 			self:GetGlobalBounds(), false, true, angle), true)
@@ -188,7 +188,7 @@ elseif CLIENT then
 					local r, b = self._transform:Transform(pos.x + 32, pos.y + 32)
 					l, r = math.min(l, r), math.max(l, r)
 					t, b = math.min(t, b), math.max(t, b)
-					local ang = ply:EyeAngles().y - self.Screen:GetAngles().y - 90
+					local ang = ply:EyeAngles().y - self:GetScreen():GetAngles().y - 90
 					surface.DrawTexturedRectRotated(
 						(l + r) * 0.5, (t + b) * 0.5, r - l, b - t, ang)
 				end
@@ -205,7 +205,7 @@ elseif CLIENT then
 
 		if layout.room then
 			if not self._room or self._room:GetIndex() ~= layout.room then
-				self:SetCurrentRoom(self.Screen.Ship:GetRoomByIndex(layout.room))
+				self:SetCurrentRoom(self:GetScreen():GetShip():GetRoomByIndex(layout.room))
 			end
 		else
 			self._room = nil

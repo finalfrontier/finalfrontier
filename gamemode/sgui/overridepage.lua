@@ -51,8 +51,8 @@ function GUI:Enter()
 	if SERVER then
 		self.ShuffleButton.OnClick = function(btn, button)
 			if self.Overriding then return end
-			self.Screen:ShuffleCurrentOverrideSequence()
-			self.Screen:UpdateLayout()
+			self:GetScreen():ShuffleCurrentOverrideSequence()
+			self:GetScreen():UpdateLayout()
 		end
 
 		self.OverrideButton.OnClick = function(btn, button)
@@ -60,9 +60,9 @@ function GUI:Enter()
 			if self:GetPermission() < permission.SECURITY then
 				self:StartOverriding()
 			else
-				self.Screen:SetOverrideSequence()
+				self:GetScreen():SetOverrideSequence()
 				self.PulseTime = CurTime()
-				self.Screen:UpdateLayout()
+				self:GetScreen():UpdateLayout()
 			end
 		end
 	end
@@ -84,19 +84,19 @@ function GUI:Enter()
 	self.Nodes = {}
 
 	if SERVER then
-		self.TimePerNode = self.Screen.OverrideTimePerNode
-		self.CurrSequence = self.Screen.OverrideCurrSequence
+		self.TimePerNode = self:GetScreen().OverrideTimePerNode
+		self.CurrSequence = self:GetScreen().OverrideCurrSequence
 
-		if not self.Screen.OverrideNodePositions then
-			self.Screen:GenerateOverrideNodePositions(Bounds(112, 48, w - 224, h - 96))
+		if not self:GetScreen().OverrideNodePositions then
+			self:GetScreen():GenerateOverrideNodePositions(Bounds(112, 48, w - 224, h - 96))
 		end
 
-		local count = self.Screen.OverrideNodeCount
+		local count = self:GetScreen().OverrideNodeCount
 		local rows = math.ceil(count / 4)
 		for i = 1, count do
 			local node = sgui.Create(self, "overridenode")
 			node:SetSize(NODE_SIZE, NODE_SIZE)
-			local pos = self.Screen.OverrideNodePositions[i]
+			local pos = self:GetScreen().OverrideNodePositions[i]
 			node:SetCentre(pos.x, pos.y)
 			node.Label = NODE_LABELS[i]
 
@@ -104,8 +104,8 @@ function GUI:Enter()
 			node.OnClick = function(node, button)
 				local key = table.KeyFromValue(self.CurrSequence, index)
 				if key then
-					self.Screen:SwapOverrideNodes(key)
-					self.Screen:UpdateLayout()
+					self:GetScreen():SwapOverrideNodes(key)
+					self:GetScreen():UpdateLayout()
 				end
 			end
 
@@ -118,7 +118,7 @@ if SERVER then
 	function GUI:FindCheckSequence()
 		if not self.CheckSequence then self.CheckSequence = {} end
 		
-		local goal = self.Screen.OverrideGoalSequence
+		local goal = self:GetScreen().OverrideGoalSequence
 		for i = 1, #self.CurrSequence do
 			local last = self.CurrSequence[i - 1]
 			local curr = self.CurrSequence[i]
@@ -152,7 +152,7 @@ if SERVER then
 			self.OverrideButton.CanClick = false
 
 			self:FindCheckSequence()
-			self.Screen:UpdateLayout()
+			self:GetScreen():UpdateLayout()
 
 			timer.Simple(self.TimePerNode * #self.Nodes, function()
 				self:StopOverriding()
@@ -168,7 +168,7 @@ if SERVER then
 			if self:IsCurrentPage() then
 				local overridden = true
 				for i, s in ipairs(self.CurrSequence) do
-					if self.Screen.OverrideGoalSequence[i] ~= s then
+					if self:GetScreen().OverrideGoalSequence[i] ~= s then
 						overridden = false
 					end
 				end
@@ -179,7 +179,7 @@ if SERVER then
 					self:GetParent():UpdatePermissions()
 				end
 
-				self.Screen:UpdateLayout()
+				self:GetScreen():UpdateLayout()
 			end
 		end
 	end

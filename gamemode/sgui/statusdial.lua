@@ -22,7 +22,7 @@ if CLIENT then
 	function GUI:Draw()
 		local x, y = self:GetGlobalCentre()
 		local radius = math.min(self:GetWidth(), self:GetHeight()) * 0.5
-		local room = self.Screen.Room
+		local room = self:GetScreen():GetRoom()
 
 		local atmo, temp, shld = 0, 0, 0
 		if room then

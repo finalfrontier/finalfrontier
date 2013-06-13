@@ -11,8 +11,8 @@ local MAIN_GUI_CLASS = "screen"
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 	
-ENT.Ship = nil
-ENT.Room = nil
+ENT._ship = nil
+ENT._room = nil
 
 ENT.Width = 0
 ENT.Height = 0
@@ -20,10 +20,18 @@ ENT.Height = 0
 ENT.UI = nil
 ENT.Layout = nil
 
+function ENT:GetShip()
+	return self._ship
+end
+
+function ENT:GetRoom()
+	return self._room
+end
+
 if SERVER then	
 	util.AddNetworkString("CursorPos")
 	
-	ENT.RoomName = nil
+	ENT._roomName = nil
 
 	ENT.OverrideNodeCount = 4
 	ENT.OverrideTimePerNode = 0.5
@@ -37,7 +45,7 @@ if SERVER then
 
 	function ENT:KeyValue(key, value)
 		if key == "room" then
-			self.RoomName = tostring(value)
+			self._roomName = tostring(value)
 		elseif key == "width" then
 			self:SetNWFloat("width", tonumber(value))
 			self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE
@@ -52,22 +60,22 @@ if SERVER then
 	end
 
 	function ENT:InitPostEntity()
-		if self.RoomName then
-			local rooms = ents.FindByName(self.RoomName)
+		if self._roomName then
+			local rooms = ents.FindByName(self._roomName)
 			if #rooms > 0 then
-				self.Room = rooms[1]
-				self.Room:AddScreen(self)
-				self.Ship = self.Room:GetShip()
+				self._room = rooms[1]
+				self._room:AddScreen(self)
+				self._ship = self._room:GetShip()
 			end
 		end
 		
-		if not self.Room then
+		if not self._room then
 			Error("Screen at " .. tostring(self:GetPos()) .. " (" .. self:GetName() .. ") has no room!\n")
 			return
 		end
 
-		self:SetNWString("ship", self.Room:GetShipName())
-		self:SetNWString("room", self.RoomName)
+		self:SetNWString("ship", self._room:GetShipName())
+		self:SetNWString("room", self._roomName)
 		self:SetNWBool("used", false)
 		self:SetNWEntity("user", nil)
 
@@ -248,12 +256,12 @@ if SERVER then
 		ply:Give("weapon_ff_unarmed")
 		ply:SelectWeapon("weapon_ff_unarmed")
 
-		self.UI.Permission = ply:GetPermission(self.Room)
+		self.UI.Permission = ply:GetPermission(self._room)
 		self.UI:SetCurrentPage(page.ACCESS)
 		self:UpdateLayout()
 
-		if self.Room:HasSystem() then
-			self.Room:GetSystem():StartControlling(self, ply)
+		if self._room:HasSystem() then
+			self._room:GetSystem():StartControlling(self, ply)
 		end
 	end
 	
@@ -280,8 +288,8 @@ if SERVER then
 		self.UI:SetCurrentPage(page.STATUS)
 		self:UpdateLayout()
 
-		if self.Room:HasSystem() then
-			self.Room:GetSystem():StopControlling(self, ply)
+		if self._room:HasSystem() then
+			self._room:GetSystem():StopControlling(self, ply)
 		end
 	end
 
@@ -314,9 +322,9 @@ elseif CLIENT then
 	ENT._nextCursory = 0
 	
 	function ENT:UpdateLayout()
-		if not self.Layout and self.Room and self.Room:IsCurrent() and self.Ship == LocalPlayer():GetShip() then
+		if not self.Layout and self._room and self._room:IsCurrent() and self._ship == LocalPlayer():GetShip() then
 			self.Layout = self:GetNWTable("layout")
-		elseif self.UI and self.Ship and self.Room and self.Ship ~= LocalPlayer():GetShip() then
+		elseif self.UI and self._ship and self._room and self._ship ~= LocalPlayer():GetShip() then
 			self.Layout = nil
 			self:ForgetNWTable("layout")
 		end
@@ -333,17 +341,17 @@ elseif CLIENT then
 	end
 
 	function ENT:Think()
-		if self.Ship and not self.Ship:IsValid() then
-			self.Ship = nil
-			self.Room = nil
+		if self._ship and not self._ship:IsValid() then
+			self._ship = nil
+			self._room = nil
 		end
 
-		if not self.Ship and self:GetNWString("ship") then
-			self.Ship = ships.GetByName(self:GetNWString("ship"))
+		if not self._ship and self:GetNWString("ship") then
+			self._ship = ships.GetByName(self:GetNWString("ship"))
 		end
 
-		if not self.Room and self.Ship and self:GetNWString("room") then
-			self.Room = self.Ship:GetRoomByName(self:GetNWString("room"))
+		if not self._room and self._ship and self:GetNWString("room") then
+			self._room = self._ship:GetRoomByName(self:GetNWString("room"))
 		end
 		
 		self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE
@@ -440,13 +448,13 @@ elseif CLIENT then
 		draw.NoTexture()
 		
 		cam.Start3D2D(self:GetPos(), ang, 1 / SCREEN_DRAWSCALE)
-			if self.UI then
-				self.UI:Draw()
-			end
-			if self:GetNWBool("used") then
-				self:FindCursorPosition()
-				self:DrawCursor()
-			end
+		if self.UI then
+			self.UI:Draw()
+		end
+		if self:GetNWBool("used") then
+			self:FindCursorPosition()
+			self:DrawCursor()
+		end
 		cam.End3D2D()
 	end
 

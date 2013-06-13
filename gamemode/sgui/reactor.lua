@@ -100,7 +100,7 @@ function GUI:SetCurrentRoom(room)
     end
 
     if SERVER then
-        self.Screen:UpdateLayout()
+        self:GetScreen():UpdateLayout()
     end
 end
 

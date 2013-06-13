@@ -17,9 +17,10 @@ _mt.__index = _mt
 _mt._nwdata = nil
 
 _mt.Name = "unnamed"
-_mt.Room = nil
-_mt.Ship = nil
 _mt.Powered = false
+
+_mt._room = nil
+_mt._ship = nil
 
 _mt.SGUIName = "page"
 
@@ -49,8 +50,12 @@ function _mt:Initialize()
 	return
 end
 
+function _mt:GetRoom()
+	return self._room
+end
+
 function _mt:GetShip()
-	return self.Room:GetShip()
+	return self._ship
 end
 
 if SERVER then
@@ -100,7 +105,7 @@ if SERVER then
 	end
 
 	function _mt:GetScreens()
-		return self.Room:GetScreens()
+		return self._room:GetScreens()
 	end
 	
 	function _mt:Think(dt)
@@ -150,9 +155,9 @@ function sys.Create(name, room)
 	if string.len(name) == 0 then return nil end
 	if sys._dict[name] then
 		local system = {
-			Room = room,
-			Ship = room:GetShip(),
 			Base = _mt,
+			_room = room,
+			_ship = room:GetShip(),
 			_nwtablename = room:GetName() .. "_sys"
 		}
 		setmetatable(system, sys._dict[name])

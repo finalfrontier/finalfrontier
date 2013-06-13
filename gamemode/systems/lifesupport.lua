@@ -37,7 +37,7 @@ if SERVER then
 
     function SYS:CalculatePowerNeeded(dt)
         local totNeeded = 0
-        for _, room in ipairs(self.Ship:GetRooms()) do
+        for _, room in ipairs(self:GetShip():GetRooms()) do
             if self:GetGoalTemperature(room) ~= -1 then
                 totNeeded = totNeeded + CalculatePowerCost(
                     room:GetUnitTemperature(),
@@ -65,7 +65,7 @@ if SERVER then
             ratio = math.min(self:GetPower() / needed, 1)
         end
 
-        for _, room in ipairs(self.Ship:GetRooms()) do
+        for _, room in ipairs(self:GetShip():GetRooms()) do
             if self:GetGoalTemperature(room) ~= -1 then
                 room:SetUnitTemperature(CalculateNextValue(
                     room:GetUnitTemperature(),

@@ -29,7 +29,7 @@ if SERVER then
 
         if self.Value ~= oldValue then
             self:OnValueChanged(self.Value)
-            self.Screen:UpdateLayout()
+            self:GetScreen():UpdateLayout()
         end
     end
 
