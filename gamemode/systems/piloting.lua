@@ -35,7 +35,7 @@ if SERVER then
             self._nwdata.targetx = x
             self._nwdata.targety = y
         end
-        
+
         self:_UpdateNWData()
     end
 
@@ -69,8 +69,8 @@ if SERVER then
 
         local a = self:GetAcceleration() * math.sqrt(0.5)
 
-        local ax = self:_FindAccel1D(tx, a, x, vx)
-        local ay = self:_FindAccel1D(ty, a, y, vy)
+        local ax = self:_FindAccel1D(x + dx, a, x, vx)
+        local ay = self:_FindAccel1D(y + dy, a, y, vy)
 
         obj:SetVel(vx + ax, vy + ay)
         obj:SetTargetRotation(math.atan2(-vy - ay, vx + ax) / math.pi * 180.0)
