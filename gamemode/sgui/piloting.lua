@@ -24,16 +24,19 @@ function GUI:Enter()
         end
     end
 
+    local colLeft = self._grid:GetRight() + 16
+    local colWidth = self:GetWidth() * 0.4 - 16
+
     self._zoomLabel = sgui.Create(self, "label")
     self._zoomLabel.AlignX = TEXT_ALIGN_CENTER
     self._zoomLabel.AlignY = TEXT_ALIGN_CENTER
-    self._zoomLabel:SetOrigin(self._grid:GetRight() + 16, 16)
-    self._zoomLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
+    self._zoomLabel:SetOrigin(colLeft, 16)
+    self._zoomLabel:SetSize(colWidth, 32)
     self._zoomLabel.Text = "View Zoom"
 
     self._zoomSlider = sgui.Create(self, "slider")
-    self._zoomSlider:SetOrigin(self._grid:GetRight() + 16, self._zoomLabel:GetBottom() + 8)
-    self._zoomSlider:SetSize(self:GetWidth() * 0.4 - 16, 48)
+    self._zoomSlider:SetOrigin(colLeft, self._zoomLabel:GetBottom() + 8)
+    self._zoomSlider:SetSize(colWidth, 48)
 
     if SERVER then
         local min = self._grid:GetMinScale()
@@ -46,17 +49,17 @@ function GUI:Enter()
         end
     end
 
-    self._coordLabel = sgui.Create(self, "label")
-    self._coordLabel.AlignX = TEXT_ALIGN_CENTER
-    self._coordLabel.AlignY = TEXT_ALIGN_CENTER
-    self._coordLabel:SetOrigin(self._grid:GetRight() + 16, self:GetHeight() - 48)
-    self._coordLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
-
     self._sectorLabel = sgui.Create(self, "label")
     self._sectorLabel.AlignX = TEXT_ALIGN_CENTER
     self._sectorLabel.AlignY = TEXT_ALIGN_CENTER
-    self._sectorLabel:SetOrigin(self._grid:GetRight() + 16, self._coordLabel:GetTop() - 48)
-    self._sectorLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
+    self._sectorLabel:SetOrigin(colLeft, self._zoomSlider:GetBottom() + 32)
+    self._sectorLabel:SetSize(colWidth, 32)
+
+    self._coordLabel = sgui.Create(self, "label")
+    self._coordLabel.AlignX = TEXT_ALIGN_CENTER
+    self._coordLabel.AlignY = TEXT_ALIGN_CENTER
+    self._coordLabel:SetOrigin(colLeft, self._sectorLabel:GetBottom() + 16)
+    self._coordLabel:SetSize(colWidth, 32)
 end
 
 if CLIENT then

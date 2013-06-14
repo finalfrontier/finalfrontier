@@ -78,10 +78,14 @@ if SERVER then
 		return 0
 	end
 
+	local function ShouldUpdate(old, new, compare)
+		return math.abs(new - old) >= 0.01 or (old ~= new and (old == compare or new == compare))
+	end
+
 	function _mt:SetPower(value)
 		self._power = value
 
-		if math.abs(self._power - (self._nwdata.power or 0)) >= 0.01 then
+		if ShouldUpdate(self._nwdata.power or 0, self._power, self._needed) then
 			self._nwdata.power = value
 			self:_UpdateNWData()
 		end
@@ -94,7 +98,7 @@ if SERVER then
 	function _mt:SetPowerNeeded(value)
 		self._needed = value
 
-		if math.abs(self._needed - (self._nwdata.needed or 0)) >= 0.01 then
+		if ShouldUpdate(self._nwdata.needed or 0, self._needed, self._power) then
 			self._nwdata.needed = value
 	        self:_UpdateNWData()
 	    end
