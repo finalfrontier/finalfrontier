@@ -4,7 +4,6 @@ ENT.Type = "anim"
 ENT.Base = "base_anim"
 
 ENT._lastLerpTime = 0
-ENT._lastTargetRotation = 0
 ENT._currRotation = 0
 ENT._lastRotation = 0
 
@@ -53,23 +52,17 @@ if SERVER then
     end
 end
 
+local function WrapAngle(ang)
+    if ang < -180 then return ang + 360 end
+    if ang >= 180 then return ang - 360 end
+    return ang
+end
+
 local function FindAngleDifference(a, b)
-    local diff = b - a
-    if diff >= 180 then
-        return diff - 360
-    elseif diff < -180 then
-        return diff + 360
-    end
-    return diff
+    if b < 0 then return WrapAngle(a - b) else return WrapAngle(b - a) end
 end
 
 function ENT:GetRotation()
-    if self._lastTargetRotation ~= self:GetTargetRotation() then
-        self._lastTargetRotation = self:GetTargetRotation()
-        self._lastRotation = self._currRotation
-        self._lastLerpTime = CurTime()
-    end
-
     local diff = FindAngleDifference(self._currRotation, self:GetTargetRotation())
     if math.abs(diff) >= 0.1 then
         local t = (CurTime() - self._lastLerpTime)
@@ -77,9 +70,10 @@ function ENT:GetRotation()
         self._currRotation = self._lastRotation + vel
     else
         self._currRotation = self:GetTargetRotation()
-        self._lastRotation = self._currRotation
-        self._lastLerpTime = CurTime()
     end
+
+    self._lastRotation = self._currRotation
+    self._lastLerpTime = CurTime()
     return self._currRotation
 end
 
