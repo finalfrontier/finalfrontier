@@ -9,8 +9,8 @@ GUI._zoomLabel = nil
 GUI._zoomSlider = nil
 GUI._selectedLabel = nil
 GUI._inspectButton = nil
-GUI._powerBar = nil
 GUI._chargeSlider = nil
+GUI._powerBar = nil
 GUI._grid = nil
 
 GUI._shipView = nil

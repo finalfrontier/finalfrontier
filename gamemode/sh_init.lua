@@ -46,3 +46,9 @@ function FormatNum(num, leading, trailing)
 
     return str
 end
+
+function FormatBearing(angle)
+    angle = 90 - angle
+    angle = angle - math.floor(angle / 360) * 360
+    return FormatNum(angle, 3, 0)
+end

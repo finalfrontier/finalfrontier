@@ -9,11 +9,11 @@ if SERVER then
     SYS._limits = nil
 
     function SYS:Initialize()
+        self._limits = {}
+
         self._nwdata.needed = 0
         self._nwdata.supplied = 0        
         self:SetTotalPower(20)
-
-        self._limits = {}
     end
 
     function SYS:SetTotalPower(value)

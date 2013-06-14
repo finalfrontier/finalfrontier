@@ -2,11 +2,13 @@ local BASE = "page"
 
 GUI.BaseName = BASE
 
+GUI._grid = nil
 GUI._zoomLabel = nil
 GUI._zoomSlider = nil
-GUI._coordLabel = nil
 GUI._sectorLabel = nil
-GUI._grid = nil
+GUI._coordLabel = nil
+GUI._angleLabel = nil
+GUI._powerBar = nil
 
 function GUI:Enter()
     self.Super[BASE].Enter(self)
@@ -61,12 +63,23 @@ function GUI:Enter()
     self._coordLabel.AlignY = TEXT_ALIGN_CENTER
     self._coordLabel:SetOrigin(colLeft, self._sectorLabel:GetBottom() + 16)
     self._coordLabel:SetSize(colWidth, 32)
+
+    self._angleLabel = sgui.Create(self, "label")
+    self._angleLabel.AlignX = TEXT_ALIGN_CENTER
+    self._angleLabel.AlignY = TEXT_ALIGN_CENTER
+    self._angleLabel:SetOrigin(colLeft, self._coordLabel:GetBottom() + 16)
+    self._angleLabel:SetSize(colWidth, 32)
+
+    self._powerBar = sgui.Create(self, "powerbar")
+    self._powerBar:SetOrigin(colLeft, self:GetHeight() - 64)
+    self._powerBar:SetSize(colWidth, 48)
 end
 
 if CLIENT then
     function GUI:Draw()
-        local x, y = self:GetShip():GetCoordinates()
-        self._coordLabel.Text = "x: " .. FormatNum(x, 1, 2) .. ", y: " .. FormatNum(y, 1, 2)
+        local sx, sy = self:GetShip():GetCoordinates()
+        self._coordLabel.Text = "x: " .. FormatNum(sx, 1, 2) .. ", y: " .. FormatNum(sy, 1, 2)
+        self._angleLabel.Text = "bearing: " .. FormatBearing(self:GetShip():GetRotation())
 
         self.Super[BASE].Draw(self)
     end

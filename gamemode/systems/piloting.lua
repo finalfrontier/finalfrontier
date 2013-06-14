@@ -1,7 +1,7 @@
 SYS.FullName = "Piloting"
 SYS.SGUIName = "piloting"
 
-SYS.Powered = false
+SYS.Powered = true
 
 function SYS:GetTargetCoordinates()
     if self:IsRelative() then
@@ -17,6 +17,26 @@ end
 
 if SERVER then
     -- resource.AddFile("materials/systems/piloting.png")
+
+    local SNAPPING_THRESHOLD_POS = 1.0 / 65536.0
+    local SNAPPING_THRESHOLD_VEL = 1.0 / 16384.0
+
+    local ACCELERATION_PER_POWER = 1.0 / 400.0
+
+    function SYS:GetMaximumPower()
+        return 4
+    end
+
+    function SYS:CalculatePowerNeeded()
+        local sx, sy = self:GetShip():GetCoordinates()
+        local tx, ty = self:GetTargetCoordinates()
+        local dx, dy = universe:GetDifference(sx, sy, tx, ty)
+        if dx * dx + dy * dy > 0 then
+            return self:GetMaximumPower()
+        else
+            return 0
+        end
+    end
 
     function SYS:Initialize()
         self._nwdata.targetx = 0
@@ -40,7 +60,8 @@ if SERVER then
     end
 
     function SYS:GetAcceleration()
-        return 0.01
+        if self:GetPowerNeeded() <= 0 then return 0 end
+        return self:GetPower() * ACCELERATION_PER_POWER
     end
 
     function SYS:_FindAccel1D(g, a, p, u)
@@ -59,7 +80,8 @@ if SERVER then
         local dx, dy = universe:GetDifference(x, y, tx, ty)
 
         local vx, vy = obj:GetVel()
-        if dx * dx + dy * dy <= 1.0 / 8192.0 and vx * vx + vy * vy <= 1.0 / 65536.0 then
+        if dx * dx + dy * dy <= SNAPPING_THRESHOLD_POS
+            and vx * vx + vy * vy <= SNAPPING_THRESHOLD_VEL then
             obj:SetCoordinates(tx, ty)
             obj:SetVel(0, 0)
             return
@@ -73,7 +95,7 @@ if SERVER then
         local ay = self:_FindAccel1D(y + dy, a, y, vy)
 
         obj:SetVel(vx + ax, vy + ay)
-        obj:SetTargetRotation(math.atan2(-vy - ay, vx + ax) / math.pi * 180.0)
+        obj:SetTargetRotation(math.atan2(-vy, vx) / math.pi * 180.0)
     end
 elseif CLIENT then
     -- SYS.Icon = Material("systems/piloting.png", "smooth")
