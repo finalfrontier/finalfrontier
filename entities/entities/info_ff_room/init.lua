@@ -30,7 +30,7 @@ ENT._players = nil
 ENT._nwdata = nil
 
 local function ShouldSync(a, b, delta)
-	return math.abs(a - b) >= delta
+	return math.abs(a - b) >= delta or (a ~= b and a * 100 == math.Round(a * 100))
 end
 
 function ENT:Initialize()
