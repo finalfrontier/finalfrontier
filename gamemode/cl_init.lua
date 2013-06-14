@@ -24,6 +24,12 @@ POWER = Material("power.png", "smooth")
 
 -- Global Functions
 
+function math.sign(x)
+    if x > 0 then return 1 end
+    if x < 0 then return -1 end
+    return 0
+end
+
 function Pulse(period)
 	return (math.sin(CurTime() * math.pi * 2 / period) + 1) * 0.5
 end

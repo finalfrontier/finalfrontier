@@ -19,6 +19,14 @@ resource.AddFile("materials/connector.png")
 resource.AddFile("materials/playerdot.png")
 resource.AddFile("materials/objects/ship.png")
 
+-- Global Functions
+
+function math.sign(x)
+    if x > 0 then return 1 end
+    if x < 0 then return -1 end
+    return 0
+end
+
 -- Gamemode Overrides
 
 function GM:Initialize()
