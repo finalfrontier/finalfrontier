@@ -36,7 +36,7 @@ if SERVER then
 		local door = self:GetCurrentDoor()
 
 		if not self.Enabled or (self.NeedsPermission
-			and not ply:HasDoorPermission(door)) then return end
+			and not ply:HasDoorPermission(door)) then return false end
 
 		if button == MOUSE2 then
 			if door:IsLocked() then
@@ -51,6 +51,8 @@ if SERVER then
 				door:UnlockClose()
 			end
 		end
+
+		return true
 	end
 
 	function GUI:UpdateLayout(layout)

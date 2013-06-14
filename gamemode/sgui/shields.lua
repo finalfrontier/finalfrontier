@@ -60,6 +60,7 @@ function GUI:SetCurrentRoom(room)
         if SERVER then
             function self._roomelems.close.OnClick(btn)
                 self:SetCurrentRoom(nil)
+                return true
             end
         end
     else
@@ -99,6 +100,7 @@ function GUI:Enter()
                 else
                     self:SetCurrentRoom(room:GetCurrentRoom())
                 end
+                return true
             end
 
             room.shieldDial:SetTargetValue(self:GetSystem():GetDistrib(room:GetCurrentRoom()))

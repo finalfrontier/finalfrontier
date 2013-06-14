@@ -102,6 +102,7 @@ function GUI:SetCurrentRoom(room)
 
             function self._roomelems.close.OnClick(btn)
                 self:SetCurrentRoom(nil)
+                return true
             end
         end
     else
@@ -157,6 +158,7 @@ function GUI:Enter()
                 end
 
                 self:GetScreen():UpdateLayout()
+                return true
             end
 
             room.atmoDial:SetTargetValue(math.max(self:GetSystem():GetGoalAtmosphere(room:GetCurrentRoom())))

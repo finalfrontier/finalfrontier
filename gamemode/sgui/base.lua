@@ -181,7 +181,7 @@ function GUI:GetParent()
 end
 
 function GUI:OnClick(x, y, button)
-	return
+	return false
 end
 
 if CLIENT then
@@ -277,6 +277,8 @@ end
 end
 
 if SERVER then
+	local clickSound = "buttons/button15.wav"
+
 	function GUI:AllocateNewID()
 		self._id = self:GetScreen().NextGUIID
 		self:GetScreen().NextGUIID = self:GetScreen().NextGUIID + 1
@@ -327,7 +329,9 @@ if DEBUG then
 			print("click@" .. screen:GetRoom():GetName() .. ":" .. element.Name ..
 				"(" .. element:GetID() .. ")")
 end
-				element:OnClick(x, y, button)
+				if element:OnClick(x, y, button) then
+					sound.Play(clickSound, screen:GetPos(), 65, 100)
+				end
 			end
 		end
 	end)

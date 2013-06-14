@@ -44,7 +44,7 @@ function GUI:GetMinSensorScale()
 end
 
 function GUI:GetMaxScale()
-    return math.min((self:GetWidth() - 16) / 0.1, (self:GetHeight() - 16) / 0.1)
+    return math.min((self:GetWidth() - 16) / 0.5, (self:GetHeight() - 16) / 0.5)
 end
 
 function GUI:SetScale(scale)
@@ -104,7 +104,12 @@ if SERVER then
     function GUI:OnClick(x, y, button)
         x = x - self:GetLeft()
         y = y - self:GetTop()
-        self:OnSelectObject(self:GetNearestObject(x, y), button)
+        local nearest = self:GetNearestObject(x, y)
+        if nearest ~= self:GetCentreObject() then
+            self:OnSelectObject(nearest, button)
+            return true
+        end
+        return false
     end
 
     function GUI:UpdateLayout(layout)

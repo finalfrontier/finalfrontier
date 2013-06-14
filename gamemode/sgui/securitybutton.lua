@@ -22,23 +22,25 @@ function GUI:Initialize()
 		self._permButton.OnClick = function(btn)
 			local ply = self:GetPlayer()
 			local room = self:GetRoom()
-			if not ply then return end
+			if not ply then return false end
 			local perm = ply:GetPermission(room)
 			perm = perm + 1
 			if perm > permission.SECURITY then perm = permission.ACCESS end
 			ply:SetPermission(self:GetRoom(), perm)
+			return true
 		end
 
 		self._adrmButton.OnClick = function(btn)
 			local ply = self:GetPlayer()
 			local room = self:GetRoom()
-			if not ply then return end
+			if not ply then return false end
 
 			if ply:GetPermission(room) <= permission.NONE then
 				ply:SetPermission(self:GetRoom(), permission.ACCESS)
 			else
 				ply:SetPermission(self:GetRoom(), permission.NONE)
 			end
+			return true
 		end
 	end
 

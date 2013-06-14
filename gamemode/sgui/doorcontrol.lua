@@ -26,6 +26,7 @@ function GUI:Enter()
 					else
 						self:GetSystem():ToggleAllLocked()
 					end
+					return true
 				end
 			end
 		elseif CLIENT then

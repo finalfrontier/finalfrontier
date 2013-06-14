@@ -41,6 +41,7 @@ function GUI:Inspect(obj)
         if SERVER then
             self._shipView:SetRoomOnClickHandler(function(room, x, y, button)
                 self:GetSystem():StartTeleport(room:GetCurrentRoom())
+                return true
             end)
         elseif CLIENT then
             if obj ~= self:GetShip():GetObject() then
@@ -64,6 +65,7 @@ function GUI:Inspect(obj)
                 self:Inspect(nil)
                 self._grid:SetCentreObject(obj)
                 self:GetScreen():UpdateLayout()
+                return true
             end
         end
     else
@@ -116,7 +118,9 @@ function GUI:Inspect(obj)
                 if self._grid:GetCentreObject():GetObjectType() == objtype.ship then
                     self:Inspect(self._grid:GetCentreObject())
                     self:GetScreen():UpdateLayout()
+                    return true
                 end
+                return false
             end
         end
     end

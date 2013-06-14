@@ -31,6 +31,7 @@ if SERVER then
             self:OnValueChanged(self.Value)
             self:GetScreen():UpdateLayout()
         end
+        return true
     end
 
     function GUI:OnValueChanged(value)

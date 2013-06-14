@@ -21,6 +21,7 @@ function GUI:Enter()
         function self._grid.OnClick(grid, x, y, button)
             x, y = grid:ScreenToCoordinate(x - grid:GetLeft(), y - grid:GetTop())
             self:GetSystem():SetTargetCoordinates(x, y, button == MOUSE2)
+            return true
         end
     end
 

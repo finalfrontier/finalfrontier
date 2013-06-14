@@ -50,13 +50,14 @@ function GUI:Enter()
 
 	if SERVER then
 		self.ShuffleButton.OnClick = function(btn, button)
-			if self.Overriding then return end
+			if self.Overriding then return false end
 			self:GetScreen():ShuffleCurrentOverrideSequence()
 			self:GetScreen():UpdateLayout()
+			return true
 		end
 
 		self.OverrideButton.OnClick = function(btn, button)
-			if self.Overriding then return end
+			if self.Overriding then return false end
 			if self:GetPermission() < permission.SECURITY then
 				self:StartOverriding()
 			else
@@ -64,6 +65,7 @@ function GUI:Enter()
 				self.PulseTime = CurTime()
 				self:GetScreen():UpdateLayout()
 			end
+			return true
 		end
 	end
 
@@ -106,7 +108,9 @@ function GUI:Enter()
 				if key then
 					self:GetScreen():SwapOverrideNodes(key)
 					self:GetScreen():UpdateLayout()
+					return true
 				end
+				return false
 			end
 
 			self.Nodes[i] = node

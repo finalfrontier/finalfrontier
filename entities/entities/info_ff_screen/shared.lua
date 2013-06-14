@@ -28,7 +28,15 @@ function ENT:GetRoom()
 	return self._room
 end
 
-if SERVER then	
+if SERVER then
+	local enableSounds = {
+		"buttons/button9.wav"
+	}
+
+	local disableSounds = {
+		"buttons/blip1.wav"
+	}
+
 	util.AddNetworkString("CursorPos")
 	
 	ENT._roomName = nil
@@ -263,6 +271,8 @@ if SERVER then
 		if self._room:HasSystem() then
 			self._room:GetSystem():StartControlling(self, ply)
 		end
+
+		sound.Play(table.Random(enableSounds), self:GetPos(), 95, 100)
 	end
 	
 	function ENT:StopUsing()
@@ -291,6 +301,8 @@ if SERVER then
 		if self._room:HasSystem() then
 			self._room:GetSystem():StopControlling(self, ply)
 		end
+
+		sound.Play(table.Random(disableSounds), self:GetPos(), 75, 100)
 	end
 
 	function ENT:GetCursorPos()
