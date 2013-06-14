@@ -6,6 +6,8 @@ ENT._roomlist = nil
 ENT._doors = nil
 ENT._bounds = nil
 
+ENT._systems = nil
+
 ENT._players = nil
 
 ENT._nwdata = nil
@@ -22,6 +24,8 @@ function ENT:Initialize()
 	self._roomlist = {}
 	self._doors = {}
 	self._bounds = Bounds()
+
+	self._systems = {}
 
 	self._players = {}
 
@@ -136,6 +140,19 @@ end
 
 function ENT:GetRoomByIndex(index)
 	return self._roomlist[index]
+end
+
+function ENT:GetSystem(name)
+	if not self._systems[name] then
+		for _, room in pairs(self._roomlist) do
+			if room:GetSystemName() == name then
+				self._systems[name] = room:GetSystem()
+				return room:GetSystem()
+			end
+		end
+	end
+
+	return self._systems[name]
 end
 
 function ENT:AddDoor(door)

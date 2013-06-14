@@ -59,7 +59,7 @@ local function WrapAngle(ang)
 end
 
 local function FindAngleDifference(a, b)
-    if b < 0 then return WrapAngle(a - b) else return WrapAngle(b - a) end
+    if b > 0 then return WrapAngle(b - a) else return WrapAngle(a - b) end
 end
 
 function ENT:GetRotation()

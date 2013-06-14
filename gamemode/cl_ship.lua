@@ -5,6 +5,8 @@ _mt._roomdict = nil
 _mt._roomlist = nil
 _mt._doorlist = nil
 
+_mt._systems = nil
+
 _mt._bounds = nil
 
 _mt._nwdata = nil
@@ -101,6 +103,19 @@ end
 
 function _mt:GetRoomByIndex(index)
 	return self._roomlist[index]
+end
+
+function _mt:GetSystem(name)
+	if not self._systems[name] then
+		for _, room in pairs(self._roomlist) do
+			if room:GetSystemName() == name then
+				self._systems[name] = room:GetSystem()
+				return room:GetSystem()
+			end
+		end
+	end
+
+	return self._systems[name]
 end
 
 function _mt:_UpdateDoors()
@@ -210,6 +225,8 @@ function Ship(name)
 	ship._roomdict = {}
 	ship._roomlist = {}
 	ship._doorlist = {}
+
+	ship._systems = {}
 
 	ship._nwdata = GetGlobalTable(name)
 	ship._nwdata.name = name

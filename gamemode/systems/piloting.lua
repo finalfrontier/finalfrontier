@@ -3,33 +3,44 @@ SYS.SGUIName = "piloting"
 
 SYS.Powered = false
 
-SYS._targetX = 0
-SYS._targetY = 0
-SYS._directional = false
+function SYS:GetTargetCoordinates()
+    if self:IsRelative() then
+        local sx, sy = self:GetShip():GetCoordinates()
+        return sx + self._nwdata.targetx, sy + self._nwdata.targety
+    end
+    return self._nwdata.targetx, self._nwdata.targety
+end
+
+function SYS:IsRelative()
+    return self._nwdata.relative
+end
 
 if SERVER then
     -- resource.AddFile("materials/systems/piloting.png")
 
-    function SYS:SetTargetCoordinates(x, y, directional)
-        self._directional = directional
+    function SYS:Initialize()
+        self._nwdata.targetx = 0
+        self._nwdata.targety = 0
+        self._nwdata.relative = true
+        self:_UpdateNWData()
+    end
 
-        if directional then
+    function SYS:SetTargetCoordinates(x, y, relative)
+        self._nwdata.relative = relative
+
+        if relative then
             local sx, sy = self:GetShip():GetCoordinates()
-            self._targetX, self._targetY = universe:GetDifference(sx, sy, x, y)
+            self._nwdata.targetx, self._nwdata.targety = universe:GetDifference(sx, sy, x, y)
         else
-            self._targetX = x
-            self._targetY = y
+            self._nwdata.targetx = x
+            self._nwdata.targety = y
         end
-
-        print("tx: " .. FormatNum(self._targetX, 1, 2) .. ", ty: " .. FormatNum(self._targetY, 1, 2) .. ", d: " .. tostring(self._directional))
+        
+        self:_UpdateNWData()
     end
 
     function SYS:GetAcceleration()
         return 0.01
-    end
-
-    function SYS:Initialize()
-        self._targetX, self._targetY = self:GetShip():GetCoordinates()
     end
 
     function SYS:_FindAccel1D(g, a, p, u)
@@ -44,12 +55,7 @@ if SERVER then
         local obj = self:GetShip():GetObject()
 
         local x, y = obj:GetCoordinates()
-        local tx, ty = 0, 0
-        if self._directional then
-            tx, ty = x + self._targetX, y + self._targetY
-        else
-            tx, ty = self._targetX, self._targetY
-        end
+        local tx, ty = self:GetTargetCoordinates()
         local dx, dy = universe:GetDifference(x, y, tx, ty)
 
         local vx, vy = obj:GetVel()

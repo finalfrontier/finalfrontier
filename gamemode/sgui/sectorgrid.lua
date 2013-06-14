@@ -35,14 +35,12 @@ end
 
 function GUI:GetMinScale()
     local rangeSize = 8
-    return math.min((self:GetWidth() - 16) / rangeSize,
-        (self:GetHeight() - 16) / rangeSize)
+    return math.min((self:GetWidth() - 16) / rangeSize, (self:GetHeight() - 16) / rangeSize)
 end
 
 function GUI:GetMinSensorScale()
     local rangeSize = math.max(self:GetShip():GetRange() * 2, 0.1)
-    return math.min((self:GetWidth() - 16) / rangeSize,
-        (self:GetHeight() - 16) / rangeSize)
+    return math.min((self:GetWidth() - 16) / rangeSize, (self:GetHeight() - 16) / rangeSize)
 end
 
 function GUI:GetMaxScale()
@@ -157,6 +155,19 @@ elseif CLIENT then
         local sx, sy = self:CoordinateToScreen(ship:GetCoordinates())
         surface.SetDrawColor(Color(255, 255, 255, 2))
         surface.DrawCircle(sx + ox, sy + oy, ship:GetRange() * self._curScale)
+
+        local piloting = ship:GetSystem("piloting")
+        if piloting then
+            local tx, ty = self:CoordinateToScreen(piloting:GetTargetCoordinates())
+
+            if math.abs(tx - sx) > 0.5 or math.abs(ty - sy) > 0.5 then
+                surface.SetDrawColor(Color(51, 172, 45, 127))
+                surface.DrawOutlinedRect(tx + ox - 8, ty + oy - 8, 16, 16)
+
+                surface.SetDrawColor(Color(51, 172, 45, 32))
+                surface.DrawLine(sx + ox, sy + oy, tx + ox, ty + oy)
+            end
+        end
         
         local closest = self:GetNearestObject(self:GetLocalCursorPos())
         local objects = ents.FindByClass("info_ff_object")
