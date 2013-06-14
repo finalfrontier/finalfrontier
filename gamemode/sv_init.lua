@@ -5,6 +5,7 @@
 
 include("gmtools/nwtable.lua")
 
+include("sh_init.lua")
 include("sh_bounds.lua")
 include("sh_matrix.lua")
 include("sh_transform2d.lua")
@@ -18,14 +19,6 @@ resource.AddFile("materials/circle.png")
 resource.AddFile("materials/connector.png")
 resource.AddFile("materials/playerdot.png")
 resource.AddFile("materials/objects/ship.png")
-
--- Global Functions
-
-function math.sign(x)
-    if x > 0 then return 1 end
-    if x < 0 then return -1 end
-    return 0
-end
 
 -- Gamemode Overrides
 

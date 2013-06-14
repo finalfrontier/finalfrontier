@@ -20,11 +20,7 @@ function GUI:Enter()
     if SERVER then
         function self._grid.OnClick(grid, x, y, button)
             x, y = grid:ScreenToCoordinate(x - grid:GetLeft(), y - grid:GetTop())
-            if button == MOUSE1 then
-                self:GetSystem():SetTargetCoordinates(x, y)
-            else
-                self:GetSystem():SetTargetRotation(x, y)
-            end
+            self:GetSystem():SetTargetCoordinates(x, y, button == MOUSE2)
         end
     end
 
