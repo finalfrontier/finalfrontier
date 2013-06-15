@@ -44,21 +44,8 @@ if SERVER then
         self:_UpdateGrid()
     end
 
-    function ENT:Use()
-        if self:IsInSlot() then
-            local phys = self:GetPhysicsObject()
-
-            self:SetPos(self:GetPos() + Vector(0, 0, 12))
-
-            if IsValid(phys) then
-                phys:EnableMotion(true)
-                phys:Wake()
-                phys:SetVelocity(Vector(0, 0, 128))
-            end
-
-            self:SetNWString("ship", "")
-            self:SetNWInt("room", -1)
-        end
+    function ENT:Use(ply)
+        if self:IsInSlot() then self:RemoveFromSlot(ply) end
     end
 
     function ENT:_RandomizeGrid()
@@ -66,10 +53,12 @@ if SERVER then
         for i = 1, 4 do
             if not self._grid[i] then self._grid[i] = {} end
             for j = 1, 4 do
-                if math.random() > 0.5 then
-                    self._grid[i][j] = 1
-                else
+                if math.random() < 1 / 16 then
+                    self._grid[i][j] = -1
+                elseif math.random() < 0.5 then
                     self._grid[i][j] = 0
+                else
+                    self._grid[i][j] = 1
                 end
             end
         end
@@ -80,16 +69,62 @@ if SERVER then
     end
 
     function ENT:InsertIntoSlot(room, slot)
-        self:SetNWString("ship", room:GetShipName())
-        self:SetNWInt("room", room:GetIndex())
+        if not self:IsInSlot() then
+            self:SetNWString("ship", room:GetShipName())
+            self:SetNWInt("room", room:GetIndex())
 
-        local phys = self:GetPhysicsObject()
-        if IsValid(phys) then
-            phys:EnableMotion(false)
+            local phys = self:GetPhysicsObject()
+            if IsValid(phys) then
+                phys:EnableMotion(false)
+            end
+
+            self:SetPos(slot - Vector(0, 0, 4))
+            self:SetAngles(Angle(0, 0, 0))
         end
+    end
 
-        self:SetPos(slot - Vector(0, 0, 4))
-        self:SetAngles(Angle(0, 0, 0))
+    function ENT:RemoveFromSlot(ply)
+        if self:IsInSlot() then
+            local phys = self:GetPhysicsObject()
+
+            self:SetPos(self:GetPos() + Vector(0, 0, 12))
+
+            if IsValid(phys) then
+                phys:EnableMotion(true)
+                phys:Wake()
+
+                local vel = Vector(0, 0, 128)
+                if IsValid(ply) then
+                    local diff = self:GetPos() - ply:GetPos()
+                    vel.x = vel.x + diff.x
+                    vel.y = vel.y + diff.y
+                end
+
+                phys:SetVelocity(vel)
+            end
+
+            self:SetNWString("ship", "")
+            self:SetNWInt("room", -1)
+        end
+    end
+
+    function ENT:OnTakeDamage(dmg)
+        if math.random() * math.random() < dmg:GetDamage() / 100 then
+            local canDamage = {}
+            for i = 1, 4 do
+                for j = 1, 4 do
+                    if self._grid[i][j] > -1 then
+                        table.insert(canDamage, {i = i, j = j})
+                    end
+                end
+            end
+
+            if #canDamage == 0 then return end
+
+            local pos = table.Random(canDamage)
+            self._grid[pos.i][pos.j] = -1
+            self:_UpdateGrid()
+        end
     end
 
     function ENT:Think()
@@ -150,6 +185,9 @@ elseif CLIENT then
                             surface.DrawRect(x - 4, y - 4, 8, 8)
                         elseif val == 1 then
                             surface.SetDrawColor(Color(45, 51, 172, 255))
+                            surface.DrawRect(x - 4, y - 4, 8, 8)
+                        else
+                            surface.SetDrawColor(Color(172, 45, 51, Pulse(1) * 63 + 32))
                             surface.DrawRect(x - 4, y - 4, 8, 8)
                         end
                     end
