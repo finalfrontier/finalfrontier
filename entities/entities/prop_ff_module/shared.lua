@@ -37,10 +37,6 @@ if SERVER then
 
         local phys = self:GetPhysicsObject()
         if IsValid(phys) then
-            phys:AddGameFlag(FVPHYSICS_PLAYER_HELD)
-            phys:ClearGameFlag(FVPHYSICS_HEAVY_OBJECT)
-            phys:ClearGameFlag(FVPHYSICS_NO_PLAYER_PICKUP)
-            phys:SetMass(1)
             phys:Wake()
         end
 

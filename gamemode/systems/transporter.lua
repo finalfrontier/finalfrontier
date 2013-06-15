@@ -66,7 +66,8 @@ if SERVER then
 
     function SYS:GetChargeCost(ent)
         if ent:IsPlayer() then return 1.0 end
-        if ent:GetClass() == "prop_physics" then return 0.5 end
+        if ent:GetClass() == "prop_physics" then return 0.2 end
+        if ent:GetClass() == "prop_ff_module" then return 0.35 end
         return self._nwdata.maxcharge + 1
     end
 
