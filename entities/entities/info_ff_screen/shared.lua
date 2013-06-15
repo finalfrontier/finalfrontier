@@ -272,7 +272,7 @@ if SERVER then
 			self._room:GetSystem():StartControlling(self, ply)
 		end
 
-		sound.Play(table.Random(enableSounds), self:GetPos(), 95, 100)
+		self:EmitSound(table.Random(enableSounds), 95, 100)
 	end
 	
 	function ENT:StopUsing()
@@ -302,7 +302,7 @@ if SERVER then
 			self._room:GetSystem():StopControlling(self, ply)
 		end
 
-		sound.Play(table.Random(disableSounds), self:GetPos(), 75, 100)
+		self:EmitSound(table.Random(disableSounds), 75, 100)
 	end
 
 	function ENT:GetCursorPos()

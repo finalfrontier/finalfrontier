@@ -330,7 +330,7 @@ if DEBUG then
 				"(" .. element:GetID() .. ")")
 end
 				if element:OnClick(x, y, button) then
-					sound.Play(clickSound, screen:GetPos(), 65, 100)
+					screen:EmitSound(clickSound, 65, 100)
 				end
 			end
 		end

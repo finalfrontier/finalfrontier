@@ -24,7 +24,26 @@ function ENT:GetRoom()
     return ship:GetRoomByIndex(self:GetNWInt("room"))
 end
 
+function ENT:GetDamaged()
+    if CLIENT and not self:IsGridLoaded() then return 0 end
+
+    local grid = self:GetGrid()
+
+    local count = 0
+    for i = 1, 4 do
+        for j = 1, 4 do
+            if grid[i][j] == -1 then
+                count = count + 1
+            end
+        end
+    end
+
+    return count
+end
+
 if SERVER then
+    ENT._lastEffect = 0
+
     function ENT:SetModuleType(type)
         self:SetNWInt("type", type)
     end
@@ -44,8 +63,8 @@ if SERVER then
         self:_UpdateGrid()
     end
 
-    function ENT:Use(ply)
-        if self:IsInSlot() then self:RemoveFromSlot(ply) end
+    function ENT:GetGrid()
+        return self._grid
     end
 
     function ENT:_RandomizeGrid()
@@ -53,9 +72,7 @@ if SERVER then
         for i = 1, 4 do
             if not self._grid[i] then self._grid[i] = {} end
             for j = 1, 4 do
-                if math.random() < 1 / 16 then
-                    self._grid[i][j] = -1
-                elseif math.random() < 0.5 then
+                if math.random() < 0.5 then
                     self._grid[i][j] = 0
                 else
                     self._grid[i][j] = 1
@@ -139,6 +156,16 @@ if SERVER then
                     self:InsertIntoSlot(v:GetRoom(), v:GetPos())
                 end
             end
+        else
+            if self:GetDamaged() < 2 then return end
+            if CurTime() - self._lastEffect < 17 - ((math.random() * 0.5 + 0.5) * self:GetDamaged()) then return end
+
+            local ed = EffectData()
+            ed:SetEntity(self)
+            ed:SetMagnitude(math.random() * self:GetDamaged())
+            util.Effect("module_sparks", ed)
+
+            self._lastEffect = CurTime()
         end
     end
 elseif CLIENT then

@@ -70,6 +70,13 @@ function GM:Think()
 	return
 end
 
+function GM:GravGunPickupAllowed(ply, ent)
+	if ent:GetClass() == "prop_ff_module" then
+		ent:RemoveFromSlot()
+	end
+	return true
+end
+
 function GM:SetupPlayerVisibility(ply)
 	local ship = ply:GetShip()
 	if not ship then return end
