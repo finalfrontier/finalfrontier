@@ -19,6 +19,7 @@ ENT._transpads = nil
 ENT._transtargets = nil
 
 ENT._moduleslots = nil
+ENT._modules = nil
 
 ENT._airvolume = 0
 ENT._temperature = 0
@@ -47,6 +48,7 @@ function ENT:Initialize()
 	self._transtargets = {}
 
 	self._moduleslots = {}
+	self._modules = {}
 
 	self._players = {}
 
@@ -318,8 +320,12 @@ function ENT:AddModuleSlot(pos, type)
 	mdl:InsertIntoSlot(self, pos)
 end
 
-function ENT:GetModuleSlot(type)
-	
+function ENT:GetModule(type)
+	return self._modules[type]
+end
+
+function ENT:SetModule(type, module)
+	self._modules[type] = module
 end
 
 function ENT:AddDoor(door)
@@ -379,7 +385,7 @@ function ENT:GetAtmosphere()
 end
 
 function ENT:SetUnitShields(shields)
-	self._shields = math.Clamp(shields, 0, self:GetSurfaceArea())
+	self._shields = math.Clamp(shields, 0, self:GetMaximumUnitShields())
 
 	if ShouldSync(self._shields, self._nwdata.shields, 1 / 100) then
 		self._nwdata.shields = self._shields
@@ -391,8 +397,18 @@ function ENT:GetUnitShields()
 	return self._shields or 0
 end
 
+function ENT:GetMaximumUnitShields()
+	local shieldMod = self:GetModule(moduletype.shields)
+	if not shieldMod then return 0 end
+	return self:GetSurfaceArea() * shieldMod:GetScore()
+end
+
 function ENT:GetShields()
 	return self:GetUnitShields() / self:GetSurfaceArea()
+end
+
+function ENT:GetMaximumShields()
+	return self:GetMaximumUnitShields() / self:GetSurfaceArea()
 end
 
 function ENT:TransmitTemperature(room, delta)

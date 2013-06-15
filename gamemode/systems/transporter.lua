@@ -46,7 +46,10 @@ if SERVER then
     SYS._teleporting = false
 
     function SYS:CalculatePowerNeeded()
-        return 2
+        if self:GetCurrentCharge() < self:GetMaximumCharge() then
+            return 2
+        end
+        return 0
     end
 
     function SYS:Initialize()

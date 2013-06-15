@@ -29,9 +29,10 @@ if SERVER then
 			if self:GetDistrib(room) > 0 then
 				-- TODO: make continuous
 				local needed = room:GetSurfaceArea() * SHIELD_POWER_PER_M2
-				if room:GetShields() < self:GetDistrib(room) - 0.001 then
+				local goal = math.min(self:GetDistrib(room), room:GetMaximumShields())
+				if room:GetShields() < goal - 0.001 then
 					totNeeded = totNeeded + needed * 2
-				elseif room:GetShields() < self:GetDistrib(room) + 0.001 then
+				elseif room:GetShields() < goal + 0.001 then
 					totNeeded = totNeeded + needed
 				end
 			end
@@ -47,14 +48,15 @@ if SERVER then
 		end
 
 		for _, room in ipairs(self:GetShip():GetRooms()) do
-			if self:GetDistrib(room) > 0 then
+			local goal = math.min(self:GetDistrib(room), room:GetMaximumShields())
+			if goal > 0 then
 				local rate = ratio * 2 - 1
-				if room:GetShields() < self:GetDistrib(room) - 0.001 or rate < 0 then
+				if room:GetShields() < goal - 0.001 or rate < 0 then
 					room:SetUnitShields(room:GetUnitShields() + SHIELD_RECHARGE_RATE * rate * dt)
 				end
 			end
-			if room:GetShields() > self:GetDistrib(room) then
-				room:SetUnitShields(self:GetDistrib(room) * room:GetSurfaceArea())
+			if room:GetShields() > goal then
+				room:SetUnitShields(goal * room:GetSurfaceArea())
 			end
 		end
 	end

@@ -10,6 +10,33 @@ moduletype.systempower = 2
 
 ENT._grid = nil
 
+optimalGrids = nil
+
+if SERVER then
+    function ENT:GenerateGrid()
+        local grid = {}
+        for i = 1, 4 do
+            grid[i] = {}
+            for j = 1, 4 do
+                if math.random() < 0.5 then
+                    grid[i][j] = 0
+                else
+                    grid[i][j] = 1
+                end
+            end
+        end
+        return grid
+    end
+
+    optimalGrids = {}
+    for _, t in pairs(moduletype) do
+        optimalGrids[t] = ENT.GenerateGrid(nil)
+        SetGlobalTable("optimalGrids", optimalGrids)
+    end
+elseif CLIENT then
+    optimalGrids = GetGlobalTable("optimalGrids")
+end
+
 function ENT:GetModuleType()
     return self:GetNWInt("type", 0)
 end
@@ -41,6 +68,26 @@ function ENT:GetDamaged()
     return count
 end
 
+function ENT:GetScore()
+    if CLIENT and not self:IsGridLoaded() then return 0 end
+
+    local grid = self:GetGrid()
+    local optimal = optimalGrids[self:GetModuleType()]
+
+    local score = 0
+    for i = 1, 4 do
+        for j = 1, 4 do
+            if grid[i][j] == optimal[i][j] then
+                score = score + 4
+            elseif grid[i][j] ~= -1 then
+                score = score + 1
+            end
+        end
+    end
+
+    return score / (4 * 4 * 4)
+end
+
 if SERVER then
     ENT._lastEffect = 0
 
@@ -60,7 +107,6 @@ if SERVER then
         end
 
         self:_RandomizeGrid()
-        self:_UpdateGrid()
     end
 
     function ENT:GetGrid()
@@ -68,17 +114,8 @@ if SERVER then
     end
 
     function ENT:_RandomizeGrid()
-        if not self._grid then self._grid = {} end
-        for i = 1, 4 do
-            if not self._grid[i] then self._grid[i] = {} end
-            for j = 1, 4 do
-                if math.random() < 0.5 then
-                    self._grid[i][j] = 0
-                else
-                    self._grid[i][j] = 1
-                end
-            end
-        end
+        self._grid = self:GenerateGrid()
+        self:_UpdateGrid()
     end
 
     function ENT:_UpdateGrid()
@@ -86,9 +123,11 @@ if SERVER then
     end
 
     function ENT:InsertIntoSlot(room, slot)
-        if not self:IsInSlot() then
+        if not self:IsInSlot() and not room:GetModule(self:GetModuleType()) then
             self:SetNWString("ship", room:GetShipName())
             self:SetNWInt("room", room:GetIndex())
+
+            room:SetModule(self:GetModuleType(), self)
 
             local phys = self:GetPhysicsObject()
             if IsValid(phys) then
@@ -119,6 +158,8 @@ if SERVER then
 
                 phys:SetVelocity(vel)
             end
+
+            self:GetRoom():SetModule(self:GetModuleType(), nil)
 
             self:SetNWString("ship", "")
             self:SetNWInt("room", -1)
