@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "357"
+	"mapversion" "358"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "357"
+	"mapversion" "358"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -39554,7 +39554,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_module.vmf"
-	"replace01" "$room_name room_transporter"
+	"replace01" "$room_name room_medical"
 	"replace02" "$module_type 1"
 	"origin" "-672 -1696 96"
 	editor
@@ -39588,7 +39588,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_module.vmf"
-	"replace01" "$room_name room_transporter"
+	"replace01" "$room_name room_medical"
 	"replace02" "$module_type 0"
 	"origin" "-544 -1696 96"
 	editor
@@ -39605,7 +39605,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -90 0"
 	"file" "ff_default_module.vmf"
-	"replace01" "$room_name room_transporter"
+	"replace01" "$room_name room_medical"
 	"replace02" "$module_type 2"
 	"origin" "-544 -1824 96"
 	editor
@@ -40114,8 +40114,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[240.132 -1446.71 205.076]"
-		"look" "[252.428 -1446.23 185.973]"
+		"position" "[-603.327 -1733.48 233.823]"
+		"look" "[-603.97 -1739.4 211.894]"
 	}
 }
 cordon

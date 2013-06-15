@@ -167,7 +167,10 @@ if SERVER then
     end
 
     function ENT:OnTakeDamage(dmg)
-        if math.random() * math.random() < dmg:GetDamage() / 100 then
+        local amount = dmg:GetDamage() / 100
+        local threshold = math.random() * math.random()
+        local damaged = false
+        while threshold < amount do
             local canDamage = {}
             for i = 1, 4 do
                 for j = 1, 4 do
@@ -177,11 +180,25 @@ if SERVER then
                 end
             end
 
-            if #canDamage == 0 then return end
+            if #canDamage == 0 then break end
 
             local pos = table.Random(canDamage)
             self._grid[pos.i][pos.j] = -1
+
+            damaged = true
+
+            amount = amount - threshold
+            threshold = math.random() * math.random()
+        end
+
+        if damaged then
             self:_UpdateGrid()
+
+            local ed = EffectData()
+            ed:SetOrigin(self:GetPos())
+            ed:SetMagnitude(0.5)
+            ed:SetScale(0.125)
+            util.Effect("Explosion", ed)
         end
     end
 
