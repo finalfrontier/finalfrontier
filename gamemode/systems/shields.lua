@@ -28,12 +28,17 @@ if SERVER then
 		for _, room in ipairs(self:GetShip():GetRooms()) do
 			if self:GetDistrib(room) > 0 then
 				-- TODO: make continuous
-				local needed = room:GetSurfaceArea() * SHIELD_POWER_PER_M2
+	            local cost = 1
+	            local shieldModule = room:GetModule(moduletype.shields)
+	            if shieldModule then
+	                cost = 1.5 - shieldModule:GetScore()
+	            end
+				local needed = room:GetSurfaceArea() * SHIELD_POWER_PER_M2 * cost
 				local goal = math.min(self:GetDistrib(room), room:GetMaximumShields())
 				if room:GetShields() < goal - 0.001 then
 					totNeeded = totNeeded + needed * 2
 				elseif room:GetShields() < goal + 0.001 then
-					totNeeded = totNeeded + needed
+					totNeeded = totNeeded + needed * 0.5
 				end
 			end
 		end
@@ -50,7 +55,12 @@ if SERVER then
 		for _, room in ipairs(self:GetShip():GetRooms()) do
 			local goal = math.min(self:GetDistrib(room), room:GetMaximumShields())
 			if goal > 0 then
-				local rate = ratio * 2 - 1
+				local score = 0
+	            local shieldModule = room:GetModule(moduletype.shields)
+	            if shieldModule then
+	                score = shieldModule:GetScore() * 2
+	            end
+				local rate = ratio * 2 * score - 1
 				if room:GetShields() < goal - 0.001 or rate < 0 then
 					room:SetUnitShields(room:GetUnitShields() + SHIELD_RECHARGE_RATE * rate * dt)
 				end

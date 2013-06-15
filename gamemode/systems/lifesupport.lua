@@ -38,19 +38,26 @@ if SERVER then
     function SYS:CalculatePowerNeeded(dt)
         local totNeeded = 0
         for _, room in ipairs(self:GetShip():GetRooms()) do
+            local score = 0
+            local cost = 1
+            local lifeModule = room:GetModule(moduletype.lifesupport)
+            if lifeModule then
+                score = lifeModule:GetScore() * 2
+                cost = 2 - score * 0.5
+            end
             if self:GetGoalTemperature(room) ~= -1 then
                 totNeeded = totNeeded + CalculatePowerCost(
                     room:GetUnitTemperature(),
                     self:GetGoalTemperature(room) / 600 * room:GetVolume(),
-                    TEMP_RECHARGE_RATE * dt,
-                    TEMP_POWER_PER_METER3)
+                    TEMP_RECHARGE_RATE * score * dt,
+                    TEMP_POWER_PER_METER3 * cost)
             end
             if self:GetGoalAtmosphere(room) ~= -1 then
                 totNeeded = totNeeded + CalculatePowerCost(
                     room:GetAirVolume(),
                     self:GetGoalAtmosphere(room) * room:GetVolume(),
-                    ATMO_RECHARGE_RATE * dt,
-                    ATMO_POWER_PER_METER3)
+                    ATMO_RECHARGE_RATE * score * dt,
+                    ATMO_POWER_PER_METER3 * cost)
             end
         end
         return totNeeded
@@ -66,18 +73,25 @@ if SERVER then
         end
 
         for _, room in ipairs(self:GetShip():GetRooms()) do
+            local score = 0
+            local cost = 1
+            local lifeModule = room:GetModule(moduletype.lifesupport)
+            if lifeModule then
+                score = lifeModule:GetScore() * 2
+                cost = 2 - score * 0.5
+            end
             if self:GetGoalTemperature(room) ~= -1 then
                 room:SetUnitTemperature(CalculateNextValue(
                     room:GetUnitTemperature(),
                     self:GetGoalTemperature(room) / 600 * room:GetVolume(),
-                    TEMP_RECHARGE_RATE * dt,
+                    TEMP_RECHARGE_RATE * score * dt,
                     ratio))
             end
             if self:GetGoalAtmosphere(room) ~= -1 then
                 room:SetAirVolume(CalculateNextValue(
                     room:GetAirVolume(),
                     self:GetGoalAtmosphere(room) * room:GetVolume(),
-                    ATMO_RECHARGE_RATE * dt,
+                    ATMO_RECHARGE_RATE * score * dt,
                     ratio))
             end
         end

@@ -114,12 +114,23 @@ function ENT:Think()
 	local dt = self:_NextUpdate()
 
 	if self:HasSystem() then self:GetSystem():Think(dt) end
+
+	local breachloss = 1
+	local lifeModule = self:GetModule(moduletype.lifesupport)
+	if lifeModule then
+		breachloss = lifeModule:GetDamaged() / 16
+	end
+
+	breachloss = breachloss * 0.1 * dt
 	
 	self:SetUnitTemperature(self:GetUnitTemperature() *
-		math.max(0, 1 - self:GetSurfaceArea() * TEMPERATURE_LOSS_RATE * dt) +
+		math.max(0, 1 - self:GetSurfaceArea() * TEMPERATURE_LOSS_RATE * dt
+			- breachloss) +
 		#self:GetPlayers() * PLAYER_HEAT_RATE * dt)
 
-	self:SetAirVolume(self:GetAirVolume() - #self:GetPlayers() * AIR_LOSS_RATE * dt)
+	self:SetAirVolume(self:GetAirVolume()
+		- #self:GetPlayers() * AIR_LOSS_RATE * dt 
+		- self:GetAirVolume() * breachloss)
 
 	local bounds = self:GetBounds()
 	local min = Vector(bounds.l, bounds.t, -65536)
@@ -400,7 +411,7 @@ end
 function ENT:GetMaximumUnitShields()
 	local shieldMod = self:GetModule(moduletype.shields)
 	if not shieldMod then return 0 end
-	return self:GetSurfaceArea() * shieldMod:GetScore()
+	return self:GetSurfaceArea() * (1 - shieldMod:GetDamaged() / 16)
 end
 
 function ENT:GetShields()
