@@ -63,6 +63,7 @@ function GM:PlayerSpawn(ply)
 	local ship = ships.FindCurrentShip(ply)
 	if ship then ply:SetShip(ship) end
 	ply:Give("weapon_crowbar")
+	ply:Give("weapon_physcannon")
 end
 
 function GM:Think()

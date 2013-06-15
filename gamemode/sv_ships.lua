@@ -43,7 +43,8 @@ function ships.InitPostEntity()
 		"info_ff_roomdetail",
 		"info_ff_transtarget",
 		"info_ff_door",
-		"info_ff_screen"
+		"info_ff_screen",
+		"info_ff_moduleslot"
 	}
 
 	for _1, class in ipairs(classOrder) do

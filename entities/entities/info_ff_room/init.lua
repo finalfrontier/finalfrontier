@@ -18,6 +18,8 @@ ENT._detailindices = nil
 ENT._transpads = nil
 ENT._transtargets = nil
 
+ENT._moduleslots = nil
+
 ENT._airvolume = 0
 ENT._temperature = 0
 ENT._shields = 0
@@ -43,6 +45,8 @@ function ENT:Initialize()
 
 	self._transpads = {}
 	self._transtargets = {}
+
+	self._moduleslots = {}
 
 	self._players = {}
 
@@ -303,6 +307,19 @@ function ENT:GetTransporterTarget()
 	else
 		return table.Random(self._transpads)
 	end
+end
+
+function ENT:AddModuleSlot(pos, type)
+	self._moduleslots[type] = pos
+
+	local mdl = ents.Create("prop_ff_module")
+	mdl:SetModuleType(type)
+	mdl:Spawn()
+	mdl:InsertIntoSlot(self, pos)
+end
+
+function ENT:GetModuleSlot(type)
+	
 end
 
 function ENT:AddDoor(door)

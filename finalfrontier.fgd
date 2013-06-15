@@ -78,3 +78,14 @@
 		1 : "Yessir"
 	]
 ]
+
+@PointClass base(Angles) studio("models/props_c17/consolebox01a.mdl") = info_ff_moduleslot : "module slot"
+[
+	room(target_destination) : "Parent room" : "" : "Targetname of the room containing this module slot"
+	type(choices) : "Module Type" : "0" =
+	[
+		0 : "Life Support"
+		1 : "Shields"
+		2 : "System Power"
+	]
+]
