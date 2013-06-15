@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "299"
+	"mapversion" "319"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "299"
+	"mapversion" "319"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -12230,82 +12230,6 @@ world
 			"uaxis" "[0 0 1 0] 0.25"
 			"vaxis" "[0 1 0 -256] 0.125"
 			"rotation" "90"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		editor
-		{
-			"color" "0 168 225"
-			"visgroupshown" "1"
-			"visgroupautoshown" "1"
-		}
-	}
-	solid
-	{
-		"id" "16755"
-		side
-		{
-			"id" "5792"
-			"plane" "(320 -1696 80) (128 -1696 80) (128 -1632 80)"
-			"material" "METAL/METALWALL060A"
-			"uaxis" "[1 0 0 0] 0.125"
-			"vaxis" "[0 -1 0 0] 0.125"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "5791"
-			"plane" "(320 -1632 64) (128 -1632 64) (128 -1696 64)"
-			"material" "/FF_WALLCONCRETE"
-			"uaxis" "[1 0 0 -256] 0.25"
-			"vaxis" "[0 -1 0 128] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "5790"
-			"plane" "(128 -1632 64) (320 -1632 64) (320 -1632 80)"
-			"material" "/FF_WALLCONCRETE"
-			"uaxis" "[1 0 0 -256] 0.25"
-			"vaxis" "[0 0 -1 256] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "5789"
-			"plane" "(320 -1696 64) (128 -1696 64) (128 -1696 80)"
-			"material" "/FF_WALLCONCRETE"
-			"uaxis" "[1 0 0 -256] 0.25"
-			"vaxis" "[0 0 -1 256] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "5788"
-			"plane" "(320 -1632 64) (320 -1696 64) (320 -1696 80)"
-			"material" "METAL/METALTRUSS017A"
-			"uaxis" "[0 0 1 0] 0.25"
-			"vaxis" "[0 1 0 -256] 0.125"
-			"rotation" "90"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "5787"
-			"plane" "(128 -1696 64) (128 -1632 64) (128 -1632 80)"
-			"material" "/FF_WALLCONCRETE"
-			"uaxis" "[0 1 0 -128] 0.25"
-			"vaxis" "[0 0 -1 256] 0.25"
-			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
 		}
@@ -38713,94 +38637,6 @@ entity
 }
 entity
 {
-	"id" "37933"
-	"classname" "func_detail"
-	solid
-	{
-		"id" "16765"
-		side
-		{
-			"id" "9491"
-			"plane" "(128 -1696 96) (128 -1632 96) (320 -1632 96)"
-			"material" "METAL/METALGRATE013B"
-			"uaxis" "[1 0 0 0] 0.25"
-			"vaxis" "[0 -1 0 128] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "9490"
-			"plane" "(128 -1632 88) (128 -1696 88) (320 -1696 88)"
-			"material" "TOOLS/TOOLSNODRAW"
-			"uaxis" "[1 0 0 0] 0.25"
-			"vaxis" "[0 -1 0 0] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "9489"
-			"plane" "(128 -1696 88) (128 -1632 88) (128 -1632 96)"
-			"material" "METAL/METALGRATE013B"
-			"uaxis" "[0 1 0 -128] 0.25"
-			"vaxis" "[0 0 -1 128] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "9488"
-			"plane" "(320 -1632 88) (320 -1696 88) (320 -1696 96)"
-			"material" "METAL/METALGRATE013B"
-			"uaxis" "[0 1 0 -128] 0.25"
-			"vaxis" "[0 0 -1 128] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "9487"
-			"plane" "(128 -1632 88) (320 -1632 88) (320 -1632 96)"
-			"material" "METAL/METALGRATE013B"
-			"uaxis" "[1 0 0 0] 0.25"
-			"vaxis" "[0 0 -1 128] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "9486"
-			"plane" "(320 -1696 88) (128 -1696 88) (128 -1696 96)"
-			"material" "METAL/METALGRATE013B"
-			"uaxis" "[1 0 0 0] 0.25"
-			"vaxis" "[0 0 -1 128] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		editor
-		{
-			"color" "0 180 0"
-			"visgroupshown" "1"
-			"visgroupautoshown" "1"
-		}
-	}
-	editor
-	{
-		"color" "0 180 0"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 0]"
-	}
-}
-entity
-{
 	"id" "37939"
 	"classname" "func_detail"
 	solid
@@ -41235,13 +41071,58 @@ entity
 		"logicalpos" "[0 2500]"
 	}
 }
+entity
+{
+	"id" "41037"
+	"classname" "func_instance"
+	"angles" "-0 90 0"
+	"file" "ff_default_module.vmf"
+	"origin" "160 -1664 80"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 500]"
+	}
+}
+entity
+{
+	"id" "41059"
+	"classname" "func_instance"
+	"angles" "-0 90 0"
+	"file" "ff_default_module.vmf"
+	"origin" "224 -1664 80"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 500]"
+	}
+}
+entity
+{
+	"id" "41066"
+	"classname" "func_instance"
+	"angles" "-0 90 0"
+	"file" "ff_default_module.vmf"
+	"origin" "288 -1664 80"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 500]"
+	}
+}
 cameras
 {
 	"activecamera" "0"
 	camera
 	{
-		"position" "[281.813 -1769.86 278.984]"
-		"look" "[271.161 -1770.45 258.925]"
+		"position" "[178.311 -1757.91 200.283]"
+		"look" "[181.944 -1744.4 182.378]"
 	}
 }
 cordon
