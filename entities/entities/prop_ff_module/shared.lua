@@ -7,6 +7,8 @@ moduletype = {}
 moduletype.lifesupport = 0
 moduletype.shields = 1
 moduletype.systempower = 2
+moduletype.repair1 = 3
+moduletype.repair2 = 4
 
 ENT._grid = nil
 
@@ -124,12 +126,12 @@ if SERVER then
         self:SetNWTable("grid", self._grid)
     end
 
-    function ENT:InsertIntoSlot(room, slot)
-        if not self:IsInSlot() and not self:IsPlayerHolding() and not room:GetModule(self:GetModuleType()) then
+    function ENT:InsertIntoSlot(room, type, slot)
+        if not self:IsInSlot() and not self:IsPlayerHolding() and not room:GetModule(type) then
             self:SetNWString("ship", room:GetShipName())
             self:SetNWInt("room", room:GetIndex())
 
-            room:SetModule(self:GetModuleType(), self)
+            room:SetModule(type, self)
 
             local phys = self:GetPhysicsObject()
             if IsValid(phys) then
@@ -165,7 +167,7 @@ if SERVER then
                 phys:SetVelocity(vel)
             end
 
-            self:GetRoom():SetModule(self:GetModuleType(), nil)
+            self:GetRoom():RemoveModule(self)
 
             self:SetNWString("ship", "")
             self:SetNWInt("room", -1)
@@ -228,10 +230,12 @@ if SERVER then
             max = max + self:GetPos()
             local near = ents.FindInBox(min, max)
             for _, v in pairs(near) do
-                if v:GetClass() == "info_ff_moduleslot"
-                    and v:GetModuleType() == self:GetModuleType() then
-                    self:InsertIntoSlot(v:GetRoom(), v:GetPos())
-                    return
+                if v:GetClass() == "info_ff_moduleslot" then
+                    local type = v:GetModuleType()
+                    if type == self:GetModuleType() or type == moduletype.repair1 or type == moduletype.repair2 then
+                        self:InsertIntoSlot(v:GetRoom(), type, v:GetPos())
+                        return
+                    end
                 end
             end
         else

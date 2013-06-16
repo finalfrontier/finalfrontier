@@ -325,10 +325,12 @@ end
 function ENT:AddModuleSlot(pos, type)
 	self._moduleslots[type] = pos
 
-	local mdl = ents.Create("prop_ff_module")
-	mdl:SetModuleType(type)
-	mdl:Spawn()
-	mdl:InsertIntoSlot(self, pos)
+	if type < moduletype.repair1 then
+		local mdl = ents.Create("prop_ff_module")
+		mdl:SetModuleType(type)
+		mdl:Spawn()
+		mdl:InsertIntoSlot(self, type, pos)
+	end
 end
 
 function ENT:GetModule(type)
@@ -337,6 +339,15 @@ end
 
 function ENT:SetModule(type, module)
 	self._modules[type] = module
+end
+
+function ENT:RemoveModule(module)
+	for i, v in pairs(self._modules) do
+		if v == module then
+			self._modules[i] = nil
+			return
+		end
+	end
 end
 
 function ENT:AddDoor(door)
