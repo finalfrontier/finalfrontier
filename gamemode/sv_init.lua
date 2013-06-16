@@ -37,12 +37,16 @@ function GM:InitPostEntity()
 
 	for _, ship in pairs(ships.GetAll()) do
 		for _, room in pairs(ship:GetRooms()) do
-			if math.random() < 0.5 then
-				local mdl = ents.Create("prop_ff_module")
-				mdl:SetModuleType(math.floor(math.random() * 3))
-				mdl:SetPos(room:GetTransporterTarget())
-				mdl:Spawn()
-			end
+			-- if math.random() < 0.5 then
+				local pos = room:GetTransporterTarget()
+				if pos then
+					local mdl = ents.Create("prop_ff_module")
+					mdl:SetModuleType(math.floor(math.random() * 3))
+					mdl:SetPos(pos)
+					mdl:SetAngles(Angle(0, math.random() * math.pi * 2, 0))
+					mdl:Spawn()
+				end
+			-- end
 		end
 	end
 end

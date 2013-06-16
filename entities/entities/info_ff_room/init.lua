@@ -315,31 +315,39 @@ end
 
 -- Stolen from TTT
 local function ShouldCollide(ent)
-   local g = ent:GetCollisionGroup()
-   return (g != COLLISION_GROUP_WEAPON and
-           g != COLLISION_GROUP_DEBRIS and
-           g != COLLISION_GROUP_DEBRIS_TRIGGER and
-           g != COLLISION_GROUP_INTERACTIVE_DEBRIS)
+	if ent:IsWorld() or string.StartWith(ent:GetClass(), "info_ff_") then
+		return false
+	end
+	local g = ent:GetCollisionGroup()
+	return (g ~= COLLISION_GROUP_WEAPON and
+		g ~= COLLISION_GROUP_DEBRIS and
+		g ~= COLLISION_GROUP_DEBRIS_TRIGGER and
+		g ~= COLLISION_GROUP_INTERACTIVE_DEBRIS)
 end
 
 function ENT:GetAvailableTransporterTargets()
 	local available = {}
-	for _, pad in pairs(self._transtargets) do
-		local obstructed = false
-		for _, ent in pairs(ents.FindInBox(pad - Vector(64, 64, -8),
-			pad + Vector(64, 64, 128))) do
-			if ShouldCollide(ent) then
-				obstructed = true
-				break
+	for _, set in pairs({self._transpads, self._transtargets}) do
+		for _, pos in pairs(set) do
+			local obstructed = false
+			for _, ent in pairs(ents.FindInBox(pos - Vector(48, 48, 0),
+				pos + Vector(48, 48, 96))) do
+				if ShouldCollide(ent) then
+					obstructed = true
+					print(ent:GetClass())
+					break
+				end
+			end
+			if not obstructed then
+				table.insert(available, pos)
 			end
 		end
-		table.insert(available, pad)
 	end
 	return available
 end
 
 function ENT:GetTransporterTarget()
-	return table.Random(self:GetAvailableTransporterTargets())
+	return table.Random(self:GetAvailableTransporterTargets()) or nil
 end
 
 function ENT:AddModuleSlot(pos, type)
