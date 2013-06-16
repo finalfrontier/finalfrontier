@@ -19,7 +19,6 @@ ENT._transpads = nil
 ENT._transtargets = nil
 
 ENT._moduleslots = nil
-ENT._modules = nil
 
 ENT._airvolume = 0
 ENT._temperature = 0
@@ -48,7 +47,6 @@ function ENT:Initialize()
 	self._transtargets = {}
 
 	self._moduleslots = {}
-	self._modules = {}
 
 	self._players = {}
 
@@ -59,6 +57,8 @@ function ENT:Initialize()
 
 	if not self._nwdata.corners then self._nwdata.corners = {} end
 	if not self._nwdata.details then self._nwdata.details = {} end
+
+	self._nwdata.modules = {}
 
 	self._nwdata.temperature = 0
 	self._nwdata.airvolume = 0
@@ -334,7 +334,6 @@ function ENT:GetAvailableTransporterTargets()
 				pos + Vector(48, 48, 96))) do
 				if ShouldCollide(ent) then
 					obstructed = true
-					print(ent:GetClass())
 					break
 				end
 			end
@@ -374,17 +373,19 @@ function ENT:GetModuleIntegrity(type)
 end
 
 function ENT:GetModule(type)
-	return self._modules[type]
+	return self._nwdata.modules[type]
 end
 
 function ENT:SetModule(type, module)
-	self._modules[type] = module
+	self._nwdata.modules[type] = module
+	self:_UpdateNWData()
 end
 
 function ENT:RemoveModule(module)
-	for i, v in pairs(self._modules) do
+	for i, v in pairs(self._nwdata.modules) do
 		if v == module then
-			self._modules[i] = nil
+			self._nwdata.modules[i] = nil
+			self:_UpdateNWData()
 			return
 		end
 	end

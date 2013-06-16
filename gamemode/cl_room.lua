@@ -89,6 +89,10 @@ function _mt:GetDetails()
 	return self._nwdata.details
 end
 
+function _mt:GetModule(type)
+	return self._nwdata.modules[type]
+end
+
 function _mt:_UpdateConvexPolys()
 	self._convexPolys = FindConvexPolygons(self:GetCorners())
 end

@@ -1,4 +1,5 @@
 "LightmappedGeneric"
 {
 	"$basetexture" "ff_hatch1"
+	"$surfaceprop" "MetalPanel"
 }

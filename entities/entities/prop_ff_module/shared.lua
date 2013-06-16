@@ -251,7 +251,7 @@ if SERVER then
         end
     end
 elseif CLIENT then
-    local typeMaterials = {
+    modulematerials = {
         Material("systems/lifesupport.png", "smooth"),
         Material("systems/shields.png", "smooth"),
         Material("power.png", "smooth")
@@ -304,7 +304,7 @@ elseif CLIENT then
             end
 
             surface.SetDrawColor(Color(255, 255, 255, 16))
-            surface.SetMaterial(typeMaterials[self:GetModuleType() + 1])
+            surface.SetMaterial(modulematerials[self:GetModuleType() + 1])
             surface.DrawTexturedRect(-20, -20, 40, 40)
         cam.End3D2D()
     end

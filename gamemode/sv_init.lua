@@ -37,16 +37,21 @@ function GM:InitPostEntity()
 
 	for _, ship in pairs(ships.GetAll()) do
 		for _, room in pairs(ship:GetRooms()) do
-			-- if math.random() < 0.5 then
-				local pos = room:GetTransporterTarget()
-				if pos then
-					local mdl = ents.Create("prop_ff_module")
-					mdl:SetModuleType(math.floor(math.random() * 3))
-					mdl:SetPos(pos)
-					mdl:SetAngles(Angle(0, math.random() * math.pi * 2, 0))
-					mdl:Spawn()
+			if room:GetSystemName() == "engineering" then
+				for _, t in pairs({moduletype.lifesupport, moduletype.shields, moduletype.systempower}) do
+					local pos = room:GetTransporterTarget()
+					if pos then
+						local count = 1 + math.floor(math.random() * math.random() * 2)
+						for i = 1, count do
+							local mdl = ents.Create("prop_ff_module")
+							mdl:SetModuleType(t)
+							mdl:SetPos(pos + Vector(0, 0, i * 16))
+							mdl:SetAngles(Angle(0, math.random() * 360, 0))
+							mdl:Spawn()
+						end
+					end
 				end
-			-- end
+			end
 		end
 	end
 end
@@ -67,19 +72,11 @@ function GM:PlayerSpawn(ply)
 	local ship = ships.FindCurrentShip(ply)
 	if ship then ply:SetShip(ship) end
 	ply:Give("weapon_crowbar")
-	-- ply:Give("weapon_physcannon")
 end
 
 function GM:Think()
 	return
 end
-
---[[function GM:GravGunPickupAllowed(ply, ent)
-	if ent:GetClass() == "prop_ff_module" then
-		ent:RemoveFromSlot()
-	end
-	return true
-end]]
 
 function GM:SetupPlayerVisibility(ply)
 	local ship = ply:GetShip()

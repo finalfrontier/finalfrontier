@@ -16,7 +16,7 @@ function SYS:GetShieldThreshold()
 end
 
 if SERVER then
-    -- resource.AddFile("materials/systems/transporter.png")
+    resource.AddFile("materials/systems/transporter.png")
 
     local warmupSounds = {
         "ambient/levels/citadel/zapper_warmup1.wav",
@@ -54,7 +54,7 @@ if SERVER then
 
     function SYS:Initialize()
         self._nwdata.maxcharge = 1
-        self._nwdata.charge = 0
+        self._nwdata.charge = 1
         self._nwdata.maxshields = 0.25
         self:_UpdateNWData()
     end
@@ -183,5 +183,5 @@ if SERVER then
         return true
     end
 elseif CLIENT then
-    -- SYS.Icon = Material("systems/transporter.png", "smooth")
+    SYS.Icon = Material("systems/transporter.png", "smooth")
 end
