@@ -63,19 +63,19 @@ function GM:PlayerSpawn(ply)
 	local ship = ships.FindCurrentShip(ply)
 	if ship then ply:SetShip(ship) end
 	ply:Give("weapon_crowbar")
-	ply:Give("weapon_physcannon")
+	-- ply:Give("weapon_physcannon")
 end
 
 function GM:Think()
 	return
 end
 
-function GM:GravGunPickupAllowed(ply, ent)
+--[[function GM:GravGunPickupAllowed(ply, ent)
 	if ent:GetClass() == "prop_ff_module" then
 		ent:RemoveFromSlot()
 	end
 	return true
-end
+end]]
 
 function GM:SetupPlayerVisibility(ply)
 	local ship = ply:GetShip()

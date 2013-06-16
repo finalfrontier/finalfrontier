@@ -10,9 +10,11 @@ moduletype.systempower = 2
 
 ENT._grid = nil
 
-optimalGrids = nil
+local optimalGrids = nil
 
 if SERVER then
+    ENT._lastEffect = 0
+
     function ENT:GenerateGrid()
         local grid = {}
         for i = 1, 4 do
@@ -89,13 +91,13 @@ function ENT:GetScore()
 end
 
 if SERVER then
-    ENT._lastEffect = 0
-
     function ENT:SetModuleType(type)
         self:SetNWInt("type", type)
     end
 
     function ENT:Initialize()
+        self:SetUseType(SIMPLE_USE)
+
         self:SetModel("models/props_c17/consolebox01a.mdl")
         self:PhysicsInit(SOLID_VPHYSICS)
         self:SetMoveType(MOVETYPE_VPHYSICS)
@@ -123,7 +125,7 @@ if SERVER then
     end
 
     function ENT:InsertIntoSlot(room, slot)
-        if not self:IsInSlot() and not room:GetModule(self:GetModuleType()) then
+        if not self:IsInSlot() and not self:IsPlayerHolding() and not room:GetModule(self:GetModuleType()) then
             self:SetNWString("ship", room:GetShipName())
             self:SetNWInt("room", room:GetIndex())
 
@@ -167,6 +169,19 @@ if SERVER then
 
             self:SetNWString("ship", "")
             self:SetNWInt("room", -1)
+        end
+    end
+
+    function ENT:Use(ply)
+        if not IsValid(ply) or not ply:IsPlayer() then return end
+
+        if self:IsInSlot() then
+            self:RemoveFromSlot(ply)
+        end
+
+        if not self:IsPlayerHolding() then
+            self:SetAngles(Angle(0, self:GetAngles().y, 0))
+            ply:PickupObject(self)
         end
     end
 
@@ -216,6 +231,7 @@ if SERVER then
                 if v:GetClass() == "info_ff_moduleslot"
                     and v:GetModuleType() == self:GetModuleType() then
                     self:InsertIntoSlot(v:GetRoom(), v:GetPos())
+                    return
                 end
             end
         else
