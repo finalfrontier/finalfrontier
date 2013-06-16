@@ -12,7 +12,7 @@ if SERVER then
         self._limits = {}
 
         self._nwdata.needed = 0
-        self._nwdata.supplied = 0        
+        self._nwdata.supplied = 0
         self:SetTotalPower(20)
     end
 
@@ -40,6 +40,12 @@ if SERVER then
             if room:GetSystem() and room:GetSystem().Powered then
                 local needed = room:GetSystem():CalculatePowerNeeded(dt)
                 room:GetSystem():SetPowerNeeded(needed)
+                local powerModule = room:GetModule(moduletype.systempower)
+                if powerModule then
+                    needed = needed * (1 - powerModule:GetDamaged() / 16)
+                else
+                    needed = 0
+                end
                 local limit = self:GetSystemLimit(room:GetSystem())
                 totalneeded = totalneeded + math.min(needed, limit)
             end
@@ -56,7 +62,13 @@ if SERVER then
 
         for _, room in pairs(self:GetShip():GetRooms()) do
             if room:GetSystem() and room:GetSystem().Powered then
-                local needed = room:GetSystem():GetPowerNeeded()
+                local needed = room:GetSystem():CalculatePowerNeeded(dt)
+                local powerModule = room:GetModule(moduletype.systempower)
+                if powerModule then
+                    needed = needed * (1 - powerModule:GetDamaged() / 16)
+                else
+                    needed = 0
+                end
                 local limit = self:GetSystemLimit(room:GetSystem())
                 room:GetSystem():SetPower(math.min(needed, limit) * ratio)
             end

@@ -79,9 +79,10 @@
 	]
 ]
 
-@PointClass base(Angles) studio("models/props_c17/consolebox01a.mdl") = info_ff_moduleslot : "module slot"
+@PointClass base(Targetname, Angles) studio("models/props_c17/consolebox01a.mdl") = info_ff_moduleslot : "module slot"
 [
 	room(target_destination) : "Parent room" : "" : "Targetname of the room containing this module slot"
+	hatch(target_destination) : "Hatch" : "" : "Targetname of the hatch covering the slot"
 	type(choices) : "Module Type" : "0" =
 	[
 		0 : "Life Support"

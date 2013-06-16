@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "358"
+	"mapversion" "378"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "358"
+	"mapversion" "57"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -39403,6 +39403,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_transporter"
 	"replace02" "$module_type 2"
+	"targetname" "room_transporter_m2_"
 	"origin" "160 -1792 96"
 	editor
 	{
@@ -39420,6 +39421,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_transporter"
 	"replace02" "$module_type 1"
+	"targetname" "room_transporter_m1_"
 	"origin" "160 -1664 96"
 	editor
 	{
@@ -39437,6 +39439,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_transporter"
 	"replace02" "$module_type 0"
+	"targetname" "room_transporter_m0_"
 	"origin" "288 -1664 96"
 	editor
 	{
@@ -39454,6 +39457,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_hallway4"
 	"replace02" "$module_type 0"
+	"targetname" "room_hallway4_m0_"
 	"origin" "288 -1440 96"
 	editor
 	{
@@ -39471,6 +39475,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_hallway4"
 	"replace02" "$module_type 1"
+	"targetname" "room_hallway4_m1_"
 	"origin" "288 -1312 96"
 	editor
 	{
@@ -39486,8 +39491,6 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 180 0"
 	"file" "ff_default_floorgrate.vmf"
-	"replace01" "$room_name room_transporter"
-	"replace02" "$module_type 2"
 	"origin" "288 -1376 96"
 	editor
 	{
@@ -39503,8 +39506,6 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -180 0"
 	"file" "ff_default_floorgrate.vmf"
-	"replace01" "$room_name room_transporter"
-	"replace02" "$module_type 2"
 	"origin" "-672 -1376 96"
 	editor
 	{
@@ -39522,6 +39523,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_hallway1"
 	"replace02" "$module_type 1"
+	"targetname" "room_hallway1_m1_"
 	"origin" "-672 -1312 96"
 	editor
 	{
@@ -39539,6 +39541,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_hallway1"
 	"replace02" "$module_type 0"
+	"targetname" "room_hallway1_m0_"
 	"origin" "-672 -1440 96"
 	editor
 	{
@@ -39556,6 +39559,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_medical"
 	"replace02" "$module_type 1"
+	"targetname" "room_medical_m1_"
 	"origin" "-672 -1696 96"
 	editor
 	{
@@ -39571,8 +39575,6 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_floorgrate.vmf"
-	"replace01" "$room_name room_transporter"
-	"replace02" "$module_type 2"
 	"origin" "-608 -1696 96"
 	editor
 	{
@@ -39590,6 +39592,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_medical"
 	"replace02" "$module_type 0"
+	"targetname" "room_medical_m0_"
 	"origin" "-544 -1696 96"
 	editor
 	{
@@ -39607,6 +39610,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_medical"
 	"replace02" "$module_type 2"
+	"targetname" "room_medical_m2_"
 	"origin" "-544 -1824 96"
 	editor
 	{
@@ -39622,8 +39626,6 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_floorgrate.vmf"
-	"replace01" "$room_name room_transporter"
-	"replace02" "$module_type 2"
 	"origin" "224 -1664 96"
 	editor
 	{
@@ -39641,6 +39643,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_lifesupport"
 	"replace02" "$module_type 1"
+	"targetname" "room_lifesupport_m1_"
 	"origin" "224 -768 64"
 	editor
 	{
@@ -39658,6 +39661,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_lifesupport"
 	"replace02" "$module_type 0"
+	"targetname" "room_lifesupport_m0_"
 	"origin" "224 -704 64"
 	editor
 	{
@@ -39675,6 +39679,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_lifesupport"
 	"replace02" "$module_type 2"
+	"targetname" "room_lifesupport_m2_"
 	"origin" "224 -832 64"
 	editor
 	{
@@ -39692,6 +39697,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_doorcontrol"
 	"replace02" "$module_type 0"
+	"targetname" "room_doorcontrol_m0_"
 	"origin" "-608 -704 64"
 	editor
 	{
@@ -39709,6 +39715,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_doorcontrol"
 	"replace02" "$module_type 1"
+	"targetname" "room_doorcontrol_m1_"
 	"origin" "-608 -768 64"
 	editor
 	{
@@ -39726,6 +39733,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_doorcontrol"
 	"replace02" "$module_type 2"
+	"targetname" "room_doorcontrol_m2_"
 	"origin" "-608 -832 64"
 	editor
 	{
@@ -39743,6 +39751,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_shields"
 	"replace02" "$module_type 2"
+	"targetname" "room_shields_m2_"
 	"origin" "-192 -1568 96"
 	editor
 	{
@@ -39758,8 +39767,6 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 180 0"
 	"file" "ff_default_floorgrate.vmf"
-	"replace01" "$room_name room_transporter"
-	"replace02" "$module_type 2"
 	"origin" "-192 -1632 96"
 	editor
 	{
@@ -39777,6 +39784,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_shields"
 	"replace02" "$module_type 1"
+	"targetname" "room_shields_m1_"
 	"origin" "-192 -1696 96"
 	editor
 	{
@@ -39794,6 +39802,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_shields"
 	"replace02" "$module_type 0"
+	"targetname" "room_shields_m0_"
 	"origin" "-192 -1824 96"
 	editor
 	{
@@ -39809,8 +39818,6 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -180 0"
 	"file" "ff_default_floorgrate.vmf"
-	"replace01" "$room_name room_transporter"
-	"replace02" "$module_type 2"
 	"origin" "-192 -1760 96"
 	editor
 	{
@@ -39828,6 +39835,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_engineering"
 	"replace02" "$module_type 0"
+	"targetname" "room_engineering_m0_"
 	"origin" "-192 -2080 96"
 	editor
 	{
@@ -39845,6 +39853,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_engineering"
 	"replace02" "$module_type 1"
+	"targetname" "room_engineering_m1_"
 	"origin" "-192 -2144 96"
 	editor
 	{
@@ -39862,6 +39871,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_engineering"
 	"replace02" "$module_type 2"
+	"targetname" "room_engineering_m2_"
 	"origin" "-192 -2208 96"
 	editor
 	{
@@ -39879,6 +39889,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_reactor"
 	"replace02" "$module_type 0"
+	"targetname" "room_reactor_m0_"
 	"origin" "0 -1008 -112"
 	editor
 	{
@@ -39896,6 +39907,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_reactor"
 	"replace02" "$module_type 2"
+	"targetname" "room_reactor_m2_"
 	"origin" "-192 -1072 -96"
 	editor
 	{
@@ -39913,6 +39925,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_reactor"
 	"replace02" "$module_type 1"
+	"targetname" "room_reactor_m1_"
 	"origin" "-384 -1008 -112"
 	editor
 	{
@@ -39930,6 +39943,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_weapons"
 	"replace02" "$module_type 1"
+	"targetname" "room_weapons_m1_"
 	"origin" "-64 -768 -112"
 	editor
 	{
@@ -39945,8 +39959,6 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_floorgrate.vmf"
-	"replace01" "$room_name room_transporter"
-	"replace02" "$module_type 2"
 	"origin" "-128 -768 -112"
 	editor
 	{
@@ -39964,6 +39976,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_weapons"
 	"replace02" "$module_type 2"
+	"targetname" "room_weapons_m2_"
 	"origin" "-192 -768 -112"
 	editor
 	{
@@ -39979,8 +39992,6 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_floorgrate.vmf"
-	"replace01" "$room_name room_transporter"
-	"replace02" "$module_type 2"
 	"origin" "-256 -768 -112"
 	editor
 	{
@@ -39998,6 +40009,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_weapons"
 	"replace02" "$module_type 0"
+	"targetname" "room_weapons_m0_"
 	"origin" "-320 -768 -112"
 	editor
 	{
@@ -40015,6 +40027,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_piloting"
 	"replace02" "$module_type 2"
+	"targetname" "room_piloting_m2_"
 	"origin" "-192 256 0"
 	editor
 	{
@@ -40032,6 +40045,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_piloting"
 	"replace02" "$module_type 1"
+	"targetname" "room_piloting_m1_"
 	"origin" "-192 192 0"
 	editor
 	{
@@ -40049,6 +40063,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_piloting"
 	"replace02" "$module_type 0"
+	"targetname" "room_piloting_m0_"
 	"origin" "-192 128 0"
 	editor
 	{
@@ -40066,6 +40081,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_sensors"
 	"replace02" "$module_type 0"
+	"targetname" "room_sensors_m0_"
 	"origin" "-128 -192 0"
 	editor
 	{
@@ -40083,6 +40099,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_sensors"
 	"replace02" "$module_type 1"
+	"targetname" "room_sensors_m1_"
 	"origin" "-256 -192 0"
 	editor
 	{
@@ -40100,6 +40117,7 @@ entity
 	"file" "ff_default_module.vmf"
 	"replace01" "$room_name room_sensors"
 	"replace02" "$module_type 2"
+	"targetname" "room_sensors_m2_"
 	"origin" "-192 -192 0"
 	editor
 	{
@@ -40114,8 +40132,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-603.327 -1733.48 233.823]"
-		"look" "[-603.97 -1739.4 211.894]"
+		"position" "[-601.489 -1759.95 224.047]"
+		"look" "[-594.885 -1761.46 202.356]"
 	}
 }
 cordon
