@@ -313,13 +313,33 @@ function ENT:GetTransporterPads()
 	return self._transpads
 end
 
-function ENT:GetTransporterTarget()
-	-- TODO: check for obstructions
-	if #self._transtargets > 0 then
-		return table.Random(self._transtargets)
-	else
-		return table.Random(self._transpads)
+-- Stolen from TTT
+local function ShouldCollide(ent)
+   local g = ent:GetCollisionGroup()
+   return (g != COLLISION_GROUP_WEAPON and
+           g != COLLISION_GROUP_DEBRIS and
+           g != COLLISION_GROUP_DEBRIS_TRIGGER and
+           g != COLLISION_GROUP_INTERACTIVE_DEBRIS)
+end
+
+function ENT:GetAvailableTransporterTargets()
+	local available = {}
+	for _, pad in pairs(self._transtargets) do
+		local obstructed = false
+		for _, ent in pairs(ents.FindInBox(pad - Vector(64, 64, -8),
+			pad + Vector(64, 64, 128))) do
+			if ShouldCollide(ent) then
+				obstructed = true
+				break
+			end
+		end
+		table.insert(available, pad)
 	end
+	return available
+end
+
+function ENT:GetTransporterTarget()
+	return table.Random(self:GetAvailableTransporterTargets())
 end
 
 function ENT:AddModuleSlot(pos, type)
@@ -331,6 +351,18 @@ function ENT:AddModuleSlot(pos, type)
 		mdl:Spawn()
 		mdl:InsertIntoSlot(self, type, pos)
 	end
+end
+
+function ENT:GetModuleScore(type)
+	local mdl = self:GetModule(type)
+	if not mdl then return 0 end
+	return mdl:GetScore()
+end
+
+function ENT:GetModuleIntegrity(type)
+	local mdl = self:GetModule(type)
+	if not mdl then return 0 end
+	return 1 - mdl:GetDamaged() / 16
 end
 
 function ENT:GetModule(type)

@@ -60,9 +60,14 @@ if SERVER then
     end
 
     function SYS:Think(dt)
+        self._nwdata.maxcharge = math.max(1, self:GetRoom():GetModuleScore(moduletype.systempower) * 4)
+
         if self._nwdata.charge < self._nwdata.maxcharge then
             self._nwdata.charge = math.min(self._nwdata.maxcharge, self._nwdata.charge
                 + RECHARGE_RATE * dt * self:GetPower())
+            self:_UpdateNWData()
+        elseif self._nwdata.charge > self._nwdata.maxcharge then
+            self._nwdata.charge = self._nwdata.maxcharge
             self:_UpdateNWData()
         end
     end
@@ -90,28 +95,60 @@ if SERVER then
     function SYS:TryTeleport(room)
         self._teleporting = false
 
+        local pads = self:GetRoom():GetTransporterPads()
+        local sent = {}
+
         if room:GetShip() == self:GetShip() or room:GetShields() < self:GetShieldThreshold() then
-            for _, pad in pairs(self:GetRoom():GetTransporterPads()) do
-                for _, ent in pairs(ents.FindInSphere(pad, 64)) do
-                    if self:TeleportEntity(ent, room) then return end
+            local toSend = {}
+            local available = room:GetAvailableTransporterTargets()
+            local dests = {}
+            for i, pad in ipairs(pads) do
+                local inRange = ents.FindInSphere(pad, 32)
+                local added = false
+                for _, ent in pairs(inRange) do
+                    if self:CanTeleportEntity(ent) then
+                        added = true
+                        table.insert(toSend, {pad = i, ent = ent})
+                    end
+                end
+
+                if added then
+                    local index = math.floor(math.random() * #available) + 1
+                    dests[i] = available[index]
+                    table.remove(available, index)
+                end
+            end
+
+            while #toSend > 0 do
+                local index = math.floor(math.random() * #toSend) + 1
+                local ent = toSend[index].ent
+                local pad = toSend[index].pad
+                table.remove(toSend, index)
+                if dests[pad] and self:TeleportEntity(ent, pads[pad], dests[pad]) then
+                    sent[index] = true
                 end
             end
         end
 
-        -- Nothing was teleported...
-        for _, pad in pairs(self:GetRoom():GetTransporterPads()) do
-            sound.Play(table.Random(failedSounds), pad, 70, 110)
+        for i, pad in ipairs(pads) do
+            if not sent[i] then
+                local ed = EffectData()
+                ed:SetOrigin(pad)
+                ed:SetMagnitude(0.5 + math.random())
+                ed:SetScale(32)
+                util.Effect("trans_fail", ed, true, true)
+            end
         end
     end
 
-    function SYS:TeleportEntity(ent, room)
+    function SYS:TeleportEntity(ent, pad, dest)
         if not self:CanTeleportEntity(ent) then return false end
 
         self._nwdata.charge = self._nwdata.charge - self:GetChargeCost(ent)
         self:_UpdateNWData()
 
         local oldpos = ent:GetPos()
-        local newpos = room:GetTransporterTarget()
+        local newpos = ent:GetPos() - pad + dest
 
         ent:SetPos(newpos)
 

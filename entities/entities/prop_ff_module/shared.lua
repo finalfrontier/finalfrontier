@@ -215,11 +215,11 @@ if SERVER then
         if damaged then
             self:_UpdateGrid()
 
-            --[[local ed = EffectData()
+            local ed = EffectData()
             ed:SetOrigin(self:GetPos())
             ed:SetMagnitude(0.5)
             ed:SetScale(0.125)
-            util.Effect("Explosion", ed)]]
+            util.Effect("Explosion", ed, true, true)
         end
     end
 
@@ -245,7 +245,7 @@ if SERVER then
             local ed = EffectData()
             ed:SetEntity(self)
             ed:SetMagnitude(math.random() * self:GetDamaged())
-            util.Effect("module_sparks", ed)
+            util.Effect("module_sparks", ed, true, true)
 
             self._lastEffect = CurTime()
         end
