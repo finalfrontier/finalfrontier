@@ -135,7 +135,11 @@ if SERVER then
             end
 
             self:SetPos(slot - Vector(0, 0, 4))
-            self:SetAngles(Angle(0, 0, 0))
+
+            local yaw = self:GetAngles().y
+            yaw = math.Round(yaw / 90) * 90
+
+            self:SetAngles(Angle(0, yaw, 0))
         end
     end
 
