@@ -47,7 +47,9 @@ function EFFECT:Init(data)
     end
     emitter:Finish()
 
-    target:EmitSound(table.Random(sparkSounds), 85 + (30 / 16 * mag), 100)
+    if data:GetFlags() ~= 1 then
+        target:EmitSound(table.Random(sparkSounds), 85 + (30 / 16 * mag), 100)
+    end
 end
 
 function EFFECT:Think( )

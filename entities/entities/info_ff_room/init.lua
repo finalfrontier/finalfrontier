@@ -384,11 +384,13 @@ end
 function ENT:RemoveModule(module)
 	for i, v in pairs(self._nwdata.modules) do
 		if v == module then
+			if i >= moduletype.repair1 and self:GetSystem():IsPerformingAction() then return false end
 			self._nwdata.modules[i] = nil
 			self:_UpdateNWData()
-			return
+			return true
 		end
 	end
+	return false
 end
 
 function ENT:AddDoor(door)

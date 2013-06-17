@@ -148,8 +148,7 @@ if SERVER then
     end
 
     function ENT:RemoveFromSlot(ply)
-        if self:IsInSlot() then
-
+        if self:IsInSlot() and self:GetRoom():RemoveModule(self) then
             self:SetPos(self:GetPos() + Vector(0, 0, 12))
 
             local phys = self:GetPhysicsObject()
@@ -166,8 +165,6 @@ if SERVER then
 
                 phys:SetVelocity(vel)
             end
-
-            self:GetRoom():RemoveModule(self)
 
             self:SetNWString("ship", "")
             self:SetNWInt("room", -1)

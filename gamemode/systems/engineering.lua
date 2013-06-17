@@ -39,6 +39,7 @@ if SERVER then
     resource.AddFile("materials/systems/engineering.png")
 
     SYS._compared = nil
+    SYS._sounds = nil
 
     function SYS:CalculatePowerNeeded(dt)
         if self:IsPerformingAction() then
@@ -53,6 +54,7 @@ if SERVER then
 
     function SYS:Initialize()
         self._compared = {nil, nil}
+        self._sounds = {}
 
         self:Reset()
         self._nwdata.compresult = compresult.none
@@ -62,6 +64,12 @@ if SERVER then
         self._nwdata.progress = -1
         self._nwdata.action = 0
         self:_UpdateNWData()
+
+        for _, v in pairs(self._sounds) do
+            v:Stop()
+        end
+
+        self._sounds = {}
     end
 
     function SYS:StartAction(type)
@@ -70,6 +78,35 @@ if SERVER then
             self._nwdata.progress = 0
             self._nwdata.compresult = compresult.none
             self:_UpdateNWData()
+
+            local left, right = self:GetModules()
+            self._sounds[1] = CreateSound(left, "ambient/machines/electric_machine.wav")
+            self._sounds[2] = CreateSound(right, "ambient/machines/electric_machine.wav")
+
+            self._sounds[1]:PlayEx(0.5, 75)
+            self._sounds[2]:PlayEx(0.5, 75)
+
+            self:UpdateSounds(1)
+        end
+    end
+
+    function SYS:UpdateSounds(index)
+        if self._nwdata.action == engaction.compare then return end
+
+        local left, right = self:GetModules()
+        for i, v in pairs(self._sounds) do
+            if index > 16 then
+                v:ChangePitch(50, 0.5)
+                v:ChangeVolume(0, 0.75)
+            elseif left:IsDamaged(index) ~= right:IsDamaged(index)
+                and (self._nwdata.action == engaction.splice) == (((i == 1 and left:IsDamaged(index))
+                or (i == 2 and right:IsDamaged(index)))) then
+                v:ChangePitch(100, 0.5)
+                v:ChangeVolume(1, 0.75)
+            else
+                v:ChangePitch(75, 0.5)
+                v:ChangeVolume(0.5, 0.75)
+            end
         end
     end
 
@@ -113,14 +150,29 @@ if SERVER then
                     self:Reset()
                     return
                 end
+                
+                local index = math.floor(next)
+
+                self:UpdateSounds(math.max(1, index + 1))
 
                 if self._nwdata.action == engaction.splice then
-                    left:Splice(right, math.floor(next))
-                    right:Splice(left, math.floor(next))
+                    left:Splice(right, index)
+                    right:Splice(left, index)
                 elseif self._nwdata.action == engaction.mirror then
-                    left:Mirror(right, math.floor(next))
-                    right:Mirror(left, math.floor(next))
+                    left:Mirror(right, index)
+                    right:Mirror(left, index)
                 end
+            elseif self._nwdata.action ~= engaction.compare
+                and left:IsDamaged(index) ~= right:IsDamaged(index) then
+                local ed = EffectData()
+                if left:IsDamaged(index) == (self._nwdata.action == engaction.splice) then
+                    ed:SetEntity(left)
+                else
+                    ed:SetEntity(right)
+                end
+                ed:SetMagnitude(0.25 + math.random() * 0.25)
+                ed:SetFlags(1)
+                util.Effect("module_sparks", ed, true, true)
             end
 
             self._nwdata.progress = next
