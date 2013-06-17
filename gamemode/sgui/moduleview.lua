@@ -23,6 +23,9 @@ function GUI:GetGrid()
 end
 
 if CLIENT then
+    GUI._progX = 0
+    GUI._progY = 0
+
     function GUI:IsGridLoaded()
         local mdl = self:GetModule()
         if not mdl then return false end
@@ -34,7 +37,7 @@ if CLIENT then
         xs, ys = xs / 40, ys / 40
 
         local cx, cy = self:GetGlobalCentre()
-            
+
         if self:IsGridLoaded() then
             local mdl = self:GetModule()
             local grid = self:GetGrid()
@@ -58,12 +61,35 @@ if CLIENT then
             surface.SetDrawColor(Color(255, 255, 255, 16))
             surface.SetMaterial(modulematerials[mdl:GetModuleType() + 1])
             surface.DrawTexturedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
+
+            if self:GetSystem():IsPerformingAction() then
+                local progress = math.min(15, math.floor(self:GetSystem():GetActionProgress()))
+                if progress == 0 then
+                    self._progX = 1
+                    self._progY = 1
+                else
+                    local y = math.floor(progress / 4)
+                    local x = progress - y * 4
+
+                    self._progX = self._progX + (x + 1 - self._progX) * 0.1
+                    self._progY = self._progY + (y + 1 - self._progY) * 0.1
+                end
+
+                local x = (self._progX - 2.5) * 10
+                local y = (self._progY - 2.5) * 10
+                surface.SetDrawColor(Color(255, 255, 255, Pulse(1) * 64 + 127))
+                surface.DrawOutlinedRect(cx + (x - 5) * xs, cy + (y - 5) * ys, 10 * xs, 10 * ys)                
+            end
         else
             surface.SetDrawColor(Color(255, 255, 255, 4))
-            surface.DrawOutlinedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
+            surface.DrawRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
 
             surface.SetDrawColor(Color(255, 255, 255, 16))
             surface.DrawOutlinedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
+
+            surface.SetDrawColor(Color(255, 255, 255, 16))
+            surface.SetMaterial(modulematerials[4])
+            surface.DrawTexturedRect(cx - 10 * xs, cy - 10 * ys, 20 * xs, 20 * ys)
         end
         
         self.Super[BASE].Draw(self)

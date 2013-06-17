@@ -218,6 +218,36 @@ if SERVER then
         if damaged then self:_UpdateGrid() end
     end
 
+    function ENT:_FindXY(index)
+        local y = math.floor((index - 1) / 4) + 1
+        local x = index - (y - 1) * 4
+        return x, y
+    end
+
+    function ENT:IsActionRequired(other, index)
+        local x, y = self:_FindXY(index)
+
+        return (self._grid[x][y] == -1) ~= (other._grid[x][y] == -1)
+    end
+
+    function ENT:Splice(other, index)
+        local x, y = self:_FindXY(index)
+
+        if self._grid[x][y] == -1 and other._grid[x][y] > -1 then
+            self._grid[x][y] = other._grid[x][y]
+            self:_UpdateGrid()
+        end
+    end
+
+    function ENT:Mirror(other, index)
+        local x, y = self:_FindXY(index)
+
+        if self._grid[x][y] > -1 and other._grid[x][y] == -1 then
+            self._grid[x][y] = -1
+            self:_UpdateGrid()
+        end
+    end
+
     function ENT:Think()
         if not self:IsInSlot() then
             if not self:IsPlayerHolding() and self:GetNWBool("held", false) then
@@ -253,7 +283,8 @@ elseif CLIENT then
     modulematerials = {
         Material("systems/lifesupport.png", "smooth"),
         Material("systems/shields.png", "smooth"),
-        Material("power.png", "smooth")
+        Material("power.png", "smooth"),
+        Material("systems/noicon.png", "smooth")
     }
 
     function ENT:Initialize()
