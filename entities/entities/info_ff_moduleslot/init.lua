@@ -16,6 +16,10 @@ function ENT:GetRoom()
     return self._room
 end
 
+function ENT:GetModule()
+    return self._room:GetModule(self:GetModuleType())
+end
+
 function ENT:GetModuleType()
     return self._moduleType
 end
@@ -38,7 +42,8 @@ function ENT:AcceptInput(name, activator, caller, data)
     elseif name == "Used" then
         local ply = activator
         if not IsValid(ply) or not ply:HasPermission(self._room, permission.SYSTEM) then return end
-        if self._open then self:Close() else self:Open() end
+        if self:GetModuleType() >= moduletype.repair1 then return end
+        if self._open and self:GetModule() then self:Close() elseif not self._open then self:Open() end
     end
 end
 
@@ -72,7 +77,16 @@ function ENT:InitPostEntity()
 end
 
 function ENT:Think()
-    if self._open and #self._room:GetPlayers() == 0 then
+    if self._open and self:GetModule() and #self._room:GetPlayers() == 0 then
         self:Close()
+    end
+
+    if self:GetModuleType() >= moduletype.repair1 then
+        local system = self._room:GetSystem()
+        if self._open and system:IsPerformingAction() then
+            self:Close()
+        elseif not self._open and not system:IsPerformingAction() then
+            self:Open()
+        end
     end
 end

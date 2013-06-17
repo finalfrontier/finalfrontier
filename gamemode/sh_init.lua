@@ -52,12 +52,3 @@ function FormatBearing(angle)
     angle = angle - math.floor(angle / 360) * 360
     return FormatNum(angle, 3, 0)
 end
-
-function GM:ShouldCollide(a, b)
-    if a:GetClass() == "prop_ff_module" and b:IsPlayer() then
-        return not a:GetNWBool("held", false)
-    elseif b:GetClass() == "prop_ff_module" and a:IsPlayer() then
-        return not b:GetNWBool("held", false)
-    end
-    return true
-end

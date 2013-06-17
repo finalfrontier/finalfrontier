@@ -80,7 +80,16 @@ function GUI:Enter()
             elseif not right then
                 return "INSERT RIGHT MODULE TO BEGIN"
             elseif not system:IsPerformingAction() then
-                return "SELECT AN ACTION"
+                local comp = system:GetComparisonResult()
+                if comp == compresult.equal then
+                    return "BOTH MODULES ARE EQUALLY EFFICIENT"
+                elseif comp == compresult.left then
+                    return "LEFT MODULE IS MORE EFFICIENT"
+                elseif comp == compresult.right then
+                    return "RIGHT MODULE IS MORE EFFICIENT"
+                else
+                    return "SELECT AN ACTION"
+                end
             elseif act == engaction.compare then
                 return "COMPARISON IN PROGRESS " .. pc
             elseif act == engaction.splice then

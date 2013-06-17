@@ -105,8 +105,6 @@ if SERVER then
         self:SetMoveType(MOVETYPE_VPHYSICS)
         self:SetSolid(SOLID_VPHYSICS)
 
-        self:SetCustomCollisionCheck(true)
-
         local phys = self:GetPhysicsObject()
         if IsValid(phys) then
             phys:Wake()
@@ -186,7 +184,6 @@ if SERVER then
         if not self:IsPlayerHolding() then
             self:SetAngles(Angle(0, self:GetAngles().y, 0))
             ply:PickupObject(self)
-            self:SetNWBool("held", true)
         end
     end
 
@@ -224,10 +221,9 @@ if SERVER then
         return x, y
     end
 
-    function ENT:IsActionRequired(other, index)
+    function ENT:IsDamaged(index)
         local x, y = self:_FindXY(index)
-
-        return (self._grid[x][y] == -1) ~= (other._grid[x][y] == -1)
+        return self._grid[x][y] == -1
     end
 
     function ENT:Splice(other, index)
@@ -250,10 +246,6 @@ if SERVER then
 
     function ENT:Think()
         if not self:IsInSlot() then
-            if not self:IsPlayerHolding() and self:GetNWBool("held", false) then
-                self:SetNWBool("held", false)
-            end
-
             local min, max = self:GetCollisionBounds()
             min = min + self:GetPos() - Vector(0, 0, 8)
             max = max + self:GetPos()
