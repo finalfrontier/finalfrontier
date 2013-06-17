@@ -73,13 +73,13 @@ if SERVER then
     end
 
     function SYS:StartAction(type)
-        if not self:IsPerformingAction() then
+        local left, right = self:GetModules()
+        if not self:IsPerformingAction() and left and right then
             self._nwdata.action = type
             self._nwdata.progress = 0
             self._nwdata.compresult = compresult.none
             self:_UpdateNWData()
 
-            local left, right = self:GetModules()
             self._sounds[1] = CreateSound(left, "ambient/machines/electric_machine.wav")
             self._sounds[2] = CreateSound(right, "ambient/machines/electric_machine.wav")
 
@@ -153,14 +153,16 @@ if SERVER then
                 
                 local index = math.floor(next)
 
-                self:UpdateSounds(math.max(1, index + 1))
+                if index > 0 then
+                    self:UpdateSounds(math.max(1, index + 1))
 
-                if self._nwdata.action == engaction.splice then
-                    left:Splice(right, index)
-                    right:Splice(left, index)
-                elseif self._nwdata.action == engaction.mirror then
-                    left:Mirror(right, index)
-                    right:Mirror(left, index)
+                    if self._nwdata.action == engaction.splice then
+                        left:Splice(right, index)
+                        right:Splice(left, index)
+                    elseif self._nwdata.action == engaction.mirror then
+                        left:Mirror(right, index)
+                        right:Mirror(left, index)
+                    end
                 end
             elseif self._nwdata.action ~= engaction.compare
                 and left:IsDamaged(index) ~= right:IsDamaged(index) then

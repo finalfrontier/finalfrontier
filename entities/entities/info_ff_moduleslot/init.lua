@@ -77,16 +77,31 @@ function ENT:InitPostEntity()
 end
 
 function ENT:Think()
-    if self._open and self:GetModule() and #self._room:GetPlayers() == 0 then
-        self:Close()
-    end
-
     if self:GetModuleType() >= moduletype.repair1 then
         local system = self._room:GetSystem()
         if self._open and system:IsPerformingAction() then
+            if self:GetModule() then
+                self:GetModule():EmitSound("ambient/alarms/klaxon1.wav", 110, 100)
+            end
             self:Close()
         elseif not self._open and not system:IsPerformingAction() then
-            self:Open()
+            if self:GetModule() then
+                self:GetModule():EmitSound("plats/elevbell1.wav", 105, 120)
+            end
+            self._open = true
+            timer.Simple(0.5, function()
+                if self:GetModule() then
+                    local sound = CreateSound(self:GetModule(), "npc/env_headcrabcanister/hiss.wav")
+                    sound:PlayEx(1, 110)
+                    sound:ChangeVolume(0, 1.5)
+                    timer.Simple(2, function()
+                        sound:Stop()
+                    end)
+                end
+                self:Open()
+            end)
         end
+    elseif self._open and self:GetModule() and #self._room:GetPlayers() == 0 then
+        self:Close()
     end
 end
