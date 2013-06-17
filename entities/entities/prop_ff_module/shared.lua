@@ -105,6 +105,8 @@ if SERVER then
         self:SetMoveType(MOVETYPE_VPHYSICS)
         self:SetSolid(SOLID_VPHYSICS)
 
+        self:SetCustomCollisionCheck(true)
+
         local phys = self:GetPhysicsObject()
         if IsValid(phys) then
             phys:Wake()
@@ -149,10 +151,10 @@ if SERVER then
 
     function ENT:RemoveFromSlot(ply)
         if self:IsInSlot() then
-            local phys = self:GetPhysicsObject()
 
             self:SetPos(self:GetPos() + Vector(0, 0, 12))
 
+            local phys = self:GetPhysicsObject()
             if IsValid(phys) then
                 phys:EnableMotion(true)
                 phys:Wake()
@@ -184,6 +186,7 @@ if SERVER then
         if not self:IsPlayerHolding() then
             self:SetAngles(Angle(0, self:GetAngles().y, 0))
             ply:PickupObject(self)
+            self:SetNWBool("held", true)
         end
     end
 
@@ -212,19 +215,15 @@ if SERVER then
             threshold = math.random() * math.random()
         end
 
-        if damaged then
-            self:_UpdateGrid()
-
-            local ed = EffectData()
-            ed:SetOrigin(self:GetPos())
-            ed:SetMagnitude(0.5)
-            ed:SetScale(0.125)
-            util.Effect("Explosion", ed, true, true)
-        end
+        if damaged then self:_UpdateGrid() end
     end
 
     function ENT:Think()
         if not self:IsInSlot() then
+            if not self:IsPlayerHolding() and self:GetNWBool("held", false) then
+                self:SetNWBool("held", false)
+            end
+
             local min, max = self:GetCollisionBounds()
             min = min + self:GetPos() - Vector(0, 0, 8)
             max = max + self:GetPos()
@@ -256,6 +255,10 @@ elseif CLIENT then
         Material("systems/shields.png", "smooth"),
         Material("power.png", "smooth")
     }
+
+    function ENT:Initialize()
+        self:SetCustomCollisionCheck(true)
+    end
 
     function ENT:IsGridLoaded()
         local grid = self:GetGrid()

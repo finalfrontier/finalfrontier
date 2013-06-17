@@ -30,14 +30,14 @@ if CLIENT then
     end
 
     function GUI:Draw()
+        local xs, ys = self:GetSize()
+        xs, ys = xs / 40, ys / 40
+
+        local cx, cy = self:GetGlobalCentre()
+            
         if self:IsGridLoaded() then
             local mdl = self:GetModule()
             local grid = self:GetGrid()
-
-            local xs, ys = self:GetSize()
-            xs, ys = xs / 40, ys / 40
-
-            local cx, cy = self:GetGlobalCentre()
 
             for i = 1, 4 do
                 local x = (i - 2.5) * 10
@@ -58,6 +58,12 @@ if CLIENT then
             surface.SetDrawColor(Color(255, 255, 255, 16))
             surface.SetMaterial(modulematerials[mdl:GetModuleType() + 1])
             surface.DrawTexturedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
+        else
+            surface.SetDrawColor(Color(255, 255, 255, 4))
+            surface.DrawOutlinedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
+
+            surface.SetDrawColor(Color(255, 255, 255, 16))
+            surface.DrawOutlinedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
         end
         
         self.Super[BASE].Draw(self)
