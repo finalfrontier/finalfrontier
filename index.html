@@ -8,10 +8,77 @@
                 -moz-background-size: cover;
                 -o-background-size: cover;
                 background-size: cover;
+                text-align: center;
+            }
+
+            #main {
+                color: white;
+                font-family: calibri;
+                text-shadow: white 0 0 0.2em;
+                position: absolute;
+                top: 65%;
+                left:10%;
+                width: 80%;
+            }
+
+            #svname {
+                font-size: 48px;
+                text-shadow: white 0 0 0.2em;
+            }
+
+            #svurl {
+                font-size: 24px;
+                text-shadow: white 0 0 0.2em;
+            }
+
+            #mapname {
+                font-size: 24px;
+                text-shadow: white 0 0 0.2em;
             }
         </style>
+        <script type="text/javascript">
+            function replaceContents(id, contents) {
+                var elem = document.getElementById(id);
+                while (elem.childNodes.length > 0) {
+                    elem.removeChild(elem.firstChild);
+                }
+                elem.appendChild(elem.ownerDocument.createTextNode(contents));
+            }
+
+            function GameDetails(svname, svurl, mapname, maxplayers, steamid, gamemode) {
+                replaceContents("svname", svname);
+                replaceContents("svurl", svurl);
+                replaceContents("mapname", mapname);
+            }
+
+            function DownloadingFile(filename) {
+                
+            }
+
+            function SetStatusChanged(status) {
+                
+            }
+
+            function SetFilesTotal(total) {
+                
+            }
+
+            function SetFilesNeeded(needed) {
+                
+            }
+        </script>
     </head>
     <body>
-
+        <div id="main">
+            <div id="svname">
+                Final Frontier
+            </div>
+            <div id="svurl">
+                &nbsp;
+            </div>
+            <div id="mapname">
+                &nbsp;
+            </div>
+        </div>
     </body>
 </html>
