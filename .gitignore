@@ -1,13 +1,1 @@
-content/maps/vmf/*.bsp
-content/maps/vmf/*.log
-content/maps/vmf/*.prt
-content/maps/vmf/*.vmx
-*.ztmp
-*.mdmp
-*.temp.vmf
-*.vmx
-*.gl
-*.cache
-content/maps/vmf/ships/*.log
-content/maps/vmf/ships/*.lin
-content/maps/vmf/ships/*.bsp
+Thumbs.db
