@@ -7,8 +7,8 @@ GUI.TextColor = Color(191, 191, 191, 255)
 
 if CLIENT then
     function GUI:GetValueText(value)
-        return FormatNum(self:GetSystem():GetPower(), 1, 2) .. "kW / " ..
-            FormatNum(self:GetSystem():GetPowerNeeded(), 1, 2) .. "kW"
+        return FormatNum(self:GetSystem():GetPower(), 1, 2) .. "MW / " ..
+            FormatNum(self:GetSystem():GetPowerNeeded(), 1, 2) .. "MW"
     end
 
     function GUI:DrawValueText(value)

@@ -1,17 +1,8 @@
-local sparkSounds = {
-    "ambient/energy/spark1.wav",
-    "ambient/energy/spark2.wav",
-    "ambient/energy/spark3.wav",
-    "ambient/energy/spark4.wav",
-    "ambient/energy/spark5.wav",
-    "ambient/energy/spark6.wav"
-}
-
 function EFFECT:Init(data)
     local target = data:GetEntity()
     if not IsValid(target) then return end
 
-    local mag = math.max(1, data:GetMagnitude())
+    local mag = data:GetMagnitude()
     local low, high = target:WorldSpaceAABB()
 
     local count = math.Clamp(math.sqrt(mag) * 8, 4, 64)
@@ -24,25 +15,25 @@ function EFFECT:Init(data)
             math.Rand(low.z, high.z) + 16
         )
 
-        local particle = emitter:Add("effects/spark", pos)
+        local particle = emitter:Add("particle/SmokeStack", pos)
         if particle then
             particle:SetVelocity((pos - target:GetPos())
-                * (5 + math.random() * 5))
+                * (5 + math.random() * 2))
 
-            particle:SetGravity(Vector(0, 0, -600))
-            particle:SetAirResistance(100)
+            particle:SetGravity(Vector(0, 0, 0))
+            particle:SetAirResistance(150)
             particle:SetDieTime(math.Rand(0.5, 1.5))
 
             particle:SetLifeTime(0)
-            particle:SetStartAlpha(math.Rand(191, 255))
+            particle:SetStartAlpha(math.Rand(8, 16))
             particle:SetEndAlpha(0)
-            particle:SetStartSize(2)
-            particle:SetEndSize(0)
+            particle:SetStartSize(math.Rand(16, 32))
+            particle:SetEndSize(math.Rand(32, 64))
             particle:SetRoll(math.Rand(0, 360))
             particle:SetRollDelta(0)
             
-            particle:SetCollide(true)
-            particle:SetBounce(0.3)
+            particle:SetCollide(false)
+            particle:SetBounce(0.1)
         end
     end
     emitter:Finish()

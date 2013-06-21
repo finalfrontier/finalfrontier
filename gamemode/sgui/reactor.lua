@@ -48,7 +48,7 @@ function GUI:SetCurrentRoom(room)
             end
         elseif CLIENT then
             function self._roomelems.slider.GetValueText(slider, value)
-                return FormatNum(self:GetSystem():GetTotalPower() * value, 1, 2) .. "kW"
+                return FormatNum(self:GetSystem():GetTotalPower() * value, 1, 2) .. "MW"
             end
         end
         self._roomelems.supplied = sgui.Create(self, "label")
@@ -173,10 +173,10 @@ elseif CLIENT then
 
         if layout.room then
             self._roomelems.supplied.Text = FormatNum(self._curroom:GetSystem():GetPower(), 1, 2) 
-                .. "kW / " .. FormatNum(self._curroom:GetSystem():GetPowerNeeded(), 1, 2) .. "kW"
+                .. "MW / " .. FormatNum(self._curroom:GetSystem():GetPowerNeeded(), 1, 2) .. "MW"
         else
-            self._totaltext.Text = FormatNum(self:GetSystem():GetTotalNeeded(), 1, 2) .. "kW / "
-                .. FormatNum(self:GetSystem():GetTotalPower(), 1, 2) .. "kW"
+            self._totaltext.Text = FormatNum(self:GetSystem():GetTotalNeeded(), 1, 2) .. "MW / "
+                .. FormatNum(self:GetSystem():GetTotalPower(), 1, 2) .. "MW"
                 
             local total = self:GetSystem():GetTotalPower()
             if total > 0 then

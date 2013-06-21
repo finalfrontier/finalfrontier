@@ -10,9 +10,12 @@ if SERVER then
 	local SHIELD_POWER_PER_M2 = 0.008
 	
 	SYS._distrib = nil
+	SYS._startTime = 0
 	
 	function SYS:Initialize()
 		self._distrib = {}
+
+		self._startTime = CurTime()
 	end
 
 	function SYS:SetDistrib(room, value)

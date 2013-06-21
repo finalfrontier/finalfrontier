@@ -46,7 +46,7 @@ function EFFECT:Init(data)
     emitter:Finish()
 end
 
-function EFFECT:Think( )
+function EFFECT:Think()
     return false
 end
 
