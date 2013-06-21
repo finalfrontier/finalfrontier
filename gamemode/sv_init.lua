@@ -20,6 +20,8 @@ resource.AddFile("materials/connector.png")
 resource.AddFile("materials/playerdot.png")
 resource.AddFile("materials/objects/ship.png")
 
+game.ConsoleCommand("sv_loadingurl \"http://metapyziks.github.io/finalfrontier/\"\n")
+
 -- Gamemode Overrides
 
 function GM:Initialize()

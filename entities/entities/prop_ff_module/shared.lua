@@ -263,7 +263,7 @@ if SERVER then
             local ed = EffectData()
             ed:SetEntity(self)
             ed:SetMagnitude(math.random() * self:GetDamaged())
-            ed:SetOrigin(self:GetPos())
+            ed:SetOrigin(self:GetPos() + Vector(0, 0, 8))
             util.Effect("module_sparks", ed, true, true)
 
             self._lastEffect = CurTime()

@@ -14,7 +14,7 @@ function EFFECT:Init(data)
     local mag = math.max(1, data:GetMagnitude())
     local low, high = target:WorldSpaceAABB()
 
-    local count = math.Clamp(math.sqrt(mag) * 8, 4, 64)
+    local count = math.Clamp(math.sqrt(mag) * 4, 2, 16)
         
     local emitter = ParticleEmitter(target:GetPos())
     for i = 1, count do

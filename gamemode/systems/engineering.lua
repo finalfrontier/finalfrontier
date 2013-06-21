@@ -169,10 +169,10 @@ if SERVER then
                 local ed = EffectData()
                 if left:IsDamaged(index) == (self._nwdata.action == engaction.splice) then
                     ed:SetEntity(left)
-                    ed:SetOrigin(left:GetPos())
+                    ed:SetOrigin(left:GetPos() + Vector(0, 0, 8))
                 else
                     ed:SetEntity(right)
-                    ed:SetOrigin(right:GetPos())
+                    ed:SetOrigin(right:GetPos() + Vector(0, 0, 8))
                 end
                 ed:SetMagnitude(0.25 + math.random() * 0.25)
                 ed:SetFlags(1)

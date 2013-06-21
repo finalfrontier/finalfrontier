@@ -101,7 +101,7 @@ function ENT:Think()
                     ed:SetEntity(self:GetModule())
                     ed:SetMagnitude(0.25 + math.random() * 0.25)
                     ed:SetFlags(1)
-                    ed:SetOrigin(self:GetPos())
+                    ed:SetOrigin(self:GetPos() + Vector(0, 0, 8))
                     util.Effect("module_smoke", ed, true, true)
                 end
                 self:Open()
