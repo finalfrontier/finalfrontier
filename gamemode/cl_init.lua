@@ -61,10 +61,6 @@ function CreateHollowCircle(x, y, innerRadius, outerRadius, startAngle, rotation
     return verts
 end
 
-function WrapAngle(ang)
-    return ang - math.floor(ang / (math.pi * 2)) * math.pi * 2
-end
-
 function surface.DrawCentredText(x, y, text)
     local wid, hei = surface.GetTextSize(text)
     surface.SetTextPos(x - wid / 2, y - hei / 2)
@@ -92,70 +88,6 @@ function surface.DrawConnector(sx, sy, ex, ey, width)
     surface.SetMaterial(CONNECTOR)
     surface.DrawTexturedRectRotated(sx + dx * 0.5, sy + dy * 0.5, diff, width, ang)
     draw.NoTexture()
-end
-
--- TODO: Add check to avoid complex polys in output
-function FindConvexPolygons(poly, output)
-    output = output or {}
-    local cur = {}
-    local l = poly[#poly]
-    local n = poly[1]
-    local i = 1
-    while i <= #poly do
-        local v = n
-        table.insert(cur, v)
-        n = poly[(i % #poly) + 1]
-        i = i + 1
-        
-        local la = math.atan2(l.y - v.y, l.x - v.x)
-        local subPoly = { v }
-        
-        while n ~= v do
-            table.insert(subPoly, n)
-            if i > #poly + 1 then
-                table.remove(cur, 1)
-            end
-            local na = math.atan2(n.y - v.y, n.x - v.x)
-            local ang = WrapAngle(na - la)
-            
-            if ang > math.pi then
-                n = poly[(i % #poly) + 1]
-                i = i + 1
-            else
-                if #subPoly > 2 then
-                    FindConvexPolygons(subPoly, output)
-                end
-                break
-            end
-        end
-        
-        if n == v then
-            break
-        end
-        l = v
-    end
-    table.insert(output, cur)
-    return output
-end
-
-function IsPointInsidePoly(poly, x, y)
-    for i, v in ipairs(poly) do
-        local n = poly[(i % #poly) + 1]
-        local ax, ay = n.x - v.x, n.y - v.y
-        local bx, by =   x - v.x,   y - v.y
-        local cross = ax * by - ay * bx
-        if cross < 0 then return false end
-    end
-    
-    return true
-end
-
-function IsPointInsidePolyGroup(polys, x, y)
-    for _, poly in ipairs(polys) do
-        if IsPointInsidePoly(poly, x, y) then return true end
-    end
-    
-    return false
 end
 
 -- Gamemode Overrides

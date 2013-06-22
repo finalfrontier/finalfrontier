@@ -11,6 +11,7 @@ ENT._screens = nil
 ENT._system = nil
 ENT._doorlist = nil
 ENT._bounds = nil
+ENT._polys = nil
 
 ENT._details = nil
 ENT._detailindices = nil
@@ -272,6 +273,13 @@ function ENT:GetBounds()
     return self._bounds
 end
 
+function ENT:GetPolygons()
+    if not self._polys then
+        self._polys = FindConvexPolygons(self._nwdata.corners)
+    end
+    return self._polys
+end
+
 function ENT:AddCorner(index, x, y)
     if not self._nwdata.corners then self._nwdata.corners = {} end
 
@@ -279,6 +287,8 @@ function ENT:AddCorner(index, x, y)
     self:GetBounds():AddPoint(x, y)
     self:GetShip():GetBounds():AddPoint(x, y)
     self:_UpdateNWData()
+
+    self._polys = nil
 end
 
 function ENT:GetCorners()
@@ -582,6 +592,7 @@ end
 
 function ENT:IsPointInside(x, y)
     return self:GetBounds():IsPointInside(x, y)
+        and IsPointInsidePolyGroup(self:GetPolygons(), x, y)
 end
 
 function ENT:_UpdateNWData()
