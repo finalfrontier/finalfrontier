@@ -10,70 +10,70 @@ _mt.b = 0
 _mt._set = false
 
 function _mt:GetSize()
-	return self.r - self.l, self.b - self.t
+    return self.r - self.l, self.b - self.t
 end
 
 function _mt:GetCentre()
-	return (self.r + self.l) / 2, (self.b + self.t) / 2
+    return (self.r + self.l) / 2, (self.b + self.t) / 2
 end
 
 function _mt:GetRect()
-	return self.l, self.t, self.r - self.l, self.b - self.t
+    return self.l, self.t, self.r - self.l, self.b - self.t
 end
 
 function _mt:AddPoint(x, y)
-	if not self._set then
-		self.l, self.t, self.r, self.b = x, y, x, y
-		self._set = true
-	else
-		if x < self.l then self.l = x end
-		if y < self.t then self.t = y end
-		if x > self.r then self.r = x end
-		if y > self.b then self.b = y end
-	end
+    if not self._set then
+        self.l, self.t, self.r, self.b = x, y, x, y
+        self._set = true
+    else
+        if x < self.l then self.l = x end
+        if y < self.t then self.t = y end
+        if x > self.r then self.r = x end
+        if y > self.b then self.b = y end
+    end
 end
 
 function _mt:AddBounds(bounds)
-	if not self._set then
-		self.l, self.t, self.r, self.b = bounds.l, bounds.t, bounds.r, bounds.b
-		self._set = true
-	else
-		if bounds.l < self.l then self.l = bounds.l end
-		if bounds.t < self.t then self.t = bounds.t end
-		if bounds.r > self.r then self.r = bounds.r end
-		if bounds.b > self.b then self.b = bounds.b end
-	end
+    if not self._set then
+        self.l, self.t, self.r, self.b = bounds.l, bounds.t, bounds.r, bounds.b
+        self._set = true
+    else
+        if bounds.l < self.l then self.l = bounds.l end
+        if bounds.t < self.t then self.t = bounds.t end
+        if bounds.r > self.r then self.r = bounds.r end
+        if bounds.b > self.b then self.b = bounds.b end
+    end
 end
 
 function _mt:Move(x, y)
-	self.l = self.l + x
-	self.t = self.t + y
-	self.r = self.r + x
-	self.b = self.b + y
+    self.l = self.l + x
+    self.t = self.t + y
+    self.r = self.r + x
+    self.b = self.b + y
 end
 
 function _mt:Equals(bounds)
-	return  self.l == bounds.l and self.t == bounds.t
-		and self.r == bounds.r and self.b == bounds.b
+    return  self.l == bounds.l and self.t == bounds.t
+        and self.r == bounds.r and self.b == bounds.b
 end
 
 function _mt:IsPointInside(x, y)
-	if x < self.l then return false end
-	if y < self.t then return false end
-	if x > self.r then return false end
-	if y > self.b then return false end
-	return true
+    if x < self.l then return false end
+    if y < self.t then return false end
+    if x > self.r then return false end
+    if y > self.b then return false end
+    return true
 end
 
 function _mt:__tostring()
-	return "{(" .. self.l .. "," .. self.t .. "),(" .. self.r .. "," .. self.b .. ")}"
+    return "{(" .. self.l .. "," .. self.t .. "),(" .. self.r .. "," .. self.b .. ")}"
 end
 
 function Bounds(x, y, width, height)
-	local bounds = {}
-	if x then
-		bounds.l, bounds.t, bounds.r, bounds.b = x, y, x + width, y + height
-		bounds._set = true
-	end
-	return setmetatable(bounds, _mt)
+    local bounds = {}
+    if x then
+        bounds.l, bounds.t, bounds.r, bounds.b = x, y, x + width, y + height
+        bounds._set = true
+    end
+    return setmetatable(bounds, _mt)
 end

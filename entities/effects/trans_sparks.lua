@@ -12,9 +12,9 @@ function EFFECT:Init(data)
     local emitter = ParticleEmitter(offset)
     for i = 1, count do
         local pos = Vector(
-        	math.Rand(low.x, high.x),
-        	math.Rand(low.y, high.y),
-        	math.Rand(low.z,high.z)
+            math.Rand(low.x, high.x),
+            math.Rand(low.y, high.y),
+            math.Rand(low.z,high.z)
         )
 
         local particle = emitter:Add("effects/spark", pos)

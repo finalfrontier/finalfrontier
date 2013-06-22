@@ -7,7 +7,7 @@ if SERVER then
     local OPEN_DISTANCE = 160
     local POWER_PER_DOOR = 0.2
 
-	resource.AddFile("materials/systems/doorcontrol.png")
+    resource.AddFile("materials/systems/doorcontrol.png")
 
     SYS._sorted = nil
 
@@ -118,5 +118,5 @@ if SERVER then
         end
     end
 elseif CLIENT then
-	SYS.Icon = Material("systems/doorcontrol.png", "smooth")
+    SYS.Icon = Material("systems/doorcontrol.png", "smooth")
 end

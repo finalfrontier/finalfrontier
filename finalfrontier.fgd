@@ -90,3 +90,16 @@
 		2 : "System Power"
 	]
 ]
+
+@PointClass base(Angles) = info_ff_damageeffect : "damage effect"
+[
+	room(target_destination) : "Parent room" : "" : "Targetname of the room containing this damage effect"
+	type(choices) : "Effect Type" : "0" =
+	[
+		0 : "None"
+		1 : "Sparks"
+		2 : "Gas"
+		4 : "Smoke"
+		8 : "Cracks"
+	]
+]

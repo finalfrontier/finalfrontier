@@ -4,7 +4,7 @@ ships._dict = {}
 ships._nwdata = GetGlobalTable("ships")
 
 function ships.Add(ship)
-	ships._dict[ship:GetName()] = ship
+    ships._dict[ship:GetName()] = ship
 end
 
 function ships.Remove(ship)
@@ -23,7 +23,7 @@ function ships.GetByName(name)
         ship = Ship(name)
         ships._dict[name] = ship
     end
-	return ship
+    return ship
 end
 
 function ships.GetRoomByName(name)

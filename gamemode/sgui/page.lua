@@ -3,16 +3,16 @@ local BASE = "container"
 GUI.BaseName = BASE
 
 function GUI:Initialize()
-	self.Super[BASE].Initialize(self)
+    self.Super[BASE].Initialize(self)
 
-	self:SetWidth(self:GetScreen().Width)
-	self:SetHeight(self:GetScreen().Height)
+    self:SetWidth(self:GetScreen().Width)
+    self:SetHeight(self:GetScreen().Height)
 end
 
 function GUI:Enter() end
 
 function GUI:Leave()
-	self:RemoveAllChildren()
+    self:RemoveAllChildren()
 end
 
 function GUI:IsCurrentPage()

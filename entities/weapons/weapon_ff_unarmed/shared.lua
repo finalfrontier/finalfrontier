@@ -28,7 +28,7 @@ SWEP.AllowDelete = false
 SWEP.AllowDrop = false
 
 function SWEP:Initialize()
-	self:SetWeaponHoldType("pistol")
+    self:SetWeaponHoldType("pistol")
 end
 
 function SWEP:GetClass()
@@ -65,7 +65,7 @@ function SWEP:Holster()
 end
 
 function SWEP:HUDShouldDraw()
-	return element ~= "CHudWeaponSelection"
+    return element ~= "CHudWeaponSelection"
 end
 
 function SWEP:DrawWorldModel()

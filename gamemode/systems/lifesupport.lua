@@ -4,7 +4,7 @@ SYS.SGUIName = "lifesupport"
 SYS.Powered = true
 
 if SERVER then
-	resource.AddFile("materials/systems/lifesupport.png")
+    resource.AddFile("materials/systems/lifesupport.png")
 
     local TEMP_POWER_PER_METER3 = 2
     local TEMP_RECHARGE_RATE = 2
@@ -97,5 +97,5 @@ if SERVER then
         end
     end
 elseif CLIENT then
-	SYS.Icon = Material("systems/lifesupport.png", "smooth")
+    SYS.Icon = Material("systems/lifesupport.png", "smooth")
 end

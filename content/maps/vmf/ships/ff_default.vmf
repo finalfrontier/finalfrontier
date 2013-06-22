@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "382"
+	"mapversion" "399"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "382"
+	"mapversion" "399"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -25500,6 +25500,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 0 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_shields"
 	"origin" "-288 -1728 96"
 	editor
 	{
@@ -25515,6 +25516,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -180 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_shields"
 	"origin" "-96 -1728 96"
 	editor
 	{
@@ -25530,6 +25532,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_shields"
 	"origin" "-320 -1280 96"
 	editor
 	{
@@ -25545,6 +25548,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_shields"
 	"origin" "-64 -1280 96"
 	editor
 	{
@@ -26952,6 +26956,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 180 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_transporter"
 	"origin" "384 -1744 96"
 	editor
 	{
@@ -26967,6 +26972,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_transporter"
 	"origin" "128 -1888 96"
 	editor
 	{
@@ -27093,6 +27099,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 0 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_hallway4"
 	"origin" "192 -1216 96"
 	editor
 	{
@@ -27108,6 +27115,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -180 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_hallway4"
 	"origin" "384 -1408 96"
 	editor
 	{
@@ -27123,6 +27131,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_lifesupport"
 	"origin" "224 -608 64"
 	editor
 	{
@@ -27138,6 +27147,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 180 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_engineering"
 	"origin" "128 -2208 48"
 	editor
 	{
@@ -27153,6 +27163,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 1.00179e-005 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_engineering"
 	"origin" "-512 -2208 48"
 	editor
 	{
@@ -29095,6 +29106,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 180 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_engineering"
 	"origin" "-96 -2208 96"
 	editor
 	{
@@ -29110,6 +29122,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -5.00896e-006 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_engineering"
 	"origin" "-288 -2208 96"
 	editor
 	{
@@ -30439,6 +30452,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 180 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_hallway1"
 	"origin" "-576 -1216 96"
 	editor
 	{
@@ -30454,6 +30468,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 5.00896e-006 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_hallway1"
 	"origin" "-768 -1408 96"
 	editor
 	{
@@ -30873,6 +30888,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_medical"
 	"origin" "-512 -1888 96"
 	editor
 	{
@@ -30888,6 +30904,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -5.00896e-006 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_medical"
 	"origin" "-768 -1744 96"
 	editor
 	{
@@ -30903,6 +30920,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_doorcontrol"
 	"origin" "-608 -608 64"
 	editor
 	{
@@ -31387,6 +31405,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_reactor"
 	"origin" "-320 -1216 -96"
 	editor
 	{
@@ -31402,6 +31421,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_reactor"
 	"origin" "-64 -1216 -96"
 	editor
 	{
@@ -31417,6 +31437,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_reactor"
 	"origin" "-192 -1008 -96"
 	editor
 	{
@@ -31912,6 +31933,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -180 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_sensors"
 	"origin" "-32 -128 0"
 	editor
 	{
@@ -31927,6 +31949,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 0 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_sensors"
 	"origin" "-352 -128 0"
 	editor
 	{
@@ -33220,6 +33243,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 0 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_piloting"
 	"origin" "-320 128 -16"
 	editor
 	{
@@ -33235,6 +33259,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -180 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_piloting"
 	"origin" "-64 128 -16"
 	editor
 	{
@@ -34481,6 +34506,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_weapons"
 	"origin" "-192 -864 -112"
 	editor
 	{
@@ -34964,6 +34990,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_weapons"
 	"origin" "-64 -320 0"
 	editor
 	{
@@ -34979,6 +35006,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_weapons"
 	"origin" "-320 -320 0"
 	editor
 	{
@@ -34994,6 +35022,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_weapons"
 	"origin" "-32 -896 64"
 	editor
 	{
@@ -35009,6 +35038,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_lightcolumn.vmf"
+	"replace01" "$room_name room_weapons"
 	"origin" "-352 -896 64"
 	editor
 	{
@@ -39762,6 +39792,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 180 0"
 	"file" "ff_default_floorgrate.vmf"
+	"replace01" "$room_name room_hallway4"
 	"origin" "288 -1376 96"
 	editor
 	{
@@ -39777,6 +39808,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -180 0"
 	"file" "ff_default_floorgrate.vmf"
+	"replace01" "$room_name room_hallway1"
 	"origin" "-672 -1376 96"
 	editor
 	{
@@ -39847,6 +39879,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_floorgrate.vmf"
+	"replace01" "$room_name room_medical"
 	"origin" "-608 -1696 96"
 	editor
 	{
@@ -39900,6 +39933,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_floorgrate.vmf"
+	"replace01" "$room_name room_transporter"
 	"origin" "224 -1664 96"
 	editor
 	{
@@ -40046,6 +40080,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 180 0"
 	"file" "ff_default_floorgrate.vmf"
+	"replace01" "$room_name room_shields"
 	"origin" "-192 -1632 96"
 	editor
 	{
@@ -40098,6 +40133,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 -180 0"
 	"file" "ff_default_floorgrate.vmf"
+	"replace01" "$room_name room_shields"
 	"origin" "-192 -1760 96"
 	editor
 	{
@@ -40243,6 +40279,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_floorgrate.vmf"
+	"replace01" "$room_name room_weapons"
 	"origin" "-128 -768 -112"
 	editor
 	{
@@ -40277,6 +40314,7 @@ entity
 	"classname" "func_instance"
 	"angles" "-0 90 0"
 	"file" "ff_default_floorgrate.vmf"
+	"replace01" "$room_name room_weapons"
 	"origin" "-256 -768 -112"
 	editor
 	{
@@ -40460,8 +40498,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-35.9783 -2267.64 177.754]"
-		"look" "[-47.609 -2272.37 158.812]"
+		"position" "[-310.175 -1474.32 207.457]"
+		"look" "[-309.867 -1451.61 208.115]"
 	}
 }
 cordon
