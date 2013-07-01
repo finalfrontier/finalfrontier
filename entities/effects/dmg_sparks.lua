@@ -44,7 +44,7 @@ function EFFECT:Init(data)
     end
     emitter:Finish()
 
-    sound.Play(table.Random(sparkSounds), pos, 85 + (30 * mag), 100)
+    sound.Play(table.Random(sparkSounds), pos, 55 + (30 * mag), 100)
 end
 
 function EFFECT:Think()

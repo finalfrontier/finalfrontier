@@ -32,11 +32,22 @@ if SERVER then
         return grid
     end
 
+    function ENT:SetToOptimal()
+        self._grid = {}
+        for i = 1, 4 do
+            self._grid[i] = {}
+            for j = 1, 4 do
+                self._grid[i][j] = optimalGrids[self:GetModuleType()][i][j]
+            end
+        end
+        self:_UpdateGrid()
+    end
+
     optimalGrids = {}
     for _, t in pairs(moduletype) do
         optimalGrids[t] = ENT.GenerateGrid(nil)
-        SetGlobalTable("optimalGrids", optimalGrids)
     end
+    SetGlobalTable("optimalGrids", optimalGrids)
 elseif CLIENT then
     optimalGrids = GetGlobalTable("optimalGrids")
 end

@@ -50,6 +50,7 @@ function GM:InitPostEntity()
                             mdl:SetPos(pos + Vector(0, 0, i * 16))
                             mdl:SetAngles(Angle(0, math.random() * 360, 0))
                             mdl:Spawn()
+                            mdl:SetToOptimal()
                         end
                     end
                 end
