@@ -32,6 +32,10 @@ function _mt:GetObject()
     return self._nwdata.object
 end
 
+function _mt:GetHazardMode()
+    return self._nwdata.hazardmode
+end
+
 function _mt:IsObjectInRange(obj)
     local ox, oy = obj:GetCoordinates()
     local sx, sy = self:GetCoordinates()
@@ -193,6 +197,20 @@ function _mt:Think()
 
     for _, door in ipairs(self:GetDoors()) do
         door:Think()
+    end
+
+    local ply = LocalPlayer()
+    if self == ply:GetShip() then
+        if self:GetHazardMode() and not ply._hazardalarm then
+            local sound = CreateSound(ply, "ambient/alarms/alarm_citizen_loop1.wav")
+            sound:PlayEx(0.75, 100)
+            ply._hazardalarm = sound
+            ply._hazardship = self
+        elseif ply._hazardalarm and (not self:GetHazardMode() or ply._hazardship ~= self) then
+            ply._hazardalarm:FadeOut(1)
+            ply._hazardalarm = nil
+            ply._hazardship = nil
+        end
     end
 end
 

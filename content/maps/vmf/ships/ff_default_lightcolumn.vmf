@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "15"
+	"mapversion" "26"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "15"
+	"mapversion" "26"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -425,14 +425,19 @@ entity
 {
 	"id" "4"
 	"classname" "light"
-	"_castentityshadow" "1"
-	"_light" "$light_brightness"
+	"_constant_attn" "0"
+	"_distance" "0"
+	"_fifty_percent_distance" "0"
+	"_hardfalloff" "0"
+	"_light" "$light_colour 70"
 	"_lightHDR" "-1 -1 -1 1"
 	"_lightscaleHDR" "1"
 	"_linear_attn" "0.5"
 	"_quadratic_attn" "0.5"
-	"_shadoworiginoffset" "0 0 0"
-	"origin" "32 -0.0117188 112"
+	"_zero_percent_distance" "0"
+	"spawnflags" "0"
+	"targetname" "light"
+	"origin" "64 0 104"
 	editor
 	{
 		"color" "220 30 220"
@@ -490,6 +495,75 @@ entity
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "124"
+	"classname" "light"
+	"_constant_attn" "0"
+	"_distance" "512"
+	"_fifty_percent_distance" "0"
+	"_hardfalloff" "0"
+	"_light" "255 0 0 50"
+	"_lightHDR" "-1 -1 -1 1"
+	"_lightscaleHDR" "1"
+	"_linear_attn" "0.75"
+	"_quadratic_attn" "0.25"
+	"_zero_percent_distance" "0"
+	"spawnflags" "1"
+	"style" "5"
+	"targetname" "warnlight"
+	"origin" "40 0 40"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[500 -14268]"
+	}
+}
+entity
+{
+	"id" "169"
+	"classname" "prop_static"
+	"angles" "0 0 0"
+	"fademindist" "-1"
+	"fadescale" "1"
+	"model" "models/props_c17/light_cagelight01_on.mdl"
+	"skin" "0"
+	"solid" "6"
+	"origin" "16 0 44"
+	editor
+	{
+		"color" "255 255 0"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "266"
+	"classname" "light"
+	"_constant_attn" "0"
+	"_distance" "0"
+	"_fifty_percent_distance" "0"
+	"_hardfalloff" "0"
+	"_light" "$light_colour 15"
+	"_lightHDR" "-1 -1 -1 1"
+	"_lightscaleHDR" "1"
+	"_linear_attn" "0.5"
+	"_quadratic_attn" "0.5"
+	"_zero_percent_distance" "0"
+	"spawnflags" "0"
+	"origin" "56 0 104"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[500 -14268]"
 	}
 }
 cameras

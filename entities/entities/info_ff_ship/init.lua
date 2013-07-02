@@ -15,9 +15,21 @@ ENT._players = nil
 ENT._nwdata = nil
 ENT._object = nil
 
+ENT._mainLightName = nil
+ENT._warnLightName = nil
+
+ENT._mainLights = nil
+ENT._warnLights = nil
+
+ENT._hazardEnd = 0
+
 function ENT:KeyValue(key, value)
     if key == "health" then
         self:_SetBaseHealth(tonumber(value))
+    elseif key == "mainlight" then
+        self._mainLightName = tostring(value)
+    elseif key == "warnlight" then
+        self._warnLightName = tostring(value)
     end
 end
 
@@ -40,6 +52,8 @@ function ENT:Initialize()
 
     self._nwdata.name = self:GetName()
     self._nwdata.range = 0.25
+
+    self._nwdata.hazardmode = false
 
     if not self:GetBaseHealth() then
         self:_SetBaseHealth(1)
@@ -97,7 +111,47 @@ function ENT:InitPostEntity()
     self._nwdata.object:Spawn()
     self:_UpdateNWData()
 
+    self._mainLights = ents.FindByName(self._mainLightName)
+    self._warnLights = ents.FindByName(self._warnLightName)
+
     ships.Add(self)
+end
+
+function ENT:Think()
+    if self:GetHazardMode() and CurTime() > self._hazardEnd then
+        self:SetHazardMode(false)
+    end
+end
+
+function ENT:SetHazardMode(value, duration)
+    if value and CurTime() + duration > self._hazardEnd then
+        self._hazardEnd = CurTime() + duration
+    end
+
+    if self._nwdata.hazardmode ~= value then
+        self._nwdata.hazardmode = value
+        self:_UpdateNWData()
+
+        for _, light in pairs(self._mainLights) do
+            if value then
+                light:Fire("turnoff", "", 0)
+            else
+                light:Fire("turnon", "", 0)
+            end
+        end
+
+        for _, light in pairs(self._warnLights) do
+            if value then
+                light:Fire("turnon", "", 0)
+            else
+                light:Fire("turnoff", "", 0)
+            end
+        end
+    end
+end
+
+function ENT:GetHazardMode()
+    return self._nwdata.hazardmode
 end
 
 function ENT:GetBounds()

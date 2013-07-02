@@ -11,6 +11,8 @@
 @PointClass base(Targetname, Origin) = info_ff_ship : "ship"
 [
 	health(integer) : "Base hull health" : 1 : "The initial hull health of the ship"
+    mainlight(target_destination) : "Main light" : "" : "Targetname of the main lights"
+    warnlight(target_destination) : "Warning light" : "" : "Targetname of the warning lights"
 ]
 
 @PointClass base(Targetname, Origin) = info_ff_room : "room"

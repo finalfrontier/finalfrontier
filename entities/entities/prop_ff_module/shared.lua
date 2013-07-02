@@ -234,7 +234,13 @@ if SERVER then
             threshold = math.random() * math.random()
         end
 
-        if damaged then self:_UpdateGrid() end
+        if damaged then
+            self:_UpdateGrid()
+
+            if self:IsInSlot() then
+                self:GetRoom():GetShip():SetHazardMode(true, 10)
+            end
+        end
     end
 
     function ENT:_FindXY(index)
