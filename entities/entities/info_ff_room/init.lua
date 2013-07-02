@@ -399,6 +399,7 @@ function ENT:AddModuleSlot(pos, type)
     if type < moduletype.repair1 then
         local mdl = ents.Create("prop_ff_module")
         mdl:SetModuleType(type)
+        mdl:SetDefaultGrid(self:GetShip())
         mdl:Spawn()
         mdl:InsertIntoSlot(self, type, pos)
     end

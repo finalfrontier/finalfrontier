@@ -6,6 +6,8 @@ ENT._roomlist = nil
 ENT._doors = nil
 ENT._bounds = nil
 
+ENT._defaultGrids = nil
+
 ENT._systems = nil
 
 ENT._players = nil
@@ -43,6 +45,11 @@ function ENT:Initialize()
         self:_SetBaseHealth(1)
     end
 
+    self._defaultGrid = GenerateModuleGrid()
+end
+
+function ENT:GetDefaultGrid()
+    return self._defaultGrid
 end
 
 function ENT:GetObject()

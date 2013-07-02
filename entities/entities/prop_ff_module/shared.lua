@@ -32,6 +32,8 @@ if SERVER then
         return grid
     end
 
+    GenerateModuleGrid = ENT.GenerateGrid
+
     function ENT:SetToOptimal()
         self._grid = {}
         for i = 1, 4 do
@@ -121,7 +123,7 @@ if SERVER then
             phys:Wake()
         end
 
-        self:_RandomizeGrid()
+        if not self._grid then self:_RandomizeGrid() end
     end
 
     function ENT:GetGrid()
@@ -130,6 +132,18 @@ if SERVER then
 
     function ENT:_RandomizeGrid()
         self._grid = self:GenerateGrid()
+        self:_UpdateGrid()
+    end
+
+    function ENT:SetDefaultGrid(ship)
+        local default = ship:GetDefaultGrid()
+        self._grid = {}
+        for i = 1, 4 do
+            self._grid[i] = {}
+            for j = 1, 4 do
+                self._grid[i][j] = default[i][j]
+            end
+        end
         self:_UpdateGrid()
     end
 
