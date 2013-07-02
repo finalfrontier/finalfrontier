@@ -78,6 +78,10 @@ function GM:PlayerSpawn(ply)
 end
 
 function GM:Think()
+    for _, ply in pairs(player.GetAll()) do
+        local ship = ships.FindCurrentShip(ply)
+        if ship and ship ~= ply:GetShip() then ply:SetShip(ship) end
+    end
     return
 end
 
