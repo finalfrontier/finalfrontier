@@ -41,6 +41,8 @@ if SERVER then
     
     ENT._roomName = nil
 
+    ENT._lastPage = page.ACCESS
+
     ENT.OverrideNodeCount = 4
     ENT.OverrideTimePerNode = 0.5
 
@@ -265,7 +267,13 @@ if SERVER then
         ply:SelectWeapon("weapon_ff_unarmed")
 
         self.UI.Permission = ply:GetPermission(self._room)
-        self.UI:SetCurrentPage(page.ACCESS)
+
+        if (self._lastPage == page.SECURITY and not ply:HasPermission(self._room, permission.SECURITY))
+            or (self._lastPage == page.SYSTEM and not ply:HasPermission(self._room, permission.SYSTEM)) then
+            self._lastPage = page.ACCESS
+        end
+
+        self.UI:SetCurrentPageIndex(self._lastPage)
         self:UpdateLayout()
 
         if self._room:HasSystem() then
@@ -295,7 +303,8 @@ if SERVER then
             ply:CrosshairEnable()
         end
 
-        self.UI:SetCurrentPage(page.STATUS)
+        self._lastPage = self.UI:GetCurrentPageIndex()
+        self.UI:SetCurrentPageIndex(page.STATUS)
         self:UpdateLayout()
 
         if self._room:HasSystem() then

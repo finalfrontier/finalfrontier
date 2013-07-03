@@ -52,12 +52,12 @@ function GUI:Initialize()
         local old = self.TabMenu.OnChangeCurrent
         self.TabMenu.OnChangeCurrent = function(tabmenu)
             old(tabmenu)
-            self:SetCurrentPage(page[tabmenu:GetCurrent().Text])
+            self:SetCurrentPageIndex(page[tabmenu:GetCurrent().Text])
         end
     end
 
     self:UpdatePermissions()
-    self:SetCurrentPage(page.STATUS)
+    self:SetCurrentPageIndex(page.STATUS)
 end
 
 function GUI:UpdatePermissions()
@@ -67,11 +67,11 @@ function GUI:UpdatePermissions()
     self.Tabs[page.SECURITY].CanClick = self.Permission >= permission.SECURITY
 end
 
-function GUI:GetCurrentPage()
-    return self.Pages[self._curpage]
+function GUI:GetCurrentPageIndex()
+    return self._curpage
 end
 
-function GUI:SetCurrentPage(newpage)
+function GUI:SetCurrentPageIndex(newpage)
     if newpage == self._curpage then return end
 
     local curpage = self:GetCurrentPage()
@@ -111,6 +111,10 @@ function GUI:SetCurrentPage(newpage)
     end
 end
 
+function GUI:GetCurrentPage()
+    return self.Pages[self._curpage]
+end
+
 if SERVER then
     function GUI:UpdateLayout(layout)
         self.Super[BASE].UpdateLayout(self, layout)
@@ -130,7 +134,7 @@ if CLIENT then
             self:UpdatePermissions()
         end
 
-        self:SetCurrentPage(layout.curpage)
+        self:SetCurrentPageIndex(layout.curpage)
 
         self.Super[BASE].UpdateLayout(self, layout)
     end
