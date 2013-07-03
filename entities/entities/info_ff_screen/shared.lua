@@ -8,6 +8,8 @@ local MAX_USE_DISTANCE = 64
 
 local MAIN_GUI_CLASS = "screen"
 
+local ALARM_TIME = 15
+
 ENT.Type = "anim"
 ENT.Base = "base_anim"
     
@@ -26,6 +28,22 @@ end
 
 function ENT:GetRoom()
     return self._room
+end
+
+function ENT:IsAlarmCountingDown()
+    return self:GetNWBool("alcntactive", false)
+end
+
+function ENT:GetAlarmCounter()
+    return math.max(0, self:GetNWFloat("alcntinit", 0) - CurTime() + self:GetNWFloat("alcntstart", 0))
+end
+
+function ENT:GetFormattedAlarmCounter()
+    if self:IsAlarmCountingDown() then
+        return "T-" .. FormatNum(self:GetAlarmCounter(), 1, 0) .. "s"
+    else
+        return ""
+    end
 end
 
 if SERVER then
@@ -223,6 +241,38 @@ if SERVER then
         end
     end
 
+    function ENT:StartAlarmCountdown()
+        if self:GetNWFloat("alcntinit", 0) > 0 then return end
+
+        self:SetNWBool("alcntactive", true)
+        self:SetNWFloat("alcntstart", CurTime())
+        self:SetNWFloat("alcntinit", ALARM_TIME)
+    end
+
+    function ENT:StopAlarmCountdown()
+        self:SetNWBool("alcntactive", false)
+        self:SetNWFloat("alcntstart", 0)
+        self:SetNWFloat("alcntinit", 0)
+    end
+
+    function ENT:PauseAlarmCountdown()
+        self:SetNWFloat("alcntinit", self:GetAlarmCounter())
+        if self:GetNWFloat("alcntinit", 0) <= 0 then 
+            self:StopAlarmCountdown()
+            return
+        end
+        self:SetNWBool("alcntactive", false)
+        self:SetNWFloat("alcntstart", 0)
+    end
+
+    function ENT:UnpauseAlarmCountdown()
+        if self:GetNWFloat("alcntinit", 0) <= 0 then return end
+        if self:GetNWBool("alcntactive", false) then return end
+
+        self:SetNWBool("alcntactive", true)
+        self:SetNWFloat("alcntstart", CurTime())
+    end
+
     function ENT:UpdateLayout()
         if not self.UI then return end
         if not self.Layout then self.Layout = {} end
@@ -233,6 +283,11 @@ if SERVER then
 
     function ENT:Think()
         if self:GetNWBool("used") then
+            if self:IsAlarmCountingDown() and self:GetAlarmCounter() <= 0 then
+                self:GetShip():SetHazardMode(true, 10)
+                self:StopAlarmCountdown()
+            end
+
             local ply = self:GetNWEntity("user")
             if not ply:IsValid() or not ply:Alive() or self:GetPos():Distance(ply:EyePos()) > MAX_USE_DISTANCE
                 or self:GetAngles():Forward():Dot(ply:GetAimVector()) >= 0 then
@@ -271,6 +326,10 @@ if SERVER then
         if (self._lastPage == page.SECURITY and not ply:HasPermission(self._room, permission.SECURITY))
             or (self._lastPage == page.SYSTEM and not ply:HasPermission(self._room, permission.SYSTEM)) then
             self._lastPage = page.ACCESS
+        end
+
+        if ply:HasPermission(self._room, permission.SECURITY) then
+            self:StopAlarmCountdown()
         end
 
         self.UI:SetCurrentPageIndex(self._lastPage)

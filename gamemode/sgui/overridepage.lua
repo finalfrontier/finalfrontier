@@ -11,24 +11,25 @@ local NODE_LABELS = {
 
 GUI.BaseName = BASE
 
-GUI.ShuffleButton = nil
-GUI.OverrideButton = nil
-GUI.Start = nil
-GUI.End = nil
-GUI.Nodes = nil
-GUI.CurrSequence = nil
-GUI.CheckSequence = nil
+GUI._shuffleButton = nil
+GUI._overrideButton = nil
+GUI._start = nil
+GUI._end = nil
+GUI._nodes = nil
+GUI._currSequence = nil
+GUI._checkSequence = nil
+GUI._alarmTimer = nil
 
-GUI.PulseTime = 0
+GUI._pulseTime = 0
 
-GUI.Overriding = false
-GUI.OverrideStartTime = 0
-GUI.TimePerNode = 1
+GUI._overriding = false
+GUI._overrideStartTime = 0
+GUI._timePerNode = 1
 
 function GUI:GetFreeNode()
-    for i = 1, #self.Nodes do
-        if not table.HasValue(self.CurrSequence, i) then
-            return self.Nodes[i], i
+    for i = 1, #self._nodes do
+        if not table.HasValue(self._currSequence, i) then
+            return self._nodes[i], i
         end
     end
     return nil, 0
@@ -39,30 +40,39 @@ function GUI:Enter()
 
     local w, h = self:GetSize()
 
-    self.ShuffleButton = sgui.Create(self, "button")
-    self.ShuffleButton:SetSize(w / 4 - 24, 48)
-    self.ShuffleButton:SetOrigin(16, h - 48 - 16)
-    self.ShuffleButton.Text = "Shuffle"
+    self._shuffleButton = sgui.Create(self, "button")
+    self._shuffleButton:SetSize((w - 48) / 4, 48)
+    self._shuffleButton:SetOrigin(16, h - 48 - 16)
+    self._shuffleButton.Text = "Shuffle"
 
-    self.OverrideButton = sgui.Create(self, "button")
-    self.OverrideButton:SetSize(w * 3 / 4 - 24, 48)
-    self.OverrideButton:SetOrigin(w / 4 + 8, h - 48 - 16)
+    self._overrideButton = sgui.Create(self, "button")
+    self._overrideButton:SetSize((w - 48) / 2, 48)
+    self._overrideButton:SetOrigin(self._shuffleButton:GetRight() + 8, h - 48 - 16)
+
+    self._alarmTimer = sgui.Create(self, "label")
+    self._alarmTimer:SetSize((w - 48) / 4, 48)
+    self._alarmTimer:SetOrigin(self._overrideButton:GetRight() + 8, h - 48 - 16)
+    self._alarmTimer.AlignX = TEXT_ALIGN_CENTER
+    self._alarmTimer.AlignY = TEXT_ALIGN_CENTER
+    self._alarmTimer.Color = Color(172, 45, 51, 191)
+    self._alarmTimer.Font = "CTextLarge"
+    self._alarmTimer.Text = "T-60s"
 
     if SERVER then
-        self.ShuffleButton.OnClick = function(btn, button)
-            if self.Overriding then return false end
+        self._shuffleButton.OnClick = function(btn, button)
+            if self._overriding then return false end
             self:GetScreen():ShuffleCurrentOverrideSequence()
             self:GetScreen():UpdateLayout()
             return true
         end
 
-        self.OverrideButton.OnClick = function(btn, button)
-            if self.Overriding then return false end
+        self._overrideButton.OnClick = function(btn, button)
+            if self._overriding then return false end
             if self:GetPermission() < permission.SECURITY then
                 self:StartOverriding()
             else
                 self:GetScreen():SetOverrideSequence()
-                self.PulseTime = CurTime()
+                self._pulseTime = CurTime()
                 self:GetScreen():UpdateLayout()
             end
             return true
@@ -71,23 +81,25 @@ function GUI:Enter()
 
     h = h - 80
 
-    self.Start = sgui.Create(self, "overridenode")
-    self.Start:SetSize(NODE_SIZE, NODE_SIZE)
-    self.Start:SetCentre(48, h / 2)
-    self.Start.Enabled = false
-    self.Start.CanClick = false
+    self._start = sgui.Create(self, "overridenode")
+    self._start:SetSize(NODE_SIZE, NODE_SIZE)
+    self._start:SetCentre(48, h / 2)
+    self._start.Enabled = false
+    self._start.CanClick = false
 
-    self.End = sgui.Create(self, "overridenode")
-    self.End:SetSize(NODE_SIZE, NODE_SIZE)
-    self.End:SetCentre(w - 48, h / 2)
-    self.End.Enabled = false
-    self.End.CanClick = false
+    self._end = sgui.Create(self, "overridenode")
+    self._end:SetSize(NODE_SIZE, NODE_SIZE)
+    self._end:SetCentre(w - 48, h / 2)
+    self._end.Enabled = false
+    self._end.CanClick = false
 
-    self.Nodes = {}
+    self._nodes = {}
 
     if SERVER then
-        self.TimePerNode = self:GetScreen().OverrideTimePerNode
-        self.CurrSequence = self:GetScreen().OverrideCurrSequence
+        self:GetScreen():UnpauseAlarmCountdown()
+
+        self._timePerNode = self:GetScreen().OverrideTimePerNode
+        self._currSequence = self:GetScreen().OverrideCurrSequence
 
         if not self:GetScreen().OverrideNodePositions then
             self:GetScreen():GenerateOverrideNodePositions(Bounds(112, 48, w - 224, h - 96))
@@ -104,7 +116,7 @@ function GUI:Enter()
 
             local index = i
             node.OnClick = function(node, button)
-                local key = table.KeyFromValue(self.CurrSequence, index)
+                local key = table.KeyFromValue(self._currSequence, index)
                 if key then
                     self:GetScreen():SwapOverrideNodes(key)
                     self:GetScreen():UpdateLayout()
@@ -113,20 +125,20 @@ function GUI:Enter()
                 return false
             end
 
-            self.Nodes[i] = node
+            self._nodes[i] = node
         end
     end
 end
 
 if SERVER then
     function GUI:FindCheckSequence()
-        if not self.CheckSequence then self.CheckSequence = {} end
+        if not self._checkSequence then self._checkSequence = {} end
         
         local goal = self:GetScreen().OverrideGoalSequence
-        for i = 1, #self.CurrSequence do
-            local last = self.CurrSequence[i - 1]
-            local curr = self.CurrSequence[i]
-            local next = self.CurrSequence[i + 1]
+        for i = 1, #self._currSequence do
+            local last = self._currSequence[i - 1]
+            local curr = self._currSequence[i]
+            local next = self._currSequence[i + 1]
 
             if curr and table.HasValue(goal, curr) then
                 curr = table.KeyFromValue(goal, curr)
@@ -136,51 +148,54 @@ if SERVER then
             else last = 0 end
             if next and table.HasValue(goal, next) then
                 next = table.KeyFromValue(goal, next)
-            else next = #self.CurrSequence + 1 end
+            else next = #self._currSequence + 1 end
 
             local score = 0
             if curr then
                 if last < curr then score = score + 1 end
                 if curr < next then score = score + 1 end
             else
-                if i == 1 or i == #self.CurrSequence or math.random() < 0.5 then score = 1 end
+                if i == 1 or i == #self._currSequence or math.random() < 0.5 then score = 1 end
             end
-            self.CheckSequence[i] = score
+            self._checkSequence[i] = score
         end
     end
 
     function GUI:StartOverriding()
-        if not self.Overriding then
-            self.Overriding = true
-            self.OverrideStartTime = CurTime()
-            self.OverrideButton.CanClick = false
+        if not self._overriding then
+            self._overriding = true
+            self._overrideStartTime = CurTime()
+            self._overrideButton.CanClick = false
 
             self:FindCheckSequence()
             self:GetScreen():UpdateLayout()
 
-            timer.Simple(self.TimePerNode * #self.Nodes, function()
+            timer.Simple(self._timePerNode * #self._nodes, function()
                 self:StopOverriding()
             end)
         end
     end
 
     function GUI:StopOverriding()
-        if self.Overriding then
-            self.Overriding = false
-            self.OverrideButton.CanClick = true
+        if self._overriding then
+            self._overriding = false
+            self._overrideButton.CanClick = true
 
             if self:IsCurrentPage() then
                 local overridden = true
-                for i, s in ipairs(self.CurrSequence) do
+                for i, s in ipairs(self._currSequence) do
                     if self:GetScreen().OverrideGoalSequence[i] ~= s then
                         overridden = false
                     end
                 end
 
                 if overridden then
-                    self.PulseTime = CurTime()
+                    self:GetScreen():StopAlarmCountdown()
+                    self._pulseTime = CurTime()
                     self:GetParent().Permission = permission.SECURITY
                     self:GetParent():UpdatePermissions()
+                else
+                    self:GetScreen():StartAlarmCountdown()
                 end
 
                 self:GetScreen():UpdateLayout()
@@ -188,35 +203,39 @@ if SERVER then
         end
     end
 
+    function GUI:Leave()
+        self:GetScreen():PauseAlarmCountdown()
+    end
+
     function GUI:UpdateLayout(layout)
         self.Super[BASE].UpdateLayout(self, layout)
 
-        if self.Nodes then
-            if not layout.nodes or #layout.nodes > #self.Nodes then
+        if self._nodes then
+            if not layout.nodes or #layout.nodes > #self._nodes then
                 layout.nodes = {}
             end
 
-            for i, n in ipairs(self.Nodes) do
+            for i, n in ipairs(self._nodes) do
                 local x, y = n:GetCentre()
                 layout.nodes[i] = { x = x, y = y, label = n.Label }
             end
         end
 
-        if self.CurrSequence then
-            layout.sequence = self.CurrSequence
+        if self._currSequence then
+            layout.sequence = self._currSequence
         end
 
-        layout.ovrd = self.Overriding
-        layout.ovrdtime = self.OverrideStartTime
+        layout.ovrd = self._overriding
+        layout.ovrdtime = self._overrideStartTime
 
-        if self.Overriding then
-            layout.check = self.CheckSequence
+        if self._overriding then
+            layout.check = self._checkSequence
         elseif layout.check then
             layout.check = nil
         end
 
-        layout.otpn = self.TimePerNode
-        layout.pulsetime = self.PulseTime
+        layout.otpn = self._timePerNode
+        layout.pulsetime = self._pulseTime
     end
 end
 
@@ -228,26 +247,26 @@ if CLIENT then
     end
 
     function GUI:Draw()
-        if self.CurrSequence then
+        if self._currSequence then
             local freeNode = self:GetFreeNode()
             freeNode.Enabled = false
             freeNode.CanClick = false
-            local last = self.Start
+            local last = self._start
             local toSwap = nil
             surface.SetDrawColor(Color(255, 255, 255, 32))
-            for i, index in ipairs(self.CurrSequence) do
-                local node = self.Nodes[index]
+            for i, index in ipairs(self._currSequence) do
+                local node = self._nodes[index]
                 node.Enabled = true
-                node.CanClick = not self.Overriding
+                node.CanClick = not self._overriding
                 self:DrawConnectorBetween(last, node)
                 last = node
-                if not self.Overriding and not toSwap and node:IsCursorInside() then
+                if not self._overriding and not toSwap and node:IsCursorInside() then
                     toSwap = {}
-                    toSwap.last = self.Nodes[self.CurrSequence[i - 1]] or self.Start
-                    toSwap.next = self.Nodes[self.CurrSequence[i + 1]] or self.End
+                    toSwap.last = self._nodes[self._currSequence[i - 1]] or self._start
+                    toSwap.next = self._nodes[self._currSequence[i + 1]] or self._end
                 end
             end
-            self:DrawConnectorBetween(last, self.End)
+            self:DrawConnectorBetween(last, self._end)
             if toSwap then
                 surface.SetDrawColor(Color(255, 255, 255,
                     math.cos(CurTime() * math.pi * 2) * 24 + 32))
@@ -255,26 +274,28 @@ if CLIENT then
                 self:DrawConnectorBetween(freeNode, toSwap.next)
             end
 
-            if self.CheckSequence then
-                local dt = (CurTime() - self.OverrideStartTime) / self.TimePerNode
+            if self._checkSequence then
+                local dt = (CurTime() - self._overrideStartTime) / self._timePerNode
                 local ni = math.floor(dt)
                 dt = dt - ni
-                if ni >= 0 and ni <= #self.CurrSequence then
-                    local last = self.Nodes[self.CurrSequence[ni]] or self.Start
-                    local next = self.Nodes[self.CurrSequence[ni + 1]] or self.End
-                    if last ~= self.Start and not last:IsGlowing() then
-                        last:StartGlow(self.CheckSequence[ni] + 1)
+                if ni >= 0 and ni <= #self._currSequence then
+                    local last = self._nodes[self._currSequence[ni]] or self._start
+                    local next = self._nodes[self._currSequence[ni + 1]] or self._end
+                    if last ~= self._start and not last:IsGlowing() then
+                        last:StartGlow(self._checkSequence[ni] + 1)
                     end
                     local lx, ly = last:GetGlobalCentre()
                     local nx, ny = next:GetGlobalCentre()
                     local x = lx + (nx - lx) * dt
                     local y = ly + (ny - ly) * dt
                     surface.SetDrawColor(Color(255, 255, 255, 255))
-                    surface.DrawCircle(x, y, math.cos((CurTime() - self.OverrideStartTime)
-                        * math.pi * 2 / self.TimePerNode) * 4 + 16)
+                    surface.DrawCircle(x, y, math.cos((CurTime() - self._overrideStartTime)
+                        * math.pi * 2 / self._timePerNode) * 4 + 16)
                 end
             end
         end
+
+        self._alarmTimer.Text = self:GetScreen():GetFormattedAlarmCounter()
 
         self.Super[BASE].Draw(self)
     end
@@ -282,41 +303,41 @@ if CLIENT then
     function GUI:UpdateLayout(layout)
         if layout.nodes then
             for i, n in ipairs(layout.nodes) do
-                if not self.Nodes[i] then
+                if not self._nodes[i] then
                     local node = sgui.Create(self, "overridenode")
                     node:SetSize(NODE_SIZE, NODE_SIZE)
                     node:SetCentre(n.x, n.y)
                     node.Label = n.label
 
-                    self.Nodes[i] = node
+                    self._nodes[i] = node
                 end
             end
         end
 
         if layout.sequence then
-            self.CurrSequence = layout.sequence
+            self._currSequence = layout.sequence
         end
 
-        self.Overriding = layout.ovrd
-        self.OverrideStartTime = layout.ovrdtime
-        self.CheckSequence = layout.check
+        self._overriding = layout.ovrd
+        self._overrideStartTime = layout.ovrdtime
+        self._checkSequence = layout.check
 
-        self.TimePerNode = layout.otpn
+        self._timePerNode = layout.otpn
 
-        if layout.pulsetime ~= self.PulseTime then
-            self.PulseTime = layout.pulsetime
-            for _, node in pairs(self.Nodes) do
+        if layout.pulsetime ~= self._pulseTime then
+            self._pulseTime = layout.pulsetime
+            for _, node in pairs(self._nodes) do
                 if node.Enabled then node:StartGlow(3) end
             end
         end
 
-        self.ShuffleButton.CanClick = not self.Overriding
-        self.OverrideButton.CanClick = not self.Overriding
+        self._shuffleButton.CanClick = not self._overriding
+        self._overrideButton.CanClick = not self._overriding
         
         if self:GetPermission() < permission.SECURITY then
-            self.OverrideButton.Text = "Test Override Sequence"
+            self._overrideButton.Text = "Attempt Override"
         else
-            self.OverrideButton.Text = "Set Override Sequence"
+            self._overrideButton.Text = "Set Sequence"
         end
 
         self.Super[BASE].UpdateLayout(self, layout)
