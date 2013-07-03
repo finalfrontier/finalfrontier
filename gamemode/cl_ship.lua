@@ -202,8 +202,8 @@ function _mt:Think()
     local ply = LocalPlayer()
     if self == ply:GetShip() then
         if self:GetHazardMode() and not ply._hazardalarm then
-            local sound = CreateSound(ply, "ambient/alarms/alarm_citizen_loop1.wav")
-            sound:PlayEx(0.75, 100)
+            local sound = CreateSound(ply, "ambient/alarms/apc_alarm_loop1.wav")
+            sound:PlayEx(0.25, 100)
             ply._hazardalarm = sound
             ply._hazardship = self
         elseif ply._hazardalarm and (not self:GetHazardMode() or ply._hazardship ~= self) then

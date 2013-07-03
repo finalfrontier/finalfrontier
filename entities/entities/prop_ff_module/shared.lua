@@ -62,6 +62,11 @@ function ENT:IsInSlot()
     return self:GetNWInt("room", -1) > -1
 end
 
+function ENT:GetSlotType()
+    if not self:IsInSlot() then return nil end
+    return self:GetRoom():GetSlot(self)
+end
+
 function ENT:GetRoom()
     if not self:IsInSlot() then return nil end
     local ship = ships.GetByName(self:GetNWString("ship"))
@@ -237,7 +242,7 @@ if SERVER then
         if damaged then
             self:_UpdateGrid()
 
-            if self:IsInSlot() then
+            if self:IsInSlot() and self:GetSlotType() < moduletype.repair1 then
                 self:GetRoom():GetShip():SetHazardMode(true, 10)
             end
         end
@@ -288,7 +293,7 @@ if SERVER then
                 end
             end
         else
-            if self:GetDamaged() < 2 then return end
+            if self:GetDamaged() < 2 or self:GetSlotType() >= moduletype.repair1 then return end
             if CurTime() - self._lastEffect < 17 - ((math.random() * 0.5 + 0.5) * self:GetDamaged()) then return end
 
             local ed = EffectData()

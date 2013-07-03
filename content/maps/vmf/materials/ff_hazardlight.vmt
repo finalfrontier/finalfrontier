@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "ff_hazardlight"
+	"$selfillum" "1"
+}

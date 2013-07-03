@@ -421,6 +421,13 @@ function ENT:GetModule(type)
     return self._nwdata.modules[type]
 end
 
+function ENT:GetSlot(module)
+    for i, v in pairs(self._nwdata.modules) do
+        if v == module then return i end
+    end
+    return nil
+end
+
 function ENT:SetModule(type, module)
     self._nwdata.modules[type] = module
     self:_UpdateNWData()

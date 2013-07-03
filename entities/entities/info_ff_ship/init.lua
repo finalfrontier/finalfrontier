@@ -53,7 +53,7 @@ function ENT:Initialize()
     self._nwdata.name = self:GetName()
     self._nwdata.range = 0.25
 
-    self._nwdata.hazardmode = false
+    self._nwdata.hazardmode = true
 
     if not self:GetBaseHealth() then
         self:_SetBaseHealth(1)
@@ -115,6 +115,8 @@ function ENT:InitPostEntity()
     self._warnLights = ents.FindByName(self._warnLightName)
 
     ships.Add(self)
+
+    self:SetHazardMode(false)
 end
 
 function ENT:Think()

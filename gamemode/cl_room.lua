@@ -93,6 +93,13 @@ function _mt:GetModule(type)
     return self._nwdata.modules[type]
 end
 
+function _mt:GetSlot(module)
+    for i, v in pairs(self._nwdata.modules) do
+        if v == module then return i end
+    end
+    return nil
+end
+
 function _mt:_UpdateConvexPolys()
     self._convexPolys = FindConvexPolygons(self:GetCorners())
 end
