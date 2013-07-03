@@ -79,6 +79,17 @@ function GUI:Inspect(obj)
         self._grid:SetCentreObject(nil)
         self._grid:SetScale(math.max(self._grid:GetMinSensorScale(), self._oldScale))
 
+        if SERVER then
+            function self._grid.OnClickSelectedObject(grid, obj, button)
+                if obj:GetObjectType() == objtype.ship then
+                    self:Inspect(obj)
+                    self:GetScreen():UpdateLayout()
+                    return true
+                end
+                return false
+            end
+        end
+
         self._zoomLabel = sgui.Create(self, "label")
         self._zoomLabel.AlignX = TEXT_ALIGN_CENTER
         self._zoomLabel.AlignY = TEXT_ALIGN_CENTER

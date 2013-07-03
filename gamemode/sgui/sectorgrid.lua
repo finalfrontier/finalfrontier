@@ -99,6 +99,11 @@ if SERVER then
     function GUI:OnSelectObject(obj, button)
         self:SetCentreObject(obj)
         self:GetScreen():UpdateLayout()
+        return true
+    end
+
+    function GUI:OnClickSelectedObject(obj, button)
+        return false
     end
     
     function GUI:OnClick(x, y, button)
@@ -106,8 +111,9 @@ if SERVER then
         y = y - self:GetTop()
         local nearest = self:GetNearestObject(x, y)
         if nearest ~= self:GetCentreObject() then
-            self:OnSelectObject(nearest, button)
-            return true
+            return self:OnSelectObject(nearest, button)
+        elseif nearest ~= nil then
+            return self:OnClickSelectedObject(nearest, button)
         end
         return false
     end
