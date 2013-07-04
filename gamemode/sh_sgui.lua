@@ -65,7 +65,7 @@ end
 
 MsgN("Loading sgui...")
 local files = file.Find("finalfrontier/gamemode/sgui/*.lua", "LUA")
-for i, file in ipairs(files) do    
+for i, file in ipairs(files) do
     local name = string.sub(file, 0, string.len(file) - 4)
     if SERVER then AddCSLuaFile("sgui/" .. file) end
 

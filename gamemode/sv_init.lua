@@ -20,6 +20,12 @@ resource.AddFile("materials/connector.png")
 resource.AddFile("materials/playerdot.png")
 resource.AddFile("materials/objects/ship.png")
 
+MsgN("Loading materials...")
+local files = file.Find("materials/ff_*.vmt", "GAME")
+for i, file in ipairs(files) do
+    resource.AddFile(file)
+end
+
 game.ConsoleCommand("sv_loadingurl \"http://metapyziks.github.io/finalfrontier/\"\n")
 
 -- Gamemode Overrides

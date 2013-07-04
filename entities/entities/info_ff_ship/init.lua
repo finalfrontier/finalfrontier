@@ -17,9 +17,11 @@ ENT._object = nil
 
 ENT._mainLightName = nil
 ENT._warnLightName = nil
+ENT._warnLightBrushName = nil
 
 ENT._mainLights = nil
 ENT._warnLights = nil
+ENT._warnLightBrushes = nil
 
 ENT._hazardEnd = 0
 
@@ -30,6 +32,8 @@ function ENT:KeyValue(key, value)
         self._mainLightName = tostring(value)
     elseif key == "warnlight" then
         self._warnLightName = tostring(value)
+    elseif key == "warnlightbrush" then
+        self._warnLightBrushName = tostring(value)
     end
 end
 
@@ -113,6 +117,7 @@ function ENT:InitPostEntity()
 
     self._mainLights = ents.FindByName(self._mainLightName)
     self._warnLights = ents.FindByName(self._warnLightName)
+    self._warnLightBrushes = ents.FindByName(self._warnLightBrushName)
 
     ships.Add(self)
 
@@ -147,6 +152,14 @@ function ENT:SetHazardMode(value, duration)
                 light:Fire("turnon", "", 0)
             else
                 light:Fire("turnoff", "", 0)
+            end
+        end
+
+        for _, brush in pairs(self._warnLightBrushes) do
+            if value then
+                brush:Fire("SetTextureIndex", "1", 0)
+            else
+                brush:Fire("SetTextureIndex", "0", 0)
             end
         end
     end

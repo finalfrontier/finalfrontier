@@ -13,6 +13,7 @@
 	health(integer) : "Base hull health" : 1 : "The initial hull health of the ship"
     mainlight(target_destination) : "Main light" : "" : "Targetname of the main lights"
     warnlight(target_destination) : "Warning light" : "" : "Targetname of the warning lights"
+    warnlightbrush(target_destination) : "Warning light brush" : "" : "Targetname of a bush to toggle a material on when warning lights are enabled"
 ]
 
 @PointClass base(Targetname, Origin) = info_ff_room : "room"
