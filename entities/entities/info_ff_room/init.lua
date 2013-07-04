@@ -598,6 +598,23 @@ function ENT:GetPlayers()
     return self._players
 end
 
+function ENT:GetEntities()
+    local bounds = self:GetBounds()
+    local min = Vector(bounds.l, bounds.t, -65536)
+    local max = Vector(bounds.r, bounds.b, 65536)
+
+    local matches = {}
+
+    for _, ent in pairs(ents.FindInBox(min, max)) do
+        local pos = ent:GetPos()
+        if ent:GetClass() ~= "info_ff_object" and self:IsPointInside(pos.x, pos.y) then
+            table.insert(matches, ent)
+        end
+    end
+
+    return matches
+end
+
 function ENT:IsPointInside(x, y)
     return self:GetBounds():IsPointInside(x, y)
         and IsPointInsidePolyGroup(self:GetPolygons(), x, y)

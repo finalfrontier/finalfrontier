@@ -111,4 +111,5 @@ function sgui.Create(parent, name)
         
         return element
     end
+    return nil
 end
