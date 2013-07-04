@@ -91,6 +91,11 @@
 		0 : "Life Support"
 		1 : "Shields"
 		2 : "System Power"
+        3 : "Repair 1"
+        4 : "Repair 2"
+        5 : "Weapon 1"
+        6 : "Weapon 2"
+        7 : "Weapon 3"
 	]
 ]
 

@@ -9,6 +9,9 @@ moduletype.shields = 1
 moduletype.systempower = 2
 moduletype.repair1 = 3
 moduletype.repair2 = 4
+moduletype.weapon1 = 5
+moduletype.weapon2 = 6
+moduletype.weapon3 = 7
 
 ENT._grid = nil
 
@@ -286,7 +289,7 @@ if SERVER then
             for _, v in pairs(near) do
                 if v:GetClass() == "info_ff_moduleslot" then
                     local type = v:GetModuleType()
-                    if type == self:GetModuleType() or type == moduletype.repair1 or type == moduletype.repair2 then
+                    if type == self:GetModuleType() or v:IsRepairSlot() then
                         self:InsertIntoSlot(v:GetRoom(), type, v:GetPos())
                         return
                     end

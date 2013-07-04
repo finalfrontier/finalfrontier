@@ -17,11 +17,22 @@ function ENT:GetRoom()
 end
 
 function ENT:GetModule()
+    if not self._room then return nil end
     return self._room:GetModule(self:GetModuleType())
 end
 
 function ENT:GetModuleType()
     return self._moduleType
+end
+
+function ENT:IsRepairSlot()
+    return self._moduleType == moduletype.repair1
+        or self._moduleType == moduletype.repair2
+end
+
+function ENT:IsWeaponSlot()
+    return self._moduleType >= moduletype.weapon1
+        and self._moduleType <= moduletype.weapon3
 end
 
 function ENT:KeyValue(key, value)
@@ -42,18 +53,20 @@ function ENT:AcceptInput(name, activator, caller, data)
     elseif name == "Used" then
         local ply = activator
         if not IsValid(ply) or not ply:HasPermission(self._room, permission.SYSTEM) then return end
-        if self:GetModuleType() >= moduletype.repair1 then return end
+        if self:IsRepairSlot() then return end
         if self._open and self:GetModule() then self:Close() elseif not self._open then self:Open() end
     end
 end
 
 function ENT:Open()
+    if not self._hatch then return end
     self._hatch:Fire("Unlock", "", 0)
     self._hatch:Fire("Open", "", 0)
     self._hatch:Fire("Lock", "", 0)
 end
 
 function ENT:Close()
+    if not self._hatch then return end
     self._hatch:Fire("Unlock", "", 0)
     self._hatch:Fire("Close", "", 0)
     self._hatch:Fire("Lock", "", 0)
@@ -77,7 +90,7 @@ function ENT:InitPostEntity()
 end
 
 function ENT:Think()
-    if self:GetModuleType() >= moduletype.repair1 then
+    if self:IsRepairSlot() then
         local system = self._room:GetSystem()
         if self._open and system:IsPerformingAction() then
             if self:GetModule() then
@@ -109,5 +122,7 @@ function ENT:Think()
         end
     elseif self._open and self:GetModule() and #self._room:GetPlayers() == 0 then
         self:Close()
+    elseif not self._open and not self:GetModule() then
+        self:Open()
     end
 end

@@ -402,6 +402,11 @@ function ENT:AddModuleSlot(pos, type)
         mdl:SetDefaultGrid(self:GetShip())
         mdl:Spawn()
         mdl:InsertIntoSlot(self, type, pos)
+    elseif type == moduletype.weapon1 then
+        local mdl = ents.Create("prop_ff_weaponmodule")
+        mdl:SetWeapon("base")
+        mdl:Spawn()
+        mdl:InsertIntoSlot(self, type, pos)
     end
 end
 
@@ -436,7 +441,10 @@ end
 function ENT:RemoveModule(module)
     for i, v in pairs(self._nwdata.modules) do
         if v == module then
-            if i >= moduletype.repair1 and self:GetSystem():IsPerformingAction() then return false end
+            if (i == moduletype.repair1 or i == moduletype.repair2)
+                and self:GetSystem():IsPerformingAction() then
+                return false
+            end
             self._nwdata.modules[i] = nil
             self:_UpdateNWData()
             return true

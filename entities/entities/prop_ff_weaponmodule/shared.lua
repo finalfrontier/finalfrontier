@@ -1,0 +1,227 @@
+if SERVER then AddCSLuaFile("shared.lua") end
+
+ENT.Type = "anim"
+ENT.Base = "base_anim"
+
+ENT._weapon = nil
+
+function ENT:GetModuleType()
+    return 5
+end
+
+function ENT:IsInSlot()
+    return self:GetNWInt("room", -1) > -1
+end
+
+function ENT:GetSlotType()
+    if not self:IsInSlot() then return nil end
+    return self:GetRoom():GetSlot(self)
+end
+
+function ENT:GetRoom()
+    if not self:IsInSlot() then return nil end
+    local ship = ships.GetByName(self:GetNWString("ship"))
+    return ship:GetRoomByIndex(self:GetNWInt("room"))
+end
+
+function ENT:GetWeaponName()
+    return self:GetNWString("weapon")
+end
+
+function ENT:GetWeapon()
+    return self._weapon
+end
+
+function ENT:GetCharge()
+    return self:GetNWFloat("charge", 0)
+end
+
+if SERVER then
+    function ENT:SetWeapon(name)
+        self:SetNWString("weapon", name)
+        self._weapon = weapon.Create(name)
+    end
+
+    function ENT:SetCharge(value)
+        self:SetNWFloat("charge", value)
+    end
+
+    function ENT:Initialize()
+        self:SetUseType(SIMPLE_USE)
+
+        self:SetModel("models/props_c17/consolebox01a.mdl")
+        self:PhysicsInit(SOLID_VPHYSICS)
+        self:SetMoveType(MOVETYPE_VPHYSICS)
+        self:SetSolid(SOLID_VPHYSICS)
+
+        local phys = self:GetPhysicsObject()
+        if IsValid(phys) then
+            phys:Wake()
+        end
+
+        if not self._weapon then self:SetWeapon("base") end
+    end
+
+    function ENT:InsertIntoSlot(room, type, slot)
+        if not self:IsInSlot() and not self:IsPlayerHolding() and not room:GetModule(type) then
+            self:SetNWString("ship", room:GetShipName())
+            self:SetNWInt("room", room:GetIndex())
+
+            room:SetModule(type, self)
+
+            local phys = self:GetPhysicsObject()
+            if IsValid(phys) then
+                phys:EnableMotion(false)
+            end
+
+            self:SetPos(slot - Vector(0, 0, 4))
+
+            local yaw = self:GetAngles().y
+            yaw = math.Round(yaw / 90) * 90
+
+            self:SetAngles(Angle(0, yaw, 0))
+        end
+    end
+
+    function ENT:RemoveFromSlot(ply)
+        if self:IsInSlot() and self:GetRoom():RemoveModule(self) then
+            self:SetPos(self:GetPos() + Vector(0, 0, 12))
+
+            local phys = self:GetPhysicsObject()
+            if IsValid(phys) then
+                phys:EnableMotion(true)
+                phys:Wake()
+
+                local vel = Vector(0, 0, 128)
+                if IsValid(ply) then
+                    local diff = self:GetPos() - ply:GetPos()
+                    vel.x = vel.x + diff.x
+                    vel.y = vel.y + diff.y
+                end
+
+                phys:SetVelocity(vel)
+            end
+
+            self:SetNWString("ship", "")
+            self:SetNWInt("room", -1)
+        end
+    end
+
+    function ENT:Use(ply)
+        if not IsValid(ply) or not ply:IsPlayer() then return end
+
+        if self:IsInSlot() then
+            self:RemoveFromSlot(ply)
+        end
+
+        if not self:IsPlayerHolding() then
+            self:SetAngles(Angle(0, self:GetAngles().y, 0))
+            ply:PickupObject(self)
+        end
+    end
+
+    function ENT:Think()
+        if not self:IsInSlot() then
+            if self:GetCharge() > 0 then self:SetCharge(0) end
+
+            local min, max = self:GetCollisionBounds()
+            min = min + self:GetPos() - Vector(0, 0, 8)
+            max = max + self:GetPos()
+            local near = ents.FindInBox(min, max)
+            for _, v in pairs(near) do
+                if v:GetClass() == "info_ff_moduleslot" then
+                    local type = v:GetModuleType()
+                    if v:IsWeaponSlot() then
+                        self:InsertIntoSlot(v:GetRoom(), type, v:GetPos())
+                        return
+                    end
+                end
+            end
+        end
+    end
+elseif CLIENT then
+    function ENT:Think()
+        if not self._weapon then
+            local name = self:GetWeaponName()
+            if name then self._weapon = weapon.Create(name) end
+        end
+    end
+
+    function ENT:Draw()
+        self:DrawModel()
+
+        local ang = self:GetAngles()
+        ang:RotateAroundAxis(ang:Up(), -90)
+        
+        draw.NoTexture()
+        
+        local scale = 1 / 16
+        local size = 24 / scale
+        cam.Start3D2D(self:GetPos() + ang:Up() * 11, ang, scale)
+
+            surface.SetDrawColor(Color(0, 0, 0, 255))
+            surface.DrawRect(-size / 2, -size / 2, size, size)
+
+            if self._weapon then
+                surface.SetTextColor(Color(191, 191, 191, 255))
+                surface.SetFont("CTextLarge")
+
+                local text = self._weapon:GetFullName()
+
+                local w, h = surface.GetTextSize(text)
+                local x = -size / 2 + (size - w) / 2
+                local y = -size / 2 + (size / 4 - h) / 2
+
+                surface.SetTextPos(x, y)
+                surface.DrawText(text)
+
+                surface.SetDrawColor(self._weapon:GetColor())
+                surface.SetMaterial(self._weapon.Icon)
+                surface.DrawTexturedRect(-size / 2 + 8, -size / 4 - 8, size / 2 - 16, size / 2 - 16)
+                draw.NoTexture()
+
+                text = self._weapon:GetTierName()
+
+                w, h = surface.GetTextSize(text)
+                x = (size / 2 - w) / 2
+                y = -size / 4 - 16 + (size / 2 - h) / 2
+
+                surface.SetTextPos(x, y)
+                surface.DrawText(text)
+
+                surface.SetDrawColor(Color(191, 191, 191, 255))
+                surface.DrawOutlinedRect(-size / 2 + 8, size / 4 + 8, size - 16, size / 4 - 16)
+
+                if self:GetCharge() == 0 then
+                    surface.SetTextColor(Color(172, 45, 51, 255))
+                    surface.SetFont("CTextSmall")
+
+                    text = "NO CHARGE"
+
+                    w, h = surface.GetTextSize(text)
+                    x = -size / 2 + (size - w) / 2
+                    y = size / 4 + (size / 4 - h) / 2
+
+                    surface.SetTextPos(x, y)
+                    surface.DrawText(text)
+                else
+                    local totbars = 24
+                    local barspacing = 4
+                    local barsize = (size - 32 + barspacing) / totbars
+
+                    local bars = (self:GetCharge() / self._weapon:GetMaxCharge()) * totbars
+
+                    if bars == totbars then
+                        surface.SetDrawColor(LerpColour(Color(191, 191, 191, 255), Color(255, 255, 159, 255), Pulse(0.5)))
+                    else
+                        surface.SetDrawColor(Color(191, 191, 191, 255))
+                    end
+
+                    for i = 0, bars - 1 do
+                        surface.DrawRect(-size / 2 + 16 + i * barsize, size / 4 + 16, barsize - barspacing, size / 4 - 32)
+                    end
+                end
+            end
+        cam.End3D2D()
+    end
+end

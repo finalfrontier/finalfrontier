@@ -1,30 +1,40 @@
-WPN.FullName = "Base Weapon"
+WPN.MaxTier = 5
 
-WPN.MaxPower = 1
-WPN.MaxCharge = 10
-WPN.ShotCharge = 10
+WPN.MaxPower = { 1, 3 }
+WPN.MaxCharge = { 10, 40 }
+WPN.ShotCharge = { 10, 40 }
 
 WPN.Projectile = true
 WPN.Homing = true
+WPN.Speed = { 1, 2 }
+WPN.Lateral = { 1, 4 }
+WPN.LifeTime = { 4, 8 }
 
-WPN.Speed = 1
-WPN.Lateral = 1
+WPN.BaseDamage = { 10, 50 }
+WPN.PierceRatio = { 0, 0 }
 
-WPN.LifeTime = 5
+if CLIENT then
+    WPN.FullName = "Missile"
+    WPN.Color = Color(255, 255, 255, 255)
+end
 
-WPN.BaseDamage = 20
-WPN.PierceRatio = 0
+function WPN:_FindValue(values)
+    if type(values) == "number" then return values end
+    if self.MaxTier == 1 then return (values[1] + values[2]) * 0.5 end
+    local t = (self:GetTier() - 1) / (self.MaxTier - 1)
+    return values[1] + t * (values[2] - values[1])
+end
 
 function WPN:GetMaxPower()
-    return self.MaxPower
+    return self:_FindValue(self.MaxPower)
 end
 
 function WPN:GetMaxCharge()
-    return self.MaxCharge
+    return self:_FindValue(self.MaxCharge)
 end
 
 function WPN:GetShotCharge()
-    return self.ShotCharge
+    return self:_FindValue(self.ShotCharge)
 end
 
 function WPN:IsProjectile()
@@ -36,23 +46,23 @@ function WPN:IsHoming()
 end
 
 function WPN:GetSpeed()
-    return self.Speed
+    return self:_FindValue(self.Speed)
 end
 
 function WPN:GetLateral()
-    return self.Lateral
+    return self:_FindValue(self.Lateral)
 end
 
 function WPN:GetLifeTime()
-    return self.LifeTime
+    return self:_FindValue(self.LifeTime)
 end
 
 function WPN:GetBaseDamage()
-    return self.BaseDamage
+    return self:_FindValue(self.BaseDamage)
 end
 
 function WPN:GetPierceRatio()
-    return self.PierceRatio
+    return self:_FindValue(self.PierceRatio)
 end
 
 if SERVER then
@@ -80,5 +90,13 @@ if SERVER then
                 ent:TakeDamageInfo(dmg)
             end
         end
+    end
+elseif CLIENT then
+    function WPN:GetFullName()
+        return self.FullName
+    end
+
+    function WPN:GetColor()
+        return self.Color
     end
 end

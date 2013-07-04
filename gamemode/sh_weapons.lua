@@ -8,20 +8,32 @@ else return end
 local _mt = {}
 _mt.__index = _mt
 
+_mt._tier = 0
+
 _mt.BaseName = nil
 _mt.Base = nil
 
 _mt.Name = nil
-_mt.FullName = "unnamed"
+_mt.MaxTier = 1
+
+if CLIENT then
+    _mt.Icon = Material("systems/noicon.png", "smooth")
+end
 
 function _mt:GetMaxPower() return 0 end
 function _mt:GetMaxCharge() return 0 end
 function _mt:GetShotCharge() return 0 end
 
+function _mt:GetTier() return self._tier end
+
 if SERVER then
-    function _mt:OnHit(room)
-        return
+    function _mt:OnHit(room) return end
+elseif CLIENT then
+    function _mt:GetFullName() return "unnamed" end
+    function _mt:GetTierName()
+        return "Mk " .. tostring(self:GetTier())
     end
+    function _mt:GetColor() return Color(255, 255, 255, 255) end
 end
 
 MsgN("Loading weapons...")
@@ -53,9 +65,10 @@ for _, WPN in pairs(weapon._dict) do
     end
 end
 
-function weapon.Create(name)
+function weapon.Create(name, tier)
     if weapon._dict[name] then
-        return setmetatable({}, weapon._dict[name])
+        tier = tier or (1 + math.floor(math.random() * weapon._dict[name].MaxTier))
+        return setmetatable({ _tier = tier }, weapon._dict[name])
     end
     return nil
 end
