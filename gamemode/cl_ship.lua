@@ -169,13 +169,6 @@ function _mt:ApplyTransform(transform)
 end
 
 function _mt:Think()
-    --[[if self:IsCurrent() and LocalPlayer():GetShipName()
-        and self:GetName() ~= LocalPlayer():GetShipName()
-        and LocalPlayer():GetShip() and LocalPlayer():GetShip():IsCurrent()
-        and not LocalPlayer():GetShip():IsObjectInRange(self:GetObject()) then
-        self:Remove()
-    end]]
-
     if not self._valid then return end
 
     if table.Count(self:GetRooms()) < table.Count(self:GetRoomNames()) then
