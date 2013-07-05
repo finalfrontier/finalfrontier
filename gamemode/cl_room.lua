@@ -90,12 +90,16 @@ function _mt:GetDetails()
 end
 
 function _mt:GetModule(type)
-    return self._nwdata.modules[type]
+    local index = self._nwdata.modules[type]
+    if not index then return nil end
+    local mdl = ents.GetByIndex(index)
+    if not IsValid(mdl) then return nil end
+    return mdl
 end
 
 function _mt:GetSlot(module)
     for i, v in pairs(self._nwdata.modules) do
-        if v == module then return i end
+        if v == module:EntIndex() then return i end
     end
     return nil
 end

@@ -21,6 +21,7 @@ ENT._transtargets = nil
 ENT._dmgeffects = nil
 
 ENT._moduleslots = nil
+ENT._modules = nil
 
 ENT._airvolume = 0
 ENT._temperature = 0
@@ -51,6 +52,7 @@ function ENT:Initialize()
     self._transtargets = {}
 
     self._moduleslots = {}
+    self._modules = {}
 
     self._players = {}
 
@@ -423,28 +425,30 @@ function ENT:GetModuleIntegrity(type)
 end
 
 function ENT:GetModule(type)
-    return self._nwdata.modules[type]
+    return self._modules[type]
 end
 
 function ENT:GetSlot(module)
-    for i, v in pairs(self._nwdata.modules) do
+    for i, v in pairs(self._modules) do
         if v == module then return i end
     end
     return nil
 end
 
 function ENT:SetModule(type, module)
-    self._nwdata.modules[type] = module
+    self._modules[type] = module
+    self._nwdata.modules[type] = module:EntIndex()
     self:_UpdateNWData()
 end
 
 function ENT:RemoveModule(module)
-    for i, v in pairs(self._nwdata.modules) do
+    for i, v in pairs(self._modules) do
         if v == module then
             if (i == moduletype.repair1 or i == moduletype.repair2)
                 and self:GetSystem():IsPerformingAction() then
                 return false
             end
+            self._modules[i] = nil
             self._nwdata.modules[i] = nil
             self:_UpdateNWData()
             return true
