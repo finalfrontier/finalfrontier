@@ -27,12 +27,16 @@ function GUI:Initialize()
     self.Super[BASE].Initialize(self)
 
     self._icon = sgui.Create(self, "image")
+
     self._nameLabel = sgui.Create(self, "label")
     self._nameLabel.AlignX = TEXT_ALIGN_CENTER
     self._nameLabel.AlignY = TEXT_ALIGN_CENTER
+
     self._tierLabel = sgui.Create(self, "label")
     self._tierLabel.AlignX = TEXT_ALIGN_CENTER
     self._tierLabel.AlignY = TEXT_ALIGN_CENTER
+
+    self._powerBar = sgui.Create(self, "weaponpowerbar")
 end
 
 function GUI:SetBounds(bounds)
@@ -52,6 +56,9 @@ function GUI:SetBounds(bounds)
 
     self._tierLabel:SetOrigin(self._nameLabel:GetRight(), 0)
     self._tierLabel:SetSize(textWidth / 3, textHeight)
+
+    self._powerBar:SetOrigin(self._icon:GetRight() + 6, textHeight)
+    self._powerBar:SetSize(textWidth - 12, textHeight - 6)
 end
 
 if CLIENT then
