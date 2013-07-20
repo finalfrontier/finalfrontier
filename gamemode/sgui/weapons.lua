@@ -3,6 +3,7 @@ local BASE = "page"
 GUI.BaseName = BASE
 
 GUI._grid = nil
+GUI._powerBar = nil
 GUI._weapons = nil
 
 function GUI:Enter()
@@ -14,27 +15,9 @@ function GUI:Enter()
     self._grid:SetCentreObject(nil)
     self._grid:SetScale(math.max(self._grid:GetMinScale(), self._grid:GetMinSensorScale()))
 
-    self._zoomLabel = sgui.Create(self, "label")
-    self._zoomLabel.AlignX = TEXT_ALIGN_CENTER
-    self._zoomLabel.AlignY = TEXT_ALIGN_CENTER
-    self._zoomLabel:SetOrigin(self._grid:GetRight() + 8, 16)
-    self._zoomLabel:SetSize(colWidth, 32)
-    self._zoomLabel.Text = "View Zoom"
-
-    self._zoomSlider = sgui.Create(self, "slider")
-    self._zoomSlider:SetOrigin(self._grid:GetRight() + 8, self._zoomLabel:GetBottom() + 8)
-    self._zoomSlider:SetSize(colWidth, 48)
-
-    if SERVER then
-        local min = self._grid:GetMinScale()
-        local max = self._grid:GetMaxScale()
-        self._zoomSlider.Value = math.sqrt((self._grid:GetScale() - min) / (max - min))
-        function self._zoomSlider.OnValueChanged(slider, value)
-            min = self._grid:GetMinScale()
-            max = self._grid:GetMaxScale()
-            self._grid:SetScale(min + math.pow(value, 2) * (max - min))
-        end
-    end
+    self._powerBar = sgui.Create(self, "powerbar")
+    self._powerBar:SetOrigin(self._grid:GetRight() + 8, 8)
+    self._powerBar:SetSize(colWidth, 48)
 
     local wpnHeight = 80
 

@@ -82,7 +82,7 @@ if CLIENT then
 
     function GUI:Draw()
         if self:GetWeapon() then
-            surface.SetDrawColor(Color(191, 191, 191, 255))
+            surface.SetDrawColor(Color(127, 127, 127, 255))
         else
             surface.SetDrawColor(Color(32, 32, 32, 255))
         end

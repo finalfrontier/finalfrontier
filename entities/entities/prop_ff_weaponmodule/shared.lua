@@ -28,6 +28,10 @@ function ENT:GetWeaponName()
     return self:GetNWString("weapon")
 end
 
+function ENT:GetWeaponTier()
+    return self:GetNWInt("tier", 0)
+end
+
 function ENT:GetWeapon()
     return self._weapon
 end
@@ -40,6 +44,7 @@ if SERVER then
     function ENT:SetWeapon(name)
         self:SetNWString("weapon", name)
         self._weapon = weapon.Create(name)
+        self:SetNWInt("tier", self._weapon:GetTier())
     end
 
     function ENT:SetCharge(value)
@@ -143,7 +148,8 @@ elseif CLIENT then
     function ENT:Think()
         if not self._weapon then
             local name = self:GetWeaponName()
-            if name then self._weapon = weapon.Create(name) end
+            local tier = self:GetWeaponTier()
+            if name and tier > 0 then self._weapon = weapon.Create(name, tier) end
         end
     end
 
