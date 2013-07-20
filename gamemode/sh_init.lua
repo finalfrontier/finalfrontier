@@ -8,8 +8,8 @@ function math.sign(x)
     return 0
 end
 
-function Pulse(period)
-    return (math.sin(CurTime() * math.pi * 2 / period) + 1) * 0.5
+function Pulse(period, phase)
+    return (math.sin((CurTime() + (phase or 0)) * math.pi * 2 / period) + 1) * 0.5
 end
 
 function LerpColour(a, b, t)

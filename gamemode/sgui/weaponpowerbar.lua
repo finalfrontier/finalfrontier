@@ -29,6 +29,26 @@ if CLIENT then
 
                 surface.SetTextPos(x, y)
                 surface.DrawText(text)
+            else
+                local totbars = math.ceil(mdl:GetMaxCharge())
+                local barspacing = 2
+                local width = self:GetWidth()
+                local barsize = (width - 8 + barspacing) / totbars
+
+                local bars = (mdl:GetCharge() / mdl:GetMaxCharge()) * totbars
+
+                if bars ~= totbars then
+                    surface.SetDrawColor(Color(191, 191, 191, 255))
+                end
+
+                for i = 0, bars - 1 do
+                    if bars == totbars then
+                        surface.SetDrawColor(LerpColour(Color(255, 255, 255, 255), Color(255, 255, 159, 255), Pulse(0.5, -i / totbars / 4)))
+                    end
+
+                    surface.DrawRect(self:GetGlobalLeft() + 4 + i * barsize,
+                        self:GetGlobalTop() + 4, barsize - barspacing, self:GetHeight() - 8)
+                end
             end
         end
 

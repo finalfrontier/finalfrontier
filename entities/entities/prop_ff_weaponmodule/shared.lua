@@ -40,6 +40,10 @@ function ENT:GetCharge()
     return self:GetNWFloat("charge", 0)
 end
 
+function ENT:GetMaxCharge()
+    return self._weapon:GetMaxCharge()
+end
+
 if SERVER then
     function ENT:SetWeapon(name)
         self:SetNWString("weapon", name)
@@ -47,8 +51,22 @@ if SERVER then
         self:SetNWInt("tier", self._weapon:GetTier())
     end
 
-    function ENT:SetCharge(value)
-        self:SetNWFloat("charge", value)
+    function ENT:AddCharge(amount)
+        if self:GetCharge() < self:GetMaxCharge() then
+            local charge = math.min(self:GetCharge() + amount, self:GetMaxCharge())
+            self:SetNWFloat("charge", charge)
+        end
+    end
+
+    function ENT:RemoveCharge(amount)
+        if self:GetCharge() > 0 then
+            local charge = math.max(self:GetCharge() - amount, 0)
+            self:SetNWFloat("charge", charge)
+        end
+    end
+
+    function ENT:ClearCharge()
+        self:SetNWFloat("charge", 0)
     end
 
     function ENT:Initialize()
@@ -109,6 +127,8 @@ if SERVER then
 
             self:SetNWString("ship", "")
             self:SetNWInt("room", -1)
+
+            self:ClearCharge()
         end
     end
 
@@ -211,19 +231,21 @@ elseif CLIENT then
                     surface.SetTextPos(x, y)
                     surface.DrawText(text)
                 else
-                    local totbars = 24
+                    local totbars = math.ceil(self._weapon:GetMaxCharge())
                     local barspacing = 4
                     local barsize = (size - 32 + barspacing) / totbars
 
                     local bars = (self:GetCharge() / self._weapon:GetMaxCharge()) * totbars
 
-                    if bars == totbars then
-                        surface.SetDrawColor(LerpColour(Color(191, 191, 191, 255), Color(255, 255, 159, 255), Pulse(0.5)))
-                    else
+                    if bars ~= totbars then
                         surface.SetDrawColor(Color(191, 191, 191, 255))
                     end
 
                     for i = 0, bars - 1 do
+                        if bars == totbars then
+                            surface.SetDrawColor(LerpColour(Color(191, 191, 191, 255), Color(255, 255, 159, 255), Pulse(0.5, -i / totbars / 4)))
+                        end
+
                         surface.DrawRect(-size / 2 + 16 + i * barsize, size / 4 + 16, barsize - barspacing, size / 4 - 32)
                     end
                 end
