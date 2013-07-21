@@ -49,15 +49,19 @@ function ENT:InitPostEntity()
     end
 end
 
+function ENT:PlayEffect()
+    if self:GetType() == dmgeffect.sparks then
+        local ed = EffectData()
+        ed:SetOrigin(self:GetPos())
+        ed:SetAngles(self:GetAngles())
+        util.Effect("dmg_sparks", ed, true, true)
+
+        self._nextBurst = CurTime() + math.random() * 4 + 2
+    end
+end
+
 function ENT:Think()
     if self:IsActive() and CurTime() >= self._nextBurst then
-        if self:GetType() == dmgeffect.sparks then
-            local ed = EffectData()
-            ed:SetOrigin(self:GetPos())
-            ed:SetAngles(self:GetAngles())
-            util.Effect("dmg_sparks", ed, true, true)
-
-            self._nextBurst = CurTime() + math.random() * 4 + 2
-        end
+        self:PlayEffect()
     end
 end

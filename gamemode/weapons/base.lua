@@ -71,6 +71,11 @@ function WPN:GetShieldMultiplier()
 end
 
 if SERVER then
+    local shieldedSounds = {
+        "weapons/physcannon/energy_disintegrate4.wav",
+        "weapons/physcannon/energy_disintegrate5.wav"
+    }
+
     function WPN:CreateDamageInfo(target, damage)
         if not IsValid(target) then return nil end
         
@@ -109,6 +114,14 @@ if SERVER then
                     ed:SetScale(1)
                     util.Effect("Explosion", ed)
                 end)
+            end
+        else
+            sound.Play(table.Random(shieldedSounds), room:GetPos(), 100, 70)
+
+            local effects = room:GetDamageEffects()
+            local count = math.max(1, #effects * math.random() * 0.5)
+            for i = 1, count do
+                effects[i]:PlayEffect()
             end
         end
     end
