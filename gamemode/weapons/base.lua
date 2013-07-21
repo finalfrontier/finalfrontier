@@ -1,8 +1,8 @@
 WPN.MaxTier = 5
 
 WPN.MaxPower = { 1, 3 }
-WPN.MaxCharge = { 10, 40 }
-WPN.ShotCharge = { 10, 40 }
+WPN.MaxCharge = { 8, 20 }
+WPN.ShotCharge = { 8, 15 }
 
 WPN.Projectile = true
 WPN.Homing = true
@@ -72,6 +72,8 @@ if SERVER then
         local dmg = DamageInfo()
         dmg:SetDamageType(DMG_BLAST)
         dmg:SetDamage(damage)
+
+        return dmg
     end
 
     function WPN:OnHit(room)

@@ -17,19 +17,7 @@ if CLIENT then
             surface.DrawOutlinedRect(self:GetGlobalRect())
 
             local mdl = self:GetWeaponModule()
-            if mdl:GetCharge() == 0 then
-                surface.SetTextColor(Color(172, 45, 51, 255))
-                surface.SetFont("CTextSmall")
-
-                text = "NO CHARGE"
-
-                local w, h = surface.GetTextSize(text)
-                local x = self:GetGlobalLeft() + (self:GetWidth() - w) / 2
-                local y = self:GetGlobalTop() + (self:GetHeight() - h) / 2
-
-                surface.SetTextPos(x, y)
-                surface.DrawText(text)
-            else
+            if mdl:GetCharge() > 0 then
                 local totbars = math.ceil(mdl:GetMaxCharge())
                 local barspacing = 2
                 local width = self:GetWidth()
@@ -37,12 +25,12 @@ if CLIENT then
 
                 local bars = (mdl:GetCharge() / mdl:GetMaxCharge()) * totbars
 
-                if bars ~= totbars then
+                if not mdl:CanShoot() then
                     surface.SetDrawColor(Color(191, 191, 191, 255))
                 end
 
                 for i = 0, bars - 1 do
-                    if bars == totbars then
+                    if mdl:CanShoot() then
                         surface.SetDrawColor(LerpColour(Color(255, 255, 255, 255), Color(255, 255, 159, 255), Pulse(0.5, -i / totbars / 4)))
                     end
 

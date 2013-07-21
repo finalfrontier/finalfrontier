@@ -42,7 +42,7 @@ for i, file in ipairs(files) do
     local name = string.sub(file, 0, string.len(file) - 4)
     if SERVER then AddCSLuaFile("weapons/" .. file) end
 
-    MsgN("  Loading weapon " .. name)
+    MsgN("- " .. name)
 
     WPN = { Name = name }
     WPN.__index = WPN

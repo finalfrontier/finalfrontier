@@ -139,7 +139,7 @@ MsgN("Loading systems...")
 local files = file.Find("finalfrontier/gamemode/systems/*.lua", "LUA")
 for i, file in ipairs(files) do    
     local name = string.sub(file, 0, string.len(file) - 4)
-    MsgN("  Loading system " .. name)
+    MsgN("- " .. name)
 
     if SERVER then AddCSLuaFile("systems/" .. file) end
     

@@ -28,6 +28,17 @@ function GUI:Enter()
         wpn:SetOrigin(self._grid:GetRight() + 8, self:GetHeight() - yof * (wpnHeight + 8))
         wpn:SetSize(colWidth, wpnHeight)
         wpn:SetWeaponSlot(moduletype.weapon1 + i - 1)
+        
+        if SERVER then
+            wpn.OnClick = function(wpn, x, y, button)
+                local mdl = wpn:GetWeaponModule()
+                if mdl and mdl:CanShoot() then
+                    mdl:RemoveCharge(mdl:GetWeapon():GetShotCharge())
+                    mdl:GetWeapon():OnHit(self:GetRoom())
+                end
+            end
+        end
+        
         self._weapons[i] = wpn
     end
 end

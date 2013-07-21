@@ -44,6 +44,14 @@ function ENT:GetMaxCharge()
     return self._weapon:GetMaxCharge()
 end
 
+function ENT:IsFullyCharged()
+    return self._weapon:GetMaxCharge() > 0 and self._weapon:GetMaxCharge() <= self:GetCharge()
+end
+
+function ENT:CanShoot()
+    return self:GetCharge() >= self._weapon:GetShotCharge()
+end
+
 if SERVER then
     function ENT:SetWeapon(name)
         self:SetNWString("weapon", name)
@@ -237,12 +245,12 @@ elseif CLIENT then
 
                     local bars = (self:GetCharge() / self._weapon:GetMaxCharge()) * totbars
 
-                    if bars ~= totbars then
+                    if not self:CanShoot() then
                         surface.SetDrawColor(Color(191, 191, 191, 255))
                     end
 
                     for i = 0, bars - 1 do
-                        if bars == totbars then
+                        if self:CanShoot() then
                             surface.SetDrawColor(LerpColour(Color(191, 191, 191, 255), Color(255, 255, 159, 255), Pulse(0.5, -i / totbars / 4)))
                         end
 

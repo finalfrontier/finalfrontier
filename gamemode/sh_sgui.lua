@@ -69,7 +69,7 @@ for i, file in ipairs(files) do
     local name = string.sub(file, 0, string.len(file) - 4)
     if SERVER then AddCSLuaFile("sgui/" .. file) end
 
-    MsgN("  Loading sgui element " .. name)
+    MsgN("- " .. name)
 
     GUI = { Name = name }
     GUI.__index = GUI

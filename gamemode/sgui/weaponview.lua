@@ -2,6 +2,8 @@ local BASE = "container"
 
 GUI.BaseName = BASE
 
+GUI.CanClick = true
+
 GUI._slot = 0
 
 GUI._icon = nil
@@ -72,17 +74,20 @@ if CLIENT then
             self._tierLabel.Text = weapon:GetTierName()
         else
             self._icon.Color = Color(0, 0, 0, 0)
-            self._nameLabel.Color = Color(32, 32, 32, 255)
-            self._nameLabel.Text = "No Weapon"
+            self._nameLabel.Text = ""
             self._tierLabel.Text = ""
         end
 
-        self.Super[BASE].Draw(self, layout)
+        self.Super[BASE].UpdateLayout(self, layout)
     end
 
     function GUI:Draw()
-        if self:GetWeapon() then
-            surface.SetDrawColor(Color(127, 127, 127, 255))
+        if self:GetWeaponModule() then
+            if self:GetWeaponModule():CanShoot() then
+                surface.SetDrawColor(Color(191, 191, 191, 255))
+            else
+                surface.SetDrawColor(Color(127, 127, 127, 255))
+            end
         else
             surface.SetDrawColor(Color(32, 32, 32, 255))
         end
@@ -90,5 +95,14 @@ if CLIENT then
         surface.DrawOutlinedRect(self:GetGlobalRect())
 
         self.Super[BASE].Draw(self)
+
+        if self.CanClick and self:IsCursorInside() and self:GetWeaponModule()
+            and self:GetWeaponModule():CanShoot() then
+            surface.SetDrawColor(Color(255, 255, 255, 8))
+            surface.DrawRect(self:GetGlobalRect())
+        elseif self:GetWeaponModule() then
+            surface.SetDrawColor(Color(255, 255, 255, 4))
+            surface.DrawRect(self:GetGlobalRect())
+        end
     end
 end

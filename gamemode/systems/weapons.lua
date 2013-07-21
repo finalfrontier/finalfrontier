@@ -10,7 +10,7 @@ if SERVER then
         local tot = 0
         for slot = moduletype.weapon1, moduletype.weapon3 do
             local mdl = self:GetRoom():GetModule(slot)
-            if mdl then
+            if mdl and not mdl:IsFullyCharged() then
                 local weapon = mdl:GetWeapon()
                 tot = tot + weapon:GetMaxPower()
             end
