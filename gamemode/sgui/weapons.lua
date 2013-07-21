@@ -4,6 +4,8 @@ GUI.BaseName = BASE
 
 GUI._grid = nil
 GUI._powerBar = nil
+GUI._targetBtn = nil
+GUI._directBtn = nil
 GUI._weapons = nil
 
 function GUI:Enter()
@@ -18,6 +20,16 @@ function GUI:Enter()
     self._powerBar = sgui.Create(self, "powerbar")
     self._powerBar:SetOrigin(self._grid:GetRight() + 8, 8)
     self._powerBar:SetSize(colWidth, 48)
+
+    self._targetBtn = sgui.Create(self, "button")
+    self._targetBtn:SetOrigin(self._powerBar:GetLeft(), self._powerBar:GetBottom() + 8)
+    self._targetBtn:SetSize((colWidth - 8) / 2, 48)
+    self._targetBtn.Text = "Set Target"
+
+    self._directBtn = sgui.Create(self, "button")
+    self._directBtn:SetOrigin(self._targetBtn:GetRight() + 8, self._powerBar:GetBottom() + 8)
+    self._directBtn:SetSize((colWidth - 8) / 2, 48)
+    self._directBtn.Text = "Set Angle"
 
     local wpnHeight = 80
 
