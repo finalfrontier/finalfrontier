@@ -391,6 +391,10 @@ function ENT:GetAvailableTransporterTargets()
     return available
 end
 
+function ENT:GetTransporterTargets()
+    return self._transtargets
+end
+
 function ENT:GetTransporterTarget()
     return table.Random(self:GetAvailableTransporterTargets()) or nil
 end

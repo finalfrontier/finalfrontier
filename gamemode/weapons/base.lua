@@ -12,6 +12,7 @@ WPN.LifeTime = { 4, 8 }
 
 WPN.BaseDamage = { 10, 50 }
 WPN.PierceRatio = { 0, 0 }
+WPN.ShieldMult = { 4, 4 }
 
 if CLIENT then
     WPN.FullName = "Missile"
@@ -65,6 +66,10 @@ function WPN:GetPierceRatio()
     return self:_FindValue(self.PierceRatio)
 end
 
+function WPN:GetShieldMultiplier()
+    return self:_FindValue(self.ShieldMult)
+end
+
 if SERVER then
     function WPN:CreateDamageInfo(target, damage)
         if not IsValid(target) then return nil end
@@ -80,16 +85,30 @@ if SERVER then
         local shields = room:GetUnitShields()
         local damage = self:GetBaseDamage()
         local ratio = self:GetPierceRatio()
+        local mult = self:GetShieldMultiplier()
 
-        room:SetUnitShields(shields - math.min(shields, damage) * (1 - ratio))
-        damage = damage - math.min(damage, shields) * ratio
+        util.ScreenShake(room:GetPos(), math.sqrt(damage * 0.5), math.random() * 4 + 3, 1.5, 768)
 
-        for _, ent in pairs(room:GetEntities()) do
-            local dmg = self:CreateDamageInfo(ent, damage)
-            if dmg then
-                dmg:SetAttacker(room)
-                dmg:SetInflictor(room)
-                ent:TakeDamageInfo(dmg)
+        room:SetUnitShields(shields - math.min(shields, damage * mult) * (1 - ratio))
+        damage = damage - (shields / mult) * (1 - ratio)
+
+        if damage > 0 then
+            for _, ent in pairs(room:GetEntities()) do
+                local dmg = self:CreateDamageInfo(ent, damage)
+                if dmg then
+                    dmg:SetAttacker(room)
+                    dmg:SetInflictor(room)
+                    ent:TakeDamageInfo(dmg)
+                end
+            end
+
+            for _, pos in pairs(room:GetTransporterTargets()) do
+                timer.Simple(math.random() * 0.5, function()
+                    local ed = EffectData()
+                    ed:SetOrigin(pos)
+                    ed:SetScale(1)
+                    util.Effect("Explosion", ed)
+                end)
             end
         end
     end
