@@ -20,6 +20,7 @@ resource.AddFile("materials/circle.png")
 resource.AddFile("materials/connector.png")
 resource.AddFile("materials/playerdot.png")
 resource.AddFile("materials/objects/ship.png")
+resource.AddFile("materials/objects/missile.png")
 
 MsgN("Loading materials...")
 local files = file.Find("materials/ff_*.vmt", "GAME")

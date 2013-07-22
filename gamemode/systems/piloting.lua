@@ -21,7 +21,7 @@ if SERVER then
     local SNAPPING_THRESHOLD_POS = 1.0 / 65536.0
     local SNAPPING_THRESHOLD_VEL = 1.0 / 16384.0
 
-    local ACCELERATION_PER_POWER = 1.0 / 400.0
+    local ACCELERATION_PER_POWER = 1.0 / 800.0
 
     function SYS:GetMaximumPower()
         return 4

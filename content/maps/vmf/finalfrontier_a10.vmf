@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "5845"
-	"mapversion" "184"
+	"mapversion" "185"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "184"
+	"mapversion" "185"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -35,7 +35,7 @@ entity
 	"file" "ships/ff_default.vmf"
 	"replace01" "$light_colour 191 191 255"
 	"targetname" "ship01_"
-	"origin" "-832 0 896"
+	"origin" "-4096 8192 1024"
 	editor
 	{
 		"color" "220 30 220"
@@ -88,7 +88,7 @@ entity
 	"replace05" "#/FF_WALLCONCRETE_STRIPE0D /FF_WALLCONCRETE_STRIPE1D"
 	"replace06" "#/FF_WALLCONCRETE_STRIPE0E /FF_WALLCONCRETE_STRIPE1E"
 	"targetname" "ship02_"
-	"origin" "1216 0 896"
+	"origin" "-4096 4096 1024"
 	editor
 	{
 		"color" "220 30 220"
@@ -102,8 +102,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[-1220.26 -475.046 1062.15]"
-		"look" "[-1201.18 -466.287 1042.99]"
+		"position" "[-1702 -730.958 3340.59]"
+		"look" "[-1682.36 -724.78 3320.99]"
 	}
 }
 cordon

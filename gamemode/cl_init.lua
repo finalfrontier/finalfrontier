@@ -22,6 +22,7 @@ WHITE = Material("vgui/white")
 CIRCLE = Material("circle.png", "smooth")
 PLAYER_DOT = Material("playerdot.png", "smooth")
 SHIP_ICON = Material("objects/ship.png", "smooth")
+MISSILE_ICON = Material("objects/missile.png", "smooth")
 POWER = Material("power.png", "smooth")
 
 -- Global Functions

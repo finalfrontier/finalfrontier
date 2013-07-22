@@ -47,7 +47,8 @@ function GUI:Enter()
             wpn.OnClick = function(wpn, x, y, button)
                 local mdl = wpn:GetWeaponModule()
                 if mdl and mdl:CanShoot() then
-                    self:GetSystem():FireWeapon(slot, self:GetShip(), 45)
+                    local targ = ships.GetByName(self._grid:GetCentreObject():GetObjectName())
+                    self:GetSystem():FireWeapon(slot, targ, nil)
                 end
             end
         end

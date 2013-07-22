@@ -194,7 +194,6 @@ function ENT:AddRoom(room)
 
     self._roomdict[name] = room
     table.insert(self._roomlist, room)
-    self:GetBounds():AddBounds(room:GetBounds())
     
     room:SetIndex(#self._roomlist)
 

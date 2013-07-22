@@ -53,10 +53,11 @@ function FormatBearing(angle)
     return FormatNum(angle, 3, 0)
 end
 
-function WrapAngle(ang)
-    ang = ang + math.pi
+function WrapAngle(ang, alwaysPositive)
+    if not alwaysPositive then ang = ang + math.pi end
     ang = ang - math.floor(ang / (math.pi * 2)) * math.pi * 2
-    return ang - math.pi
+    if not alwaysPositive then ang = ang - math.pi end
+    return ang
 end
 
 function FindAngleDifference(a, b)
@@ -85,7 +86,7 @@ function FindConvexPolygons(poly, output)
                 table.remove(cur, 1)
             end
             local na = math.atan2(n.y - v.y, n.x - v.x)
-            local ang = WrapAngle(na - la)
+            local ang = WrapAngle(na - la, true)
             
             if ang > math.pi then
                 n = poly[(i % #poly) + 1]

@@ -192,15 +192,21 @@ elseif CLIENT then
                     surface.DrawCircle(sx + ox, sy + oy, 16)
                 end
 
-                if obj:GetObjectType() == objtype.ship then
-                    surface.SetMaterial(SHIP_ICON)
-                    if obj == ship:GetObject() then
-                        surface.SetDrawColor(Color(51, 172, 45, 255))
-                    else 
+                local ot = obj:GetObjectType()
+                if ot == objtype.ship or ot == objtype.missile then
+                    if ot == objtype.ship then
+                        surface.SetMaterial(SHIP_ICON)
+                        if obj == ship:GetObject() then
+                            surface.SetDrawColor(Color(51, 172, 45, 255))
+                        else 
+                            surface.SetDrawColor(Color(172, 45, 51, 191))
+                        end
+                    elseif ot == objtype.missile then
+                        surface.SetMaterial(MISSILE_ICON)
                         surface.SetDrawColor(Color(172, 45, 51, 191))
                     end
                     surface.DrawTexturedRectRotated(sx + ox, sy + oy,
-                        16 * scale, 16 * scale, obj:GetRotation())
+                        16 * scale, 16 * scale, -obj:GetRotation())
                     draw.NoTexture()
                 else
                     surface.SetDrawColor(Color(172, 45, 51, 127))

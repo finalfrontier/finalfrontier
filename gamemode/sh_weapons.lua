@@ -16,6 +16,8 @@ _mt.Base = nil
 _mt.Name = nil
 _mt.MaxTier = 1
 
+_mt.LaunchSound = "weapons/rpg/rocketfire1.wav"
+
 if CLIENT then
     _mt.Icon = Material("systems/noicon.png", "smooth")
 end
@@ -80,6 +82,13 @@ if SERVER then
             local mx, my = ent:GetCoordinates()
             local tx, ty = ent._target:GetCoordinates()
             dx, dy = universe:GetDifference(mx, my, tx, ty)
+
+            if (ent._target ~= ent._owner or CurTime() - ent._shootTime > 1)
+                and dx * dx + dy * dy < 1 / (128 * 128) then
+                ent._weapon:Hit(ent._target, ent:GetCoordinates())
+                ent:Remove()
+            end
+
             local dest = math.atan2(dy, dx)
             local curr = ent:GetRotation() * math.pi / 180
             local diff = FindAngleDifference(dest, curr)
@@ -96,12 +105,14 @@ if SERVER then
         return Vector(0, 0, 0), vel - phys:GetVelocity(), SIM_GLOBAL_ACCELERATION
     end
 
-    function weapon.LaunchMissile(x, y, wpn, target, rot)
+    function weapon.LaunchMissile(ship, wpn, target, rot)
         local missile = ents.Create("info_ff_object")
+        missile._owner = ship
         missile._weapon = wpn
         missile._target = target
+        missile._shootTime = CurTime()
         missile:SetObjectType(objtype.missile)
-        missile:SetCoordinates(x, y)
+        missile:SetCoordinates(ship:GetCoordinates())
         missile.PhysicsSimulate = missilePhysicsSimulate
 
         missile:Spawn()

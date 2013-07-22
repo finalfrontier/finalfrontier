@@ -23,6 +23,7 @@ if SERVER then
         if mdl and mdl:CanShoot() then
             mdl:RemoveCharge(mdl:GetWeapon():GetShotCharge())
             mdl:GetWeapon():OnShoot(self:GetShip(), target, rot)
+            sound.Play(mdl:GetWeapon().LaunchSound, self:GetRoom():GetPos())
         end
     end
 

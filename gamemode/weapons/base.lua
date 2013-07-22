@@ -6,7 +6,7 @@ WPN.ShotCharge = { 8, 15 }
 
 WPN.Projectile = true
 WPN.Homing = true
-WPN.Speed = { 1 / 12, 1 / 8 }
+WPN.Speed = { 1 / 16, 1 / 16 }
 WPN.Lateral = { 1, 1 }
 WPN.LifeTime = { 4, 8 }
 
@@ -89,10 +89,33 @@ if SERVER then
     function WPN:OnShoot(ship, target, rot)
         local sx, sy = ship:GetCoordinates()
         local tx, ty = target:GetCoordinates()
-        local diff = universe:GetDifference(sx, sy, tx, ty)
-        if not rot then rot = math.atan2(diff.y, diff.x) / math.pi * 180 end
+        local dx, dy = universe:GetDifference(sx, sy, tx, ty)
+        if not rot then rot = math.atan2(dy, dx) / math.pi * 180 end
 
-        weapon.LaunchMissile(sx, sy, self, target, rot)
+        weapon.LaunchMissile(ship, self, target, rot)
+    end
+
+    function WPN:Hit(ship, x, y)
+        local sx, sy = ship:GetCoordinates()
+        local dx, dy = universe:GetDifference(sx, sy, x, y)
+        local ang = FindAngleDifference(math.atan2(dy, dx), ship:GetRotation() * math.pi / 180)
+
+        local closest = nil
+        local closdif = 0
+
+        local sx, sy = ship:GetBounds():GetCentre()
+        for _, room in pairs(ship:GetRooms()) do
+            local rx, ry = room:GetBounds():GetCentre()
+            dx, dy = rx - sx, sy - ry
+            local rang = math.atan2(dy, dx)
+            local dif = math.abs(FindAngleDifference(rang, ang))
+            if not closest or dif < closdif + (math.random() - 0.5) * math.pi / 8 then
+                closest = room
+                closdif = dif
+            end
+        end
+
+        self:OnHit(closest)
     end
 
     function WPN:OnHit(room)
