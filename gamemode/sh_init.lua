@@ -54,7 +54,13 @@ function FormatBearing(angle)
 end
 
 function WrapAngle(ang)
-    return ang - math.floor(ang / (math.pi * 2)) * math.pi * 2
+    ang = ang + math.pi
+    ang = ang - math.floor(ang / (math.pi * 2)) * math.pi * 2
+    return ang - math.pi
+end
+
+function FindAngleDifference(a, b)
+    return WrapAngle(WrapAngle(a) - WrapAngle(b))
 end
 
 -- TODO: Add check to avoid complex polys in output

@@ -18,6 +18,14 @@ if SERVER then
         return tot
     end
 
+    function SYS:FireWeapon(slot, target, rot)
+        local mdl = self:GetRoom():GetModule(slot)
+        if mdl and mdl:CanShoot() then
+            mdl:RemoveCharge(mdl:GetWeapon():GetShotCharge())
+            mdl:GetWeapon():OnShoot(self:GetShip(), target, rot)
+        end
+    end
+
     function SYS:Think(dt)
         local power = self:GetPower()
         local needed = self:GetPowerNeeded()

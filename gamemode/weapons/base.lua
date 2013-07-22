@@ -6,8 +6,8 @@ WPN.ShotCharge = { 8, 15 }
 
 WPN.Projectile = true
 WPN.Homing = true
-WPN.Speed = { 1, 2 }
-WPN.Lateral = { 1, 4 }
+WPN.Speed = { 1 / 12, 1 / 8 }
+WPN.Lateral = { 1, 1 }
 WPN.LifeTime = { 4, 8 }
 
 WPN.BaseDamage = { 10, 50 }
@@ -84,6 +84,15 @@ if SERVER then
         dmg:SetDamage(damage)
 
         return dmg
+    end
+
+    function WPN:OnShoot(ship, target, rot)
+        local sx, sy = ship:GetCoordinates()
+        local tx, ty = target:GetCoordinates()
+        local diff = universe:GetDifference(sx, sy, tx, ty)
+        if not rot then rot = math.atan2(diff.y, diff.x) / math.pi * 180 end
+
+        weapon.LaunchMissile(sx, sy, self, target, rot)
     end
 
     function WPN:OnHit(room)

@@ -37,16 +37,17 @@ function GUI:Enter()
     for i = 1, 3 do
         local wpn = sgui.Create(self, "weaponview")
         local yof = 4 - i
+        local slot = moduletype.weapon1 + i - 1
+
         wpn:SetOrigin(self._grid:GetRight() + 8, self:GetHeight() - yof * (wpnHeight + 8))
         wpn:SetSize(colWidth, wpnHeight)
-        wpn:SetWeaponSlot(moduletype.weapon1 + i - 1)
+        wpn:SetWeaponSlot(slot)
         
         if SERVER then
             wpn.OnClick = function(wpn, x, y, button)
                 local mdl = wpn:GetWeaponModule()
                 if mdl and mdl:CanShoot() then
-                    mdl:RemoveCharge(mdl:GetWeapon():GetShotCharge())
-                    mdl:GetWeapon():OnHit(self:GetRoom())
+                    self:GetSystem():FireWeapon(slot, self:GetShip(), 45)
                 end
             end
         end

@@ -26,6 +26,12 @@ POWER = Material("power.png", "smooth")
 
 -- Global Functions
 
+function math.sign(value)
+    if value < 0 then return -1 end
+    if value > 0 then return  1 end
+    return 0
+end
+
 local sin, cos = math.sin, math.cos
 function CreateCircle(x, y, radius)
     local quality = math.min(256, 4 * math.sqrt(radius) + 8)

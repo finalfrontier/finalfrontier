@@ -10,6 +10,7 @@ ENT._lastRotation = 0
 objtype = {}
 objtype.unknown = 0
 objtype.ship = 1
+objtype.missile = 2
 
 function ENT:SetupDataTables()
     self:NetworkVar("Float", 0, "TargetRotation")
@@ -18,8 +19,22 @@ end
 
 function ENT:Initialize()
     if SERVER then
-        self:SetMoveType(MOVETYPE_NOCLIP)
-        self:PhysicsInit(SOLID_NONE)
+        self:SetModel("models/props_junk/PopCan01a.mdl")
+        self:PhysicsInit(SOLID_VPHYSICS)
+        self:SetMoveType(MOVETYPE_VPHYSICS)
+        self:SetSolid(SOLID_VPHYSICS)
+
+
+        local phys = self:GetPhysicsObject()
+        if phys:IsValid() then
+            phys:EnableCollisions(false)
+            phys:EnableDrag(false)
+            phys:EnableGravity(false)
+            phys:EnableMotion(true)
+            phys:Wake()
+        end
+
+        self:StartMotionController()
 
         self:SetTargetRotation(0)
         self:SetAngularVel(45)
@@ -40,7 +55,10 @@ if SERVER then
     function ENT:SetVel(dx, dy)
         local orig = universe:GetWorldPos(0, 0)
         local next = universe:GetWorldPos(dx, dy)
-        self:SetLocalVelocity(next - orig)
+        local phys = self:GetPhysicsObject()
+        if phys:IsValid() then
+            phys:SetVelocity(next - orig)
+        end
     end
 
     function ENT:SetObjectType(type)
@@ -52,18 +70,9 @@ if SERVER then
     end
 end
 
-local function WrapAngle(ang)
-    if ang < -180 then return ang + 360 end
-    if ang >= 180 then return ang - 360 end
-    return ang
-end
-
-local function FindAngleDifference(a, b)
-    if b > 0 then return WrapAngle(b - a) else return WrapAngle(a - b) end
-end
-
 function ENT:GetRotation()
-    local diff = FindAngleDifference(self._currRotation, self:GetTargetRotation())
+    local diff = FindAngleDifference(self._currRotation * math.pi / 180,
+        self:GetTargetRotation() * math.pi / 180) / math.pi * 180
     if math.abs(diff) >= 0.1 then
         local t = (CurTime() - self._lastLerpTime)
         local vel = math.sign(diff) * math.min(math.abs(diff), t * self:GetAngularVel())
@@ -106,6 +115,15 @@ if SERVER then
         if math.abs(wx - x) >= 1 or math.abs(wy - y) >= 1 then
             self:SetCoordinates(wx, wy)
         end
+
+        local phys = self:GetPhysicsObject()
+        if phys:IsValid() and phys:IsAsleep() then
+            phys:Wake()
+        end
+    end
+
+    function ENT:PhysicsSimulate(phys, delta)
+        return SIM_NOTHING
     end
 elseif CLIENT then
     function ENT:Think()

@@ -72,3 +72,45 @@ function weapon.Create(name, tier)
     end
     return nil
 end
+
+if SERVER then
+    local function missilePhysicsSimulate(ent, phys, delta)
+        local dx, dy = 0, 0
+        if ent._target then
+            local mx, my = ent:GetCoordinates()
+            local tx, ty = ent._target:GetCoordinates()
+            dx, dy = universe:GetDifference(mx, my, tx, ty)
+            local dest = math.atan2(dy, dx)
+            local curr = ent:GetRotation() * math.pi / 180
+            local diff = FindAngleDifference(dest, curr)
+            local newr = (curr + math.sign(diff) * ent._weapon:GetLateral() * delta) / math.pi * 180
+
+            ent:SetRotation(newr)
+            ent:SetTargetRotation(newr)
+        end
+        local ang = ent:GetRotation() * math.pi / 180
+        local speed = ent._weapon:GetSpeed()
+        dx = math.cos(ang) * speed
+        dy = math.sin(ang) * speed
+        local vel = universe:GetWorldPos(dx, dy) - universe:GetWorldPos(0, 0)
+        return Vector(0, 0, 0), vel - phys:GetVelocity(), SIM_GLOBAL_ACCELERATION
+    end
+
+    function weapon.LaunchMissile(x, y, wpn, target, rot)
+        local missile = ents.Create("info_ff_object")
+        missile._weapon = wpn
+        missile._target = target
+        missile:SetObjectType(objtype.missile)
+        missile:SetCoordinates(x, y)
+        missile.PhysicsSimulate = missilePhysicsSimulate
+
+        missile:Spawn()
+
+        local rad = rot * math.pi / 180
+        missile:SetRotation(rot)
+        missile:SetTargetRotation(rot)
+        missile:SetVel(math.cos(rad) * wpn:GetSpeed(), math.sin(rad) * wpn:GetSpeed())
+
+        return missile
+    end
+end
