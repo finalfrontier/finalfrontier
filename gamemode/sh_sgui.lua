@@ -51,6 +51,13 @@ if CLIENT then
         weight = 400,
         antialias = true
     })
+
+    surface.CreateFont("CTextMedium", {
+        font = "consolas",
+        size = 48,
+        weight = 400,
+        antialias = true
+    })
     
     surface.CreateFont("CTextLarge", {
         font = "consolas",

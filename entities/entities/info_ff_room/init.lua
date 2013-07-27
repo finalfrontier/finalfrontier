@@ -410,7 +410,7 @@ function ENT:AddModuleSlot(pos, type)
         mdl:InsertIntoSlot(self, type, pos)
     elseif type == moduletype.weapon1 then
         local mdl = ents.Create("prop_ff_weaponmodule")
-        mdl:SetWeapon("base")
+        mdl:SetWeapon("janus")
         mdl:Spawn()
         mdl:InsertIntoSlot(self, type, pos)
     end

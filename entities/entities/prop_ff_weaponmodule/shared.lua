@@ -203,6 +203,12 @@ elseif CLIENT then
                 local text = self._weapon:GetFullName()
 
                 local w, h = surface.GetTextSize(text)
+
+                if w > size - 32 then
+                    surface.SetFont("CTextMedium")
+                    w, h = surface.GetTextSize(text)
+                end
+
                 local x = -size / 2 + (size - w) / 2
                 local y = -size / 2 + (size / 4 - h) / 2
 
@@ -214,6 +220,8 @@ elseif CLIENT then
                 surface.DrawTexturedRect(-size / 2 + 8, -size / 4 - 8, size / 2 - 16, size / 2 - 16)
                 draw.NoTexture()
 
+                surface.SetFont("CTextLarge")
+                
                 text = self._weapon:GetTierName()
 
                 w, h = surface.GetTextSize(text)

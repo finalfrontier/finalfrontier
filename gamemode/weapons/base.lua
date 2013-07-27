@@ -1,21 +1,17 @@
-WPN.MaxTier = 5
+WPN.MaxTier = 1
 
-WPN.MaxPower = { 1, 3 }
-WPN.MaxCharge = { 8, 20 }
-WPN.ShotCharge = { 8, 15 }
+WPN.MaxPower = { 1, 1 }
+WPN.MaxCharge = { 1, 1 }
+WPN.ShotCharge = { 1, 1 }
 
-WPN.Projectile = true
-WPN.Homing = true
-WPN.Speed = { 1 / 16, 1 / 16 }
-WPN.Lateral = { 1, 1 }
-WPN.LifeTime = { 4, 8 }
+WPN.Projectile = false
 
-WPN.BaseDamage = { 10, 50 }
+WPN.BaseDamage = { 0, 0 }
 WPN.PierceRatio = { 0, 0 }
-WPN.ShieldMult = { 4, 4 }
+WPN.ShieldMult = { 0, 0 }
 
 if CLIENT then
-    WPN.FullName = "Missile"
+    WPN.FullName = "Unnamed"
     WPN.Color = Color(255, 255, 255, 255)
 end
 
@@ -40,22 +36,6 @@ end
 
 function WPN:IsProjectile()
     return self.Projectile
-end
-
-function WPN:IsHoming()
-    return self.Homing
-end
-
-function WPN:GetSpeed()
-    return self:_FindValue(self.Speed)
-end
-
-function WPN:GetLateral()
-    return self:_FindValue(self.Lateral)
-end
-
-function WPN:GetLifeTime()
-    return self:_FindValue(self.LifeTime)
 end
 
 function WPN:GetBaseDamage()
@@ -87,12 +67,7 @@ if SERVER then
     end
 
     function WPN:OnShoot(ship, target, rot)
-        local sx, sy = ship:GetCoordinates()
-        local tx, ty = target:GetCoordinates()
-        local dx, dy = universe:GetDifference(sx, sy, tx, ty)
-        if not rot then rot = math.atan2(dy, dx) / math.pi * 180 end
-
-        weapon.LaunchMissile(ship, self, target, rot)
+        return
     end
 
     function WPN:Hit(ship, x, y)
