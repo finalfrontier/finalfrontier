@@ -50,6 +50,7 @@ if SERVER then
 
     function ENT:SetRotation(angle)
         self._currRotation = angle
+        self:SetTargetRotation(angle)
     end
 
     function ENT:SetVel(dx, dy)
@@ -96,7 +97,7 @@ end
 
 function ENT:GetVel()
     local ox, oy = universe:GetUniversePos(Vector(0, 0, 0))
-    local nx, ny = universe:GetUniversePos(self:GetVelocity())
+    local nx, ny = universe:GetUniversePos(self:GetPhysicsObject():GetVelocity())
     return nx - ox, ny - oy
 end
 

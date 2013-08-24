@@ -13,7 +13,7 @@ if SERVER then
 
         self._nwdata.needed = 0
         self._nwdata.supplied = 0
-        self:SetTotalPower(20)
+        self:SetTotalPower(100)
     end
 
     function SYS:SetTotalPower(value)
