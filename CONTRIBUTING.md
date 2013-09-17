@@ -1,4 +1,4 @@
-### Contributions are welcome
+# Contributions are welcome
 
 Thank you for taking an interest in contributing to the project, we need all
 the help we can get!
@@ -22,12 +22,12 @@ utility entities used when creating a map to designate certain areas), and
 For adding or modifying code, here are some guidelines for keeping coding
 style consistency:
 
-# Whitespace
+### Whitespace
 * Indent with 4 spaces, no tabs
 * Avoid trailing whitespace
 * Empty lines should contain no whitespace
 
-# Function Identifiers
+### Function Identifiers
 * Global functions should be in CamelCase with a leading upper-case letter.
 * Local functions should be in camelCase with a leading lower-case letter.
 * Functions bound to a table (for example, entity bound functions) that are
@@ -37,7 +37,7 @@ style consistency:
   bound to that table (private methods) must match the local function naming
   rule, but also have a leading underscore.
 
-# Variable Identifiers
+### Variable Identifiers
 * Constant variable definitions should be in ALL_CAPS with underscores used
   to separate words.
 * Local and global variable definitions should both be in camelCase with a
