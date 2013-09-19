@@ -1,5 +1,14 @@
 if SERVER then AddCSLuaFile("sh_init.lua") end
 
+GM.Name = "Final Frontier"
+GM.Author = "Metapyziks"
+GM.Email = "N/A"
+GM.Website = "N/A"
+
+function GM:Initialize()
+
+end 
+
 -- Global Functions
 
 function math.sign(x)
