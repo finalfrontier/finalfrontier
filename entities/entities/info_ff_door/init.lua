@@ -74,7 +74,7 @@ function ENT:IsPowered()
 end
 
 function ENT:_SetArea(area)
-    self._nwdata.area = value
+    self._nwdata.area = area
     self:_UpdateNWData()
 end
 
