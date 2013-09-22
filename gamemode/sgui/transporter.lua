@@ -174,7 +174,7 @@ if SERVER then
     end
 elseif CLIENT then
     function GUI:Draw()
-        if not self._inspected then
+        if self._grid then
             local obj = self._grid:GetCentreObject()
             if obj ~= self:GetShip():GetObject() then
                 self._selectedLabel.Text = obj:GetObjectName()
@@ -201,7 +201,7 @@ elseif CLIENT then
 
         self._chargeSlider.Value = old
 
-        if not self._inspected then
+        if self._grid then
             self._inspectButton.CanClick = self._grid:GetCentreObject():GetObjectType() == objtype.ship
         end
     end
