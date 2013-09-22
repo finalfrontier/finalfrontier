@@ -415,7 +415,7 @@ elseif CLIENT then
             self.UI = nil
         end
 
-        if self.Layout and table.Count(self.Layout) > 0 then
+        if self.Layout and self.UI and table.Count(self.Layout) > 0 then
             self.UI:UpdateLayout(self.Layout)
         end
     end
