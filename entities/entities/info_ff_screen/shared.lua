@@ -85,6 +85,7 @@ if SERVER then
     
     function ENT:Initialize()
         self:DrawShadow(false)
+        self.Storage = {}
     end
 
     function ENT:InitPostEntity()
