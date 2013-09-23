@@ -13,4 +13,3 @@ content/maps/vmf/ships/*.lin
 content/maps/vmf/ships/*.bsp
 *.sublime-project
 *.sublime-workspace
-/gamemode/gmtools
