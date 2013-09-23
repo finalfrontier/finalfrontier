@@ -21,6 +21,7 @@ ENT.Height = 0
 
 ENT.UI = nil
 ENT.Layout = nil
+ENT.Storage = nil
 
 function ENT:GetShip()
     return self._ship
@@ -85,6 +86,7 @@ if SERVER then
     
     function ENT:Initialize()
         self:DrawShadow(false)
+        self.Storage = {}
     end
 
     function ENT:InitPostEntity()
