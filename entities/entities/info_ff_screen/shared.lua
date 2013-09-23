@@ -8,7 +8,7 @@ local MAX_USE_DISTANCE = 64
 
 local MAIN_GUI_CLASS = "screen"
 
-local ALARM_TIME = 15
+local ALARM_TIME = 120
 
 ENT.Type = "anim"
 ENT.Base = "base_anim"
@@ -21,7 +21,6 @@ ENT.Height = 0
 
 ENT.UI = nil
 ENT.Layout = nil
-ENT.Storage = nil
 
 function ENT:GetShip()
     return self._ship
@@ -62,7 +61,7 @@ if SERVER then
 
     ENT._lastPage = page.ACCESS
 
-    ENT.OverrideNodeCount = 4
+    ENT.OverrideNodeCount = 6
     ENT.OverrideTimePerNode = 0.5
 
     ENT.OverrideNodePositions = nil
@@ -86,7 +85,6 @@ if SERVER then
     
     function ENT:Initialize()
         self:DrawShadow(false)
-        self.Storage = {}
     end
 
     function ENT:InitPostEntity()
@@ -110,7 +108,7 @@ if SERVER then
         self:SetNWEntity("user", nil)
 
         self:GenerateOverrideSequence()
-        -- if not DEBUG then self:ShuffleCurrentOverrideSequence() end
+        self:ShuffleCurrentOverrideSequence()
 
         self.FreeGUIIDs = {}
 
