@@ -18,11 +18,8 @@ if SERVER then
         "rho",   "sigma", "tau",    "upsilon", "phi",     "chi",  "psi",     "omega"
     }
 
-    local vertNames = {
-        "1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",
-        "9",  "10", "11", "12", "13", "14", "15", "16",
-        "17", "18", "19", "20", "21", "22", "23", "24"
-    }
+    local vertNames = {}
+    for i = 1, 24 do vertNames[i] = tostring(i) end
 
     function ENT:GetPVSPos()
         return self:GetPos() + Vector(0, 0, 64)

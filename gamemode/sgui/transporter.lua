@@ -104,11 +104,22 @@ function GUI:Inspect(obj)
         if SERVER then
             local min = self._grid:GetMinScale()
             local max = self._grid:GetMaxScale()
-            self._zoomSlider.Value = math.sqrt((self._grid:GetScale() - min) / (max - min))
+
+            if self:GetScreen().Storage and self:GetScreen().Storage.ZoomSliderValue then
+                self._zoomSlider.Value = self:GetScreen().Storage.ZoomSliderValue
+            else
+                self._zoomSlider.Value = math.sqrt((self._grid:GetScale() - min) / (max - min))
+                self:GetScreen().Storage = self:GetScreen().Storage or {}
+                self:GetScreen().Storage.ZoomSliderValue = self._zoomSlider.Value 
+            end
+
+            self._grid:SetScale(min + math.pow(self._zoomSlider.Value, 2) * (max - min))
+
             function self._zoomSlider.OnValueChanged(slider, value)
                 min = self._grid:GetMinScale()
                 max = self._grid:GetMaxScale()
                 self._grid:SetScale(min + math.pow(value, 2) * (max - min))
+                self:GetScreen().Storage.ZoomSliderValue = value
             end
         end
 
