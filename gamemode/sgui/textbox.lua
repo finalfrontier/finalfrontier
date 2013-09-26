@@ -33,9 +33,10 @@ if CLIENT then
           surface.DrawRect(x + self.Margin, y + self.Margin,
               w - self.Margin * 2, h - self.Margin * 2)
             self.Text = ""
-            if letter < 0
+            if letter < 0 then
               ply.KeyDown(letter)
               self.Text = self.Text + letter
+            end
         end
 
         local cx, cy = self:GetGlobalCentre()
