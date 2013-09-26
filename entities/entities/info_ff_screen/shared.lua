@@ -46,6 +46,15 @@ function ENT:GetFormattedAlarmCounter()
     end
 end
 
+
+function ENT:ConsolePasswordGuessed(guess)
+    return guess
+end
+
+function ENT:ConsolePassword(password)
+    return password
+end
+
 if SERVER then
     local enableSounds = {
         "buttons/button9.wav"
@@ -70,6 +79,13 @@ if SERVER then
 
     ENT.NextGUIID = 1
     ENT.FreeGUIIDs = nil
+    
+    function ENT:GetConsolePassword()
+    if self:ConsolePasswordGuessed() == self:ConsolePassword() then
+        --self:GetCurrentOverrideSequenceScore().correct = 1
+        self.OverrideCurrSequence = self.OverrideGoalSequence
+    end
+
 
     function ENT:KeyValue(key, value)
         if key == "room" then
@@ -401,6 +417,13 @@ elseif CLIENT then
     ENT._lastCursory = 0
     ENT._nextCursorx = 0
     ENT._nextCursory = 0
+    
+    function ENT:GetConsolePassword()
+    if self:ConsolePasswordGuessed() == self:ConsolePassword() then
+        --self:GetCurrentOverrideSequenceScore().correct = 1
+        self.OverrideCurrSequence = self.OverrideGoalSequence
+    end
+
     
     function ENT:UpdateLayout()
         if not self.Layout and self._room and self._room:IsCurrent() and self._ship == LocalPlayer():GetShip() then
