@@ -21,14 +21,15 @@ if CLIENT then
 
     function GUI:Draw()
         local x, y = self:GetGlobalCentre()
-        local radius = math.min(self:GetWidth(), self:GetHeight()) * 0.5
+        local radius = math.min(self:GetWidth(), self:GetHeight()) * 0.45
         local room = self:GetScreen():GetRoom()
 
-        local atmo, temp, shld = 0, 0, 0
+        local atmo, temp, shld, pwr = 0, 0, 0, 0
         if room then
             atmo = room:GetAtmosphere()
             temp = room:GetTemperature() / 600
             shld = room:GetShields()
+            pwr = room:GetPowerRatio()
         end
 
         local scale = radius / 192
@@ -77,6 +78,11 @@ if CLIENT then
                 surface.DrawRect(x - 24 * scale, y + i * 16 * scale - 2 * scale, 48 * scale, 4 * scale)
             end
         end
+
+        local pwidth, pheight = self:GetWidth()/2 - radius, pwr * (self:GetHeight()/2)
+        surface.SetDrawColor(Color(128, 128, 128, 255))
+        surface.DrawRect(x - radius - pwidth, y - pheight, pwidth, pheight * 2)
+        surface.DrawRect(x + radius, y - pheight, pwidth, pheight * 2)
 
         self.Super[BASE].Draw(self)
     end

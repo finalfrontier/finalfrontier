@@ -149,6 +149,14 @@ function _mt:GetShields()
     return self:GetUnitShields() / self:GetSurfaceArea()
 end
 
+function _mt:GetPowerRatio()
+    if self:HasSystem() and self:GetSystem():GetPowerNeeded() > 0 then
+        return math.min(1, self:GetSystem():GetPower()
+            / self:GetSystem():GetPowerNeeded())
+    end
+    return 0
+end
+
 function _mt:GetPermissionsName()
     return "p_" .. self:GetShip():GetName() .. "_" .. self:GetIndex()
 end
