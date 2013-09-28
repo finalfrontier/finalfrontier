@@ -7,6 +7,10 @@ GUI._oldScale = nil
 
 GUI._zoomLabels = nil
 GUI._zoomSlider = nil
+GUI._scanPowerLabel = nil
+GUI._chargeSlider = nil
+GUI._scanPowerBar = nil
+GUI._scanButton = nil
 GUI._selectedLabel = nil
 GUI._inspectButton = nil
 GUI._coordLabel = nil
@@ -24,6 +28,10 @@ function GUI:Inspect(obj)
 
         self._zoomLabels = nil
         self._zoomSlider = nil
+        self._scanPowerLabel = nil
+        self._chargeSlider = nil
+        self._scanPowerBar = nil
+        self._scanButton = nil
         self._selectedLabel = nil
         self._inspectButton = nil
         self._coordLabel = nil
@@ -105,11 +113,33 @@ function GUI:Inspect(obj)
             end
         end
 
-        local _, cy = self._grid:GetCentre()
+        self._scanPowerLabel = sgui.Create(self, "label")
+        self._scanPowerLabel.AlignX = TEXT_ALIGN_CENTER
+        self._scanPowerLabel.AlignY = TEXT_ALIGN_CENTER
+        self._scanPowerLabel:SetOrigin(self._grid:GetRight() + 16, 8)
+        self._scanPowerLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
+        self._scanPowerLabel.Text = "Scan Power"
+
+        self._chargeSlider = sgui.Create(self, "slider")
+        self._chargeSlider:SetOrigin(self._grid:GetRight() + 16, self._scanPowerLabel:GetBottom() + 8)
+        self._chargeSlider:SetSize(self:GetWidth() * 0.4 - 16, 32)
+        self._chargeSlider.CanClick = false
+        self._chargeSlider.TextColorNeg = self._chargeSlider.TextColorPos
+        self._chargeSlider.Value = self:GetSystem():GetCurrentCharge() / self:GetSystem():GetMaximumCharge()
+
+        self._scanPowerBar = sgui.Create(self, "powerbar")
+        self._scanPowerBar:SetOrigin(self._grid:GetRight() + 16, self._chargeSlider:GetBottom() + 8)
+        self._scanPowerBar:SetSize(self:GetWidth() * 0.4 - 16, 32)
+
+        self._scanButton = sgui.Create(self, "button")
+        self._scanButton:SetOrigin(self._grid:GetRight() + 16, self._scanPowerBar:GetBottom() + 8)
+        self._scanButton:SetSize(self:GetWidth() * 0.4 - 16, 48)
+        self._scanButton.Text = "Scan"
+
         self._selectedLabel = sgui.Create(self, "label")
         self._selectedLabel.AlignX = TEXT_ALIGN_CENTER
         self._selectedLabel.AlignY = TEXT_ALIGN_CENTER
-        self._selectedLabel:SetOrigin(self._grid:GetRight() + 16, cy - 36)
+        self._selectedLabel:SetOrigin(self._grid:GetRight() + 16, self._scanButton:GetBottom() + 16)
         self._selectedLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
         self._selectedLabel.Text = "This Ship"
 
