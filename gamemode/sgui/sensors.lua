@@ -5,7 +5,7 @@ GUI.BaseName = BASE
 GUI._inspected = nil
 GUI._oldScale = nil
 
-GUI._zoomLabel = nil
+GUI._zoomLabels = nil
 GUI._zoomSlider = nil
 GUI._selectedLabel = nil
 GUI._inspectButton = nil
@@ -22,7 +22,7 @@ function GUI:Inspect(obj)
         self._inspected = obj
         self._oldScale = self._grid:GetScale()
 
-        self._zoomLabel = nil
+        self._zoomLabels = nil
         self._zoomSlider = nil
         self._selectedLabel = nil
         self._inspectButton = nil
@@ -54,7 +54,7 @@ function GUI:Inspect(obj)
 
         self._grid = sgui.Create(self, "sectorgrid")
         self._grid:SetOrigin(8, 8)
-        self._grid:SetSize(self:GetWidth() * 0.6 - 16, self:GetHeight() - 16)
+        self._grid:SetSize(self:GetWidth() * 0.6 - 16, self:GetHeight() - 56)
         self._grid:SetCentreObject(nil)
         self._grid:SetScale(math.max(self._grid:GetMinScale(), self._oldScale or self._grid:GetMinSensorScale()))
 
@@ -69,16 +69,25 @@ function GUI:Inspect(obj)
             end
         end
         
-        self._zoomLabel = sgui.Create(self, "label")
-        self._zoomLabel.AlignX = TEXT_ALIGN_CENTER
-        self._zoomLabel.AlignY = TEXT_ALIGN_CENTER
-        self._zoomLabel:SetOrigin(self._grid:GetRight() + 16, 16)
-        self._zoomLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
-        self._zoomLabel.Text = "View Zoom"
+        local lblMinus = sgui.Create(self, "label")
+        lblMinus.AlignX = TEXT_ALIGN_CENTER
+        lblMinus.AlignY = TEXT_ALIGN_CENTER
+        lblMinus:SetOrigin(self._grid:GetLeft(), self._grid:GetBottom() + 8)
+        lblMinus:SetSize(32, 32)
+        lblMinus.Text = "[-]"
+
+        local lblPlus = sgui.Create(self, "label")
+        lblPlus.AlignX = TEXT_ALIGN_CENTER
+        lblPlus.AlignY = TEXT_ALIGN_CENTER
+        lblPlus:SetOrigin(self._grid:GetRight() - 32, self._grid:GetBottom() + 8)
+        lblPlus:SetSize(32, 32)
+        lblPlus.Text = "[+]"
+
+        self._zoomLabels = {minus = lblMinus, plus = lblPlus}
 
         self._zoomSlider = sgui.Create(self, "slider")
-        self._zoomSlider:SetOrigin(self._grid:GetRight() + 16, self._zoomLabel:GetBottom() + 8)
-        self._zoomSlider:SetSize(self:GetWidth() * 0.4 - 16, 48)
+        self._zoomSlider:SetOrigin(lblMinus:GetRight() + 8, self._grid:GetBottom() + 8)
+        self._zoomSlider:SetSize(lblPlus:GetLeft() - lblMinus:GetRight() - 16, 32)
 
         if SERVER then
             local min = self._grid:GetMinScale()
@@ -96,10 +105,11 @@ function GUI:Inspect(obj)
             end
         end
 
+        local _, cy = self._grid:GetCentre()
         self._selectedLabel = sgui.Create(self, "label")
         self._selectedLabel.AlignX = TEXT_ALIGN_CENTER
         self._selectedLabel.AlignY = TEXT_ALIGN_CENTER
-        self._selectedLabel:SetOrigin(self._grid:GetRight() + 16, self._zoomSlider:GetBottom() + 48)
+        self._selectedLabel:SetOrigin(self._grid:GetRight() + 16, cy - 36)
         self._selectedLabel:SetSize(self:GetWidth() * 0.4 - 16, 32)
         self._selectedLabel.Text = "This Ship"
 
