@@ -203,10 +203,10 @@ elseif CLIENT then
                 self._selectedLabel.Text = "This Ship"
             end
             self._coordLabel.Text = "x: " .. FormatNum(x, 1, 2) .. ", y: " .. FormatNum(y, 1, 2)
-        end
 
-        local dest = self:GetSystem():GetCurrentCharge() / self:GetSystem():GetMaximumCharge()
-        self._chargeSlider.Value = self._chargeSlider.Value + (dest - self._chargeSlider.Value) * 0.1
+            local dest = self:GetSystem():GetCurrentCharge() / self:GetSystem():GetMaximumCharge()
+            self._chargeSlider.Value = self._chargeSlider.Value + (dest - self._chargeSlider.Value) * 0.1
+        end
 
         self.Super[BASE].Draw(self)
     end
@@ -216,14 +216,13 @@ elseif CLIENT then
             self:Inspect(layout.inspected)
         end
 
-        local old = self._chargeSlider.Value
+        if self._inspected then
+            self.Super[BASE].UpdateLayout(self, layout)
+        else
+            local old = self._chargeSlider.Value
+            self.Super[BASE].UpdateLayout(self, layout)
+            self._chargeSlider.Value = old
 
-        self.Super[BASE].UpdateLayout(self, layout)
-
-        self._chargeSlider.Value = old
-        self._scanButton.CanClick = self:GetSystem():CanScan()
-
-        if not self._inspected then
             local sectors = ents.FindByClass("info_ff_sector")
             local sx, sy = self:GetShip():GetCoordinates()
             sx = math.floor(sx)
@@ -238,6 +237,7 @@ elseif CLIENT then
                 end
             end
 
+            self._scanButton.CanClick = self:GetSystem():CanScan()
             self._inspectButton.CanClick = self._grid:GetCentreObject():GetObjectType() == objtype.ship
         end
 
