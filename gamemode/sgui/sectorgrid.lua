@@ -167,6 +167,11 @@ elseif CLIENT then
         surface.SetDrawColor(Color(255, 255, 255, 2))
         surface.DrawCircle(sx + ox, sy + oy, ship:GetRange() * self._curScale)
 
+        local sensor = ship:GetSystem("sensors")
+        if sensor and sensor:IsScanning() then
+            surface.DrawCircle(sx + ox, sy + oy, sensor:GetActiveScanDistance() * self._curScale)
+        end    
+
         local piloting = ship:GetSystem("piloting")
         if piloting then
             local tx, ty = self:CoordinateToScreen(piloting:GetTargetCoordinates())

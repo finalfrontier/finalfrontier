@@ -149,6 +149,12 @@ function GUI:Inspect(obj)
         self._inspectButton.Text = "Inspect"
 
         if SERVER then
+            self._scanButton.OnClick = function(btn, button)
+                self:GetSystem():StartScan()
+                self:GetScreen():UpdateLayout()
+                return true
+            end
+
             self._inspectButton.OnClick = function(btn, button)
                 if self._grid:GetCentreObject():GetObjectType() == objtype.ship then
                     self:Inspect(self._grid:GetCentreObject())
@@ -199,6 +205,9 @@ elseif CLIENT then
             self._coordLabel.Text = "x: " .. FormatNum(x, 1, 2) .. ", y: " .. FormatNum(y, 1, 2)
         end
 
+        local dest = self:GetSystem():GetCurrentCharge() / self:GetSystem():GetMaximumCharge()
+        self._chargeSlider.Value = self._chargeSlider.Value + (dest - self._chargeSlider.Value) * 0.1
+
         self.Super[BASE].Draw(self)
     end
 
@@ -207,7 +216,12 @@ elseif CLIENT then
             self:Inspect(layout.inspected)
         end
 
+        local old = self._chargeSlider.Value
+
         self.Super[BASE].UpdateLayout(self, layout)
+
+        self._chargeSlider.Value = old
+        self._scanButton.CanClick = self:GetSystem():CanScan()
 
         if not self._inspected then
             local sectors = ents.FindByClass("info_ff_sector")
@@ -226,5 +240,6 @@ elseif CLIENT then
 
             self._inspectButton.CanClick = self._grid:GetCentreObject():GetObjectType() == objtype.ship
         end
+
     end
 end

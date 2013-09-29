@@ -56,6 +56,7 @@ function ENT:Initialize()
 
     self._nwdata.name = self:GetName()
     self._nwdata.range = 0.25
+    self._nwdata.scanrange = 2.0
 
     self._nwdata.hazardmode = true
 
@@ -101,7 +102,16 @@ function ENT:GetRange()
 end
 
 function ENT:SetRange(range)
-    self._nwdata.range = value
+    self._nwdata.range = range
+    self:_UpdateNWData()
+end
+
+function ENT:GetScanRange()
+    return self._nwdata.scanrange
+end
+
+function ENT:SetScanRange(srange)
+    self._nwdata.scanrange = srange
     self:_UpdateNWData()
 end
 
