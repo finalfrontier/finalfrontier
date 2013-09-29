@@ -39,7 +39,13 @@ end
 function _mt:IsObjectInRange(obj)
     local ox, oy = obj:GetCoordinates()
     local sx, sy = self:GetCoordinates()
-    return universe:GetDistance(ox, oy, sx, sy) <= self:GetRange()
+
+    local range = self:GetRange()
+    local sensor = self:GetSystem('sensors')
+    if sensor and sensor:IsScanning() then
+        range = sensor:GetActiveScanDistance()
+    end
+    return universe:GetDistance(ox, oy, sx, sy) <= range
 end
 
 function _mt:GetCoordinates()

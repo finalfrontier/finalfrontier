@@ -78,6 +78,13 @@ end
 function ENT:IsObjectInRange(obj)
     local ox, oy = obj:GetCoordinates()
     local sx, sy = self:GetCoordinates()
+
+    local range = self:GetRange()
+    local sensor = self:GetSystem('sensors')
+    if sensor and sensor:IsScanning() then
+        range = sensor:GetActiveScanDistance()
+    end
+
     return universe:GetDistance(ox, oy, sx, sy) <= self:GetRange()
 end
 
