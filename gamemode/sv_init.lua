@@ -25,7 +25,7 @@ resource.AddFile("materials/objects/missile.png")
 MsgN("Loading materials...")
 local files = file.Find("materials/ff_*.vmt", "GAME")
 for i, file in ipairs(files) do
-    resource.AddFile(file)
+    resource.AddFile("materials/" .. file)
 end
 
 game.ConsoleCommand("sv_loadingurl \"http://metapyziks.github.io/finalfrontier/\"\n")
