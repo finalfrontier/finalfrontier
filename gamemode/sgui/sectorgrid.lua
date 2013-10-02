@@ -169,6 +169,7 @@ elseif CLIENT then
 
         local sensor = ship:GetSystem("sensors")
         if sensor and sensor:IsScanning() then
+            surface.SetDrawColor(Color(128, 128, 128, 2))
             surface.DrawCircle(sx + ox, sy + oy, sensor:GetActiveScanDistance() * self._curScale)
         end    
 
