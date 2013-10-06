@@ -3,8 +3,10 @@
 
 -- jit.on()
 
+
 include("gmtools/nwtable.lua")
 
+include("sh_teams.lua")
 include("sh_init.lua")
 include("sh_bounds.lua")
 include("sh_matrix.lua")
