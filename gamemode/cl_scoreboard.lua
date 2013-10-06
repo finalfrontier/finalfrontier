@@ -1,4 +1,3 @@
-
 surface.CreateFont( "ScoreboardDefault",
 {
 	font		= "Helvetica",
@@ -130,7 +129,8 @@ local PLAYER_LINE =
 		-- so if we set the z order according to kills they'll be ordered that way!
 		-- Careful though, it's a signed short internally, so needs to range between -32,768k and +32,767
 		--
-		self:SetZPos( (self.NumKills * -50) + self.NumDeaths )
+		--self:SetZPos( (self.NumKills * -50) + self.NumDeaths )
+		self:SetZPos(self.Player:Team())
 
 	end,
 
