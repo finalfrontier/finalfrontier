@@ -75,8 +75,9 @@ function GM:PlayerInitialSpawn(ply)
     local num = math.random(1, 9)
     ply:SetModel("models/player/group03/male_0" .. num .. ".mdl")
     ply:SetCanWalk(true)
-    
+    ply:SetTeam(CheckTeams())
     GAMEMODE:SetPlayerSpeed(ply, 175, 250)
+    ShipSet(ply)
 end
 
 function GM:PlayerSpawn(ply)
