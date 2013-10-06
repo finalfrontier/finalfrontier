@@ -131,7 +131,6 @@ local PLAYER_LINE =
 		--
 		--self:SetZPos( (self.NumKills * -50) + self.NumDeaths )
 		self:SetZPos(self.Player:Team())
-		self:SetColor(team.GetColor(self.Player:Team()))
 
 	end,
 
