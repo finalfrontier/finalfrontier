@@ -78,6 +78,7 @@ function GM:PlayerInitialSpawn(ply)
     ply:SetCanWalk(true)
     ply:SetTeam(CheckTeams())
     GAMEMODE:SetPlayerSpeed(ply, 175, 250)
+    ShipSet(ply)
 end
 
 function GM:PlayerSpawn(ply)
