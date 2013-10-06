@@ -5,7 +5,7 @@ team.SetUp(TEAM_Bl, "Blue", Color(0,0,255,255), true)
 
 local ShipPos = {}
 ShipPos[TEAM_Or] = Vector(-4720, 3883, 1208) 
-ShipPos[TEAM_Bl] = Vector( 4720, 7984, 1208)
+ShipPos[TEAM_Bl] = Vector( 4720, 7973, 1208)
 
 function TableShuffle(t)
 	math.randomseed(CurTime())
