@@ -56,6 +56,7 @@ function ENT:Initialize()
 
     self._nwdata.name = self:GetName()
     self._nwdata.range = 0.25
+    self._nwdata.scanrange = 2.0
 
     self._nwdata.hazardmode = true
 
@@ -77,6 +78,13 @@ end
 function ENT:IsObjectInRange(obj)
     local ox, oy = obj:GetCoordinates()
     local sx, sy = self:GetCoordinates()
+
+    local range = self:GetRange()
+    local sensor = self:GetSystem('sensors')
+    if sensor and sensor:IsScanning() then
+        range = sensor:GetActiveScanDistance()
+    end
+
     return universe:GetDistance(ox, oy, sx, sy) <= self:GetRange()
 end
 
@@ -101,7 +109,16 @@ function ENT:GetRange()
 end
 
 function ENT:SetRange(range)
-    self._nwdata.range = value
+    self._nwdata.range = range
+    self:_UpdateNWData()
+end
+
+function ENT:GetScanRange()
+    return self._nwdata.scanrange
+end
+
+function ENT:SetScanRange(srange)
+    self._nwdata.scanrange = srange
     self:_UpdateNWData()
 end
 
