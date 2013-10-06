@@ -6,6 +6,7 @@
 include("gmtools/nwtable.lua")
 
 include("sh_init.lua")
+include("sh_teams.lua") 
 include("sh_bounds.lua")
 include("sh_matrix.lua")
 include("sh_transform2d.lua")
@@ -80,10 +81,12 @@ function GM:PlayerInitialSpawn(ply)
     ShipSet(ply)
 end
 
+
 function GM:PlayerSpawn(ply)
     local ship = ships.FindCurrentShip(ply)
     if ship then ply:SetShip(ship) end
     ply:Give("weapon_crowbar")
+    ShipSet(ply)
 end
 
 function GM:Think()
