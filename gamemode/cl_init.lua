@@ -3,8 +3,10 @@
 
 -- jit.on()
 
+
 include("gmtools/nwtable.lua")
 
+include("sh_teams.lua")
 include("sh_init.lua")
 include("sh_bounds.lua")
 include("sh_matrix.lua")
@@ -17,6 +19,7 @@ include("cl_room.lua")
 include("cl_ship.lua")
 include("cl_ships.lua")
 include("cl_universe.lua")
+include("cl_scoreboard.lua")
 
 WHITE = Material("vgui/white")
 CIRCLE = Material("circle.png", "smooth")
@@ -130,10 +133,10 @@ function GM:PlayerBindPress(ply, bind, pressed)
     end
 end
 
-function GM:HUDDrawTargetID()
+--[[function GM:HUDDrawTargetID()
     return false
 end
 
 function GM:DrawDeathNotice(x, y)
     return false
-end
+end]]
