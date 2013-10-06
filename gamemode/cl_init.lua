@@ -131,10 +131,10 @@ function GM:PlayerBindPress(ply, bind, pressed)
     end
 end
 
-function GM:HUDDrawTargetID()
+--[[function GM:HUDDrawTargetID()
     return false
 end
 
 function GM:DrawDeathNotice(x, y)
     return false
-end
+end]]
