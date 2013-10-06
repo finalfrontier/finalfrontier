@@ -29,9 +29,9 @@ end
 if SERVER then
 function ShipSet(ply)
 	if ply:Team() == TEAM_Or then
-		ply:SetPos(ShipPos[TEAM_OR])
+		ply:SetPos(Vector(-4720, 3883, 1208))
 	else
-		ply:SetPos(ShipPos[TEAM_Bl])
+		ply:SetPos(Vector( 4720, 7984, 1208))
 	end
 end
 end
