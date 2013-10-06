@@ -131,6 +131,7 @@ local PLAYER_LINE =
 		--
 		--self:SetZPos( (self.NumKills * -50) + self.NumDeaths )
 		self:SetZPos(self.Player:Team())
+		self:SetColor(team.GetColor(self.Player:Team()))
 
 	end,
 
@@ -154,10 +155,6 @@ local PLAYER_LINE =
 			return
 		end
 		draw.RoundedBox( 4, 0, 0, w, h, team.GetColor(self.Player:Team()))
-		return
-
-		draw.RoundedBox( 4, 0, 0, w, h, Color( 230, 230, 230, 255 ) )
-
 	end,
 }
 
