@@ -153,7 +153,7 @@ local PLAYER_LINE =
 			draw.RoundedBox( 4, 0, 0, w, h, Color( 230, 200, 200, 255 ) )
 			return
 		end
-		draw.RoundedBox( 4, 0, 0, w, h, team.GetColor(self.Player:GetTeam()))
+		draw.RoundedBox( 4, 0, 0, w, h, team.GetColor(self.Player:Team()))
 		return
 
 		draw.RoundedBox( 4, 0, 0, w, h, Color( 230, 230, 230, 255 ) )
