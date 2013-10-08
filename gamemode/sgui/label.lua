@@ -27,7 +27,7 @@ if CLIENT then
 
         if self.AlignY == TEXT_ALIGN_CENTER then
             y = y + (self:GetHeight() - h) / 2
-        elseif self.AlignY == TEXT_ALIGH_BOTTOM then
+        elseif self.AlignY == TEXT_ALIGN_BOTTOM then
             y = y + self:GetHeight() - h
         end
 
