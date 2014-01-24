@@ -1,11 +1,13 @@
-TEAM_Or = 1
-team.SetUp(TEAM_Or, "Orange", Color(222,127,18,255), true)
-TEAM_Bl = 2
-team.SetUp(TEAM_Bl, "Blue", Color(0,0,255,255), true)
+TEAM = {}
+TEAM[1] = {number = 1, name = "Orange", color = Color(222,127,18,255), joinable = true}
+TEAM[2] = {number = 2, name = "Blue", color = Color(0,0,255,255), joinable = true}
+nextTeam = 3
+team.SetUp(TEAM[1].number, TEAM[1].name, Color(222,127,18,255), TEAM[1].joinable)
+team.SetUp(TEAM[2].number, TEAM[2].name, Color(0,0,255,255), TEAM[2].joinable)
 
 local ShipPos = {}
-ShipPos[TEAM_Or] = Vector(-4720, 3883, 1208) 
-ShipPos[TEAM_Bl] = Vector( 4720, 7973, 1208)
+ShipPos[TEAM[1].number] = Vector(-4720, 3883, 1208) 
+ShipPos[TEAM[2].number] = Vector( 4720, 7973, 1208)
 
 function TableShuffle(t)
 	math.randomseed(CurTime())
@@ -33,6 +35,15 @@ function ShipSet(ply)
 	else
 		ply:SetPos(Vector( -4717, 7984, 1208))
 	end
+end
+
+function CreateTeam(num, nam)
+	if num == nil or num < nextTeam or TEAM[num] != nil then return end
+	if name == nil then return end
+	TEAM[num] = {number = num, name = nam, color = Color(0, 255, 255, 255), joinable = true}
+	ShipPos[TEAM[num].number = Vector(-4720, 3883, 1208)
+	team.Setup(TEAM[num])
+	
 end
 end
 
