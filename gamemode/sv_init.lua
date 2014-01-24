@@ -31,6 +31,10 @@ end
 
 game.ConsoleCommand("sv_loadingurl \"http://metapyziks.github.io/finalfrontier/\"\n")
 
+-- Console Commands
+args = nil
+concommand.Add("ff_team_create " .. args, CreateETeam(args))
+
 -- Gamemode Overrides
 
 function GM:Initialize()
