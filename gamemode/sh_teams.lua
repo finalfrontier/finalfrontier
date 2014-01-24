@@ -43,6 +43,12 @@ function GetSpawn(ply)
 	
 end
 
+function CreateETeam(nam)
+	
+	CreateTeam(nextTeam, nam)
+	
+end
+
 function CreateTeam(num, nam)
 	if num == nil or num < nextTeam or TEAM[num] != nil then return end
 	if name == nil then return end
