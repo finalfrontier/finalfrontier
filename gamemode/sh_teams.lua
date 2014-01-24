@@ -5,6 +5,7 @@ nextTeam = 3
 team.SetUp(TEAM[1].number, TEAM[1].name, Color(222,127,18,255), TEAM[1].joinable)
 team.SetUp(TEAM[2].number, TEAM[2].name, Color(0,0,255,255), TEAM[2].joinable)
 
+
 local ShipPos = {}
 ShipPos[TEAM[1].number] = Vector(-4720, 3883, 1208) 
 ShipPos[TEAM[2].number] = Vector( 4720, 7973, 1208)
@@ -30,11 +31,16 @@ function CheckTeams()
 end
 if SERVER then
 function ShipSet(ply)
-	if ply:Team() == TEAM_Or then
-		ply:SetPos(Vector(-4720, 3883, 1208))
-	else
-		ply:SetPos(Vector( -4717, 7984, 1208))
-	end
+	
+	plySetPos(GetSpawn(ply))
+
+end
+
+function GetSpawn(ply)
+	
+	plyTeam = ply:Team()
+	return ShipPos[TEAM[plyTeam].number]
+	
 end
 
 function CreateTeam(num, nam)
@@ -43,7 +49,7 @@ function CreateTeam(num, nam)
 	TEAM[num] = {number = num, name = nam, color = Color(0, 255, 255, 255), joinable = true}
 	ShipPos[TEAM[num].number = Vector(-4720, 3883, 1208)
 	team.Setup(TEAM[num])
-	
+	nextTeam = nextTeam + 1
 end
 end
 
