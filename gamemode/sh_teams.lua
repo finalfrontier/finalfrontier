@@ -5,6 +5,7 @@ nextTeam = 3
 team.SetUp(TEAM[1].number, TEAM[1].name, Color(222,127,18,255), TEAM[1].joinable)
 team.SetUp(TEAM[2].number, TEAM[2].name, Color(0,0,255,255), TEAM[2].joinable)
 
+local teamAddAllowed = false
 
 local ShipPos = {}
 ShipPos[TEAM[1].number] = Vector(-4720, 3883, 1208) 
@@ -21,6 +22,19 @@ function TableShuffle(t)
 	return t
 end
 
+function TEAM:GetName(tNum)
+    return TEAM[tNum].name
+end
+
+function TEAM:GetNumber(tName)
+   for v, b = table.Count(TEAM),1 do
+       if TEAM[v].name == tName then
+           return TEAM[v].number
+       end
+   end
+   
+end
+
 function CheckTeams()
 	--print(team.BestAutoJoinTeam())
 	if team.NumPlayers(1)>team.NumPlayers(2) then
@@ -29,6 +43,29 @@ function CheckTeams()
 		return 1
 	end
 end
+
+function SetTeam(ply, team)
+    
+    if teamAddAllowed == true then
+        if ply:IsPlayer() then
+            for v=0, 9, 1 do
+                tNumCheck = string.StartWith(team, v)
+                if tNumCheck == true
+                    break
+                end
+            end
+            if tNumCheck == true then
+                TEAM:GetName(team)
+                ply:SetTeam(team)
+            end
+            if tNumCheck == false then
+               teamNumbs = TEAM:GetNumber(team)
+               ply:SetTeam(teamNumbs)
+            end
+    end
+    
+end
+
 if SERVER then
 function ShipSet(ply)
 	
