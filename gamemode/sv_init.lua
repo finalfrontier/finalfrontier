@@ -33,7 +33,8 @@ game.ConsoleCommand("sv_loadingurl \"http://metapyziks.github.io/finalfrontier/\
 
 -- Console Commands
 args = nil
-concommand.Add("ff_team_create " .. args, CreateETeam(args))
+concommand.Add("ff_team_create ", CreateETeam(args[1]))
+concommand.Add("ff_team_join ", SetTeam(ply, args[1]))
 
 -- Gamemode Overrides
 
