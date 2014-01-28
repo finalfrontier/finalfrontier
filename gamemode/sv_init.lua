@@ -31,11 +31,22 @@ end
 
 game.ConsoleCommand("sv_loadingurl \"http://metapyziks.github.io/finalfrontier/\"\n")
 
+needsAdmin = {}
+needsAdmin.createT = false
+needsAdmin.joinT = false
+needsAdmin.modT = false
+
 -- Console Commands
 args = nil
-concommand.Add("ff_team_create ", AddCommand(ply, cmd, args, fullstring))
-concommand.Add("ff_team_join ", AddCommand(ply, cmd, args, fullstring))
-
+concommand.Add("ff_team_create", AddCommand(ply, cmd, args, fullstring))
+concommand.Add("ff_team_join", AddCommand(ply, cmd, args, fullstring))
+-- Console Team Modding Commands
+concommand.Add("ff_team_mod_r", AddCommand(ply, cmd, args, fullstring))
+concommand.Add("ff_team_mod_g", AddCommand(ply, cmd, args, fullstring))
+concommand.Add("ff_team_mod_b", AddCommand(ply, cmd, args, fullstring))
+concommand.Add("ff_team_mod_a", AddCommand(ply, cmd, args, fullstring))
+concommand.Add("ff_team_mod_na", AddCommand(ply, cmd, args, fullstring))
+concommand.Add("ff_team_mod_jo", AddCommand(ply, cmd, args, fullstring))
 
 function AddCommand(ply, cmd, args, fullstring)
     
@@ -44,13 +55,24 @@ function AddCommand(ply, cmd, args, fullstring)
         if string.StartWith(cmd, "team_") then
             string.Replace(cmd,"team_","")
             if string.StartWith(cmd,"create") then
-                CreateETeam(args[1])
+                if ply:IsAdmin() == needsAdmin.createT or ply:IsAdmin then
+                    CreateETeam(args[1])
+                else
+                    ply:PrintMessage( HUD_PRINTCONSOLE, "You don't have access to that command")    
+                end
             elseif string.StartWith(cmd,"join") then
-                SetTeam(ply, args[1])
+                if ply:IsAdmin() == needsAdmin.joinT or ply:IsAdmin then
+                    SetTeam(ply, args[1])
+                else
+                    ply:PrintMessage( HUD_PRINTCONSOLE, "You don't have access to that command")    
+                end
             elseif string.StartWith(cmd,"mod_") then
                 string.Replace(cmd,"mod_","")
-                if string.StartWith(cmd,"red") then
-                    
+                if ply:IsAdmin() == needsAdmin.modT or ply:IsAdmin then
+                    ModTeam(cmd, args[1], args[2])
+                else
+                    ply:PrintMessage( HUD_PRINTCONSOLE, "You don't have access to that command")    
+                end
             end
         end
     end
