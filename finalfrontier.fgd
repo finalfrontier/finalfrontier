@@ -111,3 +111,12 @@
 		8 : "Cracks"
 	]
 ]
+
+@PointClass base(Origin) = info_ff_spawnconsole : "spawn console"
+[
+	type(choices) : "Player Respawn Console" : "0" =
+	[
+		0 : "Nope"
+		1 : "Yessir"
+	]
+]
