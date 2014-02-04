@@ -20,7 +20,6 @@ end
 if Server then
   
     function FILEA:Append()
-        file.Append(filePath..fileName, fileAppend)
         fileCheck = file.Read(filePath..fileName, fileBase)
         if fileCheck != nil then 
             fileCheck = string.format(fileCheck.."%", "\n"..fileAppend)
