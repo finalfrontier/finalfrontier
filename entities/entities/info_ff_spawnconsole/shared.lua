@@ -35,6 +35,6 @@ if SERVER then
 
     function ENT:KeyValue(key, value)
         if key == "respawn" then
-            self._respawn= toboolean(value)
+            self._respawn = tostring(value)
         end
     end
