@@ -79,7 +79,7 @@ end
 function ModTeam(modType, teamN, modBy)
     
     teamBool = TEAM:IsName(teamN)
-    if teamBool == true
+    if teamBool then
         teamNumber = TEAM:GetNumber(teamN)
         teamName = teamN
     else
