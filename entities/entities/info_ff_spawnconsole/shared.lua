@@ -6,7 +6,7 @@ local UPDATE_FREQ = 0.5
 local CURSOR_UPDATE_FREQ = 0.25
 local MAX_USE_DISTANCE = 64
 
-local MAIN_GUI_CLASS = "screen"
+local MAIN_GUI_CLASS = "spawn_screen"
 
 ENT.Type = "anim"
 ENT.Base = "base_anim"
