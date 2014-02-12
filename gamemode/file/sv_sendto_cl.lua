@@ -1,4 +1,4 @@
-SVMesssage = {}
+local SVMesssage = {}
 SVMessage.players = {}
 SVMessage.sv_table = {}
 SVMessage.sv_string = {}
@@ -7,6 +7,7 @@ SVMessage.sv_entity = {}
 SVMessage.sv_extras = {}
 
 Message = {}
+Message.netStr = ""
 
 --Set Players to send to
 function Message:SetPlayers(plyTable)
@@ -49,7 +50,19 @@ function Message:WriteExtras(plyTable)
     self.mEX = plyTable
     SVMessage.sv_extras = plyTable
 end
+
+function Message:NetworkString(str)
+    Message.netStr = str    
+end
 --End of writing
 
-function Message:
+function Message:Send()
+    if Message.netStr == "" then
+        util.AddNetworkString("Server_Message")
+    else
+        util.AddNetworkString(Message.netStr)
+    end
+    
+    
+end
 
