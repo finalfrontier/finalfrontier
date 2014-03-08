@@ -35,6 +35,10 @@ local PLAYER_LINE =
 		self.Name:Dock( FILL )
 		self.Name:SetFont( "ScoreboardDefault" )
 		self.Name:DockMargin( 8, 0, 0, 0 )
+		
+		self.Team       = self:Add( "DLabel" )
+		self.Team:Dock( LEFT )
+		self.Team:SetFont( "ScoreboardDefault" )
 
 		self.Mute		= self:Add( "DImageButton" )
 		self.Mute:SetSize( 32, 32 )
@@ -71,6 +75,7 @@ local PLAYER_LINE =
 
 		self.Avatar:SetPlayer( pl )
 		self.Name:SetText( pl:Nick() )
+		slef.Team:SetText( pl:Team() )
 
 		self:Think( self )
 
@@ -143,15 +148,19 @@ local PLAYER_LINE =
 		--
 		-- We draw our background a different colour based on the status of the player
 		--
+		plyTeam = self.Player:Team()
 
 		if ( self.Player:Team() == TEAM_Or ) then
 			draw.RoundedBox( 4, 0, 0, w, h, Color( 255, 200, 0, 200 ) )
 			return
-		end
 		
-		if ( self.Player:Team() == TEAM_Bl ) then
+		elseif ( self.Player:Team() == TEAM_Bl ) then
 			draw.RoundedBox( 4, 0, 0, w, h, Color( 43, 0, 255, 200 ) )
 			return
+			
+		elseif ( self.Player:Team() != TEAM_CONNECTING or self.Player:Team() != nil ) then
+		    draw.RoundedBox( 4, 0, 0, w, h, plyTeam.getColor() )
+		    return
 		end
 
 
@@ -191,6 +200,14 @@ local SCORE_BOARD =
 		self.Name:SetHeight( 40 )
 		self.Name:SetContentAlignment( 5 )
 		self.Name:SetExpensiveShadow( 2, Color( 0, 0, 0, 200 ) )
+		
+		self.MapName = self.Header:Add( "DLabel" )
+		slef.MapName:SetFont( "ScoreboardDefault" )
+		self.MapName:SetTextColor( Color( 255, 200, 255, 255 ) )
+		self.MapName:Dock( TOP )
+		self.MapName:SetHeight( 30 )
+		self.MapName:SetContentAlignment( 5 )
+		self.MapName:SetExpensiveShadow( 2, Color( 0, 0, 0, 180 ) )
 
 		--self.NumPlayers = self.Header:Add( "DLabel" )
 		--self.NumPlayers:SetFont( "ScoreboardDefault" )
@@ -219,7 +236,13 @@ local SCORE_BOARD =
 
 	Think = function( self, w, h )
 
+        hasFF = string.find( string.lower(game.GetMap() ), "ff_") or string.find( string.lower(game.GetMap() ), "_ff")
+        if hasFF then
+            removedFF = string.gsub(game.GetMap(), "ff_" , "")
+            rmovedFF = string.gsub(game.GetMap(), "_ff" , "")
+        end
 		self.Name:SetText( GetHostName() )
+		self.MapName:SetText( removedFF )
 
 		--
 		-- Loop through each player, and if one doesn't have a score entry - create it.
