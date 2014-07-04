@@ -248,7 +248,7 @@ if SERVER then
                 end
             end
 
-            if #canDamage == 0 then break end
+            if #canDamage <= 1 then break end
 
             local pos = table.Random(canDamage)
             self._grid[pos.i][pos.j] = -1
