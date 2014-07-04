@@ -41,7 +41,6 @@ function ENT:Initialize()
         self:SetMoveType(MOVETYPE_VPHYSICS)
         self:SetSolid(SOLID_VPHYSICS)
 
-
         local phys = self:GetPhysicsObject()
         if phys:IsValid() then
             phys:EnableCollisions(false)
@@ -89,6 +88,7 @@ if SERVER then
 end
 
 function ENT:GetRotation()
+    --[[
     local diff = FindAngleDifference(self._currRotation * math.pi / 180,
         self:GetTargetRotation() * math.pi / 180) / math.pi * 180
     if math.abs(diff) >= 0.1 then
@@ -101,7 +101,9 @@ function ENT:GetRotation()
 
     self._lastRotation = self._currRotation
     self._lastLerpTime = CurTime()
-    return self._currRotation
+    return self._currRotation]]
+
+    return self:GetTargetRotation()
 end
 
 function ENT:GetCoordinates()
@@ -116,6 +118,11 @@ function ENT:GetVel()
     local ox, oy = universe:GetUniversePos(Vector(0, 0, 0))
     local nx, ny = universe:GetUniversePos(self:GetPhysicsObject():GetVelocity())
     return nx - ox, ny - oy
+end
+
+function ENT:GetSpeed()
+    local vx, vy = self:GetVel()
+    return math.sqrt(vx * vx + vy * vy)
 end
 
 function ENT:GetObjectType()

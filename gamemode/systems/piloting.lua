@@ -40,8 +40,7 @@ if SERVER then
 
     local ACCELERATION_PER_POWER = 1.0 / 800.0
 
-    local function findAccel1D(g, a, p, u)
-        local s = g - p
+    local function findAccel1D(a, u, s)
         local v = math.sqrt(2 * a * math.abs(s)) * math.sign(s)
         if u < v then return math.min(a, v - u) end
         if u > v then return math.max(-a, v - u) end
@@ -59,15 +58,30 @@ if SERVER then
             ent:SetCoordinates(tx, ty)
             return Vector(0, 0, 0), -phys:GetVelocity(), SIM_GLOBAL_ACCELERATION
         end
-        vx = vx * 0.99
-        vy = vy * 0.99
 
         local a = ent._piloting:GetAcceleration() * math.sqrt(0.5)
 
-        local ax = findAccel1D(x + dx, a, x, vx)
-        local ay = findAccel1D(y + dy, a, y, vy)
+        local vl = math.sqrt(vx * vx + vy * vy)
 
-        local vel = universe:GetWorldPos(vx + ax, vy + ay) - universe:GetWorldPos(0, 0)
+        local nx, ny = vx, vy
+
+        if vl == 0 then
+            nx = 1
+            ny = 0
+        else
+            nx = nx / vl
+            ny = ny / vl
+        end
+
+        local rx, ry = -ny, nx
+
+        local an = findAccel1D(a, vl, (dx * nx + dy * ny) * 0.9)
+        local ar = findAccel1D(a, 0, (dx * rx + dy * ry) * 0.9)
+
+        vx = vx * 0.99 + an * nx + ar * rx
+        vy = vy * 0.99 + an * ny + ar * ry
+
+        local vel = universe:GetWorldPos(vx, vy) - universe:GetWorldPos(0, 0)
         ent:SetTargetRotation(math.atan2(vy, vx) / math.pi * 180.0)
         return Vector(0, 0, 0), vel - phys:GetVelocity(), SIM_GLOBAL_ACCELERATION
     end

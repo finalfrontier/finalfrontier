@@ -136,15 +136,6 @@ function ENT:InitPostEntity()
             sector:SetCoordinates(xi, yi)
             sector:Spawn()
             self._sectors[index] = sector
-
-            --[[local objs = math.floor(math.random() * 4) + 1
-            for i = 1, objs do
-                local obj = ents.Create("info_ff_object")
-                obj:SetCoordinates(x + math.random(), y + math.random())
-                obj:SetRotation(0)
-                obj:SetVel(math.random() - 0.5, math.random() - 0.5)
-                obj:Spawn()
-            end]]
         end
     end
 end
