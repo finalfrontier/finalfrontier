@@ -108,7 +108,7 @@ if SERVER then
 
             local dest = math.atan2(dy, dx)
             local curr = ent:GetRotation() * math.pi / 180
-            local diff = FindAngleDifference(dest, curr)
+            local diff = FindAngleDifference(curr, dest)
             local newr = (curr + math.sign(diff) * ent._weapon:GetLateral() * delta) / math.pi * 180
 
             ent:SetRotation(newr)

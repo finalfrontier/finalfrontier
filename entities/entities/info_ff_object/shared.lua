@@ -22,7 +22,6 @@ ENT.Base = "base_anim"
 
 ENT._lastLerpTime = 0
 ENT._currRotation = 0
-ENT._lastRotation = 0
 
 objtype = {}
 objtype.unknown = 0
@@ -31,7 +30,6 @@ objtype.missile = 2
 
 function ENT:SetupDataTables()
     self:NetworkVar("Float", 0, "TargetRotation")
-    self:NetworkVar("Float", 45, "AngularVel")
 end
 
 function ENT:Initialize()
@@ -53,7 +51,7 @@ function ENT:Initialize()
         self:StartMotionController()
 
         self:SetTargetRotation(0)
-        self:SetAngularVel(45)
+        self:SetMaxAngularVel(45)
     end
 
     self._lastLerpTime = CurTime()
@@ -78,6 +76,10 @@ if SERVER then
         end
     end
 
+    function ENT:SetMaxAngularVel(vel)
+        self:SetNWFloat("maxangvel", vel)
+    end
+
     function ENT:SetObjectType(type)
         self:SetNWInt("objtype", type)
     end
@@ -87,23 +89,21 @@ if SERVER then
     end
 end
 
+function ENT:GetMaxAngularVel()
+    return self:GetNWFloat("maxangvel", 0)
+end
+
 function ENT:GetRotation()
-    --[[
     local diff = FindAngleDifference(self._currRotation * math.pi / 180,
         self:GetTargetRotation() * math.pi / 180) / math.pi * 180
-    if math.abs(diff) >= 0.1 then
-        local t = (CurTime() - self._lastLerpTime)
-        local vel = math.sign(diff) * math.min(math.abs(diff), t * self:GetAngularVel())
-        self._currRotation = self._lastRotation + vel
-    else
-        self._currRotation = self:GetTargetRotation()
-    end
 
-    self._lastRotation = self._currRotation
+    local t = math.max(0, CurTime() - self._lastLerpTime)
+    local vel = math.sign(diff) * math.min(math.abs(diff), t * self:GetMaxAngularVel())
+
+    self._currRotation = self._currRotation + vel
     self._lastLerpTime = CurTime()
-    return self._currRotation]]
 
-    return self:GetTargetRotation()
+    return self._currRotation
 end
 
 function ENT:GetCoordinates()

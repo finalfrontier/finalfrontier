@@ -86,7 +86,7 @@ function WrapAngle(ang, alwaysPositive)
 end
 
 function FindAngleDifference(a, b)
-    return WrapAngle(WrapAngle(a) - WrapAngle(b))
+    return WrapAngle(b - a, false)
 end
 
 -- TODO: Add check to avoid complex polys in output

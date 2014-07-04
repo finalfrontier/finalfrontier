@@ -90,7 +90,7 @@ if SERVER then
     function WPN:Hit(ship, x, y)
         local sx, sy = ship:GetCoordinates()
         local dx, dy = universe:GetDifference(sx, sy, x, y)
-        local ang = FindAngleDifference(math.atan2(dy, dx), ship:GetRotation() * math.pi / 180)
+        local ang = FindAngleDifference(ship:GetRotation() * math.pi / 180, math.atan2(dy, dx))
 
         local closest = nil
         local closdif = 0
@@ -100,7 +100,7 @@ if SERVER then
             local rx, ry = room:GetBounds():GetCentre()
             dx, dy = rx - sx, sy - ry
             local rang = math.atan2(dy, dx)
-            local dif = math.abs(FindAngleDifference(rang, ang))
+            local dif = math.abs(FindAngleDifference(ang, rang))
             if not closest or dif < closdif + (math.random() - 0.5) * math.pi / 8 then
                 closest = room
                 closdif = dif

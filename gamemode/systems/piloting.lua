@@ -35,7 +35,7 @@ end
 if SERVER then
     -- resource.AddFile("materials/systems/piloting.png")
 
-    local SNAPPING_THRESHOLD_POS = 1.0 / 65536.0
+    local SNAPPING_THRESHOLD_POS = 1.0 / 16384.0
     local SNAPPING_THRESHOLD_VEL = 1.0 / 16384.0
 
     local ACCELERATION_PER_POWER = 1.0 / 800.0
@@ -55,28 +55,18 @@ if SERVER then
         local vx, vy = ent:GetVel()
         if dx * dx + dy * dy <= SNAPPING_THRESHOLD_POS
             and vx * vx + vy * vy <= SNAPPING_THRESHOLD_VEL then
-            ent:SetCoordinates(tx, ty)
+            ent._piloting:SetTargetCoordinates(x, y, false)
             return Vector(0, 0, 0), -phys:GetVelocity(), SIM_GLOBAL_ACCELERATION
         end
 
         local a = ent._piloting:GetAcceleration() * math.sqrt(0.5)
 
-        local vl = math.sqrt(vx * vx + vy * vy)
-
-        local nx, ny = vx, vy
-
-        if vl == 0 then
-            nx = 1
-            ny = 0
-        else
-            nx = nx / vl
-            ny = ny / vl
-        end
-
+        local rot = ent:GetRotationRadians()
+        local nx, ny = math.cos(rot), math.sin(rot)
         local rx, ry = -ny, nx
 
-        local an = findAccel1D(a, vl, (dx * nx + dy * ny) * 0.9)
-        local ar = findAccel1D(a, 0, (dx * rx + dy * ry) * 0.9)
+        local an = findAccel1D(a, vx * nx + vy * ny, (dx * nx + dy * ny) * 0.75)
+        local ar = findAccel1D(a, vx * rx + vy * ry, (dx * rx + dy * ry) * 0.75)
 
         vx = vx * 0.99 + an * nx + ar * rx
         vy = vy * 0.99 + an * ny + ar * ry
