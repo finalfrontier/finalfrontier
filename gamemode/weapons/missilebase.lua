@@ -47,8 +47,8 @@ if SERVER then
         local sx, sy = ship:GetCoordinates()
         local tx, ty = target:GetCoordinates()
         local dx, dy = universe:GetDifference(sx, sy, tx, ty)
-        if not rot then rot = math.atan2(dy, dx) / math.pi * 180 end
+        if not rot then rot = 0 end
 
-        weapon.LaunchMissile(ship, self, target, rot)
+        weapon.LaunchMissile(ship, self, target, rot + ship:GetRotation())
     end
 end

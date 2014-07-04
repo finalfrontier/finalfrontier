@@ -52,6 +52,8 @@ function ENT:Initialize()
 
         self:SetTargetRotation(0)
         self:SetMaxAngularVel(45)
+    else
+        self._currRotation = self:GetTargetRotation()
     end
 
     self._lastLerpTime = CurTime()

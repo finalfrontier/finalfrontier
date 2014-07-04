@@ -136,7 +136,6 @@ if SERVER then
 
         local rad = rot * math.pi / 180
         missile:SetRotation(rot)
-        missile:SetTargetRotation(rot)
         missile:SetVel(math.cos(rad) * wpn:GetSpeed(), math.sin(rad) * wpn:GetSpeed())
 
         return missile
