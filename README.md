@@ -9,5 +9,4 @@ A Garry's Mod gamemode by Metapyziks
     1. ``cd finalfrontier``
     1. ``git submodule init``
     1. ``git submodule update``
-1. ???
-1. Profit
+1. Prepare for a whole lot of bugs
