@@ -31,7 +31,7 @@ function table.Where(table, pred)
     local copy = {}
 
     for i, v in ipairs(table) do
-        if pred(v) then table.insert(copy, v)
+        if pred(v) then table.insert(copy, v) end
     end
 
     return copy
