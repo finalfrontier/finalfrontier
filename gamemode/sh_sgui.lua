@@ -37,7 +37,7 @@ function sgui.Log(elem, msg)
     if not msg then
         print("[sgui] " .. elem)
     else
-        print("[sgui@" .. elem:GetRoom():GetName() .. ":" .. elem.Name  .. "(" .. elem:GetID() .. ")] " .. msg)
+        print("[sgui@" .. elem:GetRoom():GetName() .. " #" .. elem:GetID() .. "] " .. msg)
     end
 end
 

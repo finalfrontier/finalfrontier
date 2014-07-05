@@ -221,6 +221,8 @@ if SERVER then
     end
 
     function GUI:Leave()
+        self.Super[BASE].Leave(self)
+
         self:GetScreen():PauseAlarmCountdown()
     end
 

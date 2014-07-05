@@ -37,7 +37,7 @@ ENT.Width = 0
 ENT.Height = 0
 
 ENT.UI = nil
-ENT.Layout = nil
+ENT._layout = nil
 
 function ENT:GetShip()
     return self._ship
@@ -293,10 +293,10 @@ if SERVER then
 
     function ENT:UpdateLayout()
         if not self.UI then return end
-        if not self.Layout then self.Layout = {} end
+        if not self._layout then self._layout = {} end
 
-        self.UI:UpdateLayout(self.Layout)
-        self:SetNWTable("layout", self.Layout)
+        self.UI:UpdateLayout(self._layout)
+        self:SetNWTable("layout", self._layout)
     end
 
     function ENT:Think()
@@ -421,21 +421,21 @@ elseif CLIENT then
     ENT._nextCursory = 0
     
     function ENT:UpdateLayout()
-        if not self.Layout and self._room and self._room:IsCurrent() and self._ship == LocalPlayer():GetShip() then
-            self.Layout = self:GetNWTable("layout")
+        if not self._layout and self._room and self._room:IsCurrent() and self._ship == LocalPlayer():GetShip() then
+            self._layout = self:GetNWTable("layout")
         elseif self.UI and self._ship and self._room and self._ship ~= LocalPlayer():GetShip() then
-            self.Layout = nil
+            self._layout = nil
             self:ForgetNWTable("layout")
         end
 
-        if not self.UI and self.Layout and self:IsNWTableCurrent("layout") then
+        if not self.UI and self._layout and self:IsNWTableCurrent("layout") then
             self.UI = sgui.Create(self, MAIN_GUI_CLASS)
-        elseif self.UI and not self.Layout then
+        elseif self.UI and not self._layout then
             self.UI = nil
         end
 
-        if self.Layout and self.UI and table.Count(self.Layout) > 0 then
-            self.UI:UpdateLayout(self.Layout)
+        if self._layout and self.UI and table.Count(self._layout) > 0 then
+            self.UI:UpdateLayout(self._layout)
         end
     end
 

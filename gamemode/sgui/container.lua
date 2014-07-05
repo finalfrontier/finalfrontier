@@ -134,6 +134,8 @@ if CLIENT then
 end
 
 if SERVER then
+    GUI._lastChildCount = 0
+
     function GUI:AllocateNewID()
         self.Super[BASE].AllocateNewID(self)
 
@@ -158,14 +160,20 @@ if SERVER then
         self.Super[BASE].UpdateLayout(self, layout)
 
         for i, child in ipairs(self:GetChildren()) do
-            if not layout[i] then layout[i] = {} end
+            if not layout[i] or layout[i].id ~= child:GetID() then
+                layout[i] = {}
+            end
+            
             child:UpdateLayout(layout[i])
         end
 
-        local i = #self:GetChildren() + 1
-        while layout[i] do
-            layout[i] = nil
-            i = i + 1
+        local childCount = #self:GetChildren()
+        if self._lastChildCount > childCount then
+            for i = childCount + 1, self._lastChildCount do
+                layout[i] = nil
+            end
         end
+
+        self._lastChildCount = childCount
     end
 end
