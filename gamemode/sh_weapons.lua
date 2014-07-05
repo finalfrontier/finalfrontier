@@ -20,6 +20,7 @@ if SERVER then AddCSLuaFile("sh_weapons.lua") end
 if not weapon then
     weapon = {}
     weapon._dict = {}
+    weapon._spawnable = {}
 else return end
 
 local _mt = {}
@@ -71,6 +72,11 @@ for i, file in ipairs(files) do
     include("weapons/" .. file)
 
     weapon._dict[name] = WPN
+
+    if WPN.CanSpawn then
+        table.insert(weapon._spawnable, WPN)
+    end
+
     WPN = nil
 end
 
@@ -84,10 +90,15 @@ for _, WPN in pairs(weapon._dict) do
     end
 end
 
+function weapon.GetRandomName()
+    return table.Random(weapon._spawnable).Name
+end
+
 function weapon.Create(name, tier)
-    if weapon._dict[name] then
-        tier = tier or (1 + math.floor(math.random() * weapon._dict[name].MaxTier))
-        return setmetatable({ _tier = tier }, weapon._dict[name])
+    local wpn = weapon._dict[name]
+    if wpn then
+        tier = tier or (1 + math.floor(math.random() * wpn.MaxTier))
+        return setmetatable({ _tier = tier }, wpn)
     end
     return nil
 end

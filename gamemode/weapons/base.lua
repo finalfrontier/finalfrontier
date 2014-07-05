@@ -27,6 +27,8 @@ WPN.BaseDamage = { 0, 0 }
 WPN.PierceRatio = { 0, 0 }
 WPN.ShieldMult = { 0, 0 }
 
+WPN.CanSpawn = false
+
 if CLIENT then
     WPN.FullName = "Unnamed"
     WPN.Color = Color(255, 255, 255, 255)
