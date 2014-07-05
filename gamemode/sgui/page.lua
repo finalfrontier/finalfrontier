@@ -26,9 +26,12 @@ function GUI:Initialize()
     self:SetHeight(self:GetScreen().Height)
 end
 
-function GUI:Enter() end
+function GUI:Enter()
+    sgui.Log(self, "Enter")
+end
 
 function GUI:Leave()
+    sgui.Log(self, "Leave")
     self:RemoveAllChildren()
 end
 

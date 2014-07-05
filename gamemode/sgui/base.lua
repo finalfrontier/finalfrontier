@@ -239,9 +239,8 @@ if CLIENT then
 
     function GUI:Click(x, y, button)
         if self.CanClick and self:IsPointInside(x, y) then
-if DEBUG then
-            print("click@" .. self:GetRoom():GetName() .. ":" .. self.Name .. "(" .. self:GetID() .. ")")
-end
+            sgui.Log(self, "Click")
+
             net.Start("Click")
             net.WriteEntity(self:GetScreen())
             net.WriteFloat(self:GetScreen():GetNWFloat("layout"))
@@ -258,8 +257,9 @@ end
         return false
     end
 
-if DEBUG then
     function GUI:Draw()
+        if not sgui.IsDebug() then return end
+        
         local color = Color(255, 0, 0, 255)
         if self:GetScreen():GetNWBool("used") and self:IsPointInside(self:GetCursorPos()) then
             color = Color(0, 255, 0, 255)
@@ -278,7 +278,6 @@ if DEBUG then
         surface.SetDrawColor(color)
         surface.DrawRect(self:GetGlobalRect())
     end
-end
 
     function GUI:UpdateLayout(layout)
         self._id = layout.id
@@ -342,10 +341,9 @@ if SERVER then
             if element and element.CanClick then
                 local button = net.ReadInt(8)
                 local x, y = net.ReadFloat(), net.ReadFloat()
-if DEBUG then
-            print("click@" .. screen:GetRoom():GetName() .. ":" .. element.Name ..
-                "(" .. element:GetID() .. ")")
-end
+
+                sgui.Log(element, "Click")
+
                 if element:OnClick(x, y, button) then
                     screen:EmitSound(clickSound, 65, 100)
                 end

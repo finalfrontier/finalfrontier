@@ -58,11 +58,7 @@ function GUI:GetCurrent()
     return self._tabs[self._current]
 end
 
-function GUI:OnChangeCurrent()
-    if DEBUG then
-        print("tabmenu -> " .. tostring(self._current))
-    end
-end
+function GUI:OnChangeCurrent() end
 
 function GUI:SetCurrentIndex(index)
     if index < 1 or index > #self._tabs then

@@ -48,18 +48,20 @@ if SERVER then
     end
 
     local function shipPhysicsSimulate(ent, phys, delta)
+        local piloting = ent._piloting
+
         local x, y = ent:GetCoordinates()
-        local tx, ty = ent._piloting:GetTargetCoordinates()
+        local tx, ty = piloting:GetTargetCoordinates()
         local dx, dy = universe:GetDifference(x, y, tx, ty)
 
         local vx, vy = ent:GetVel()
         if dx * dx + dy * dy <= SNAPPING_THRESHOLD_POS
             and vx * vx + vy * vy <= SNAPPING_THRESHOLD_VEL then
-            ent._piloting:SetTargetCoordinates(x, y, false)
+            piloting:SetTargetCoordinates(x, y, false)
             return Vector(0, 0, 0), -phys:GetVelocity(), SIM_GLOBAL_ACCELERATION
         end
 
-        local a = ent._piloting:GetAcceleration() * math.sqrt(0.5)
+        local a = piloting:GetAcceleration() * math.sqrt(0.5)
 
         local rot = ent:GetRotationRadians()
         local nx, ny = math.cos(rot), math.sin(rot)
@@ -84,6 +86,7 @@ if SERVER then
         local sx, sy = self:GetShip():GetCoordinates()
         local tx, ty = self:GetTargetCoordinates()
         local dx, dy = universe:GetDifference(sx, sy, tx, ty)
+        
         if dx * dx + dy * dy > 0 then
             return self:GetMaximumPower()
         else

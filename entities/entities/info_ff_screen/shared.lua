@@ -329,6 +329,7 @@ if SERVER then
 
         self:SetNWBool("used", true)
         self:SetNWEntity("user", ply)
+
         ply:SetNWBool("usingScreen", true)
         ply:SetNWEntity("screen", self)
         ply:SetNWEntity("oldWep", ply:GetActiveWeapon())

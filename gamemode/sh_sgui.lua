@@ -17,7 +17,7 @@
 
 if SERVER then AddCSLuaFile("sh_sgui.lua") end
 
-DEBUG = false
+local sgui_debug = CreateConVar("sgui_debug", "0", { FCVAR_ARCHIVE }, "Enable SGUI debugging?")
 
 MOUSE1 = 1
 MOUSE2 = 2
@@ -26,6 +26,20 @@ if not sgui then
     sgui = {}
     sgui._dict = {}
 else return end
+
+function sgui.IsDebug()
+    return sgui_debug:GetBool()
+end
+
+function sgui.Log(elem, msg)
+    if not sgui.IsDebug() then return end
+
+    if not msg then
+        print("[sgui] " .. elem)
+    else
+        print("[sgui@" .. elem:GetRoom():GetName() .. ":" .. elem.Name  .. "(" .. elem:GetID() .. ")] " .. msg)
+    end
+end
 
 local _mt = {}
 _mt.__index = _mt
