@@ -21,7 +21,7 @@ local sgui_debug = nil
 
 if SERVER then
     sgui_debug = CreateConVar("sv_sgui_debug", "0", { FCVAR_ARCHIVE }, "Enable SGUI debugging for server.")
-else
+elseif CLIENT then
     sgui_debug = CreateClientConVar("cl_sgui_debug", "0")
 end
 

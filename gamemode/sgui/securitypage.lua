@@ -100,7 +100,7 @@ if CLIENT then
         else
             if self.PlayerList then
                 self.PlayerList = nil
-                self.UpdateButtons()
+                self:UpdateButtons()
             end
         end
 
