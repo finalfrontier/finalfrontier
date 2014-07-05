@@ -112,7 +112,6 @@ if SERVER then
             local newr = (curr + math.sign(diff) * ent._weapon:GetLateral() * delta) / math.pi * 180
 
             ent:SetRotation(newr)
-            ent:SetTargetRotation(newr)
         end
         local ang = ent:GetRotation() * math.pi / 180
         local speed = ent._weapon:GetSpeed()
@@ -136,7 +135,12 @@ if SERVER then
 
         local rad = rot * math.pi / 180
         missile:SetRotation(rot)
+        missile:SetMaxAngularVel(180)
         missile:SetVel(math.cos(rad) * wpn:GetSpeed(), math.sin(rad) * wpn:GetSpeed())
+
+        timer.Simple(wpn:GetLifeTime(), function()
+            if IsValid(missile) then missile:Remove() end
+        end)
 
         return missile
     end
