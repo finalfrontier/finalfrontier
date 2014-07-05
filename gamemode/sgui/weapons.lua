@@ -65,7 +65,7 @@ function GUI:Enter()
                 local mdl = wpn:GetWeaponModule()
                 if mdl and mdl:CanShoot() then
                     local targ = ships.GetByName(self._grid:GetCentreObject():GetObjectName())
-                    self:GetSystem():FireWeapon(slot, targ, nil)
+                    if targ then self:GetSystem():FireWeapon(slot, targ, nil) end
                 end
             end
         end
