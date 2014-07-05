@@ -27,6 +27,28 @@ end
 
 -- Global Functions
 
+function table.Where(table, pred)
+    local copy = {}
+
+    for i, v in ipairs(table) do
+        if pred(v) then table.insert(copy, v)
+    end
+
+    return copy
+end
+
+function table.Take(table, count)
+    local copy = {}
+
+    for i, v in ipairs(table) do
+        count = count - 1
+        if count < 0 then break end
+        table.insert(copy, v)
+    end
+
+    return copy
+end
+
 function math.sign(x)
     if x > 0 then return 1 end
     if x < 0 then return -1 end
