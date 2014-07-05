@@ -46,12 +46,12 @@ function GUI:Enter()
     self.Super[BASE].Enter(self)
 
     if SERVER then
-        self.PlayerList = player.GetAll()
+        self.PlayerList = self:GetShip():GetPlayers()
         table.sort(self.PlayerList, function(a, b)
             return self:GetScreen():GetPos():DistToSqr(a:GetPos())
                 < self:GetScreen():GetPos():DistToSqr(b:GetPos())
         end)
-
+        
         self:UpdateButtons()
     end
 end

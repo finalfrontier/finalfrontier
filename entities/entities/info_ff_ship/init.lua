@@ -312,6 +312,10 @@ function ENT:_RemovePlayer(ply)
     end
 end
 
+function ENT:GetPlayers()
+    return self._players
+end
+
 function ENT:IsPointInside(x, y)
     return self:GetBounds():IsPointInside(x, y)
 end
