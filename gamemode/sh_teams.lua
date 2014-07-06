@@ -1,4 +1,4 @@
--- Copyright (c) 2014 James King [metapyziks@gmail.com]
+-- Copyright (c) 2014 Spartan322 [Spartan322@live.com]
 -- 
 -- This file is part of Final Frontier.
 -- 

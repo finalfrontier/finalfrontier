@@ -104,6 +104,8 @@ function GM:PlayerSpawn(ply)
     if ship then ply:SetShip(ship) end
     ply:Give("weapon_crowbar")
     ShipSet(ply)
+
+    TeleportArriveEffect(ply, ply:GetPos())
 end
 
 function GM:Think()

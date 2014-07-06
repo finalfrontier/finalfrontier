@@ -159,6 +159,29 @@ if SERVER then
         end
     end
 
+    function TeleportDepartEffect(ent, pos)
+        sound.Play(table.Random(receiveSounds), pos, 85, 100 + math.random() * 20)
+
+        local ed = EffectData()
+        ed:SetEntity(ent)
+        ed:SetOrigin(pos)
+        util.Effect("trans_sparks", ed, true, true)
+    end
+
+    function TeleportArriveEffect(ent, pos)
+        sound.Play(table.Random(receiveSounds), pos, 85, 100 + math.random() * 20)
+
+        local ed = EffectData()
+        ed:SetEntity(ent)
+        ed:SetOrigin(pos)
+        util.Effect("trans_sparks", ed, true, true)
+
+        ed = EffectData()
+        ed:SetEntity(ent)
+        ed:SetOrigin(pos)
+        util.Effect("trans_spawn", ed, true, true)
+    end
+
     function SYS:TeleportEntity(ent, pad, dest)
         if not self:CanTeleportEntity(ent) then return false end
 
@@ -180,23 +203,8 @@ if SERVER then
             end
         end
 
-        sound.Play(table.Random(transmitSounds), oldpos, 75, 100 + math.random() * 20)
-        sound.Play(table.Random(receiveSounds), newpos, 85, 100 + math.random() * 20)
-
-        local ed = EffectData()
-        ed:SetEntity(ent)
-        ed:SetOrigin(oldpos)
-        util.Effect("trans_sparks", ed, true, true)
-
-        ed = EffectData()
-        ed:SetEntity(ent)
-        ed:SetOrigin(oldpos)
-        util.Effect("trans_spawn", ed, true, true)
-
-        ed = EffectData()
-        ed:SetEntity(ent)
-        ed:SetOrigin(newpos)
-        util.Effect("trans_sparks", ed, true, true)
+        TeleportDepartEffect(ent, oldpos)
+        TeleportArriveEffect(ent, newpos)
 
         return true
     end
