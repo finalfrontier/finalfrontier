@@ -21,8 +21,7 @@ GUI.BaseName = BASE
 
 GUI._grid = nil
 GUI._powerBar = nil
-GUI._autoshBtn = nil
-GUI._directBtn = nil
+GUI._targetLbl = nil
 GUI._weapons = nil
 
 function GUI:Enter()
@@ -37,6 +36,13 @@ function GUI:Enter()
     self._powerBar = sgui.Create(self, "powerbar")
     self._powerBar:SetOrigin(self._grid:GetRight() + 8, 8)
     self._powerBar:SetSize(colWidth, 48)
+
+    self._targetLbl = sgui.Create(self, "label")
+    self._targetLbl:SetOrigin(self._grid:GetRight() + 8, self._powerBar:GetBottom() + 8)
+    self._targetLbl:SetSize(colWidth, 48)
+    self._targetLbl.AlignX = TEXT_ALIGN_CENTER
+    self._targetLbl.AlignY = TEXT_ALIGN_CENTER
+    self._targetLbl.Text = "No Target"
 
     local wpnHeight = 80
 
@@ -53,10 +59,8 @@ function GUI:Enter()
         if SERVER then
             local oldOnSelectObject = self._grid.OnSelectObject
             self._grid.OnSelectObject = function(grid, obj, button)
-                local targ = (obj and ships.GetByName(obj:GetObjectName())) or nil
-
-                if targ then
-                    self:GetSystem():SetTarget(targ)
+                if IsValid(obj) and ships.GetByName(obj:GetObjectName()) then
+                    self:GetSystem():SetTarget(obj)
                 else
                     self:GetSystem():SetTarget(nil)
                 end
@@ -77,5 +81,18 @@ function GUI:Enter()
         end
         
         self._weapons[i] = wpn
+    end
+end
+
+if CLIENT then
+    function GUI:Draw()
+        local targ = self:GetSystem():GetTarget()
+        if targ then
+            self._targetLbl.Text = targ:GetObjectName()
+        else
+            self._targetLbl.Text = "No Target"
+        end
+
+        self.Super[BASE].Draw(self)
     end
 end

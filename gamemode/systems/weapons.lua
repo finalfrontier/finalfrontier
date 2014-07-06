@@ -24,13 +24,27 @@ function SYS:IsAutoShooting(slot)
     return self._nwdata.autoshoot and (self._nwdata.autoshoot[slot] or false)
 end
 
+function SYS:HasTarget()
+    return IsValid(self._nwdata.target) and self:GetShip():IsObjectInRange(self._nwdata.target)
+end
+
+function SYS:GetTarget()
+    if self:HasTarget() then
+        return self._nwdata.target
+    elseif SERVER and self._nwdata.target then
+        self._nwdata.target = nil
+        self:_UpdateNWData()
+    end
+
+    return nil
+end
+
 if SERVER then
     -- resource.AddFile("materials/systems/weapons.png")
 
-    SYS._target = nil
-
     function SYS:Initialize()
         self._nwdata.autoshoot = {}
+        self._nwdata.target = nil
         self:_UpdateNWData()
     end
 
@@ -47,18 +61,15 @@ if SERVER then
     end
 
     function SYS:SetTarget(target)
-        self._target = target
-    end
-
-    function SYS:HasTarget()
-        return self._target ~= nil and self:GetShip():IsObjectInRange(self._target)
+        self._nwdata.target = target
+        self:_UpdateNWData()
     end
 
     function SYS:FireWeapon(slot)
         local mdl = self:GetRoom():GetModule(slot)
         if mdl and mdl:CanShoot() then
             mdl:RemoveCharge(mdl:GetWeapon():GetShotCharge())
-            mdl:GetWeapon():OnShoot(self:GetShip(), self._target, self:GetShip():GetRotation())
+            mdl:GetWeapon():OnShoot(self:GetShip(), self:GetTarget(), self:GetShip():GetRotation())
             sound.Play(mdl:GetWeapon().LaunchSound, self:GetRoom():GetPos())
         end
     end

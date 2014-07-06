@@ -111,7 +111,7 @@ if SERVER then
             local tx, ty = ent._target:GetCoordinates()
             dx, dy = universe:GetDifference(mx, my, tx, ty)
 
-            if (ent._target ~= ent._owner or CurTime() - ent._shootTime > 1)
+            if (ent._target ~= ent._owner:GetObject() or CurTime() - ent._shootTime > 1)
                 and dx * dx + dy * dy < 1 / (128 * 128) then
                 ent._weapon:Hit(ent._target, ent:GetCoordinates())
                 ent:Remove()

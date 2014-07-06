@@ -89,27 +89,35 @@ if SERVER then
         return
     end
 
-    function WPN:Hit(ship, x, y)
-        local sx, sy = ship:GetCoordinates()
-        local dx, dy = universe:GetDifference(sx, sy, x, y)
-        local ang = FindAngleDifference(ship:GetRotation() * math.pi / 180, math.atan2(dy, dx))
+    function WPN:Hit(obj, x, y)
+        if obj:GetObjectType() == objtype.ship then
+            local ship = ships.GetByName(obj:GetObjectName())
 
-        local closest = nil
-        local closdif = 0
+            if not IsValid(ship) then return end
 
-        local sx, sy = ship:GetBounds():GetCentre()
-        for _, room in pairs(ship:GetRooms()) do
-            local rx, ry = room:GetBounds():GetCentre()
-            dx, dy = rx - sx, sy - ry
-            local rang = math.atan2(dy, dx)
-            local dif = math.abs(FindAngleDifference(ang, rang))
-            if not closest or dif < closdif + (math.random() - 0.5) * math.pi / 8 then
-                closest = room
-                closdif = dif
+            local sx, sy = ship:GetCoordinates()
+            local dx, dy = universe:GetDifference(sx, sy, x, y)
+            local ang = FindAngleDifference(ship:GetRotation() * math.pi / 180, math.atan2(dy, dx))
+
+            local closest = nil
+            local closdif = 0
+
+            local sx, sy = ship:GetBounds():GetCentre()
+            for _, room in pairs(ship:GetRooms()) do
+                local rx, ry = room:GetBounds():GetCentre()
+                dx, dy = rx - sx, sy - ry
+                local rang = math.atan2(dy, dx)
+                local dif = math.abs(FindAngleDifference(ang, rang))
+                if not closest or dif < closdif + (math.random() - 0.5) * math.pi / 8 then
+                    closest = room
+                    closdif = dif
+                end
             end
-        end
 
-        self:OnHit(closest)
+            self:OnHit(closest)
+        elseif obj:GetObjectType() == objtype.missile then
+            obj:Remove()
+        end
     end
 
     function WPN:OnHit(room)
