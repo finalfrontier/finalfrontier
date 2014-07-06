@@ -70,7 +70,7 @@ end
 if SERVER then
     -- resource.AddFile("materials/systems/piloting.png")
 
-    local ACCELERATION_PER_POWER = 1.0 / 200.0
+    local ACCELERATION_PER_POWER = 1.0 / 100.0
 
     SYS._prevVel = Vector(0, 0, 0)
 

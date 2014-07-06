@@ -146,12 +146,15 @@ if SERVER then
     function ENT:Think()
         local x, y = self:GetCoordinates()
         local wx, wy = universe:WrapCoordinates(x, y)
+        local phys = self:GetPhysicsObject()
+
         if math.abs(wx - x) >= 1 or math.abs(wy - y) >= 1 then
+            local oldvel = phys:GetVelocity()
             self:SetCoordinates(wx, wy)
+            phys:SetVelocity(oldvel)
         end
 
-        local phys = self:GetPhysicsObject()
-        if phys:IsValid() and phys:IsAsleep() then
+        if phys:IsAsleep() then
             phys:Wake()
         end
     end
