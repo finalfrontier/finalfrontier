@@ -16,7 +16,7 @@
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
 local TEMPERATURE_LOSS_RATE = 0.00000382
-local AIR_LOSS_RATE = 0.5
+local AIR_LOSS_RATE = 1
 local PLAYER_HEAT_RATE = 0.002
 local DAMAGE_INTERVAL = 1.0
 
