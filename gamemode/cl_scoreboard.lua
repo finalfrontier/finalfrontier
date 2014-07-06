@@ -161,26 +161,12 @@ local PLAYER_LINE =
 		-- We draw our background a different colour based on the status of the player
 		--
 
-		if ( self.Player:Team() == TEAM_Or ) then
-			draw.RoundedBox( 4, 0, 0, w, h, Color( 255, 200, 0, 200 ) )
-			return
-		end
-		
-		if ( self.Player:Team() == TEAM_Bl ) then
-			draw.RoundedBox( 4, 0, 0, w, h, Color( 43, 0, 255, 200 ) )
-			return
-		end
-
-
 		if  ( !self.Player:Alive() ) then
 			draw.RoundedBox( 4, 0, 0, w, h, Color( 230, 200, 200, 255 ) )
 			return
 		end
+
 		draw.RoundedBox( 4, 0, 0, w, h, team.GetColor(self.Player:Team()))
-		return
-
-		draw.RoundedBox( 4, 0, 0, w, h, Color( 230, 230, 230, 255 ) )
-
 	end
 }
 

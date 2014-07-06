@@ -15,10 +15,12 @@
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
-ships = {}
+if not ships then
+    ships = {}
 
-ships._dict = {}
-ships._nwdata = GetGlobalTable("ships")
+    ships._dict = {}
+    ships._nwdata = GetGlobalTable("ships")
+end
 
 function ships.Add(ship)
     ships._dict[ship:GetName()] = ship

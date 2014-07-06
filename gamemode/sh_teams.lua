@@ -1,4 +1,3 @@
--- Copyright (c) 2014 Spartan322 [Spartan322@live.com]
 -- Copyright (c) 2014 James King [metapyziks@gmail.com]
 -- 
 -- This file is part of Final Frontier.
@@ -21,17 +20,27 @@ if SERVER then AddCSLuaFile("sh_teams.lua") end
 TEAM_ORANGE = 1
 TEAM_BLUE = 2
 
-team.SetUp(TEAM_ORANGE, "Orange", Color(222,127,18,255), true)
-team.SetUp(TEAM_BLUE, "Blue", Color(0,0,255,255), true)
+team.SetUp(TEAM_ORANGE, "Orange", Color(255, 152, 47, 255), true)
+team.SetUp(TEAM_BLUE, "Blue", Color(68, 73, 255, 255), true)
+
+function team.GetDeadColor(t)
+	local clr = team.GetColor(t)
+
+	return Color(clr.r * 0.75, clr.g * 0.75, clr.b * 0.75, 255)
+end
 
 if SERVER then
-	function team.GetShip(team)
+	function team.GetShip(t)
 		local teamShips = {
-			"ship01_ship",
 			"ship02_ship",
+			"ship01_ship"
 		}
 
-		return ships.GetByName(teamShips[team])
+		print("Getting ship for " .. tostring(t))
+		PrintTable(ships.GetAll())
+		print("Printed ships")
+
+		return ships.GetByName(teamShips[t])
 	end
 
 	function team.GetLeastPopulated()
