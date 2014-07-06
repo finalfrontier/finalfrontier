@@ -118,7 +118,14 @@ end
 
 function ENT:GetVel()
     local ox, oy = universe:GetUniversePos(Vector(0, 0, 0))
-    local nx, ny = universe:GetUniversePos(self:GetVelocity())
+
+    local nx, ny = 0, 0
+    if SERVER then
+        nx, ny = universe:GetUniversePos(self:GetPhysicsObject():GetVelocity())
+    elseif CLIENT then
+        nx, ny = universe:GetUniversePos(self:GetVelocity())
+    end
+    
     return nx - ox, ny - oy
 end
 

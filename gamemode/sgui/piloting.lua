@@ -38,8 +38,15 @@ function GUI:Enter()
 
     if SERVER then
         function self._grid.OnClick(grid, x, y, button)
-            x, y = grid:ScreenToCoordinate(x - grid:GetLeft(), y - grid:GetTop())
-            self:GetSystem():SetTargetCoordinates(x, y, button == MOUSE2)
+            if button == MOUSE1 then
+                local sx, sy = self:GetShip():GetCoordinates()
+                local tx, ty = grid:ScreenToCoordinate(x - grid:GetLeft(), y - grid:GetTop())
+                local dx, dy = universe:GetDifference(sx, sy, tx, ty)
+
+                self:GetSystem():SetTargetHeading(dx, dy)
+            elseif button == MOUSE2 then
+                self:GetSystem():FullStop()
+            end
             return true
         end
     end

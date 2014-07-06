@@ -20,85 +20,85 @@ SYS.SGUIName = "piloting"
 
 SYS.Powered = true
 
-local SNAPPING_THRESHOLD_POS = 1.0 / 16384.0
-local SNAPPING_THRESHOLD_VEL = 1.0 / 16384.0
+local DURATION_MULTIPLIER = 4
 
 function SYS:GetTargetCoordinates()
-    if self:ShouldFullStop() then
-        local sx, sy = self:GetShip():GetCoordinates()
-        local vx, vy = self:GetShip():GetObject():GetVel()
-        return sx - vx * 4, sy - vy * 4
-    end
+    local sx, sy = self:GetShip():GetCoordinates()
+    local ax, ay = self:GetTargetAcceleration()
 
-    return self._nwdata.targetx, self._nwdata.targety
+    local dt = self:GetAccelerationTime()
+
+    return sx + ax * dt, sy + ay * dt
 end
 
-function SYS:ShouldFullStop()
+function SYS:GetTargetAcceleration()
+    if self:IsFullStopping() then
+        local vx, vy = self:GetShip():GetVel()
+        local vl = math.sqrt(vx * vx + vy * vy)
+
+        if vl == 0 then
+            return 0, 0
+        else
+            return -vx / vl, -vy / vl
+        end
+    elseif self:GetAccelerationTime() <= 0 then
+        return 0, 0
+    end
+
+    return self._nwdata.dx, self._nwdata.dy
+end
+
+function SYS:GetAccelerationTime()
+    if self:IsFullStopping() then
+        local vx, vy = self:GetShip():GetVel()
+        return math.sqrt(vx * vx + vy * vy)
+    end
+
+    return math.max(0, self._nwdata.duration - CurTime() + self._nwdata.inittime)
+end
+
+function SYS:IsAccelerating()
+    local ax, ay = self:GetTargetAcceleration()
+
+    return ax * ax + ay * ay > 0
+end
+
+function SYS:IsFullStopping()
     return self._nwdata.fullstop
 end
 
 if SERVER then
     -- resource.AddFile("materials/systems/piloting.png")
 
-    local ACCELERATION_PER_POWER = 1.0 / 400.0
+    local ACCELERATION_PER_POWER = 1.0 / 200.0
 
-    local function findAccel1D(a, u, s)
-        local v = math.sqrt(2 * a * math.abs(s)) * math.sign(s)
-        if u < v then return math.min(a, v - u) end
-        if u > v then return math.max(-a, v - u) end
-        return 0
-    end
+    SYS._prevVel = Vector(0, 0, 0)
 
     local function shipPhysicsSimulate(ent, phys, delta)
-        local piloting = ent._piloting
+        local self = ent._piloting
 
-        local x, y = ent:GetCoordinates()
-        local tx, ty = piloting:GetTargetCoordinates()
-        local dx, dy = universe:GetDifference(x, y, tx, ty)
-
-        local vx, vy = ent:GetVel()
-        if dx * dx + dy * dy <= SNAPPING_THRESHOLD_POS
-            and vx * vx + vy * vy <= SNAPPING_THRESHOLD_VEL then
-            piloting:SetTargetCoordinates(x, y, false)
-            return Vector(0, 0, 0), -phys:GetVelocity(), SIM_GLOBAL_ACCELERATION
+        if self:GetAccelerationTime() <= 0 then
+            if self._nwdata.duration > 0 then
+                self:SetTargetHeading(0, 0)
+            end
+            
+            return Vector(0, 0, 0), Vector(0, 0, 0), SIM_GLOBAL_ACCELERATION
         end
 
-        local a = piloting:GetAcceleration() * math.sqrt(0.5)
+        local dx, dy = self:GetTargetAcceleration()
+        local a = self:GetAcceleration()
 
-        local rot = ent:GetRotationRadians()
-        local nx, ny = math.cos(rot), math.sin(rot)
-        local rx, ry = -ny, nx
-
-        local an = findAccel1D(a, vx * nx + vy * ny, (dx * nx + dy * ny) * 0.75)
-        local ar = findAccel1D(a, vx * rx + vy * ry, (dx * rx + dy * ry) * 0.75)
-
-        vx = vx * 0.99 + an * nx + ar * rx
-        vy = vy * 0.99 + an * ny + ar * ry
-
-        local vel = universe:GetWorldPos(vx, vy) - universe:GetWorldPos(0, 0)
-
-        if not piloting:ShouldFullStop() then
-            ent:SetTargetRotation(math.atan2(vy, vx) / math.pi * 180.0)
-        end
-
-        return Vector(0, 0, 0), vel - phys:GetVelocity(), SIM_GLOBAL_ACCELERATION
+        local acc = universe:GetWorldPos(dx * a, dy * a) - universe:GetWorldPos(0, 0)
+        return Vector(0, 0, 0), acc, SIM_GLOBAL_ACCELERATION
     end
 
     function SYS:GetMaximumPower()
-        return 4
+        return 8
     end
 
     function SYS:CalculatePowerNeeded()
-        local dx, dy = 0, 0
+        local dx, dy = self:GetTargetAcceleration()
 
-        if self:ShouldFullStop() then
-            dx, dy = self:GetShip():GetVel()
-        else
-            local sx, sy = self:GetShip():GetCoordinates()
-            local tx, ty = self:GetTargetCoordinates()
-            dx, dy = universe:GetDifference(sx, sy, tx, ty)
-        end
-        
         if dx * dx + dy * dy > 0 then
             return self:GetMaximumPower()
         else
@@ -107,28 +107,35 @@ if SERVER then
     end
 
     function SYS:Initialize()
-        self._nwdata.targetx = 0
-        self._nwdata.targety = 0
-        self._nwdata.fullstop = true
-        self:_UpdateNWData()
+        self:SetTargetHeading(0, 0)
 
         self:GetShip():GetObject()._piloting = self
         self:GetShip():GetObject().PhysicsSimulate = shipPhysicsSimulate
     end
 
-    function SYS:SetTargetCoordinates(x, y, fullStop)
-        self._nwdata.fullstop = fullStop
+    function SYS:FullStop()
+        self._nwdata.fullstop = true
+        self._nwdata.duration = 0
+        self._nwdata.inittime = 0
+        self._nwdata.dx = 0
+        self._nwdata.dy = 0
+        self:_UpdateNWData()
+    end
 
-        if fullStop then
-            local sx, sy = self:GetShip():GetCoordinates()
-            x, y = universe:GetDifference(sx, sy, x, y)
+    function SYS:SetTargetHeading(dx, dy)
+        self._nwdata.fullstop = false
+        self._nwdata.duration = math.sqrt(dx * dx + dy * dy) * DURATION_MULTIPLIER
+        self._nwdata.inittime = CurTime()
 
-            local len = math.sqrt(x * x + y * y)
+        if self._nwdata.duration > 0 then
+            self._nwdata.dx = dx / self._nwdata.duration
+            self._nwdata.dy = dy / self._nwdata.duration
 
-            x, y = x / len, y / len
+            self:GetShip():GetObject():SetTargetRotation(math.atan2(dy, dx) / math.pi * 180.0)
+        else
+            self._nwdata.dx = 0
+            self._nwdata.dy = 0
         end
-        
-        self._nwdata.targetx, self._nwdata.targety = x, y
 
         self:_UpdateNWData()
     end

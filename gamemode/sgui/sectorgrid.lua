@@ -207,12 +207,25 @@ elseif CLIENT then
         end    
 
         local piloting = ship:GetSystem("piloting")
-        if piloting then
+        if piloting and piloting:IsAccelerating() then
             local tx, ty = self:CoordinateToScreen(piloting:GetTargetCoordinates())
 
-            if math.abs(tx - sx) > 0.5 or math.abs(ty - sy) > 0.5 then
-                surface.SetDrawColor(Color(51, 172, 45, 127))
-                surface.DrawOutlinedRect(tx + ox - 8, ty + oy - 8, 16, 16)
+            surface.SetDrawColor(Color(51, 172, 45, 127))
+            if piloting:IsFullStopping() then
+                local size = Pulse(1) * 4 + 16
+                surface.DrawOutlinedRect(sx + ox - size, sy + oy - size, size * 2, size * 2)
+            else
+                local size = Pulse(1) * 4 + 16
+
+                local nx, ny = piloting:GetTargetAcceleration()
+                local rx, ry = -ny, nx
+
+                nx, ny = nx * size * 2, ny * size * 2
+                rx, ry = rx * size, ry * size
+
+                surface.DrawLine(tx + ox + nx, ty + oy + ny, tx + ox + rx, ty + oy + ry)
+                surface.DrawLine(tx + ox + rx, ty + oy + ry, tx + ox - rx, ty + oy - ry)
+                surface.DrawLine(tx + ox - rx, ty + oy - ry, tx + ox + nx, ty + oy + ny)
 
                 surface.SetDrawColor(Color(51, 172, 45, 32))
                 surface.DrawLine(sx + ox, sy + oy, tx + ox, ty + oy)
