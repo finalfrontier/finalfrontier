@@ -68,6 +68,15 @@ function GUI:Enter()
                 return oldOnSelectObject(grid, obj, button)
             end
 
+            self._grid.OnClickSelectedObject = function(grid, obj, button)
+                if IsValid(obj) and not self:GetSystem():HasTarget() then
+                    self:GetSystem():SetTarget(obj)
+                    return true
+                else
+                    return false
+                end
+            end
+
             wpn.OnClick = function(wpn, x, y, button)
                 if button == MOUSE1 then
                     local mdl = wpn:GetWeaponModule()

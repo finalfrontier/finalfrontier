@@ -122,10 +122,10 @@ end
 function ENT:InitPostEntity()
     self._nwdata.object = ents.Create("info_ff_object")
     self._nwdata.object:SetCoordinates(5 + math.random() * 0.2 - 0.1, 9 + math.random() * 0.2 - 0.1)
-    self._nwdata.object:SetRotation(math.random() * 360)
     self._nwdata.object:SetObjectType(objtype.ship)
     self._nwdata.object:SetObjectName(self:GetName())
     self._nwdata.object:Spawn()
+    self._nwdata.object:SetRotation(math.random() * 360)
     self:_UpdateNWData()
 
     self._mainLights = ents.FindByName(self._mainLightName)
