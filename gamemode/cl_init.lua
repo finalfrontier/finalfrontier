@@ -23,7 +23,6 @@
 
 include("gmtools/nwtable.lua")
 
-include("sh_teams.lua")
 include("sh_init.lua")
 include("sh_bounds.lua")
 include("sh_matrix.lua")
@@ -35,6 +34,7 @@ include("cl_door.lua")
 include("cl_room.lua")
 include("cl_ship.lua")
 include("cl_ships.lua")
+include("sh_teams.lua")
 include("cl_universe.lua")
 include("cl_scoreboard.lua")
 

@@ -23,7 +23,6 @@
 include("gmtools/nwtable.lua")
 
 include("sh_init.lua")
-include("sh_teams.lua") 
 include("sh_bounds.lua")
 include("sh_matrix.lua")
 include("sh_transform2d.lua")
@@ -31,6 +30,7 @@ include("sh_weapons.lua")
 include("sh_sgui.lua")
 include("sh_systems.lua")
 include("sv_ships.lua")
+include("sh_teams.lua")
 
 -- Resources
 
@@ -91,19 +91,42 @@ end
 
 function GM:PlayerInitialSpawn(ply)
     local num = math.random(1, 9)
-    ply:SetModel("models/player/group03/male_0" .. num .. ".mdl")
+
+    local models = {
+        "models/player/group03/male_01.mdl",
+        "models/player/group03/male_02.mdl",
+        "models/player/group03/male_03.mdl",
+        "models/player/group03/male_04.mdl",
+        "models/player/group03/male_05.mdl",
+        "models/player/group03/male_06.mdl",
+        "models/player/group03/male_07.mdl",
+        "models/player/group03/male_08.mdl",
+        "models/player/group03/male_09.mdl",
+        "models/player/group03/female_01.mdl",
+        "models/player/group03/female_02.mdl",
+        "models/player/group03/female_03.mdl",
+        "models/player/group03/female_04.mdl",
+        "models/player/group03/female_05.mdl",
+        "models/player/group03/female_06.mdl"
+    }
+
+    ply:SetModel(table.Random(models))
     ply:SetCanWalk(true)
-    ply:SetTeam(CheckTeams())
+
+    team.AutoAssign(ply)
+
     GAMEMODE:SetPlayerSpeed(ply, 175, 250)
-    ShipSet(ply)
 end
 
 
 function GM:PlayerSpawn(ply)
-    local ship = ships.FindCurrentShip(ply)
-    if ship then ply:SetShip(ship) end
+    local ship = team.GetShip(ply:Team())
+    local pad = table.Random(ship:GetSystem("transporter"):GetRoom():GetTransporterPads())
+
+    ply:SetPos(pad)
+    ply:SetShip(ship)
+
     ply:Give("weapon_crowbar")
-    ShipSet(ply)
 
     TeleportArriveEffect(ply, ply:GetPos())
 end

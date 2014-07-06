@@ -49,6 +49,36 @@ function table.Take(table, count)
     return copy
 end
 
+function table.Min(table, selector)
+    local minScore = 0
+    local minValue = nil
+
+    for _, value in pairs(table) do
+        local score = selector(value)
+        if minValue == nil or score < minScore then
+            minScore = score
+            minValue = value
+        end
+    end
+
+    return minValue
+end
+
+function table.Max(table, selector)
+    local maxScore = 0
+    local maxValue = nil
+
+    for _, value in pairs(table) do
+        local score = selector(value)
+        if maxValue == nil or score > maxScore then
+            maxScore = score
+            maxValue = value
+        end
+    end
+
+    return maxValue
+end
+
 function math.sign(x)
     if x > 0 then return 1 end
     if x < 0 then return -1 end
