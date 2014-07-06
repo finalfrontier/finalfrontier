@@ -162,11 +162,11 @@ local PLAYER_LINE =
 		--
 
 		if  ( !self.Player:Alive() ) then
-			draw.RoundedBox( 4, 0, 0, w, h, Color( 230, 200, 200, 255 ) )
+			draw.RoundedBox(4, 0, 0, w, h, team.GetDeadColor(self.Player:Team()))
 			return
 		end
 
-		draw.RoundedBox( 4, 0, 0, w, h, team.GetColor(self.Player:Team()))
+		draw.RoundedBox(4, 0, 0, w, h, team.GetColor(self.Player:Team()))
 	end
 }
 

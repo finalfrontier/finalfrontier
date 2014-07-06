@@ -25,8 +25,7 @@ team.SetUp(TEAM_BLUE, "Blue", Color(68, 73, 255, 255), true)
 
 function team.GetDeadColor(t)
 	local clr = team.GetColor(t)
-
-	return Color(clr.r * 0.75, clr.g * 0.75, clr.b * 0.75, 255)
+	return Color(clr.r * 0.5, clr.g * 0.5, clr.b * 0.5, 255)
 end
 
 if SERVER then
@@ -35,10 +34,6 @@ if SERVER then
 			"ship02_ship",
 			"ship01_ship"
 		}
-
-		print("Getting ship for " .. tostring(t))
-		PrintTable(ships.GetAll())
-		print("Printed ships")
 
 		return ships.GetByName(teamShips[t])
 	end
