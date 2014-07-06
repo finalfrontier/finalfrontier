@@ -118,7 +118,7 @@ end
 
 function ENT:GetVel()
     local ox, oy = universe:GetUniversePos(Vector(0, 0, 0))
-    local nx, ny = universe:GetUniversePos(self:GetPhysicsObject():GetVelocity())
+    local nx, ny = universe:GetUniversePos(self:GetVelocity())
     return nx - ox, ny - oy
 end
 

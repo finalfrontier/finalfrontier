@@ -20,23 +20,25 @@ SYS.SGUIName = "piloting"
 
 SYS.Powered = true
 
+local SNAPPING_THRESHOLD_POS = 1.0 / 16384.0
+local SNAPPING_THRESHOLD_VEL = 1.0 / 16384.0
+
 function SYS:GetTargetCoordinates()
-    if self:IsRelative() then
+    if self:ShouldFullStop() then
         local sx, sy = self:GetShip():GetCoordinates()
-        return sx + self._nwdata.targetx, sy + self._nwdata.targety
+        local vx, vy = self:GetShip():GetObject():GetVel()
+        return sx - vx * 4, sy - vy * 4
     end
+
     return self._nwdata.targetx, self._nwdata.targety
 end
 
-function SYS:IsRelative()
-    return self._nwdata.relative
+function SYS:ShouldFullStop()
+    return self._nwdata.fullstop
 end
 
 if SERVER then
     -- resource.AddFile("materials/systems/piloting.png")
-
-    local SNAPPING_THRESHOLD_POS = 1.0 / 16384.0
-    local SNAPPING_THRESHOLD_VEL = 1.0 / 16384.0
 
     local ACCELERATION_PER_POWER = 1.0 / 400.0
 
@@ -74,7 +76,11 @@ if SERVER then
         vy = vy * 0.99 + an * ny + ar * ry
 
         local vel = universe:GetWorldPos(vx, vy) - universe:GetWorldPos(0, 0)
-        ent:SetTargetRotation(math.atan2(vy, vx) / math.pi * 180.0)
+
+        if not piloting:ShouldFullStop() then
+            ent:SetTargetRotation(math.atan2(vy, vx) / math.pi * 180.0)
+        end
+
         return Vector(0, 0, 0), vel - phys:GetVelocity(), SIM_GLOBAL_ACCELERATION
     end
 
@@ -83,9 +89,15 @@ if SERVER then
     end
 
     function SYS:CalculatePowerNeeded()
-        local sx, sy = self:GetShip():GetCoordinates()
-        local tx, ty = self:GetTargetCoordinates()
-        local dx, dy = universe:GetDifference(sx, sy, tx, ty)
+        local dx, dy = 0, 0
+
+        if self:ShouldFullStop() then
+            dx, dy = self:GetShip():GetVel()
+        else
+            local sx, sy = self:GetShip():GetCoordinates()
+            local tx, ty = self:GetTargetCoordinates()
+            dx, dy = universe:GetDifference(sx, sy, tx, ty)
+        end
         
         if dx * dx + dy * dy > 0 then
             return self:GetMaximumPower()
@@ -97,23 +109,26 @@ if SERVER then
     function SYS:Initialize()
         self._nwdata.targetx = 0
         self._nwdata.targety = 0
-        self._nwdata.relative = true
+        self._nwdata.fullstop = true
         self:_UpdateNWData()
 
         self:GetShip():GetObject()._piloting = self
         self:GetShip():GetObject().PhysicsSimulate = shipPhysicsSimulate
     end
 
-    function SYS:SetTargetCoordinates(x, y, relative)
-        self._nwdata.relative = relative
+    function SYS:SetTargetCoordinates(x, y, fullStop)
+        self._nwdata.fullstop = fullStop
 
-        if relative then
+        if fullStop then
             local sx, sy = self:GetShip():GetCoordinates()
-            self._nwdata.targetx, self._nwdata.targety = universe:GetDifference(sx, sy, x, y)
-        else
-            self._nwdata.targetx = x
-            self._nwdata.targety = y
+            x, y = universe:GetDifference(sx, sy, x, y)
+
+            local len = math.sqrt(x * x + y * y)
+
+            x, y = x / len, y / len
         end
+        
+        self._nwdata.targetx, self._nwdata.targety = x, y
 
         self:_UpdateNWData()
     end
