@@ -20,8 +20,19 @@ SYS.SGUIName = "weapons"
 
 SYS.Powered = true
 
+function SYS:IsAutoShooting(slot)
+    return self._nwdata.autoshoot and (self._nwdata.autoshoot[slot] or false)
+end
+
 if SERVER then
     -- resource.AddFile("materials/systems/weapons.png")
+
+    SYS._target = nil
+
+    function SYS:Initialize()
+        self._nwdata.autoshoot = {}
+        self:_UpdateNWData()
+    end
 
     function SYS:CalculatePowerNeeded()
         local tot = 0
@@ -35,13 +46,26 @@ if SERVER then
         return tot
     end
 
-    function SYS:FireWeapon(slot, target, rot)
+    function SYS:SetTarget(target)
+        self._target = target
+    end
+
+    function SYS:HasTarget()
+        return self._target ~= nil and self:GetShip():IsObjectInRange(self._target)
+    end
+
+    function SYS:FireWeapon(slot)
         local mdl = self:GetRoom():GetModule(slot)
         if mdl and mdl:CanShoot() then
             mdl:RemoveCharge(mdl:GetWeapon():GetShotCharge())
-            mdl:GetWeapon():OnShoot(self:GetShip(), target, rot)
+            mdl:GetWeapon():OnShoot(self:GetShip(), self._target, self:GetShip():GetRotation())
             sound.Play(mdl:GetWeapon().LaunchSound, self:GetRoom():GetPos())
         end
+    end
+
+    function SYS:ToggleAutoShoot(slot)
+        self._nwdata.autoshoot[slot] = not self:IsAutoShooting(slot)
+        self:_UpdateNWData()
     end
 
     function SYS:Think(dt)
@@ -52,6 +76,17 @@ if SERVER then
             for slot = moduletype.weapon1, moduletype.weapon3 do
                 local mdl = self:GetRoom():GetModule(slot)
                 if mdl then mdl:AddCharge(ratio * dt) end
+            end
+        end
+
+        if self:HasTarget() then
+            for slot, autoshoot in pairs(self._nwdata.autoshoot) do
+                if autoshoot then
+                    local mdl = self:GetRoom():GetModule(slot)
+                    if mdl and mdl:CanShoot() then
+                        self:FireWeapon(slot)
+                    end
+                end
             end
         end
     end

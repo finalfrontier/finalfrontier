@@ -120,7 +120,7 @@ if SERVER then
             local dest = math.atan2(dy, dx)
             local curr = ent:GetRotation() * math.pi / 180
             local diff = FindAngleDifference(curr, dest)
-            local newr = (curr + math.sign(diff) * ent._weapon:GetLateral() * delta) / math.pi * 180
+            local newr = (curr + math.sign(diff) * math.min(math.abs(diff), ent._weapon:GetLateral() * delta)) / math.pi * 180
 
             ent:SetRotation(newr)
         end
@@ -144,10 +144,12 @@ if SERVER then
 
         missile:Spawn()
 
+        local vx, vy = ship:GetObject():GetVel()
+
         local rad = rot * math.pi / 180
         missile:SetRotation(rot)
         missile:SetMaxAngularVel(180)
-        missile:SetVel(math.cos(rad) * wpn:GetSpeed(), math.sin(rad) * wpn:GetSpeed())
+        missile:SetVel(math.cos(rad) * wpn:GetSpeed() + vx, math.sin(rad) * wpn:GetSpeed() + vy)
 
         timer.Simple(wpn:GetLifeTime(), function()
             if IsValid(missile) then missile:Remove() end

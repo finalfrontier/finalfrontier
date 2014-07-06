@@ -44,11 +44,6 @@ end
 
 if SERVER then
     function WPN:OnShoot(ship, target, rot)
-        local sx, sy = ship:GetCoordinates()
-        local tx, ty = target:GetCoordinates()
-        local dx, dy = universe:GetDifference(sx, sy, tx, ty)
-        if not rot then rot = 0 end
-
-        weapon.LaunchMissile(ship, self, target, rot + ship:GetRotation())
+        weapon.LaunchMissile(ship, self, target, rot)
     end
 end

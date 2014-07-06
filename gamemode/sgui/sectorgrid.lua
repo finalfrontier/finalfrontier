@@ -32,19 +32,23 @@ GUI.CanClick = true
 
 function GUI:SetCentreObject(obj)
     obj = obj or self:GetShip():GetObject()
-    if not self._centreObj then
+    if not self:GetCentreObject() then
         self._curX, self._curY = obj:GetCoordinates()
     end
     self._centreObj = obj
 end
 
 function GUI:GetCentreObject()
+    if not IsValid(self._centreObj) then
+        self._centreObj = self:GetShip():GetObject()
+    end
+
     return self._centreObj
 end
 
 function GUI:GetCentreCoordinates()
     if SERVER then
-        return self._centreObj:GetCoordinates()
+        return self:GetCentreObject():GetCoordinates()
     else
         return self._curX, self._curY
     end
@@ -56,7 +60,13 @@ function GUI:GetMinScale()
 end
 
 function GUI:GetMinSensorScale()
-    local rangeSize = math.max(self:GetShip():GetRange() * 2, 0.1)
+    local sensors = self:GetShip():GetSystem("sensors")
+    local rangeSize = 0.1
+
+    if sensors then
+        rangeSize = sensors:GetBaseScanRange() * 2
+    end
+
     return math.min((self:GetWidth() - 16) / rangeSize, (self:GetHeight() - 16) / rangeSize)
 end
 
@@ -181,13 +191,19 @@ elseif CLIENT then
      
         local ship = self:GetShip()
         local sx, sy = self:CoordinateToScreen(ship:GetCoordinates())
-        surface.SetDrawColor(Color(255, 255, 255, 2))
-        surface.DrawCircle(sx + ox, sy + oy, ship:GetRange() * self._curScale)
+        local sensor = ship:GetSystem("sensors")
 
         local sensor = ship:GetSystem("sensors")
-        if sensor and sensor:IsScanning() then
-            surface.SetDrawColor(Color(128, 128, 128, 2))
-            surface.DrawCircle(sx + ox, sy + oy, sensor:GetActiveScanDistance() * self._curScale)
+        if sensor then
+            surface.SetDrawColor(Color(255, 255, 255, 2))
+            surface.DrawCircle(sx + ox, sy + oy, sensor:GetBaseScanRange() * self._curScale)
+        
+            if sensor:IsScanning() then
+                local fade = 1.25 - math.max(0, sensor:GetScanProgress() - 1)
+
+                surface.SetDrawColor(Color(128 * fade, 128 * fade, 128 * fade, 2))
+                surface.DrawCircle(sx + ox, sy + oy, sensor:GetRange() * self._curScale)
+            end
         end    
 
         local piloting = ship:GetSystem("piloting")

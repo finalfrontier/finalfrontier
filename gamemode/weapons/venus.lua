@@ -27,9 +27,9 @@ WPN.MaxCharge = { 8, 16 }
 WPN.ShotCharge = { 4, 4 }
 
 WPN.Homing = true
-WPN.Speed = { 1 / 16, 1 / 16 }
-WPN.Lateral = { 1, 1.5 }
-WPN.LifeTime = { 4, 6 }
+WPN.Speed = { 1 / 20, 1 / 20 }
+WPN.Lateral = { 2, 3 }
+WPN.LifeTime = { 8, 12 }
 
 WPN.BaseDamage = { 10, 25 }
 WPN.PierceRatio = { 0, 0 }

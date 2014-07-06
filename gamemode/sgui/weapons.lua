@@ -21,7 +21,7 @@ GUI.BaseName = BASE
 
 GUI._grid = nil
 GUI._powerBar = nil
-GUI._targetBtn = nil
+GUI._autoshBtn = nil
 GUI._directBtn = nil
 GUI._weapons = nil
 
@@ -38,16 +38,6 @@ function GUI:Enter()
     self._powerBar:SetOrigin(self._grid:GetRight() + 8, 8)
     self._powerBar:SetSize(colWidth, 48)
 
-    self._targetBtn = sgui.Create(self, "button")
-    self._targetBtn:SetOrigin(self._powerBar:GetLeft(), self._powerBar:GetBottom() + 8)
-    self._targetBtn:SetSize((colWidth - 8) / 2, 48)
-    self._targetBtn.Text = "Set Target"
-
-    self._directBtn = sgui.Create(self, "button")
-    self._directBtn:SetOrigin(self._targetBtn:GetRight() + 8, self._powerBar:GetBottom() + 8)
-    self._directBtn:SetSize((colWidth - 8) / 2, 48)
-    self._directBtn.Text = "Set Angle"
-
     local wpnHeight = 80
 
     self._weapons = {}
@@ -61,11 +51,27 @@ function GUI:Enter()
         wpn:SetWeaponSlot(slot)
         
         if SERVER then
+            local oldOnSelectObject = self._grid.OnSelectObject
+            self._grid.OnSelectObject = function(grid, obj, button)
+                local targ = (obj and ships.GetByName(obj:GetObjectName())) or nil
+
+                if targ then
+                    self:GetSystem():SetTarget(targ)
+                else
+                    self:GetSystem():SetTarget(nil)
+                end
+
+                return oldOnSelectObject(grid, obj, button)
+            end
+
             wpn.OnClick = function(wpn, x, y, button)
-                local mdl = wpn:GetWeaponModule()
-                if mdl and mdl:CanShoot() then
-                    local targ = ships.GetByName(self._grid:GetCentreObject():GetObjectName())
-                    if targ then self:GetSystem():FireWeapon(slot, targ, nil) end
+                if button == MOUSE1 then
+                    local mdl = wpn:GetWeaponModule()
+                    if mdl and mdl:CanShoot() then
+                        self:GetSystem():FireWeapon(slot)
+                    end
+                elseif button == MOUSE2 then
+                    self:GetSystem():ToggleAutoShoot(slot)
                 end
             end
         end
