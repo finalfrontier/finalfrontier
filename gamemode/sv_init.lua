@@ -15,9 +15,6 @@
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
--- Server Initialization
--- Includes
-
 -- jit.on()
 
 include("gmtools/nwtable.lua")
@@ -40,9 +37,7 @@ resource.AddFile("materials/playerdot.png")
 resource.AddFile("materials/objects/ship.png")
 resource.AddFile("materials/objects/missile.png")
 
----Workshop Map and Materials
---This should improve loading times and will allow quicker access.
-resource.AddWorkshop("280749267")
+resource.AddWorkshop("282752490")
 
 MsgN("Loading materials...")
 local files = file.Find("materials/ff_*.vmt", "GAME")
