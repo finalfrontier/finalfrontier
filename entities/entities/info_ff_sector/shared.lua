@@ -82,6 +82,23 @@ if SERVER then
             obj:SetCoordinates(x + math.random(), y + math.random())
             obj:SetObjectType(objtype.module)
             obj:Spawn()
+
+            local mdl = nil
+            if math.random() < 0.75 then
+                mdl = ents.Create("prop_ff_module")
+                mdl:SetModuleType(table.Random({
+                    moduletype.lifesupport,
+                    moduletype.shields,
+                    moduletype.systempower
+                }))
+            else
+                mdl = ents.Create("prop_ff_weaponmodule")
+                mdl:SetWeapon(weapon.GetRandomName())
+            end
+            mdl:SetPos(self:GetPos())
+            mdl:Spawn()
+
+            obj:SetNWEntity("module", mdl)
         end
     end
 
