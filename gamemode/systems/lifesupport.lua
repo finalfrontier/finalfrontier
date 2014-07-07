@@ -57,7 +57,7 @@ if SERVER then
         for _, room in ipairs(self:GetShip():GetRooms()) do
             local score = 0
             local cost = 1
-            local lifeModule = room:GetModule(moduletype.lifesupport)
+            local lifeModule = room:GetModule(moduletype.LIFE_SUPPORT)
             if lifeModule then
                 score = lifeModule:GetScore() * 2
                 cost = 2 - score * 0.5
@@ -92,7 +92,7 @@ if SERVER then
         for _, room in ipairs(self:GetShip():GetRooms()) do
             local score = 0
             local cost = 1
-            local lifeModule = room:GetModule(moduletype.lifesupport)
+            local lifeModule = room:GetModule(moduletype.LIFE_SUPPORT)
             if lifeModule then
                 score = lifeModule:GetScore() * 2
                 cost = 2 - score * 0.5

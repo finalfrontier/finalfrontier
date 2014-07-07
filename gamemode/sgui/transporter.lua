@@ -96,11 +96,11 @@ function GUI:Inspect(obj)
 
         if SERVER then
             function self._grid.OnClickSelectedObject(grid, obj, button)
-                if obj:GetObjectType() == objtype.ship then
+                if obj:GetObjectType() == objtype.SHIP then
                     self:Inspect(obj)
                     self:GetScreen():UpdateLayout()
                     return true
-                elseif obj:GetObjectType() == objtype.module then
+                elseif obj:GetObjectType() == objtype.MODULE then
                     self:GetSystem():StartTeleport(obj)
                 end
                 return false
@@ -141,11 +141,11 @@ function GUI:Inspect(obj)
         if SERVER then
             self._inspectButton.OnClick = function(btn, button)
                 local obj = self._grid:GetCentreObject()
-                if obj:GetObjectType() == objtype.ship then
+                if obj:GetObjectType() == objtype.SHIP then
                     self:Inspect(obj)
                     self:GetScreen():UpdateLayout()
                     return true
-                elseif obj:GetObjectType() == objtype.module then
+                elseif obj:GetObjectType() == objtype.MODULE then
                     self:GetSystem():StartTeleport(obj)
                     return true
                 end
@@ -222,7 +222,7 @@ elseif CLIENT then
         if self._grid then
             local obj = self._grid:GetCentreObject()
             self._inspectButton.CanClick = obj and (
-                obj:GetObjectType() == objtype.ship or
+                obj:GetObjectType() == objtype.SHIP or
                 self:GetSystem():IsObjectTeleportable(obj))
 
             if obj and self:GetSystem():IsObjectTeleportable(obj) then

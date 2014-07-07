@@ -61,7 +61,7 @@ if SERVER then
 
     function ENT:Purge()
         for _, ent in ipairs(ents.FindInBox(self:GetBoundingBox())) do
-            if ent:GetClass() == "info_ff_object" and ent:GetObjectType() ~= objtype.ship then
+            if ent:GetClass() == "info_ff_object" and ent:GetObjectType() ~= objtype.SHIP then
                 local mdl = ent:GetNWEntity("module")
                 if IsValid(mdl) then mdl:Remove() end
 
@@ -83,16 +83,16 @@ if SERVER then
         for i = 1, count do
             local obj = ents.Create("info_ff_object")
             obj:SetCoordinates(x + math.random(), y + math.random())
-            obj:SetObjectType(objtype.module)
+            obj:SetObjectType(objtype.MODULE)
             obj:Spawn()
 
             local mdl = nil
             if math.random() < 0.75 then
                 mdl = ents.Create("prop_ff_module")
                 mdl:SetModuleType(table.Random({
-                    moduletype.lifesupport,
-                    moduletype.shields,
-                    moduletype.systempower
+                    moduletype.LIFE_SUPPORT,
+                    moduletype.SHIELDS,
+                    moduletype.SYSTEM_POWER
                 }))
             else
                 mdl = ents.Create("prop_ff_weaponmodule")

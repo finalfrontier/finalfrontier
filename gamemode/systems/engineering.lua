@@ -44,8 +44,8 @@ function SYS:GetCurrentAction()
 end
 
 function SYS:GetModules()
-    return self:GetRoom():GetModule(moduletype.repair1),
-        self:GetRoom():GetModule(moduletype.repair2)
+    return self:GetRoom():GetModule(moduletype.REPAIR_1),
+        self:GetRoom():GetModule(moduletype.REPAIR_2)
 end
 
 function SYS:GetComparisonResult()

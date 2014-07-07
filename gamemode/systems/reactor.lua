@@ -51,7 +51,7 @@ if SERVER then
             if room:GetSystem() and room:GetSystem().Powered then
                 local needed = room:GetSystem():CalculatePowerNeeded(dt)
                 room:GetSystem():SetPowerNeeded(needed)
-                local powerModule = room:GetModule(moduletype.systempower)
+                local powerModule = room:GetModule(moduletype.SYSTEM_POWER)
                 if powerModule then
                     needed = needed * (1 - powerModule:GetDamaged() / 16)
                 else
@@ -74,7 +74,7 @@ if SERVER then
         for _, room in pairs(self:GetShip():GetRooms()) do
             if room:GetSystem() and room:GetSystem().Powered then
                 local needed = room:GetSystem():CalculatePowerNeeded(dt)
-                local powerModule = room:GetModule(moduletype.systempower)
+                local powerModule = room:GetModule(moduletype.SYSTEM_POWER)
                 if powerModule then
                     needed = needed * (1 - powerModule:GetDamaged() / 16)
                 else
@@ -95,7 +95,7 @@ if SERVER then
     end
 
     function SYS:GetTotalPower()
-        local score = self:GetRoom():GetModuleScore(moduletype.systempower)
+        local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
         return 5 + score * 20
     end
 elseif CLIENT then

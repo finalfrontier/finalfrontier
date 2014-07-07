@@ -24,10 +24,10 @@ ENT._lastLerpTime = 0
 ENT._currRotation = 0
 
 objtype = {}
-objtype.unknown = 0
-objtype.ship = 1
-objtype.missile = 2
-objtype.module = 3
+objtype.UNKNOWN = 0
+objtype.SHIP = 1
+objtype.MISSILE = 2
+objtype.MODULE = 3
 
 function ENT:SetupDataTables()
     self:NetworkVar("Float", 0, "TargetRotation")
@@ -136,7 +136,7 @@ function ENT:GetSpeed()
 end
 
 function ENT:GetObjectType()
-    return self:GetNWInt("objtype", objtype.unknown)
+    return self:GetNWInt("objtype", objtype.UNKNOWN)
 end
 
 function ENT:GetObjectName()
@@ -165,9 +165,9 @@ if SERVER then
     end
 elseif CLIENT then
     function ENT:GetDescription()
-        if self:GetObjectType() == objtype.module then
+        if self:GetObjectType() == objtype.MODULE then
             return "Salvage"
-        elseif self:GetObjectType() == objtype.ship then
+        elseif self:GetObjectType() == objtype.SHIP then
             if LocalPlayer():GetShipName() == self:GetObjectName() then
                 return "This Ship"
             else

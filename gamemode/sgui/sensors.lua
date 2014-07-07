@@ -83,7 +83,7 @@ function GUI:Inspect(obj)
 
         if SERVER then
             function self._grid.OnClickSelectedObject(grid, obj, button)
-                if obj:GetObjectType() == objtype.ship then
+                if obj:GetObjectType() == objtype.SHIP then
                     self:Inspect(obj)
                     self:GetScreen():UpdateLayout()
                     return true
@@ -163,7 +163,7 @@ function GUI:Inspect(obj)
             end
 
             self._inspectButton.OnClick = function(btn, button)
-                if self._grid:GetCentreObject():GetObjectType() == objtype.ship then
+                if self._grid:GetCentreObject():GetObjectType() == objtype.SHIP then
                     self:Inspect(self._grid:GetCentreObject())
                     self:GetScreen():UpdateLayout()
                     return true
@@ -245,7 +245,7 @@ elseif CLIENT then
             end
 
             self._scanButton.CanClick = self:GetSystem():CanScan()
-            self._inspectButton.CanClick = self._grid:GetCentreObject():GetObjectType() == objtype.ship
+            self._inspectButton.CanClick = self._grid:GetCentreObject():GetObjectType() == objtype.SHIP
         end
 
     end

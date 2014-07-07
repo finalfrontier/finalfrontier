@@ -49,7 +49,7 @@ if SERVER then
             if self:GetDistrib(room) > 0 then
                 -- TODO: make continuous
                 local cost = 1
-                local shieldModule = room:GetModule(moduletype.shields)
+                local shieldModule = room:GetModule(moduletype.SHIELDS)
                 if shieldModule then
                     cost = 1.5 - shieldModule:GetScore()
                 end
@@ -76,7 +76,7 @@ if SERVER then
             local goal = math.min(self:GetDistrib(room), room:GetMaximumShields())
             if goal > 0 then
                 local score = 0
-                local shieldModule = room:GetModule(moduletype.shields)
+                local shieldModule = room:GetModule(moduletype.SHIELDS)
                 if shieldModule then
                     score = shieldModule:GetScore() * 2
                 end

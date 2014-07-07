@@ -32,7 +32,7 @@ function GUI:CreateModuleView(slot)
 
     local view = sgui.Create(self, "moduleview")
     view:SetTop(8)
-    if slot == moduletype.repair1 then
+    if slot == moduletype.REPAIR_1 then
         view:SetLeft(16)
     else
         view:SetLeft(self:GetWidth() - size - 16)
@@ -45,8 +45,8 @@ end
 function GUI:Enter()
     self._grids = {}
 
-    self._grids[1] = self:CreateModuleView(moduletype.repair1)
-    self._grids[2] = self:CreateModuleView(moduletype.repair2)
+    self._grids[1] = self:CreateModuleView(moduletype.REPAIR_1)
+    self._grids[2] = self:CreateModuleView(moduletype.REPAIR_2)
 
     self._compareBtn = sgui.Create(self, "button")
     self._compareBtn:SetSize(self._grids[2]:GetLeft() - self._grids[1]:GetRight() - 32, 48)

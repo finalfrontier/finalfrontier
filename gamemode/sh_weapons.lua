@@ -138,7 +138,7 @@ if SERVER then
         missile._weapon = wpn
         missile._target = target
         missile._shootTime = CurTime()
-        missile:SetObjectType(objtype.missile)
+        missile:SetObjectType(objtype.MISSILE)
         missile:SetCoordinates(ship:GetCoordinates())
         missile.PhysicsSimulate = missilePhysicsSimulate
 

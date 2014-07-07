@@ -77,7 +77,7 @@ if SERVER then
 
     function SYS:CalculatePowerNeeded()
         if self:GetCurrentCharge() < self:GetMaximumCharge() then
-            return 1 + self:GetRoom():GetModuleScore(moduletype.systempower) * 2
+            return 1 + self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER) * 2
         end
         return 0
     end
@@ -92,7 +92,7 @@ if SERVER then
     SYS._oldScore = 0
 
     function SYS:Think(dt)
-        local score = self:GetRoom():GetModuleScore(moduletype.systempower)
+        local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
         local changed = false
 
         if score ~= self._oldScore then

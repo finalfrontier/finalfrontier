@@ -93,7 +93,7 @@ if SERVER then
     end
 
     function SYS:GetMaximumPower()
-        local score = self:GetRoom():GetModuleScore(moduletype.systempower)
+        local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
         return 4 + score * 4
     end
 
@@ -145,7 +145,7 @@ if SERVER then
 
     function SYS:GetAcceleration()
         if self:GetPowerNeeded() <= 0 then return 0 end
-        local score = self:GetRoom():GetModuleScore(moduletype.systempower)
+        local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
         return self:GetPower() * ACCELERATION_PER_POWER * (1 + score * 3)
     end
 elseif CLIENT then

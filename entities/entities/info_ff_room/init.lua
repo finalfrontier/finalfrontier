@@ -139,7 +139,7 @@ function ENT:Think()
     if self:HasSystem() then self:GetSystem():Think(dt) end
 
     local breachloss = 1
-    local lifeModule = self:GetModule(moduletype.lifesupport)
+    local lifeModule = self:GetModule(moduletype.LIFE_SUPPORT)
     if lifeModule then
         breachloss = lifeModule:GetDamaged() / 16
     end
@@ -419,13 +419,13 @@ end
 function ENT:AddModuleSlot(pos, type)
     self._moduleslots[type] = pos
 
-    if type < moduletype.repair1 then
+    if type < moduletype.REPAIR_1 then
         local mdl = ents.Create("prop_ff_module")
         mdl:SetModuleType(type)
         mdl:SetDefaultGrid(self:GetShip())
         mdl:Spawn()
         mdl:InsertIntoSlot(self, type, pos)
-    elseif type == moduletype.weapon1 then
+    elseif type == moduletype.WEAPON_1 then
         local mdl = ents.Create("prop_ff_weaponmodule")
         mdl:SetWeapon(weapon.GetRandomName())
         mdl:Spawn()
@@ -465,7 +465,7 @@ end
 function ENT:RemoveModule(module)
     for i, v in pairs(self._modules) do
         if v == module then
-            if (i == moduletype.repair1 or i == moduletype.repair2)
+            if (i == moduletype.REPAIR_1 or i == moduletype.REPAIR_2)
                 and self:GetSystem():IsPerformingAction() then
                 return false
             end
@@ -548,7 +548,7 @@ function ENT:GetUnitShields()
 end
 
 function ENT:GetMaximumUnitShields()
-    local shieldMod = self:GetModule(moduletype.shields)
+    local shieldMod = self:GetModule(moduletype.SHIELDS)
     if not shieldMod then return 0 end
     return self:GetSurfaceArea() * (1 - shieldMod:GetDamaged() / 16)
 end

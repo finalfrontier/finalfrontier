@@ -90,7 +90,7 @@ if SERVER then
     end
 
     function WPN:Hit(obj, x, y)
-        if obj:GetObjectType() == objtype.ship then
+        if obj:GetObjectType() == objtype.SHIP then
             local ship = ships.GetByName(obj:GetObjectName())
 
             if not IsValid(ship) then return end
@@ -115,7 +115,7 @@ if SERVER then
             end
 
             self:OnHit(closest)
-        elseif obj:GetObjectType() == objtype.module then
+        elseif obj:GetObjectType() == objtype.MODULE then
             local mdl = obj:GetNWEntity("module")
             if IsValid(mdl) and mdl:GetClass() == "prop_ff_module" then
                 mdl:DamageRandomTiles(math.ceil(self:GetBaseDamage() / 10))
@@ -124,7 +124,7 @@ if SERVER then
                 if IsValid(mdl) then mdl:Remove() end
                 obj:Remove()
             end
-        elseif obj:GetObjectType() == objtype.missile then
+        elseif obj:GetObjectType() == objtype.MISSILE then
             obj:Remove()
         end
     end

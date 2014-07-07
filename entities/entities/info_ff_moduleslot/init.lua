@@ -43,13 +43,13 @@ function ENT:GetModuleType()
 end
 
 function ENT:IsRepairSlot()
-    return self._moduleType == moduletype.repair1
-        or self._moduleType == moduletype.repair2
+    return self._moduleType == moduletype.REPAIR_1
+        or self._moduleType == moduletype.REPAIR_2
 end
 
 function ENT:IsWeaponSlot()
-    return self._moduleType >= moduletype.weapon1
-        and self._moduleType <= moduletype.weapon3
+    return self._moduleType >= moduletype.WEAPON_1
+        and self._moduleType <= moduletype.WEAPON_3
 end
 
 function ENT:KeyValue(key, value)

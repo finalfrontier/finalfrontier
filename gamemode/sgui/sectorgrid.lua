@@ -276,15 +276,15 @@ elseif CLIENT then
                 end
 
                 local ot = obj:GetObjectType()
-                if ot == objtype.ship or ot == objtype.missile then
-                    if ot == objtype.ship then
+                if ot == objtype.SHIP or ot == objtype.MISSILE then
+                    if ot == objtype.SHIP then
                         surface.SetMaterial(SHIP_ICON)
                         if obj == ship:GetObject() then
                             surface.SetDrawColor(Color(51, 172, 45, 255))
                         else 
                             surface.SetDrawColor(Color(172, 45, 51, 191))
                         end
-                    elseif ot == objtype.missile then
+                    elseif ot == objtype.MISSILE then
                         surface.SetMaterial(MISSILE_ICON)
                         surface.SetDrawColor(Color(172, 45, 51, 191))
                     end
@@ -293,7 +293,7 @@ elseif CLIENT then
                     draw.NoTexture()
                 else
                     surface.SetDrawColor(Color(172, 45, 51, 127))
-                    if ot == objtype.module then
+                    if ot == objtype.MODULE then
                         surface.DrawRect(sx + ox - 4 * scale, sy + oy - 4 * scale,
                             8 * scale, 8 * scale)
                     else
