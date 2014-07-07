@@ -241,7 +241,7 @@ elseif CLIENT then
                 local size = Pulse(1) * 4 + 16
                 surface.DrawOutlinedRect(sx + ox - size, sy + oy - size, size * 2, size * 2)
             else
-                local size = Pulse(1) * 4 + 16
+                local size = Pulse(1) * 2 + 4
 
                 local nx, ny = piloting:GetTargetAcceleration()
                 local rx, ry = -ny, nx
