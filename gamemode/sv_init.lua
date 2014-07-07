@@ -62,26 +62,6 @@ function GM:InitPostEntity()
     MsgN("Final Frontier server-side is initializing post-entity...")
     
     ships.InitPostEntity()
-
-    for _, ship in pairs(ships.GetAll()) do
-        for _, room in pairs(ship:GetRooms()) do
-            if room:GetSystemName() == "engineering" then
-                for _, t in pairs({moduletype.lifesupport, moduletype.shields, moduletype.systempower}) do
-                    local pos = room:GetTransporterTarget()
-                    if pos then
-                        local count = 1 + math.floor(math.random() * math.random() * 2)
-                        for i = 1, count do
-                            local mdl = ents.Create("prop_ff_module")
-                            mdl:SetModuleType(t)
-                            mdl:SetPos(pos + Vector(0, 0, i * 16))
-                            mdl:SetAngles(Angle(0, math.random() * 360, 0))
-                            mdl:Spawn()
-                        end
-                    end
-                end
-            end
-        end
-    end
 end
 
 function GM:PlayerNoClip(ply)

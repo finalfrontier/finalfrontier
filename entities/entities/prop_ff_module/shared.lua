@@ -236,27 +236,15 @@ if SERVER then
 
     function ENT:OnTakeDamage(dmg)
         local amount = dmg:GetDamage() / 100
-        local threshold = math.random() * math.random()
+        local threshold = math.pow(math.random(), 2)
         local damaged = false
         while threshold < amount do
-            local canDamage = {}
-            for i = 1, 4 do
-                for j = 1, 4 do
-                    if self._grid[i][j] > -1 then
-                        table.insert(canDamage, {i = i, j = j})
-                    end
-                end
-            end
-
-            if #canDamage <= 1 then break end
-
-            local pos = table.Random(canDamage)
-            self._grid[pos.i][pos.j] = -1
-
-            damaged = true
+            if self:_DamageRandomTile() then
+                damaged = true
+            else break end
 
             amount = amount - threshold
-            threshold = math.random() * math.random()
+            threshold = math.pow(math.random(), 2)
         end
 
         if damaged then
@@ -266,6 +254,31 @@ if SERVER then
                 self:GetRoom():GetShip():SetHazardMode(true, 10)
             end
         end
+    end
+
+    function ENT:DamageRandomTiles(count)
+        for i = 1, count do
+            if not self:_DamageRandomTile() then break end
+        end
+        self:_UpdateGrid()
+    end
+
+    function ENT:_DamageRandomTile()
+        local canDamage = {}
+        for i = 1, 4 do
+            for j = 1, 4 do
+                if self._grid[i][j] > -1 then
+                    table.insert(canDamage, {i = i, j = j})
+                end
+            end
+        end
+
+        if #canDamage <= 1 then return false end
+
+        local pos = table.Random(canDamage)
+        self._grid[pos.i][pos.j] = -1
+
+        return true
     end
 
     function ENT:_FindXY(index)

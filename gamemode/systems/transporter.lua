@@ -32,6 +32,18 @@ function SYS:GetShieldThreshold()
     return self._nwdata.maxshields
 end
 
+function SYS:IsEntityTeleportable(ent)
+    return IsValid(ent) and (ent:IsPlayer()
+        or ent:GetClass() == "prop_physics"
+        or ent:GetClass() == "prop_ff_module"
+        or ent:GetClass() == "prop_ff_weaponmodule")
+end
+
+function SYS:IsObjectTeleportable(obj)
+    return IsValid(obj) and obj:GetClass() == "info_ff_object"
+        and self:IsEntityTeleportable(obj:GetNWEntity("module"))
+end
+
 if SERVER then
     resource.AddFile("materials/systems/transporter.png")
 
@@ -101,62 +113,95 @@ if SERVER then
         return IsValid(ent) and self:GetChargeCost(ent) <= self:GetCurrentCharge()
     end
 
-    function SYS:StartTeleport(room)
+    function SYS:StartTeleport(roomOrObj)
         if self._teleporting then return end
 
+        if roomOrObj:GetClass() == "info_ff_object" and not self:IsObjectTeleportable(roomOrObj) then
+            return
+        end
+
         sound.Play(table.Random(warmupSounds), self:GetRoom():GetPos(), 100, 70)
-        timer.Simple(2.5, function() self:TryTeleport(room) end)
+        timer.Simple(2.5, function() self:TryTeleport(roomOrObj) end)
 
         self._teleporting = true
     end
 
-    function SYS:TryTeleport(room)
+    function SYS:TryTeleport(roomOrObj)
         self._teleporting = false
-
+        
         local pads = self:GetRoom():GetTransporterPads()
-        local sent = {}
 
-        if room:GetShip() == self:GetShip() or room:GetShields() < self:GetShieldThreshold() then
-            local toSend = {}
-            local available = room:GetAvailableTransporterTargets()
-            local dests = {}
-            for i, pad in ipairs(pads) do
-                local inRange = ents.FindInSphere(pad, 32)
-                local added = false
-                for _, ent in pairs(inRange) do
-                    if self:CanTeleportEntity(ent) then
-                        added = true
-                        table.insert(toSend, {pad = i, ent = ent})
+        if roomOrObj:GetClass() == "info_ff_room" then
+            local room = roomOrObj
+            local sent = {}
+
+            if room:GetShip() == self:GetShip() or room:GetShields() < self:GetShieldThreshold() then
+                local toSend = {}
+                local available = room:GetAvailableTransporterTargets()
+                local dests = {}
+                for i, pad in ipairs(pads) do
+                    local inRange = ents.FindInSphere(pad, 32)
+                    local added = false
+                    for _, ent in pairs(inRange) do
+                        if self:CanTeleportEntity(ent) then
+                            added = true
+                            table.insert(toSend, {pad = i, ent = ent})
+                        end
+                    end
+
+                    if added then
+                        local index = math.floor(math.random() * #available) + 1
+                        dests[i] = available[index]
+                        table.remove(available, index)
                     end
                 end
 
-                if added then
-                    local index = math.floor(math.random() * #available) + 1
-                    dests[i] = available[index]
-                    table.remove(available, index)
+                while #toSend > 0 do
+                    local index = math.floor(math.random() * #toSend) + 1
+                    local ent = toSend[index].ent
+                    local pad = toSend[index].pad
+                    table.remove(toSend, index)
+                    if dests[pad] and self:TeleportEntity(ent, pads[pad], dests[pad]) then
+                        sent[index] = true
+                    end
                 end
             end
 
-            while #toSend > 0 do
-                local index = math.floor(math.random() * #toSend) + 1
-                local ent = toSend[index].ent
-                local pad = toSend[index].pad
-                table.remove(toSend, index)
-                if dests[pad] and self:TeleportEntity(ent, pads[pad], dests[pad]) then
-                    sent[index] = true
-                end
+            for i, pad in ipairs(pads) do
+                if not sent[i] then self:TeleportFailEffect(pad) end
             end
+
+            return
+        elseif roomOrObj:GetClass() == "info_ff_object" then
+            local obj = roomOrObj
+
+            if obj:GetObjectType() ~= objtype.module then return end
+            
+            local mdl = obj:GetNWEntity("module")
+
+            if not self:IsEntityTeleportable(mdl) then return end
+
+            if not self:TeleportEntity(mdl, mdl:GetPos(), table.Random(pads)) then
+                self:TeleportFailEffect()
+            else
+                obj:Remove()
+            end
+        end
+    end
+
+    function SYS:TeleportFailEffect(pos)
+        if not pos then
+            for _, pad in ipairs(self:GetRoom():GetTransporterPads()) do
+                self:TeleportFailEffect(pad)
+            end
+            return
         end
 
-        for i, pad in ipairs(pads) do
-            if not sent[i] then
-                local ed = EffectData()
-                ed:SetOrigin(pad)
-                ed:SetMagnitude(0.5 + math.random())
-                ed:SetScale(32)
-                util.Effect("trans_fail", ed, true, true)
-            end
-        end
+        local ed = EffectData()
+        ed:SetOrigin(pos)
+        ed:SetMagnitude(0.5 + math.random())
+        ed:SetScale(32)
+        util.Effect("trans_fail", ed, true, true)
     end
 
     function TeleportDepartEffect(ent, pos)

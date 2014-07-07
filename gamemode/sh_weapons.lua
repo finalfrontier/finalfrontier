@@ -97,7 +97,7 @@ end
 function weapon.Create(name, tier)
     local wpn = weapon._dict[name]
     if wpn then
-        tier = tier or (1 + math.floor(math.random() * wpn.MaxTier))
+        tier = tier or (1 + math.floor(math.pow(math.random(), 3) * wpn.MaxTier))
         return setmetatable({ _tier = tier }, wpn)
     end
     return nil

@@ -95,8 +95,13 @@ if SERVER then
                 mdl = ents.Create("prop_ff_weaponmodule")
                 mdl:SetWeapon(weapon.GetRandomName())
             end
+
             mdl:SetPos(self:GetPos())
             mdl:Spawn()
+
+            if mdl:GetClass() == "prop_ff_module" then
+                mdl:DamageRandomTiles(math.floor((1 - math.pow(math.random(), 2)) * 16))
+            end
 
             obj:SetNWEntity("module", mdl)
         end

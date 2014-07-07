@@ -158,6 +158,7 @@ elseif CLIENT then
 end
 
 function _mt:GetNWValue(ident, default)
+    if not self._nwdata.misc then return default end
     return self._nwdata.misc[ident] or default
 end
 

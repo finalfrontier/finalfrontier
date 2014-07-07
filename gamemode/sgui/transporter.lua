@@ -100,6 +100,8 @@ function GUI:Inspect(obj)
                     self:Inspect(obj)
                     self:GetScreen():UpdateLayout()
                     return true
+                elseif obj:GetObjectType() == objtype.module then
+                    self:GetSystem():StartTeleport(obj)
                 end
                 return false
             end
@@ -138,9 +140,13 @@ function GUI:Inspect(obj)
 
         if SERVER then
             self._inspectButton.OnClick = function(btn, button)
-                if self._grid:GetCentreObject():GetObjectType() == objtype.ship then
-                    self:Inspect(self._grid:GetCentreObject())
+                local obj = self._grid:GetCentreObject()
+                if obj:GetObjectType() == objtype.ship then
+                    self:Inspect(obj)
                     self:GetScreen():UpdateLayout()
+                    return true
+                elseif obj:GetObjectType() == objtype.module then
+                    self:GetSystem():StartTeleport(obj)
                     return true
                 end
                 return false
@@ -214,7 +220,16 @@ elseif CLIENT then
         self._chargeSlider.Value = old
 
         if self._grid then
-            self._inspectButton.CanClick = self._grid:GetCentreObject():GetObjectType() == objtype.ship
+            local obj = self._grid:GetCentreObject()
+            self._inspectButton.CanClick = obj and (
+                obj:GetObjectType() == objtype.ship or
+                self:GetSystem():IsObjectTeleportable(obj))
+
+            if obj and self:GetSystem():IsObjectTeleportable(obj) then
+                self._inspectButton.Text = "Teleport In"
+            else
+                self._inspectButton.Text = "Select Room"
+            end
         end
     end
 end
