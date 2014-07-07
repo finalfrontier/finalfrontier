@@ -36,7 +36,7 @@ ENT._room = nil
 ENT.Width = 0
 ENT.Height = 0
 
-ENT.UI = nil
+ENT._ui = nil
 ENT._layout = nil
 
 function ENT:GetShip()
@@ -45,6 +45,10 @@ end
 
 function ENT:GetRoom()
     return self._room
+end
+
+function ENT:GetUIRoot()
+    return self._ui
 end
 
 function ENT:IsAlarmCountingDown()
@@ -102,7 +106,6 @@ if SERVER then
     
     function ENT:Initialize()
         self:DrawShadow(false)
-        self.Storage = {}
     end
 
     function ENT:InitPostEntity()
@@ -130,8 +133,8 @@ if SERVER then
 
         self.FreeGUIIDs = {}
 
-        self.UI = sgui.Create(self, MAIN_GUI_CLASS)
-        self.UI:AllocateNewID()
+        self._ui = sgui.Create(self, MAIN_GUI_CLASS)
+        self._ui:AllocateNewID()
         self:UpdateLayout()
     end
 
@@ -292,10 +295,10 @@ if SERVER then
     end
 
     function ENT:UpdateLayout()
-        if not self.UI then return end
+        if not self._ui then return end
         if not self._layout then self._layout = {} end
 
-        self.UI:UpdateLayout(self._layout)
+        self._ui:UpdateLayout(self._layout)
         self:SetNWTable("layout", self._layout)
     end
 
@@ -340,7 +343,7 @@ if SERVER then
         ply:Give("weapon_ff_unarmed")
         ply:SelectWeapon("weapon_ff_unarmed")
 
-        self.UI.Permission = ply:GetPermission(self._room)
+        self._ui.Permission = ply:GetPermission(self._room)
 
         if (self._lastPage == page.SECURITY and not ply:HasPermission(self._room, permission.SECURITY))
             or (self._lastPage == page.SYSTEM and not ply:HasPermission(self._room, permission.SYSTEM)) then
@@ -351,7 +354,7 @@ if SERVER then
             self:StopAlarmCountdown()
         end
 
-        self.UI:SetCurrentPageIndex(self._lastPage)
+        self._ui:SetCurrentPageIndex(self._lastPage)
         self:UpdateLayout()
 
         if self._room:HasSystem() then
@@ -381,8 +384,8 @@ if SERVER then
             ply:CrosshairEnable()
         end
 
-        self._lastPage = self.UI:GetCurrentPageIndex()
-        self.UI:SetCurrentPageIndex(page.STATUS)
+        self._lastPage = self._ui:GetCurrentPageIndex()
+        self._ui:SetCurrentPageIndex(page.STATUS)
         self:UpdateLayout()
 
         if self._room:HasSystem() then
@@ -397,8 +400,8 @@ if SERVER then
     end
 
     function ENT:Click(button)
-        if self.UI then
-            self.UI:Click(self:GetCursorPos())
+        if self._ui then
+            self._ui:Click(self:GetCursorPos())
         end
     end
 
@@ -424,22 +427,22 @@ elseif CLIENT then
         if not self._layout and self._room and self._room:IsCurrent() and self._ship == LocalPlayer():GetShip() then
             self._layout = self:GetNWTable("layout")
             sgui.Log("Fetch")
-        elseif self.UI and self._ship and self._room and self._ship ~= LocalPlayer():GetShip() then
+        elseif self._ui and self._ship and self._room and self._ship ~= LocalPlayer():GetShip() then
             self._layout = nil
             self:ForgetNWTable("layout")
             sgui.Log("Forget")
         end
 
-        if not self.UI and self._layout and self:IsNWTableCurrent("layout") then
-            self.UI = sgui.Create(self, MAIN_GUI_CLASS)
+        if not self._ui and self._layout and self:IsNWTableCurrent("layout") then
+            self._ui = sgui.Create(self, MAIN_GUI_CLASS)
             sgui.Log("New UI")
-        elseif self.UI and not self._layout then
-            self.UI = nil
+        elseif self._ui and not self._layout then
+            self._ui = nil
             sgui.Log("Remove UI")
         end
 
-        if self._layout and self.UI and table.Count(self._layout) > 0 then
-            self.UI:UpdateLayout(self._layout)
+        if self._layout and self._ui and table.Count(self._layout) > 0 then
+            self._ui:UpdateLayout(self._layout)
             sgui.Log("Update")
         end
     end
@@ -561,8 +564,8 @@ elseif CLIENT then
         draw.NoTexture()
         
         cam.Start3D2D(self:GetPos(), ang, 1 / SCREEN_DRAWSCALE)
-        if self.UI then
-            self.UI:Draw()
+        if self._ui then
+            self._ui:Draw()
         end
         if self:GetNWBool("used") then
             self:FindCursorPosition()
@@ -572,9 +575,9 @@ elseif CLIENT then
     end
 
     function ENT:Click(button)
-        if self.UI then
+        if self._ui then
             local x, y = self:GetCursorPos()
-            self.UI:Click(x, y, button)
+            self._ui:Click(x, y, button)
         end
     end
 end

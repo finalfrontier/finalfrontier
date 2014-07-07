@@ -32,7 +32,7 @@ function GUI:Initialize()
 end
 
 function GUI:GetPermission()
-    return self:GetScreen().UI.Permission
+    return self:GetScreen():GetUIRoot().Permission
 end
 
 function GUI:GetRoom()
@@ -328,8 +328,8 @@ if SERVER then
             while true do
                 local id = net.ReadUInt(16)
                 if element == nil then
-                    if id == screen.UI:GetID() then
-                        element = screen.UI
+                    if id == screen:GetUIRoot():GetID() then
+                        element = screen:GetUIRoot()
                     else return end
                 else
                     if id == 0 then break end

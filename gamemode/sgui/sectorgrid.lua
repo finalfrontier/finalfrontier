@@ -76,6 +76,21 @@ end
 
 function GUI:SetScale(scale)
     self._scale = scale
+
+    if SERVER then
+        local sys = self:GetSystem()
+        if sys then sys:SetNWValue("gridscale", scale) end
+    end
+end
+
+function GUI:SetInitialScale(scale)
+    local sys = self:GetSystem()
+
+    if sys then
+        self:SetScale(sys:GetNWValue("gridscale", scale))
+    else
+        self:SetScale(scale)
+    end
 end
 
 function GUI:GetScale()
@@ -84,6 +99,18 @@ function GUI:GetScale()
     else
         return self._curScale
     end
+end
+
+function GUI:GetScaleRatio()
+    local max = self:GetMaxScale()
+    local min = self:GetMinScale()
+    return math.sqrt((self:GetScale() - min) / (max - min))
+end
+
+function GUI:SetScaleRatio(value)
+    local max = self:GetMaxScale()
+    local min = self:GetMinScale()
+    self:SetScale(min + math.pow(math.Clamp(value, 0, 1), 2) * (max - min))
 end
 
 function GUI:CoordinateToScreen(x, y)
@@ -204,7 +231,7 @@ elseif CLIENT then
                 surface.SetDrawColor(Color(128 * fade, 128 * fade, 128 * fade, 2))
                 surface.DrawCircle(sx + ox, sy + oy, sensor:GetRange() * self._curScale)
             end
-        end    
+        end
 
         local piloting = ship:GetSystem("piloting")
         if piloting and piloting:IsAccelerating() then

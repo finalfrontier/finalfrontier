@@ -133,6 +133,11 @@ if SERVER then
         return
     end
 
+    function _mt:SetNWValue(ident, value)
+        self._nwdata.misc[ident] = value
+        self:_UpdateNWData()
+    end
+
     function _mt:_UpdateNWData()
         SetGlobalTable(self._nwtablename, self._nwdata)
     end
@@ -150,6 +155,10 @@ elseif CLIENT then
     end
 
     _mt.Icon = Material("systems/noicon.png", "smooth")
+end
+
+function _mt:GetNWValue(ident, default)
+    return self._nwdata.misc[ident] or default
 end
 
 MsgN("Loading systems...")
@@ -184,6 +193,7 @@ function sys.Create(name, room)
         setmetatable(system, sys._dict[name])
         if SERVER then
             system._nwdata = {}
+            system._nwdata.misc = {}
             system:SetPower(0)
         elseif CLIENT then
             system._nwdata = GetGlobalTable(system._nwtablename)

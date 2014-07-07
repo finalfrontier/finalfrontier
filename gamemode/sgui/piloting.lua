@@ -34,7 +34,7 @@ function GUI:Enter()
     self._grid:SetOrigin(8, 8)
     self._grid:SetSize(self:GetWidth() * 0.6 - 16, self:GetHeight() - 16)
     self._grid:SetCentreObject(nil)
-    self._grid:SetScale(self._grid:GetMinScale())
+    self._grid:SetInitialScale(self._grid:GetMinScale())
 
     if SERVER then
         function self._grid.OnClick(grid, x, y, button)
@@ -66,18 +66,10 @@ function GUI:Enter()
     self._zoomSlider:SetSize(colWidth, 48)
 
     if SERVER then
-        local min = self._grid:GetMinScale()
-        local max = self._grid:GetMaxScale()
-
-        self._zoomSlider.Value = self:GetScreen().Storage.ZoomSliderValue or math.sqrt((self._grid:GetScale() - min) / (max - min))
-        self:GetScreen().Storage.ZoomSliderValue = self._zoomSlider.Value
-        self._grid:SetScale(min + math.pow(self._zoomSlider.Value, 2) * (max - min))
+        self._zoomSlider.Value = self._grid:GetScaleRatio()
 
         function self._zoomSlider.OnValueChanged(slider, value)
-            min = self._grid:GetMinScale()
-            max = self._grid:GetMaxScale()
-            self._grid:SetScale(min + math.pow(value, 2) * (max - min))
-            self:GetScreen().Storage.ZoomSliderValue = value
+            self._grid:SetScaleRatio(value)
         end
     end
 
