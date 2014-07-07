@@ -44,6 +44,8 @@ function ENT:KeyValue(key, value)
 end
 
 function ENT:Initialize()
+    universe = self
+    
     self._sectors = {}
 
     if not self._nwdata then self._nwdata = {} end
@@ -128,7 +130,6 @@ function ENT:GetSector(x, y)
 end
 
 function ENT:InitPostEntity()
-    universe = self
     for x = 0, self:GetHorizontalSectors() - 1 do
         for y = 0, self:GetVerticalSectors() - 1 do
             local sector = ents.Create("info_ff_sector")

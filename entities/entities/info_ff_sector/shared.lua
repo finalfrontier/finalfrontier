@@ -28,6 +28,14 @@ function ENT:GetSectorName()
     return self:GetNWString("name")
 end
 
+function ENT:GetBoundingBox()
+    local cx, cy = self:GetCoordinates()
+    
+    return
+        universe:GetWorldPos(cx + 0, cy + 0) - Vector(0, 0, 8),
+        universe:GetWorldPos(cx + 1, cy + 1) + Vector(0, 0, 8)
+end
+
 if SERVER then
     local horzNames = {
         "alpha", "beta",  "gamma",  "delta",   "epsilon", "zeta", "eta",     "theta",
@@ -38,6 +46,10 @@ if SERVER then
     local vertNames = {}
     for i = 1, 24 do vertNames[i] = tostring(i) end
 
+    local RESPAWN_DELAY = 300
+
+    ENT._lastVisit = 0
+
     function ENT:GetPVSPos()
         return self:GetPos() + Vector(0, 0, 64)
     end
@@ -45,6 +57,40 @@ if SERVER then
     function ENT:SetCoordinates(x, y)
         self:SetPos(universe:GetWorldPos(universe:WrapCoordinates(x + 0.5, y + 0.5)))
         self:SetNWString("name", horzNames[x + 1] .. "-" .. vertNames[y + 1])
+    end
+
+    function ENT:Purge()
+        for _, ent in ipairs(ents.FindInBox(self:GetBoundingBox())) do
+            if ent:GetClass() == "info_ff_object" and ent:GetObjectType() ~= objtype.ship then
+                ent:Remove()
+            end
+        end
+    end
+
+    function ENT:Populate()
+        self:Purge()
+
+        local x, y = self:GetCoordinates()
+        local count, max = 0, math.ceil(math.random() * 16)
+
+        while math.random() < 0.5 and count < max do
+            count = count + 1
+        end
+
+        for i = 1, count do
+            local obj = ents.Create("info_ff_object")
+            obj:SetCoordinates(x + math.random(), y + math.random())
+            obj:SetObjectType(objtype.module)
+            obj:Spawn()
+        end
+    end
+
+    function ENT:Visit()
+        if self._lastVisit == 0 or CurTime() - self._lastVisit >= RESPAWN_DELAY then
+            self:Populate()
+        end
+
+        self._lastVisit = CurTime()
     end
 elseif CLIENT then
     function ENT:Draw()

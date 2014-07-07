@@ -147,7 +147,9 @@ function GM:SetupPlayerVisibility(ply)
     local range = ship:GetRange()
     for x = math.floor(sx - range), math.floor(sx + range) do
         for y = math.floor(sy - range), math.floor(sy + range) do
-            AddOriginToPVS(universe:GetSector(x, y):GetPVSPos())
+            local sector = universe:GetSector(x, y)
+            sector:Visit()
+            AddOriginToPVS(sector:GetPVSPos())
         end
     end
 

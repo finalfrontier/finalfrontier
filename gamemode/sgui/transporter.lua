@@ -20,7 +20,6 @@ local BASE = "page"
 GUI.BaseName = BASE
 
 GUI._inspected = nil
-GUI._oldScale = 0
 
 GUI._zoomLabel = nil
 GUI._zoomSlider = nil
@@ -40,7 +39,6 @@ function GUI:Inspect(obj)
 
     if obj then
         self._inspected = obj
-        self._oldScale = self._grid:GetScale()
 
         self._zoomLabel = nil
         self._zoomSlider = nil
@@ -94,7 +92,7 @@ function GUI:Inspect(obj)
         self._grid:SetOrigin(8, 8)
         self._grid:SetSize(self:GetWidth() * 0.6 - 16, self:GetHeight() - 16)
         self._grid:SetCentreObject(nil)
-        self._grid:SetInitialScale(math.max(self._grid:GetMinSensorScale(), self._oldScale))
+        self._grid:SetInitialScale(self._grid:GetMinSensorScale())
 
         if SERVER then
             function self._grid.OnClickSelectedObject(grid, obj, button)

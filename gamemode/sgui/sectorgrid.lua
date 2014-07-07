@@ -289,7 +289,12 @@ elseif CLIENT then
                     draw.NoTexture()
                 else
                     surface.SetDrawColor(Color(172, 45, 51, 127))
-                    surface.DrawCircle(sx + ox, sy + oy, 8 * scale)
+                    if ot == objtype.module then
+                        surface.DrawRect(sx + ox - 4 * scale, sy + oy - 4 * scale,
+                            8 * scale, 8 * scale)
+                    else
+                        surface.DrawCircle(sx + ox, sy + oy, 8 * scale)
+                    end
                 end
             end
         end

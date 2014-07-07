@@ -27,6 +27,7 @@ objtype = {}
 objtype.unknown = 0
 objtype.ship = 1
 objtype.missile = 2
+objtype.module = 3
 
 function ENT:SetupDataTables()
     self:NetworkVar("Float", 0, "TargetRotation")
