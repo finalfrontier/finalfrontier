@@ -273,7 +273,18 @@ if SERVER then
             end
         end
 
-        if #canDamage <= 1 then return false end
+        if self:IsInSlot() then
+            if #canDamage <= 1 then return false end
+        else
+            if #canDamage <= 1 then
+                local ed = EffectData()
+                ed:SetOrigin(self:GetPos())
+                ed:SetScale(1)
+                util.Effect("Explosion", ed)
+                self:Remove()
+                return true
+            end
+        end
 
         local pos = table.Random(canDamage)
         self._grid[pos.i][pos.j] = -1
