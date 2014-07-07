@@ -15,12 +15,6 @@
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
--- Client Initialization
--- Includes
-
--- jit.on()
-
-
 include("gmtools/nwtable.lua")
 
 include("sh_init.lua")
