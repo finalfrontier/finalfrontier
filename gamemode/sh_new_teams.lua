@@ -17,7 +17,7 @@
 
 if SERVER then AddCSLuaFile("sh_new_teams.lua") end
 
-TEAM_LIMIT = ENT:GetTimeLimit()
+TEAM_LIMIT = ENT:GetTimeLimit() = 20 --Experimental
 team_groups = {}
 
 if SERVER then
