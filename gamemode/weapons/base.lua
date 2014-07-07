@@ -115,6 +115,14 @@ if SERVER then
             end
 
             self:OnHit(closest)
+        elseif obj:GetObjectType() == objtype.module then
+            local mdl = obj:GetNWEntity("module")
+            if IsValid(mdl) then
+                mdl:DamageRandomTiles(math.ceil(self:GetBaseDamage() / 10))
+            end
+            if not IsValid(mdl) or mdl:GetDamaged() >= 16 then
+                obj:Remove()
+            end
         elseif obj:GetObjectType() == objtype.missile then
             obj:Remove()
         end

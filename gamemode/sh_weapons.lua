@@ -106,7 +106,7 @@ end
 if SERVER then
     local function missilePhysicsSimulate(ent, phys, delta)
         local dx, dy = 0, 0
-        if ent._target then
+        if IsValid(ent._target) then
             local mx, my = ent:GetCoordinates()
             local tx, ty = ent._target:GetCoordinates()
             dx, dy = universe:GetDifference(mx, my, tx, ty)

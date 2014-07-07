@@ -60,9 +60,17 @@ if SERVER then
         return tot
     end
 
+    function SYS:CanTarget(target)
+        return IsValid(target) and target:GetClass() == "info_ff_object" and (
+            target:GetObjectType() == objtype.ship or
+            target:GetObjectType() == objtype.module)
+    end
+
     function SYS:SetTarget(target)
-        self._nwdata.target = target
-        self:_UpdateNWData()
+        if not target or self:CanTarget(target) then
+            self._nwdata.target = target
+            self:_UpdateNWData()
+        end
     end
 
     function SYS:FireWeapon(slot)

@@ -59,7 +59,7 @@ function GUI:Enter()
         if SERVER then
             local oldOnSelectObject = self._grid.OnSelectObject
             self._grid.OnSelectObject = function(grid, obj, button)
-                if IsValid(obj) and ships.GetByName(obj:GetObjectName()) then
+                if self:GetSystem():CanTarget(obj) then
                     self:GetSystem():SetTarget(obj)
                 else
                     self:GetSystem():SetTarget(nil)
@@ -69,7 +69,7 @@ function GUI:Enter()
             end
 
             self._grid.OnClickSelectedObject = function(grid, obj, button)
-                if IsValid(obj) and not self:GetSystem():HasTarget() then
+                if self:GetSystem():CanTarget(obj) and not self:GetSystem():HasTarget() then
                     self:GetSystem():SetTarget(obj)
                     return true
                 else
@@ -97,7 +97,11 @@ if CLIENT then
     function GUI:Draw()
         local targ = self:GetSystem():GetTarget()
         if targ then
-            self._targetLbl.Text = targ:GetObjectName()
+            if targ:GetObjectType() == objtype.module then
+                self._targetLbl.Text = "Salvage"
+            elseif targ:GetObjectType() == objtype.ship then
+                self._targetLbl.Text = targ:GetObjectName()
+            end
         else
             self._targetLbl.Text = "No Target"
         end
