@@ -60,5 +60,9 @@ if SERVER then
 			end
 		end
 	end
-
+	
+	function team.AssignAuto(ply)
+		team.MoveTo(team.GetUnpopular, ply)	
+	end
+	
 end
