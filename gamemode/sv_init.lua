@@ -50,7 +50,7 @@ for i, file in ipairs(files) do
     resource.AddFile("materials/" .. file)
 end
 
-game.ConsoleCommand("sv_loadingurl \"http://metapyziks.github.io/finalfrontier/\"\n")
+game.ConsoleCommand("sv_loadingurl \"http://finalfrontier.github.io/finalfrontier/\"\n")
 
 -- Gamemode Overrides
 
