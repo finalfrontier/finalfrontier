@@ -18,6 +18,8 @@
 
 if SERVER then AddCSLuaFile("shared.lua") end
 
+ENT.Editable = true
+
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 
