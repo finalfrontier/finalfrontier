@@ -1,4 +1,4 @@
--- Copyright (c) 2014 James King [metapyziks@gmail.com]
+-- Copyright (c) 2014 George Albany [spartan322@live.com]
 -- 
 -- This file is part of Final Frontier.
 -- 
@@ -17,3 +17,10 @@
 
 
 if SERVER then AddCSLuaFile("shared.lua") end
+
+ENT.Type = "anim"
+ENT.Base = "base_anim"
+
+function ENT:SetupDataTables()
+	self:NetworkVar("Int", 5, "TeamLimit", {KeyName = "teamlimit", Edit = {type = "Int", min = 0, max = 500, order = 1}})
+end
