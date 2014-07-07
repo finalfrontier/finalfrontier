@@ -97,11 +97,7 @@ if CLIENT then
     function GUI:Draw()
         local targ = self:GetSystem():GetTarget()
         if targ then
-            if targ:GetObjectType() == objtype.module then
-                self._targetLbl.Text = "Salvage"
-            elseif targ:GetObjectType() == objtype.ship then
-                self._targetLbl.Text = targ:GetObjectName()
-            end
+            self._targetLbl.Text = targ:GetDescription()
         else
             self._targetLbl.Text = "No Target"
         end

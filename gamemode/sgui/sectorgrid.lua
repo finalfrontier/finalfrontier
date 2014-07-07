@@ -39,7 +39,7 @@ function GUI:SetCentreObject(obj)
 end
 
 function GUI:GetCentreObject()
-    if not IsValid(self._centreObj) then
+    if not IsValid(self._centreObj) or not self:GetShip():IsObjectInRange(self._centreObj) then
         self._centreObj = self:GetShip():GetObject()
     end
 

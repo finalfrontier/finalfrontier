@@ -41,6 +41,7 @@ end
 
 function SYS:IsObjectTeleportable(obj)
     return IsValid(obj) and obj:GetClass() == "info_ff_object"
+        and self:GetShip():IsObjectInRange(obj)
         and self:IsEntityTeleportable(obj:GetNWEntity("module"))
 end
 
@@ -175,11 +176,11 @@ if SERVER then
         elseif roomOrObj:GetClass() == "info_ff_object" then
             local obj = roomOrObj
 
-            if obj:GetObjectType() ~= objtype.module then return end
+            if not self:IsObjectTeleportable(obj) then self:TeleportFailEffect() return end
             
             local mdl = obj:GetNWEntity("module")
 
-            if not self:IsEntityTeleportable(mdl) then return end
+            if not self:IsEntityTeleportable(mdl) then self:TeleportFailEffect() return end
 
             if not self:TeleportEntity(mdl, mdl:GetPos(), table.Random(pads)) then
                 self:TeleportFailEffect()

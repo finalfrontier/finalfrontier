@@ -164,6 +164,20 @@ if SERVER then
         return SIM_NOTHING
     end
 elseif CLIENT then
+    function ENT:GetDescription()
+        if self:GetObjectType() == objtype.module then
+            return "Salvage"
+        elseif self:GetObjectType() == objtype.ship then
+            if LocalPlayer():GetShipName() == self:GetObjectName() then
+                return "This Ship"
+            else
+                return "Enemy Ship"
+            end
+        else
+            return "Unknown"
+        end
+    end
+
     function ENT:Think()
         return
     end
