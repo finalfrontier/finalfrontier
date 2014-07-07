@@ -190,8 +190,13 @@ elseif CLIENT then
 
         -- Easing
         self._curScale = self._curScale + (self._scale - self._curScale) * 0.1
-        self._curX = self._curX + (x - self._curX) * 0.1
-        self._curY = self._curY + (y - self._curY) * 0.1
+
+        local dx, dy = universe:GetDifference(self._curX, self._curY, x, y)
+
+        self._curX = self._curX + dx * 0.1
+        self._curY = self._curY + dy * 0.1
+
+        self._curX, self._curY = universe:WrapCoordinates(self._curX, self._curY)
 
         x, y = self:GetCentreCoordinates()
         local ox, oy = self:GetGlobalOrigin()
