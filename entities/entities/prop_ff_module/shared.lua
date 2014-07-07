@@ -312,7 +312,7 @@ if SERVER then
         end
     end
 
-    function ENT:Mirror(other, index)
+    function ENT:Transcribe(other, index)
         local x, y = self:_FindXY(index)
 
         if self._grid[x][y] > -1 and other._grid[x][y] == -1 then
