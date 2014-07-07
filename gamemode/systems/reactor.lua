@@ -96,7 +96,7 @@ if SERVER then
 
     function SYS:GetTotalPower()
         local score = self:GetRoom():GetModuleScore(moduletype.systempower)
-        return 10 + 20 * score
+        return 5 + score * 20
     end
 elseif CLIENT then
     SYS.Icon = Material("systems/reactor.png", "smooth")

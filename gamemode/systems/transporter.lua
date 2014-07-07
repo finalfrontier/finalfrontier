@@ -83,23 +83,41 @@ if SERVER then
     end
 
     function SYS:Initialize()
-        self._nwdata.maxcharge = 1
-        self._nwdata.charge = 1
+        self._nwdata.maxcharge = 0
+        self._nwdata.charge = 0
         self._nwdata.maxshields = 0.25
         self:_UpdateNWData()
     end
 
+    SYS._oldScore = 0
+
     function SYS:Think(dt)
-        self._nwdata.maxcharge = math.max(1, self:GetRoom():GetModuleScore(moduletype.systempower) * 4)
+        local score = self:GetRoom():GetModuleScore(moduletype.systempower)
+        local changed = false
+
+        if score ~= self._oldScore then
+            self._oldScore = score
+
+            if self._nwdata.maxcharge == 0 then
+                self._nwdata.charge = 1 + score * 3
+            end
+
+            self._nwdata.maxcharge = 1 + score * 3
+
+            changed = true
+        end
 
         if self._nwdata.charge < self._nwdata.maxcharge then
             self._nwdata.charge = math.min(self._nwdata.maxcharge, self._nwdata.charge
                 + RECHARGE_RATE * dt * self:GetPower())
-            self:_UpdateNWData()
+
+            changed = true
         elseif self._nwdata.charge > self._nwdata.maxcharge then
             self._nwdata.charge = self._nwdata.maxcharge
-            self:_UpdateNWData()
+            changed = true
         end
+        
+        if changed then self:_UpdateNWData() end
     end
 
     function SYS:GetChargeCost(ent)
