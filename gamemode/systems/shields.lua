@@ -85,7 +85,7 @@ if SERVER then
                     room:SetUnitShields(room:GetUnitShields() + SHIELD_RECHARGE_RATE * rate * dt)
                 end
             end
-            if room:GetShields() > goal then
+            if room:GetShields() > goal or CurTime() < 10 then
                 room:SetUnitShields(goal * room:GetSurfaceArea())
             end
         end
