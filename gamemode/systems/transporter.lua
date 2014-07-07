@@ -77,7 +77,7 @@ if SERVER then
 
     function SYS:CalculatePowerNeeded()
         if self:GetCurrentCharge() < self:GetMaximumCharge() then
-            return 2
+            return 1 + self:GetRoom():GetModuleScore(moduletype.systempower) * 2
         end
         return 0
     end
