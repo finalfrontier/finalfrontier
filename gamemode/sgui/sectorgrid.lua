@@ -18,6 +18,7 @@
 local BASE = "base"
 
 GUI.BaseName = BASE
+GUI.CanClick = true
 
 GUI._scale = 256
 if CLIENT then
@@ -27,8 +28,6 @@ if CLIENT then
 end
 
 GUI._centreObj = nil
-
-GUI.CanClick = true
 
 function GUI:SetCentreObject(obj)
     obj = obj or self:GetShip():GetObject()

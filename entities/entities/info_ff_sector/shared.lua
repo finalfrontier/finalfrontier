@@ -62,6 +62,9 @@ if SERVER then
     function ENT:Purge()
         for _, ent in ipairs(ents.FindInBox(self:GetBoundingBox())) do
             if ent:GetClass() == "info_ff_object" and ent:GetObjectType() ~= objtype.ship then
+                local mdl = ent:GetNWEntity("module")
+                if IsValid(mdl) then mdl:Remove() end
+
                 ent:Remove()
             end
         end
@@ -113,6 +116,13 @@ if SERVER then
         end
 
         self._lastVisit = CurTime()
+    end
+
+    function ENT:Think()
+        if self._lastVisit > 0 and CurTime() - self._lastVisit >= RESPAWN_DELAY then
+            self:Purge()
+            self._lastVisit = 0
+        end
     end
 elseif CLIENT then
     function ENT:Draw()
