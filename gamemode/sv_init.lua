@@ -40,6 +40,10 @@ resource.AddFile("materials/playerdot.png")
 resource.AddFile("materials/objects/ship.png")
 resource.AddFile("materials/objects/missile.png")
 
+---Workshop Map and Materials
+--This should improve loading times and will allow quicker access.
+resource.AddWorkshop("280749267")
+
 MsgN("Loading materials...")
 local files = file.Find("materials/ff_*.vmt", "GAME")
 for i, file in ipairs(files) do
