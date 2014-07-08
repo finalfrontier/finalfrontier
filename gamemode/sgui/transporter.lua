@@ -194,7 +194,7 @@ elseif CLIENT then
     function GUI:Draw()
         if self._grid then
             local obj = self._grid:GetCentreObject()
-            if obj then
+            if IsValid(obj) then
                 self._selectedLabel.Text = obj:GetDescription()
             else
                 self._selectedLabel.Text = "Select Target"

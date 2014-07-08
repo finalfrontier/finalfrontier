@@ -204,10 +204,10 @@ elseif CLIENT then
             local obj = self._grid:GetCentreObject()
             local x, y = obj:GetCoordinates()
 
-            if obj ~= self:GetShip():GetObject() then
-                self._selectedLabel.Text = obj:GetObjectName()
+            if IsValid(obj) then
+                self._selectedLabel.Text = obj:GetDescription()
             else
-                self._selectedLabel.Text = "This Ship"
+                self._selectedLabel.Text = "No Target"
             end
             self._coordLabel.Text = "x: " .. FormatNum(x, 1, 2) .. ", y: " .. FormatNum(y, 1, 2)
 
