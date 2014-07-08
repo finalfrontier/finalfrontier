@@ -28,7 +28,7 @@ if SERVER then
 	end
 	
 	local function SetupTeam(new_number)
-		if new_number > TEAM_LIMIT return end
+		if new_number > TEAM_LIMIT then return end
 		team.SetUp(team_groups[new_number].number, team_groups[new_number].name, team_groups[new_number].colors, team_groups[new_number].joinable)
 	end
 	
