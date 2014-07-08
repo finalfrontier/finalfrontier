@@ -39,7 +39,7 @@ function GUI:Initialize()
         self._permButton.OnClick = function(btn)
             local ply = self:GetPlayer()
             local room = self:GetRoom()
-            if not ply then return false end
+            if not IsValid(ply) then return false end
             local perm = ply:GetPermission(room)
             perm = perm + 1
             if perm > permission.SECURITY then perm = permission.ACCESS end
@@ -50,7 +50,7 @@ function GUI:Initialize()
         self._adrmButton.OnClick = function(btn)
             local ply = self:GetPlayer()
             local room = self:GetRoom()
-            if not ply then return false end
+            if not IsValid(ply) then return false end
 
             if ply:GetPermission(room) <= permission.NONE then
                 ply:SetPermission(self:GetRoom(), permission.ACCESS)
@@ -80,13 +80,18 @@ function GUI:GetPlayer()
 end
 
 function GUI:SetPlayer(ply)
-    self._player = ply
-    self._permButton.Text = ply:Nick()
+    if not IsValid(ply) then
+        self._player = nil
+        self._permButton.Text = "[disconnected]"
+    else
+        self._player = ply
+        self._permButton.Text = ply:Nick()
+    end
 end
 
 if CLIENT then
     function GUI:Draw()
-        if self._player then
+        if IsValid(self._player) then
             self._adrmButton.Text = "-"
             self._permButton.CanClick = true
             local perm = self._player:GetPermission(self:GetRoom())
@@ -101,6 +106,11 @@ if CLIENT then
                 self._adrmButton.Text = "+"
                 self._permButton.CanClick = false
             end
+        else
+            self._permButton.Color = self.PermNoneColor
+            self._adrmButton.Text = "+"
+            self._permButton.CanClick = false
+            self._adrmButton.CanClick = false
         end
 
         self.Super[BASE].Draw(self)

@@ -293,6 +293,14 @@ function ENT:_RemovePlayer(ply)
 end
 
 function ENT:GetPlayers()
+    local i = #self._players
+    while i > 0 do
+        if not IsValid(self._players[i]) then
+            table.remove(self._players, i)
+        end
+        i = i - 1
+    end
+
     return self._players
 end
 
