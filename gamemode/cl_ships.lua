@@ -39,8 +39,7 @@ function ships.GetByName(name)
     local ship = ships._dict[name]
     if not ship and name and string.len(name) > 0 then
         print("Loading new ship " .. name)
-        ship = Ship(name)
-        ships._dict[name] = ship
+        ships.Add(Ship(name))
     end
     return ship
 end
@@ -58,12 +57,12 @@ end
 
 function ships.Think()
     local shipname = LocalPlayer():GetShipName()
-    if not ships.GetByName(shipname) then
+    if shipname and not ships._dict[shipname] then
         ships.Add(Ship(shipname))
 
         for _, name in pairs(ships._nwdata) do
-            if name ~= shipname and ships.GetByName(name) then
-                ships.Remove(ships.GetByName(name))
+            if name ~= shipname and ships._dict[name] then
+                ships.Remove(ships._dict[name])
             end
         end
     end

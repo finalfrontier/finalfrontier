@@ -122,6 +122,7 @@ end
 
 function GM:Think()
     ships.Think()
+    team.Think()
 end
 
 function GM:HUDWeaponPickedUp(weapon)
