@@ -116,7 +116,7 @@ if SERVER then
 
             self:OnHit(closest)
         elseif obj:GetObjectType() == objtype.MODULE then
-            local mdl = obj:GetNWEntity("module")
+            local mdl = obj:GetModule()
             if IsValid(mdl) and mdl:GetClass() == "prop_ff_module" then
                 mdl:DamageRandomTiles(math.ceil(self:GetBaseDamage() / 10))
             end

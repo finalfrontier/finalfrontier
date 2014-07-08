@@ -25,6 +25,7 @@ GUI._zoomLabel = nil
 GUI._zoomSlider = nil
 GUI._selectedLabel = nil
 GUI._inspectButton = nil
+GUI._jettisonButton = nil
 GUI._chargeSlider = nil
 GUI._powerBar = nil
 GUI._grid = nil
@@ -44,6 +45,7 @@ function GUI:Inspect(obj)
         self._zoomSlider = nil
         self._selectedLabel = nil
         self._inspectButton = nil
+        self._jettisonButton = nil
         self._coordLabel = nil
         self._sectorLabel = nil
         self._grid = nil
@@ -129,7 +131,7 @@ function GUI:Inspect(obj)
         self._selectedLabel = sgui.Create(self, "label")
         self._selectedLabel.AlignX = TEXT_ALIGN_CENTER
         self._selectedLabel.AlignY = TEXT_ALIGN_CENTER
-        self._selectedLabel:SetOrigin(self._grid:GetRight() + 16, self._zoomSlider:GetBottom() + 48)
+        self._selectedLabel:SetOrigin(self._grid:GetRight() + 16, self._zoomSlider:GetBottom() + 16)
         self._selectedLabel:SetSize(colWidth, 32)
         self._selectedLabel.Text = "This Ship"
 
@@ -150,6 +152,18 @@ function GUI:Inspect(obj)
                     return true
                 end
                 return false
+            end
+        end
+
+        self._jettisonButton = sgui.Create(self, "button")
+        self._jettisonButton:SetOrigin(self._grid:GetRight() + 16, self._inspectButton:GetBottom() + 8)
+        self._jettisonButton:SetSize(colWidth, 48)
+        self._jettisonButton.Text = "Jettison"
+
+        if SERVER then
+            self._jettisonButton.OnClick = function(btn, button)
+                self:GetSystem():StartTeleport(nil)
+                return true
             end
         end
     end
@@ -173,8 +187,8 @@ function GUI:Inspect(obj)
         self._chargeSlider:SetOrigin(self._closeButton:GetRight() + 16, self._closeButton:GetTop())
         self._powerBar:SetOrigin(self._chargeSlider:GetRight() + 8, self._closeButton:GetTop())
     else
-        self._chargeSlider:SetOrigin(self._grid:GetRight() + 16, self._inspectButton:GetBottom() + 32)
-        self._powerBar:SetOrigin(self._grid:GetRight() + 16, self._chargeSlider:GetBottom() + 8)
+        self._powerBar:SetOrigin(self._grid:GetRight() + 16, self:GetHeight() - 56)
+        self._chargeSlider:SetOrigin(self._grid:GetRight() + 16, self._powerBar:GetTop() - 56)
     end
 end
 

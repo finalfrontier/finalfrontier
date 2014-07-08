@@ -90,6 +90,36 @@ if SERVER then
     function ENT:SetObjectName(name)
         self:SetNWString("objname", name)
     end
+
+    function ENT:AssignModule(mdl)
+        local prev = self:GetModule()
+        if IsValid(prev) then
+            prev:UnassignObject(self)
+            prev:Remove()
+        end
+
+        mdl:SetPos(self:GetPos())
+
+        mdl:SetMoveType(MOVETYPE_NONE)
+        mdl:SetSolid(SOLID_NONE)
+
+        self:SetNWEntity("module", mdl)
+    end
+
+    function ENT:UnassignModule()
+        local mdl = self:GetModule()
+
+        if not IsValid(mdl) then return end
+
+        mdl:SetMoveType(MOVETYPE_VPHYSICS)
+        mdl:SetSolid(SOLID_VPHYSICS)
+
+        self:SetNWEntity("module", nil)
+    end
+end
+
+function ENT:GetModule()
+    return self:GetNWEntity("module")
 end
 
 function ENT:GetMaxAngularVel()

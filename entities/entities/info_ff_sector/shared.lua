@@ -62,7 +62,7 @@ if SERVER then
     function ENT:Purge()
         for _, ent in ipairs(ents.FindInBox(self:GetBoundingBox())) do
             if ent:GetClass() == "info_ff_object" and ent:GetObjectType() ~= objtype.SHIP then
-                local mdl = ent:GetNWEntity("module")
+                local mdl = ent:GetModule()
                 if IsValid(mdl) then mdl:Remove() end
 
                 ent:Remove()
@@ -99,14 +99,13 @@ if SERVER then
                 mdl:SetWeapon(weapon.GetRandomName())
             end
 
-            mdl:SetPos(self:GetPos())
             mdl:Spawn()
 
             if mdl:GetClass() == "prop_ff_module" then
                 mdl:DamageRandomTiles(math.floor((1 - math.pow(math.random(), 2)) * 16))
             end
 
-            obj:SetNWEntity("module", mdl)
+            obj:AssignModule(mdl)
         end
     end
 
