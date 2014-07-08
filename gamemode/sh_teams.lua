@@ -40,12 +40,12 @@ if SERVER then
 		t.name = ship:GetFullName()
 		t.color = ship:GetUIColor()
 
-		local i = #team._nwdata + 1
-
-		team._nwdata[i] = t
+		table.insert(team._nwdata, t)
 		team._UpdateNWData()
 
-		team.SetUp(#team._nwdata, t.name, t.color, true)
+		local i = #team._nwdata
+
+		team.SetUp(i, t.name, t.color, true)
 	end
 
 	function team.GetLeastPopulated()
@@ -53,7 +53,7 @@ if SERVER then
 
 		for t, _ in ipairs(team._nwdata) do
 			local players = team.NumPlayers(t)
-			if #min == 0 or min[1].players < players then
+			if #min == 0 or players < min[1].players then
 				min = { { team = t, players = players } }
 			elseif min[1].players == players then
 				table.insert(min, { team = t, players = players })
