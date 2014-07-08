@@ -19,11 +19,6 @@ local BASE = "container"
 
 GUI.BaseName = BASE
 
-GUI.PermNoneColor = Color(127, 127, 127, 255)
-GUI.PermAccessColor = Color(45, 51, 172, 255)
-GUI.PermSystemColor = Color(51, 172, 45, 255)
-GUI.PermSecurityColor = Color(172, 45, 51, 255)
-
 GUI._player = nil
 
 GUI._permButton = nil
@@ -94,20 +89,21 @@ if CLIENT then
         if IsValid(self._player) then
             self._adrmButton.Text = "-"
             self._permButton.CanClick = true
+            self._adrmButton.CanClick = true
             local perm = self._player:GetPermission(self:GetRoom())
             if perm >= permission.SECURITY then
-                self._permButton.Color = self.PermSecurityColor
+                self._permButton.Color = self:GetParent().PermSecurityColor
             elseif perm >= permission.SYSTEM then
-                self._permButton.Color = self.PermSystemColor
+                self._permButton.Color = self:GetParent().PermSystemColor
             elseif perm >= permission.ACCESS then
-                self._permButton.Color = self.PermAccessColor
+                self._permButton.Color = self:GetParent().PermAccessColor
             else
-                self._permButton.Color = self.PermNoneColor
+                self._permButton.Color = self:GetParent().PermNoneColor
                 self._adrmButton.Text = "+"
                 self._permButton.CanClick = false
             end
         else
-            self._permButton.Color = self.PermNoneColor
+            self._permButton.Color = self:GetParent().PermNoneColor
             self._adrmButton.Text = "+"
             self._permButton.CanClick = false
             self._adrmButton.CanClick = false
