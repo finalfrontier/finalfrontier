@@ -31,7 +31,7 @@ GUI._centreObj = nil
 
 function GUI:SetCentreObject(obj)
     obj = obj or self:GetShip():GetObject()
-    if not self:GetCentreObject() then
+    if not self._centreObj then
         self._curX, self._curY = obj:GetCoordinates()
     end
     self._centreObj = obj
