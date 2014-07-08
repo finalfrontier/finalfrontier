@@ -277,6 +277,14 @@ if SERVER then
                     obj:SetObjectType(objtype.MODULE)
                     obj:Spawn()
 
+                    local vx, vy = self:GetShip():GetVel()
+                    local dir = (math.random() * 2 - 1) * math.pi
+
+                    if vx * vx + vy * vy >= 1 / (64 * 64) then
+                        dir = dir / 8 + math.atan2(-vy, -vx)
+                    end
+
+                    obj:SetVel(vx + math.cos(dir) / 64, vy + math.sin(dir) / 64)
                     obj:AssignModule(ent)
                 else
                     timer.Simple(0.5, function()
