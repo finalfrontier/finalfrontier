@@ -186,10 +186,10 @@ if SERVER then
                     local pad = toSend[index].pad
                     table.remove(toSend, index)
 
-                    if IsValid(room) then
-                        sent[index] = dests[pad] and self:TeleportEntity(ent, pads[pad], dests[pad])
-                    else
-                        sent[index] = self:TeleportEntity(ent, pads[pad], nil)
+                    if IsValid(room) and dests[pad] and self:TeleportEntity(ent, pads[pad], dests[pad]) then
+                        sent[pad] = true
+                    elseif self:TeleportEntity(ent, pads[pad], nil) then
+                        sent[pad] = true
                     end
                 end
             end
@@ -263,10 +263,10 @@ if SERVER then
         self:_UpdateNWData()
 
         local oldpos = ent:GetPos()
-        local newpos = ent:GetPos() - pad
+        local newpos = ent:GetPos() - pad + (dest or Vector(0, 0, 0))
 
         if dest then
-            ent:SetPos(newpos + dest)
+            ent:SetPos(newpos)
         else
             if ent:IsPlayer() then
                 ent:Kill()

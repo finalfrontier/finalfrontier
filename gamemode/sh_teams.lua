@@ -18,65 +18,65 @@
 if SERVER then AddCSLuaFile("sh_teams.lua") end
 
 if SERVER and not team._nwdata then
-	team._nwdata = {}
+    team._nwdata = {}
 elseif CLIENT and not team._nwdata then
     team._nwdata = GetGlobalTable("teams")
     team._count = 0
 end
 
 function team.GetDeadColor(t)
-	local clr = team.GetColor(t)
-	return Color(clr.r * 0.5, clr.g * 0.5, clr.b * 0.5, 255)
+    local clr = team.GetColor(t)
+    return Color(clr.r * 0.5, clr.g * 0.5, clr.b * 0.5, 255)
 end
 
 function team.GetShip(t)
-	return ships.GetByName(team._nwdata[t].shipname)
+    return ships.GetByName(team._nwdata[t].shipname)
 end
 
 if SERVER then
-	function team.Add(ship)
-		local t = {}
-		t.shipname = ship:GetName()
-		t.name = ship:GetFullName()
-		t.color = ship:GetUIColor()
+    function team.Add(ship)
+        local t = {}
+        t.shipname = ship:GetName()
+        t.name = ship:GetFullName()
+        t.color = ship:GetUIColor()
 
-		table.insert(team._nwdata, t)
-		team._UpdateNWData()
+        table.insert(team._nwdata, t)
+        team._UpdateNWData()
 
-		local i = #team._nwdata
+        local i = #team._nwdata
 
-		team.SetUp(i, t.name, t.color, true)
-	end
+        team.SetUp(i, t.name, t.color, true)
+    end
 
-	function team.GetLeastPopulated()
-		local min = {}
+    function team.GetLeastPopulated()
+        local min = {}
 
-		for t, _ in ipairs(team._nwdata) do
-			local players = team.NumPlayers(t)
-			if #min == 0 or players < min[1].players then
-				min = { { team = t, players = players } }
-			elseif min[1].players == players then
-				table.insert(min, { team = t, players = players })
-			end
-		end
+        for t, _ in ipairs(team._nwdata) do
+            local players = team.NumPlayers(t)
+            if #min == 0 or players < min[1].players then
+                min = { { team = t, players = players } }
+            elseif min[1].players == players then
+                table.insert(min, { team = t, players = players })
+            end
+        end
 
-		return table.Random(min).team
-	end
+        return table.Random(min).team
+    end
 
-	function team.AutoAssign(ply)
-		ply:SetTeam(team.GetLeastPopulated())
-	end
+    function team.AutoAssign(ply)
+        ply:SetTeam(team.GetLeastPopulated())
+    end
 
-	function team._UpdateNWData()
-    	SetGlobalTable("teams", team._nwdata)
-	end
+    function team._UpdateNWData()
+        SetGlobalTable("teams", team._nwdata)
+    end
 elseif CLIENT then
-	function team.Think()
-		if team._count >= #team._nwdata then return end
+    function team.Think()
+        if team._count >= #team._nwdata then return end
 
-		for t = team._count + 1, #team._nwdata do
-			local data = team._nwdata[t]
-			team.SetUp(t, data.name, data.color, true)
-		end
-	end
+        for t = team._count + 1, #team._nwdata do
+            local data = team._nwdata[t]
+            team.SetUp(t, data.name, data.color, true)
+        end
+    end
 end
