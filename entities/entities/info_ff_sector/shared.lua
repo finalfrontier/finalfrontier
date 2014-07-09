@@ -46,7 +46,7 @@ if SERVER then
     local vertNames = {}
     for i = 1, 24 do vertNames[i] = tostring(i) end
 
-    local RESPAWN_DELAY = 300
+    local RESPAWN_DELAY = 15
 
     ENT._lastVisit = 0
 
