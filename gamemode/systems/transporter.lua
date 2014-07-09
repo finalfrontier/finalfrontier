@@ -85,7 +85,7 @@ if SERVER then
     function SYS:Initialize()
         self._nwdata.maxcharge = 0
         self._nwdata.charge = 0
-        self._nwdata.maxshields = 0.25
+        self._nwdata.maxshields = 0.1
         self:_UpdateNWData()
     end
 
