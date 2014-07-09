@@ -53,6 +53,17 @@ function GUI:Initialize()
 	end
 end
 
+function GUI:SetBounds(bounds)
+    self.Super[BASE].SetBounds(self, bounds)
+
+    self._nameButton:SetWidth(self:GetWidth() - self:GetHeight())
+    self._joinButton:SetWidth(self:GetHeight())
+    self._nameButton:SetHeight(self:GetHeight())
+    self._joinButton:SetHeight(self:GetHeight())
+
+    self._joinButton:SetOrigin(self._nameButton:GetRight(), 0)
+end
+
 function GUI:GetTeam()
 	return self._team	
 end
