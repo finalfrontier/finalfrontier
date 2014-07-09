@@ -139,3 +139,10 @@ function GM:SetupPlayerVisibility(ply)
         end
     end
 end
+
+function GM:ScalePlayerDamage(ply, hitgroup, dmginfo)
+    local attacker = dmginfo:GetAttacker()
+    if IsValid(attacker) and attacker:IsPlayer() and attacker:Team() == ply:Team() then
+        dmginfo:ScaleDamage(0)
+    end
+end
