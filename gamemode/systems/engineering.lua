@@ -60,10 +60,11 @@ if SERVER then
 
     function SYS:CalculatePowerNeeded(dt)
         if self:IsPerformingAction() then
+            local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
             if self._nwdata.action == engaction.COMPARE then
-                return 0.5
+                return 0.5 + score * 0.25
             else
-                return 1
+                return 2 + score
             end
         end
         return 0
@@ -136,12 +137,13 @@ if SERVER then
             end
 
             local last = self:GetActionProgress()
-            local prog = dt * self:GetPower() * 2 / self:GetPowerNeeded()
+            local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
+            local prog = dt * self:GetPower() * (1 + score * 2) * 2 / self:GetPowerNeeded()
             local index = math.min(math.floor(last) + 1, 16)
             if self._nwdata.action == engaction.COMPARE then
                 prog = prog / 2
             elseif left:IsDamaged(index) ~= right:IsDamaged(index) then
-                prog = prog / 8
+                prog = prog / 12
             end
 
             prog = math.min(1, prog)
