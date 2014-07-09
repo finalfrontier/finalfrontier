@@ -179,7 +179,7 @@ if SERVER then
             max = max + self:GetPos()
             local near = ents.FindInBox(min, max)
             for _, v in pairs(near) do
-                if v:GetClass() == "info_ff_moduleslot" then
+                if IsValid(v) and v:GetClass() == "info_ff_moduleslot" then
                     local type = v:GetModuleType()
                     if v:IsWeaponSlot() then
                         self:InsertIntoSlot(v:GetRoom(), type, v:GetPos())

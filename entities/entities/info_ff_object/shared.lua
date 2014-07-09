@@ -175,6 +175,8 @@ end
 
 if SERVER then
     function ENT:Think()
+        if not IsValid(self) then return end
+
         local x, y = self:GetCoordinates()
         local wx, wy = universe:WrapCoordinates(x, y)
         local phys = self:GetPhysicsObject()
