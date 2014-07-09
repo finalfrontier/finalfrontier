@@ -19,3 +19,23 @@ local BASE = "page"
 
 GUI.BaseName = BASE
 
+GUI.TeamList = nil
+GUI.Buttons = nil
+
+if SERVER then
+	function GUI:UpdateTeamList()
+		local _teamdata = team.GetAllTeams()
+		local _count = 0
+		for k, v in pairs(_teamdata) do
+			GUI.TeamList[count] = v.Name
+			count += 1
+		end
+	end
+	function GUI:UpdateLayout()
+		self:UpdateTeamList()
+		
+	end
+elseif CLIENT then
+
+
+end
