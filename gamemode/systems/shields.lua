@@ -24,7 +24,7 @@ if SERVER then
     resource.AddFile("materials/systems/shields.png")
 
     local SHIELD_RECHARGE_RATE = 2.5
-    local SHIELD_POWER_PER_M2 = 0.008
+    local SHIELD_POWER_PER_M2 = 0.004
     
     SYS._distrib = nil
     SYS._startTime = 0
@@ -46,13 +46,13 @@ if SERVER then
     function SYS:CalculatePowerNeeded()
         local totNeeded = 0
         for _, room in ipairs(self:GetShip():GetRooms()) do
+            local cost = 1
+            local shieldModule = room:GetModule(moduletype.SHIELDS)
+            if shieldModule then
+                cost = 1 - shieldModule:GetScore() * 0.75
+            end
             if self:GetDistrib(room) > 0 then
                 -- TODO: make continuous
-                local cost = 1
-                local shieldModule = room:GetModule(moduletype.SHIELDS)
-                if shieldModule then
-                    cost = 1.5 - shieldModule:GetScore()
-                end
                 local needed = room:GetSurfaceArea() * SHIELD_POWER_PER_M2 * cost
                 local goal = math.min(self:GetDistrib(room), room:GetMaximumShields())
                 if room:GetShields() < goal - 0.001 then
