@@ -19,23 +19,95 @@ local BASE = "page"
 
 GUI.BaseName = BASE
 
-GUI.TeamList = nil
+GUI.TeamList = {}
 GUI.Buttons = nil
 
-if SERVER then
-	function GUI:UpdateTeamList()
-		local _teamdata = team.GetAllTeams()
-		local _count = 0
-		for k, v in pairs(_teamdata) do
-			GUI.TeamList[count] = v.Name
-			_count += 1
+
+function GUI:UpdateTeamList()
+	local _teamdata = team.GetAllTeams()
+	local _count = 0
+	for k, v in pairs(_teamdata) do
+		GUI.TeamList[count] = v.Name
+		_count += 1
+	end
+end
+
+function GUI:UpdateButtons()
+	if self.Buttons then
+		for _, btn in pairs(self.Buttons) do
+			btn:Remove()
+		end
+		self.Buttons = nil
+	end
+	
+	self:UpdateTeamList()
+	if self.TeamList then
+		self.Buttons = {}
+		for i, team in ipairs(self.TeamList) do
+			local btn = sgui.Create(self, "teambutton")
+			btn:SetTeam(i)
+			btn:SetSize((self:GetWidth() - 16) / 2 - 4, 48)
+			btn:SetCentre(self:GetWidth() / 4, i * 48 - 16)
+			table.insert(self.Buttons, btn)
 		end
 	end
-	function GUI:UpdateLayout()
-		self:UpdateTeamList()
-		
+end
+
+function GUI:Enter()
+	self.Super[BASE].Enter(self)
+	if SERVER then
+		self:UpdateButtons()
 	end
-elseif CLIENT then
+end
 
+function GUI:Leave()
+	self.Super[BASE].Leave(self)
+	
+	self.TeamList = nil
+	self.Buttons = nil
+end
 
+if SERVER then
+    function GUI:UpdateLayout(layout)
+        self.Super[BASE].UpdateLayout(self, layout)
+
+        if not self.TeamList then
+            layout.teams = nil
+        else
+            if not layout.teams or #layout.teams > #self.TeamList then
+                layout.teams = {}
+            end
+
+            for i, team in ipairs(self.TeamList) do
+                layout.teams[i] = team
+            end
+        end
+    end    
+end
+
+if CLIENT then
+    function GUI:UpdateLayout(layout)
+        if layout.teams then
+            if not self.TeamList or #self.TeamList > #layout.teams then
+                self.TeamList = {}
+            end
+
+            local changed = false
+            for i, team in pairs(layout.teams) do
+                if not self.TeamList[i] or self.TeamList[i] ~= team then
+                    changed = true
+                    self.TeamList[i] = team
+                end
+            end
+
+            if changed then self:UpdateButtons() end
+        else
+            if self.TeamList then
+                self.TeamList = nil
+                self:UpdateButtons()
+            end
+        end
+
+        self.Super[BASE].UpdateLayout(self, layout)
+    end    
 end
