@@ -78,8 +78,6 @@ function GUI:Initialize()
 end
 
 function GUI:UpdatePermissions()
-    print("Permission: " .. self.Permission)
-
     if self.Pages[page.SYSTEM] then
         self.Tabs[page.SYSTEM].CanClick = self.Permission >= permission.SYSTEM
     end
