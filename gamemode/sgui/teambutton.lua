@@ -86,5 +86,6 @@ if CLIENT then
 				self._joinButton.Text = "+"
 			end
 		end
+		self.Super[BASE].Draw(self)
 	end
 end
