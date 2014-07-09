@@ -583,6 +583,16 @@ function ENT:GetPermissionsName()
     return "p_" .. self:GetShipName() .. "_" .. self:GetIndex()
 end
 
+function ENT:HasPlayerWithSecurityPermission()
+    for _, ply in ipairs(player.GetAll()) do
+        if IsValid(ply) and ply:HasPermission(self, permission.SECURITY) then
+            return true
+        end
+    end
+
+    return false
+end
+
 local ply_mt = FindMetaTable("Player")
 function ply_mt:GetPermission(room)
     return self:GetNWInt(room:GetPermissionsName(), 0)

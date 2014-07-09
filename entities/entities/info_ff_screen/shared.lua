@@ -343,7 +343,13 @@ if SERVER then
         ply:Give("weapon_ff_unarmed")
         ply:SelectWeapon("weapon_ff_unarmed")
 
-        self._ui.Permission = ply:GetPermission(self._room)
+        if not self._room:HasPlayerWithSecurityPermission() then
+            self._ui.Permission = permission.SECURITY
+        else
+            self._ui.Permission = ply:GetPermission(self._room)
+        end
+
+        self._ui:UpdatePermissions()
 
         if (self._lastPage == page.SECURITY and not ply:HasPermission(self._room, permission.SECURITY))
             or (self._lastPage == page.SYSTEM and not ply:HasPermission(self._room, permission.SYSTEM)) then
