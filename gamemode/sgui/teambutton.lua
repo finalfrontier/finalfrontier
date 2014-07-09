@@ -18,3 +18,73 @@
 local BASE = "container"
 
 GUI.BaseName = BASE
+
+GUI.SelectedColor = Color(200,200,200)
+GUI.NonSelectedColor = Color(109,109,109)
+GUI.OnTeamColor = Color(0,156,15)
+
+GUI._team = nil
+GUI._teamName = nil
+
+GUI._joinButton = nil
+GUI._nameButton = nil
+
+function GUI:UpdateNames()
+	self._teamName = team.GetName(self._team)
+	self._nameButton.Text = self._teamName
+end
+
+function GUI:Initialize()
+	self.Super[BASE].Initialize(self)
+	
+	self._joinButton = sgui.Create(self, "button")
+	self._nameButton = sgui.Create(self, "button")
+	
+	if SERVER then
+		self._joinbutton.OnClick = function(btn)
+			local ply = self:GetPlayer()
+			if ply:Team() == self._team then
+				ply:SetTeam(0)
+			else
+				ply:SetTeam(self._team)
+			end
+		end
+		self:UpdateNames()
+	end
+end
+
+function GUI:GetTeam()
+	return self._team	
+end
+
+
+function GUI:SetTeam(team)
+	self._team = team
+	self:UpdateNames()
+end
+
+if CLIENT then
+	function GUI:Draw()
+		if self._team then
+			self._joinButton.CanClick = true
+			local ply = self:GetPlayer()
+			if ply:Team() == self._team then
+				self._nameButton.Color = self.OnTeamColor
+			elseif self.nameButton:IsCursorInside() then
+				self._nameButton.Color = self.SelectedColor
+			else
+				self._nameButton.Color = self.UnSelectedColor
+			end
+			if self.joinButton:IsCursorInside() then
+				self._joinButton.Color = self.SelectedColor
+			else
+				self._joinButton.Color = self.UnSelectedColor
+			end
+			if ply:Team() == self._team then
+				self._joinButton.Text = "-"
+			else
+				self._joinButton.Text = "+"
+			end
+		end
+	end
+end
