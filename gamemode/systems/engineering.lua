@@ -149,6 +149,7 @@ if SERVER then
             prog = math.min(1, prog)
             local next = math.min(17, last + prog)
             if math.floor(last) ~= math.floor(next) then
+                next = math.floor(next)
                 if next == 17 then
                     if self._nwdata.action == engaction.COMPARE then
                         local lscore = left:GetScore()
@@ -168,19 +169,15 @@ if SERVER then
 
                     self:Reset()
                     return
-                end
-                
-                local index = math.floor(next)
-
-                if index > 0 then
-                    self:UpdateSounds(math.max(1, index + 1))
+                elseif next > 0 then
+                    self:UpdateSounds(math.max(1, next + 1))
 
                     if self._nwdata.action == engaction.SPLICE then
-                        left:Splice(right, index)
-                        right:Splice(left, index)
+                        left:Splice(right, next)
+                        right:Splice(left, next)
                     elseif self._nwdata.action == engaction.TRANSCRIBE then
-                        left:Transcribe(right, index)
-                        right:Transcribe(left, index)
+                        left:Transcribe(right, next)
+                        right:Transcribe(left, next)
                     end
                 end
             elseif self._nwdata.action ~= engaction.COMPARE

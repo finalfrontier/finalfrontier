@@ -77,6 +77,7 @@ end
 
 function ENT:Open()
     if not self._hatch then return end
+    self._open = true
     self._hatch:Fire("Unlock", "", 0)
     self._hatch:Fire("Open", "", 0)
     self._hatch:Fire("Lock", "", 0)
@@ -84,6 +85,7 @@ end
 
 function ENT:Close()
     if not self._hatch then return end
+    self._open = false
     self._hatch:Fire("Unlock", "", 0)
     self._hatch:Fire("Close", "", 0)
     self._hatch:Fire("Lock", "", 0)
