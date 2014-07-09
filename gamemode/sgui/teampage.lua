@@ -28,7 +28,7 @@ if SERVER then
 		local _count = 0
 		for k, v in pairs(_teamdata) do
 			GUI.TeamList[count] = v.Name
-			count += 1
+			_count += 1
 		end
 	end
 	function GUI:UpdateLayout()
