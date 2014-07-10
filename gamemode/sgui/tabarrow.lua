@@ -7,13 +7,14 @@ GUI.CanClick = true
 GUI.DisabledColor = Color(86,86,86)
 GUI.Color = Color(244,244,244)
 
-GUI._currentPage = 0
 GUI._direction = 0
+
+local _currentPage = nil
 
 local _directionTable = {-1 = "◄", 1 = "►"}
 
 function GUI:OnClick(x, y, button)
-	self._currentPage = self.currentPage + self._direction
+	_currentPage = _currentPage + self._direction
 end
 
 --Using Direction requires either 0 (left) or 2 (right) for now
@@ -22,6 +23,14 @@ function GUI:SetDirection(direction)
 		self.Text = _directionTable[direction]
 		self._direction = direction - 1
 	end
+end
+
+function GUI:SetCurrentPage(page)
+	_currentPage = page	
+end
+
+function GUI:GetCurrentPage()
+	return _currentPage	
 end
 
 if CLIENT then
