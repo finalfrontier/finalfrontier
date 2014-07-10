@@ -61,7 +61,7 @@ if SERVER then
 
     function ENT:Purge()
         for _, ent in ipairs(ents.FindInBox(self:GetBoundingBox())) do
-            if ent:GetClass() == "info_ff_object" and ent:GetObjectType() ~= objtype.SHIP then
+            if IsValid(ent) and ent:GetClass() == "info_ff_object" and ent:GetObjectType() ~= objtype.SHIP then
                 local mdl = ent:GetModule()
                 if IsValid(mdl) then mdl:Remove() end
 

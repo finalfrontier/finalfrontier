@@ -160,10 +160,12 @@ function ENT:Think()
     local max = Vector(bounds.r, bounds.b, 65536)
 
     for _, ent in pairs(ents.FindInBox(min, max)) do
-        local pos = ent:GetPos()
-        if ent:IsPlayer() and self:IsPointInside(pos.x, pos.y)
-            and ent:GetRoom() ~= self then
-            ent:SetRoom(self)
+        if IsValid(ent) then
+            local pos = ent:GetPos()
+            if ent:IsPlayer() and self:IsPointInside(pos.x, pos.y)
+                and ent:GetRoom() ~= self then
+                ent:SetRoom(self)
+            end
         end
     end
 

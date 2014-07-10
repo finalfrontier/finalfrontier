@@ -322,13 +322,15 @@ if SERVER then
     end
 
     function ENT:Think()
+        if not IsValid(self) then return end
+
         if not self:IsInSlot() then
             local min, max = self:GetCollisionBounds()
             min = min + self:GetPos() - Vector(0, 0, 8)
             max = max + self:GetPos()
             local near = ents.FindInBox(min, max)
             for _, v in pairs(near) do
-                if v:GetClass() == "info_ff_moduleslot" then
+                if IsValid(v) and v:GetClass() == "info_ff_moduleslot" then
                     local type = v:GetModuleType()
                     if type == self:GetModuleType() or v:IsRepairSlot() then
                         self:InsertIntoSlot(v:GetRoom(), type, v:GetPos())

@@ -191,6 +191,8 @@ if SERVER then
     end
 elseif CLIENT then
     function ENT:Think()
+        if not IsValid(self) then return end
+        
         if not self._weapon then
             local name = self:GetWeaponName()
             local tier = self:GetWeaponTier()
