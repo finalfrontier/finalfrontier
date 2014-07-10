@@ -25,6 +25,8 @@ GUI.Color = Color(191, 191, 191, 255)
 
 GUI._tabs = nil
 GUI._current = 0
+GUI._pages = nil
+GUI._currentPage = 0
 
 function GUI:Initialize()
     self.Super[BASE].Initialize(self)
@@ -50,6 +52,7 @@ function GUI:TabPageCheck()
 	if #self._tabs > TAB_PAGE_MAX then
 		return true
 	else
+		self._currentPage = 0
 		return false
 	end
 end
@@ -60,20 +63,33 @@ function GUI:AddArrow(direction)
 	return arrow
 end
 
+function GUI:UpdatePages()
+	self._pages = {}
+	for i, v in ipairs(self._tabs) do
+		local count = i / TAB_PAGE_MAX
+		self._pages[count] = self._pages[count] + v
+	end
+end
+
 function GUI:CreateTabPages(arrow_location, margin)
 	if not self:TabPageCheck() then return false end
-	local pages = #self._tabs / TAB_PAGE_MAX
+	local pageNum = #self._tabs / TAB_PAGE_MAX
 	local leftover_pages = #self._tabs % TAB_PAGE_MAX
 	local right = self:GetWidth() - arrow_location
 	local left = arrow_location
 	
-	local left_arrow = self:AddArrow("left")
-	local right_arrow = self:AddArrow("right")
+	local left_arrow = self:AddArrow(0)
+	local right_arrow = self:AddArrow(2)
 	
 	left_arrow:SetHeight(self:GetHeight() - margin * 2)
 	right_arrow:SetHeight(self:GetHeight() - margin * 2)
 	left_arrow:SetWidth(left)
 	right_arrow:SetWidth(right)
+	
+	GUI:UpdatePages()
+	
+	left_arrow:SetPageAmount(#GUI._pages)
+	right_arrow:SetPageAmount(#GUI._pages)
 end
 
 function GUI:SetBounds(bounds)
