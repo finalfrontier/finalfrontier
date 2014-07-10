@@ -90,7 +90,7 @@ function GM:PlayerInitialSpawn(ply)
 
     ply:SetModel(table.Random(models))
     ply:SetCanWalk(true)
-
+    
     team.AutoAssign(ply)
 
     GAMEMODE:SetPlayerSpeed(ply, 175, 250)
@@ -105,7 +105,8 @@ function GM:PlayerSpawn(ply)
     ply:SetShip(ship)
 
     ply:Give("weapon_crowbar")
-
+    ply:Give("weapon_ff_repair_tool")
+    
     TeleportArriveEffect(ply, ply:GetPos())
 end
 
