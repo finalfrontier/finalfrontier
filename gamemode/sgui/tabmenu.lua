@@ -17,6 +17,7 @@
 
 local BLACK = Color(0, 0, 0, 255)
 local BASE = "container"
+local TAB_PAGE_MAX = 4
 
 GUI.BaseName = BASE
 
@@ -43,6 +44,36 @@ function GUI:AddTab(text)
     end
 
     return tab
+end
+
+function GUI:TabPageCheck()
+	if #self._tabs > TAB_PAGE_MAX then
+		return true
+	else
+		return false
+	end
+end
+
+function GUI:AddArrow(direction)
+	local arrow = sgui.Create(self, "tabarrow")
+	arrow:SetDirection(direction)
+	return arrow
+end
+
+function GUI:CreateTabPages(arrow_location, margin)
+	if not self:TabPageCheck() then return false end
+	local pages = #self._tabs / TAB_PAGE_MAX
+	local leftover_pages = #self._tabs % TAB_PAGE_MAX
+	local right = self:GetWidth() - arrow_location
+	local left = arrow_location
+	
+	local left_arrow = self:AddArrow("left")
+	local right_arrow = self:AddArrow("right")
+	
+	left_arrow:SetHeight(self:GetHeight() - margin * 2)
+	right_arrow:SetHeight(self:GetHeight() - margin * 2)
+	left_arrow:SetWidth(left)
+	right_arrow:SetWidth(right)
 end
 
 function GUI:SetBounds(bounds)
@@ -99,7 +130,7 @@ end
 
 function GUI:UpdateTabPositions()
     local margin = 8
-    local width = (self:GetWidth() - margin) / self:GetTabCount()
+    local width = (self:GetWidth() - margin) / TAB_PAGE_MAX
 
     local left = margin
 
