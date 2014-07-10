@@ -9,7 +9,8 @@ GUI.Color = Color(244,244,244)
 
 GUI._direction = 0
 
-local _currentPage = nil
+local _currentPage = 0
+local _amountOfPages = 1
 
 local _directionTable = {-1 = "◄", 1 = "►"}
 
@@ -23,6 +24,10 @@ function GUI:SetDirection(direction)
 		self.Text = _directionTable[direction]
 		self._direction = direction - 1
 	end
+end
+
+function GUI:SetPageAmount(amount)
+	_amountOfPages = amount
 end
 
 function GUI:SetCurrentPage(page)
