@@ -73,6 +73,10 @@ function SYS:GetLongScanRange()
     return self._nwdata.scanrange or 0.1
 end
 
+function SYS:IsAutoScan()
+    return self._nwdata.autoscan
+end
+
 if SERVER then
     resource.AddFile("materials/systems/sensors.png")
 
@@ -89,6 +93,7 @@ if SERVER then
         self._nwdata.scanspeed = 2
         self._nwdata.scandelay = 5
         self._nwdata.scanstart = -1000
+        self._nwdata.autoscan = false
         self:_UpdateNWData()
     end
 
@@ -118,9 +123,18 @@ if SERVER then
             needsUpdate = true
         end
 
+        if self._nwdata.charge == self._nwdata.maxcharge and self:IsAutoScan() then
+            self:StartScan()
+        end
+
         if needsUpdate then
             self:_UpdateNWData()
         end
+    end
+
+    function SYS:SetAutoScan(val)
+        self._nwdata.autoscan = val ~= false
+        self:_UpdateNWData()
     end
 
     function SYS:StartScan()
