@@ -49,7 +49,16 @@ function _mt:Render(origin, vel)
         pos.y = pos.y + 256
     end
 
-    render.DrawQuadEasy(pos, -pos:GetNormalized(), self._scale, self._scale, self._clr, 0)
+    local dist = pos:Length()
+    local clr = self._clr
+
+    if dist > 96 then
+        clr.a = math.Round(math.max(0, (128 - dist) / 32) * 255)
+    elseif dist < 8 then
+        clr.a = math.Round(dist / 8 * 255)
+    end
+
+    render.DrawQuadEasy(pos, -pos:GetNormalized(), self._scale, self._scale, clr, 0)
 end
 
 function Star(pos, scale, clr)
@@ -63,7 +72,7 @@ local function _GenerateStars()
     _stars = {}
 
     for i = 1, 256 do
-        local scale = math.pow(math.random(), 2) + 4
+        local scale = math.pow(math.random(), 2) + 2
         local shift = math.random() * 2 - 1
 
         local pos = Vector(
@@ -72,9 +81,9 @@ local function _GenerateStars()
             math.random() * 128 - 64)
 
         local clr = Color(
-            math.floor(240 + shift * 16),
-            math.floor(255 - math.abs(shift) * 2),
-            math.floor(240 - shift * 16),
+            math.floor(224 + shift * 32),
+            math.floor(255 - math.abs(shift) * 32),
+            math.floor(224 - shift * 32),
             255)
 
         table.insert(_stars, Star(pos, scale, clr))
@@ -108,7 +117,7 @@ function GM:PostDraw2DSkyBox()
     cam.PopModelMatrix()
 
     if not _stars then _GenerateStars() end
-    if not _starMat then _starMat = Material("tempstar.png", "smooth unlitgeneric") end
+    if not _starMat then _starMat = Material("star.png", "smooth unlitgeneric") end
 
     local obj = LocalPlayer():GetShip():GetObject()
 
