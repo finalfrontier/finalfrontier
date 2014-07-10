@@ -42,7 +42,7 @@ end
 function SYS:IsObjectTeleportable(obj)
     return IsValid(obj) and obj:GetClass() == "info_ff_object"
         and self:GetShip():IsObjectInRange(obj)
-        and self:IsEntityTeleportable(obj:GetNWEntity("module"))
+        and self:IsEntityTeleportable(obj:GetModule())
 end
 
 if SERVER then
@@ -77,29 +77,47 @@ if SERVER then
 
     function SYS:CalculatePowerNeeded()
         if self:GetCurrentCharge() < self:GetMaximumCharge() then
-            return 2
+            return 1 + self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER) * 2
         end
         return 0
     end
 
     function SYS:Initialize()
-        self._nwdata.maxcharge = 1
-        self._nwdata.charge = 1
-        self._nwdata.maxshields = 0.25
+        self._nwdata.maxcharge = 0
+        self._nwdata.charge = 0
+        self._nwdata.maxshields = 0.1
         self:_UpdateNWData()
     end
 
+    SYS._oldScore = 0
+
     function SYS:Think(dt)
-        self._nwdata.maxcharge = math.max(1, self:GetRoom():GetModuleScore(moduletype.systempower) * 4)
+        local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
+        local changed = false
+
+        if score ~= self._oldScore then
+            self._oldScore = score
+
+            if self._nwdata.maxcharge == 0 then
+                self._nwdata.charge = 1 + score * 3
+            end
+
+            self._nwdata.maxcharge = 1 + score * 3
+
+            changed = true
+        end
 
         if self._nwdata.charge < self._nwdata.maxcharge then
             self._nwdata.charge = math.min(self._nwdata.maxcharge, self._nwdata.charge
                 + RECHARGE_RATE * dt * self:GetPower())
-            self:_UpdateNWData()
+
+            changed = true
         elseif self._nwdata.charge > self._nwdata.maxcharge then
             self._nwdata.charge = self._nwdata.maxcharge
-            self:_UpdateNWData()
+            changed = true
         end
+        
+        if changed then self:_UpdateNWData() end
     end
 
     function SYS:GetChargeCost(ent)
@@ -117,7 +135,8 @@ if SERVER then
     function SYS:StartTeleport(roomOrObj)
         if self._teleporting then return end
 
-        if roomOrObj:GetClass() == "info_ff_object" and not self:IsObjectTeleportable(roomOrObj) then
+        if IsValid(roomOrObj) and roomOrObj:GetClass() == "info_ff_object"
+            and not self:IsObjectTeleportable(roomOrObj) then
             return
         end
 
@@ -132,13 +151,13 @@ if SERVER then
         
         local pads = self:GetRoom():GetTransporterPads()
 
-        if roomOrObj:GetClass() == "info_ff_room" then
+        if not IsValid(roomOrObj) or roomOrObj:GetClass() == "info_ff_room" then
             local room = roomOrObj
             local sent = {}
 
-            if room:GetShip() == self:GetShip() or room:GetShields() < self:GetShieldThreshold() then
+            if not IsValid(room) or room:GetShip() == self:GetShip() or room:GetShields() < self:GetShieldThreshold() then
                 local toSend = {}
-                local available = room:GetAvailableTransporterTargets()
+                local available = (IsValid(room) and room:GetAvailableTransporterTargets()) or nil
                 local dests = {}
                 for i, pad in ipairs(pads) do
                     local inRange = ents.FindInSphere(pad, 32)
@@ -150,10 +169,14 @@ if SERVER then
                         end
                     end
 
-                    if added then
-                        local index = math.floor(math.random() * #available) + 1
-                        dests[i] = available[index]
-                        table.remove(available, index)
+                    if added and available then
+                        if #available > 0 then
+                            local index = math.floor(math.random() * #available) + 1
+                            dests[i] = available[index]
+                            table.remove(available, index)
+                        else
+                            dests[i] = table.Random(room:GetAvailableTransporterTargets())
+                        end
                     end
                 end
 
@@ -162,8 +185,11 @@ if SERVER then
                     local ent = toSend[index].ent
                     local pad = toSend[index].pad
                     table.remove(toSend, index)
-                    if dests[pad] and self:TeleportEntity(ent, pads[pad], dests[pad]) then
-                        sent[index] = true
+
+                    if IsValid(room) and dests[pad] and self:TeleportEntity(ent, pads[pad], dests[pad]) then
+                        sent[pad] = true
+                    elseif self:TeleportEntity(ent, pads[pad], nil) then
+                        sent[pad] = true
                     end
                 end
             end
@@ -178,9 +204,11 @@ if SERVER then
 
             if not self:IsObjectTeleportable(obj) then self:TeleportFailEffect() return end
             
-            local mdl = obj:GetNWEntity("module")
+            local mdl = obj:GetModule()
 
             if not self:IsEntityTeleportable(mdl) then self:TeleportFailEffect() return end
+
+            obj:UnassignModule()
 
             if not self:TeleportEntity(mdl, mdl:GetPos(), table.Random(pads)) then
                 self:TeleportFailEffect()
@@ -235,14 +263,41 @@ if SERVER then
         self:_UpdateNWData()
 
         local oldpos = ent:GetPos()
-        local newpos = ent:GetPos() - pad + dest
+        local newpos = ent:GetPos() - pad + (dest or Vector(0, 0, 0))
 
-        ent:SetPos(newpos)
+        if dest then
+            ent:SetPos(newpos)
+        else
+            if ent:IsPlayer() then
+                ent:Kill()
+            else
+                if ent:GetClass() == "prop_ff_module" or ent:GetClass() == "prop_ff_weaponmodule" then
+                    local obj = ents.Create("info_ff_object")
+                    obj:SetCoordinates(self:GetShip():GetCoordinates())
+                    obj:SetObjectType(objtype.MODULE)
+                    obj:Spawn()
+
+                    local vx, vy = self:GetShip():GetVel()
+                    local dir = (math.random() * 2 - 1) * math.pi
+
+                    if vx * vx + vy * vy >= 1 / (64 * 64) then
+                        dir = dir / 8 + math.atan2(-vy, -vx)
+                    end
+
+                    obj:SetVel(vx + math.cos(dir) / 64, vy + math.sin(dir) / 64)
+                    obj:AssignModule(ent)
+                else
+                    timer.Simple(0.5, function()
+                        if IsValid(ent) then ent:Remove() end
+                    end)
+                end
+            end
+        end
 
         if ent:IsPlayer() then
             local ship = ships.FindCurrentShip(ent)
             if ship then ent:SetShip(ship) end
-        else
+        elseif IsValid(ent) then
             local phys = ent:GetPhysicsObject()
             if phys and IsValid(phys) then
                 phys:Wake()
@@ -250,7 +305,10 @@ if SERVER then
         end
 
         TeleportDepartEffect(ent, oldpos)
-        TeleportArriveEffect(ent, newpos)
+
+        if dest then
+            TeleportArriveEffect(ent, newpos)
+        end
 
         return true
     end

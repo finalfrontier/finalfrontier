@@ -43,8 +43,14 @@ ENT._warnLightBrushes = nil
 ENT._hazardEnd = 0
 
 function ENT:KeyValue(key, value)
+    if not self._nwdata then self._nwdata = {} end
+
     if key == "health" then
         self:_SetBaseHealth(tonumber(value))
+    elseif key == "name" then
+        self:_SetFullName(tostring(value))
+    elseif key == "color" then
+        self:_SetUIColor(tostring(value))
     elseif key == "mainlight" then
         self._mainLightName = tostring(value)
     elseif key == "warnlight" then
@@ -122,7 +128,7 @@ end
 function ENT:InitPostEntity()
     self._nwdata.object = ents.Create("info_ff_object")
     self._nwdata.object:SetCoordinates(5 + math.random() * 0.2 - 0.1, 9 + math.random() * 0.2 - 0.1)
-    self._nwdata.object:SetObjectType(objtype.ship)
+    self._nwdata.object:SetObjectType(objtype.SHIP)
     self._nwdata.object:SetObjectName(self:GetName())
     self._nwdata.object:Spawn()
     self._nwdata.object:SetRotation(math.random() * 360)
@@ -191,14 +197,36 @@ function _mt:GetOrigin()
 end
 
 function ENT:_SetBaseHealth(health)
-    if not self._nwdata then self._nwdata = {} end
-
     self._nwdata.basehealth = health
     self:_UpdateNWData()
 end
 
 function ENT:GetBaseHealth()
     return self._nwdata.basehealth
+end
+
+function ENT:_SetFullName(value)
+    self._nwdata.fullname = value
+    self:_UpdateNWData()
+end
+
+function ENT:GetFullName()
+    return self._nwdata.fullname or "Unnamed"
+end
+
+function ENT:_SetUIColor(value)
+    if type(value) == "string" then
+        local split = string.Split(value, " ")
+        self._nwdata.uicolor = Color(tonumber(split[1]), tonumber(split[2]), tonumber(split[3]), 255)
+    else
+        self._nwdata.uicolor = value
+    end
+
+    self:_UpdateNWData()
+end
+
+function ENT:GetUIColor()
+    return self._nwdata.uicolor or Color(255, 255, 255, 255)
 end
 
 function ENT:AddRoom(room)
@@ -293,6 +321,14 @@ function ENT:_RemovePlayer(ply)
 end
 
 function ENT:GetPlayers()
+    local i = #self._players
+    while i > 0 do
+        if not IsValid(self._players[i]) then
+            table.remove(self._players, i)
+        end
+        i = i - 1
+    end
+
     return self._players
 end
 

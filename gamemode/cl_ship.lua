@@ -103,6 +103,14 @@ function _mt:GetOrigin()
     return self._nwdata.x, self._nwdata.y
 end
 
+function _mt:GetFullName()
+    return self._nwdata.fullname or "Unnamed"
+end
+
+function _mt:GetUIColor()
+    return self._nwdata.uicolor or Color(255, 255, 255, 255)
+end
+
 function _mt:GetRoomNames()
     return self._nwdata.roomnames or {}
 end

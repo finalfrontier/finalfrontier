@@ -1,3 +1,9 @@
 [submodule "gamemode/gmtools"]
 	path = gamemode/gmtools
 	url = https://github.com/Metapyziks/gmtools.git
+[submodule "content/maps"]
+	path = content/maps
+	url = https://github.com/finalfrontier/maps.git
+[submodule "content/materials"]
+	path = content/materials
+	url = https://github.com/finalfrontier/materials.git

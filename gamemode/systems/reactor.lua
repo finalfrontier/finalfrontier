@@ -28,15 +28,9 @@ if SERVER then
     function SYS:Initialize()
         self._limits = {}
 
+        self._nwdata.total = 0
         self._nwdata.needed = 0
         self._nwdata.supplied = 0
-        self:SetTotalPower(100)
-    end
-
-    function SYS:SetTotalPower(value)
-        self._nwdata.total = value
-        self:CaculatePower()
-        self:_UpdateNWData()
     end
 
     function SYS:SetSystemLimitRatio(system, limit)
@@ -57,7 +51,7 @@ if SERVER then
             if room:GetSystem() and room:GetSystem().Powered then
                 local needed = room:GetSystem():CalculatePowerNeeded(dt)
                 room:GetSystem():SetPowerNeeded(needed)
-                local powerModule = room:GetModule(moduletype.systempower)
+                local powerModule = room:GetModule(moduletype.SYSTEM_POWER)
                 if powerModule then
                     needed = needed * (1 - powerModule:GetDamaged() / 16)
                 else
@@ -80,7 +74,7 @@ if SERVER then
         for _, room in pairs(self:GetShip():GetRooms()) do
             if room:GetSystem() and room:GetSystem().Powered then
                 local needed = room:GetSystem():CalculatePowerNeeded(dt)
-                local powerModule = room:GetModule(moduletype.systempower)
+                local powerModule = room:GetModule(moduletype.SYSTEM_POWER)
                 if powerModule then
                     needed = needed * (1 - powerModule:GetDamaged() / 16)
                 else
@@ -91,14 +85,25 @@ if SERVER then
             end
         end
 
+        self._nwdata.total = self:GetTotalPower()
+
         self:_UpdateNWData()
     end
 
     function SYS:Think(dt)
         self:CaculatePower(dt)
     end
+
+    function SYS:GetTotalPower()
+        local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
+        return 5 + score * 20
+    end
 elseif CLIENT then
     SYS.Icon = Material("systems/reactor.png", "smooth")
+
+    function SYS:GetTotalPower()
+        return self._nwdata.total
+    end
 end
 
 function SYS:GetTotalNeeded()
@@ -109,6 +114,3 @@ function SYS:GetTotalSupplied()
     return self._nwdata.supplied
 end
 
-function SYS:GetTotalPower()
-    return self._nwdata.total
-end

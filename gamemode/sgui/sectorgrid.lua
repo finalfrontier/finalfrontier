@@ -18,6 +18,7 @@
 local BASE = "base"
 
 GUI.BaseName = BASE
+GUI.CanClick = true
 
 GUI._scale = 256
 if CLIENT then
@@ -28,11 +29,9 @@ end
 
 GUI._centreObj = nil
 
-GUI.CanClick = true
-
 function GUI:SetCentreObject(obj)
     obj = obj or self:GetShip():GetObject()
-    if not self:GetCentreObject() then
+    if not self._centreObj then
         self._curX, self._curY = obj:GetCoordinates()
     end
     self._centreObj = obj
@@ -191,8 +190,13 @@ elseif CLIENT then
 
         -- Easing
         self._curScale = self._curScale + (self._scale - self._curScale) * 0.1
-        self._curX = self._curX + (x - self._curX) * 0.1
-        self._curY = self._curY + (y - self._curY) * 0.1
+
+        local dx, dy = universe:GetDifference(self._curX, self._curY, x, y)
+
+        self._curX = self._curX + dx * 0.1
+        self._curY = self._curY + dy * 0.1
+
+        self._curX, self._curY = universe:WrapCoordinates(self._curX, self._curY)
 
         x, y = self:GetCentreCoordinates()
         local ox, oy = self:GetGlobalOrigin()
@@ -242,7 +246,7 @@ elseif CLIENT then
                 local size = Pulse(1) * 4 + 16
                 surface.DrawOutlinedRect(sx + ox - size, sy + oy - size, size * 2, size * 2)
             else
-                local size = Pulse(1) * 4 + 16
+                local size = Pulse(1) * 2 + 4
 
                 local nx, ny = piloting:GetTargetAcceleration()
                 local rx, ry = -ny, nx
@@ -272,15 +276,15 @@ elseif CLIENT then
                 end
 
                 local ot = obj:GetObjectType()
-                if ot == objtype.ship or ot == objtype.missile then
-                    if ot == objtype.ship then
+                if ot == objtype.SHIP or ot == objtype.MISSILE then
+                    if ot == objtype.SHIP then
                         surface.SetMaterial(SHIP_ICON)
                         if obj == ship:GetObject() then
                             surface.SetDrawColor(Color(51, 172, 45, 255))
                         else 
                             surface.SetDrawColor(Color(172, 45, 51, 191))
                         end
-                    elseif ot == objtype.missile then
+                    elseif ot == objtype.MISSILE then
                         surface.SetMaterial(MISSILE_ICON)
                         surface.SetDrawColor(Color(172, 45, 51, 191))
                     end
@@ -289,7 +293,7 @@ elseif CLIENT then
                     draw.NoTexture()
                 else
                     surface.SetDrawColor(Color(172, 45, 51, 127))
-                    if ot == objtype.module then
+                    if ot == objtype.MODULE then
                         surface.DrawRect(sx + ox - 4 * scale, sy + oy - 4 * scale,
                             8 * scale, 8 * scale)
                     else

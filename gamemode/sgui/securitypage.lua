@@ -19,25 +19,33 @@ local BASE = "page"
 
 GUI.BaseName = BASE
 
-GUI.PlayerList = nil
-GUI.Buttons = nil
+GUI.PermNoneColor = Color(127, 127, 127, 255)
+GUI.PermAccessColor = Color(45, 51, 172, 255)
+GUI.PermSystemColor = Color(51, 172, 45, 255)
+GUI.PermSecurityColor = Color(172, 45, 51, 255)
+
+GUI._playerList = nil
+GUI._buttons = nil
 
 function GUI:UpdateButtons()
-    if self.Buttons then
-        for _, btn in pairs(self.Buttons) do
+    if self._buttons then
+        for _, btn in pairs(self._buttons) do
             btn:Remove()
         end
-        self.Buttons = nil
+        self._buttons = nil
     end
 
-    if self.PlayerList then
-        self.Buttons = {}
-        for i, ply in ipairs(self.PlayerList) do
+    if self._playerList then
+        self._buttons = {}
+        for i, ply in ipairs(self._playerList) do
+            if i > 12 then break end
             local btn = sgui.Create(self, "securitybutton")
             btn:SetPlayer(ply)
             btn:SetSize((self:GetWidth() - 16) / 2 - 4, 48)
-            btn:SetCentre(self:GetWidth() / 4, i * 48 - 16)
-            table.insert(self.Buttons, btn)
+            btn:SetCentre(self:GetWidth() / 4
+                + math.floor((i - 1) / 6) * self:GetWidth() / 2,
+                ((i - 1) % 6) * 48 + 32)
+            table.insert(self._buttons, btn)
         end
     end
 end
@@ -45,9 +53,25 @@ end
 function GUI:Enter()
     self.Super[BASE].Enter(self)
 
+    local function keyLabel(index, text, clr)
+        local lbl = sgui.Create(self, "label")
+        lbl.Text = text
+        lbl:SetSize((self:GetWidth() - 32) / 5 + 16, 64)
+        lbl:SetCentre((self:GetWidth() - 32) * (2 * index + 1) / 10 + 16, self:GetHeight() - 32)
+        lbl.AlignX = TEXT_ALIGN_CENTER
+        lbl.AlignY = TEXT_ALIGN_CENTER
+        lbl.Color = clr or lbl.Color
+    end
+
+    keyLabel(0, "COLOR KEY:", Color(64, 64, 64, 255))
+    keyLabel(1, "NONE", self.PermNoneColor)
+    keyLabel(2, "ACCESS", self.PermAccessColor)
+    keyLabel(3, "SYSTEM", self.PermSystemColor)
+    keyLabel(4, "SECURITY", self.PermSecurityColor)
+
     if SERVER then
-        self.PlayerList = self:GetShip():GetPlayers()
-        table.sort(self.PlayerList, function(a, b)
+        self._playerList = self:GetShip():GetPlayers()
+        table.sort(self._playerList, function(a, b)
             return self:GetScreen():GetPos():DistToSqr(a:GetPos())
                 < self:GetScreen():GetPos():DistToSqr(b:GetPos())
         end)
@@ -59,22 +83,22 @@ end
 function GUI:Leave()
     self.Super[BASE].Leave(self)
 
-    self.PlayerList = nil
-    self.Buttons = nil
+    self._playerList = nil
+    self._buttons = nil
 end
 
 if SERVER then
     function GUI:UpdateLayout(layout)
         self.Super[BASE].UpdateLayout(self, layout)
 
-        if not self.PlayerList then
+        if not self._playerList then
             layout.players = nil
         else
-            if not layout.players or #layout.players > #self.PlayerList then
+            if not layout.players or #layout.players > #self._playerList then
                 layout.players = {}
             end
 
-            for i, ply in ipairs(self.PlayerList) do
+            for i, ply in ipairs(self._playerList) do
                 layout.players[i] = ply
             end
         end
@@ -84,22 +108,22 @@ end
 if CLIENT then
     function GUI:UpdateLayout(layout)
         if layout.players then
-            if not self.PlayerList or #self.PlayerList > #layout.players then
-                self.PlayerList = {}
+            if not self._playerList or #self._playerList > #layout.players then
+                self._playerList = {}
             end
 
             local changed = false
             for i, ply in pairs(layout.players) do
-                if not self.PlayerList[i] or self.PlayerList[i] ~= ply then
+                if not self._playerList[i] or self._playerList[i] ~= ply then
                     changed = true
-                    self.PlayerList[i] = ply
+                    self._playerList[i] = ply
                 end
             end
 
             if changed then self:UpdateButtons() end
         else
-            if self.PlayerList then
-                self.PlayerList = nil
+            if self._playerList then
+                self._playerList = nil
                 self:UpdateButtons()
             end
         end

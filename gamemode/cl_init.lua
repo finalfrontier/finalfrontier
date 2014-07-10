@@ -15,12 +15,6 @@
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
--- Client Initialization
--- Includes
-
--- jit.on()
-
-
 include("gmtools/nwtable.lua")
 
 include("sh_init.lua")
@@ -37,6 +31,7 @@ include("cl_ships.lua")
 include("sh_teams.lua")
 include("cl_universe.lua")
 include("cl_scoreboard.lua")
+include("cl_skypaint.lua")
 
 WHITE = Material("vgui/white")
 CIRCLE = Material("circle.png", "smooth")
@@ -128,6 +123,7 @@ end
 
 function GM:Think()
     ships.Think()
+    team.Think()
 end
 
 function GM:HUDWeaponPickedUp(weapon)
@@ -150,10 +146,6 @@ function GM:PlayerBindPress(ply, bind, pressed)
     end
 end
 
---[[function GM:HUDDrawTargetID()
-    return false
-end
-
 function GM:DrawDeathNotice(x, y)
     return false
-end]]
+end

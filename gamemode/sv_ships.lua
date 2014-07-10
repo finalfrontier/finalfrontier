@@ -30,6 +30,8 @@ function ships.Add(ship)
     table.insert(ships._nwdata, name)
     ships._UpdateNWData()
 
+    team.Add(ship)
+
     local x, y = ship:GetCoordinates()
     local sector = universe:GetSector(x, y)
     MsgN("Ship added in sector " .. sector:GetSectorName()

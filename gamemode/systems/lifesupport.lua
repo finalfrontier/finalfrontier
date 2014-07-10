@@ -23,10 +23,10 @@ SYS.Powered = true
 if SERVER then
     resource.AddFile("materials/systems/lifesupport.png")
 
-    local TEMP_POWER_PER_METER3 = 2
-    local TEMP_RECHARGE_RATE = 2
-    local ATMO_POWER_PER_METER3 = 1
-    local ATMO_RECHARGE_RATE = 10
+    local TEMP_POWER_PER_METER3 = 0.25
+    local TEMP_RECHARGE_RATE = 5
+    local ATMO_POWER_PER_METER3 = 0.5
+    local ATMO_RECHARGE_RATE = 25
 
     SYS._atmo = nil
     SYS._temp = nil
@@ -57,10 +57,10 @@ if SERVER then
         for _, room in ipairs(self:GetShip():GetRooms()) do
             local score = 0
             local cost = 1
-            local lifeModule = room:GetModule(moduletype.lifesupport)
+            local lifeModule = room:GetModule(moduletype.LIFE_SUPPORT)
             if lifeModule then
-                score = lifeModule:GetScore() * 2
-                cost = 2 - score * 0.5
+                score = lifeModule:GetScore()
+                cost = 1 - score * 0.75
             end
             if self:GetGoalTemperature(room) ~= -1 then
                 totNeeded = totNeeded + CalculatePowerCost(
@@ -92,7 +92,7 @@ if SERVER then
         for _, room in ipairs(self:GetShip():GetRooms()) do
             local score = 0
             local cost = 1
-            local lifeModule = room:GetModule(moduletype.lifesupport)
+            local lifeModule = room:GetModule(moduletype.LIFE_SUPPORT)
             if lifeModule then
                 score = lifeModule:GetScore() * 2
                 cost = 2 - score * 0.5

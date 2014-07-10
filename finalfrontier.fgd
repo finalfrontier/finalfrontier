@@ -10,6 +10,8 @@
 
 @PointClass base(Targetname, Origin) = info_ff_ship : "ship"
 [
+	name(string) : "Ship name" : "" : "Name to refer to this ship by"
+	color(color255) : "UI Color" : "255 255 255" : "Color to use in ship-specific UI elements"
 	health(integer) : "Base hull health" : 1 : "The initial hull health of the ship"
     mainlight(target_destination) : "Main light" : "" : "Targetname of the main lights"
     warnlight(target_destination) : "Warning light" : "" : "Targetname of the warning lights"

@@ -19,11 +19,11 @@ ENT.Type = "point"
 ENT.Base = "base_point"
 
 dmgeffect = {}
-dmgeffect.none = 0
-dmgeffect.sparks = 1
-dmgeffect.gas = 2
-dmgeffect.smoke = 4
-dmgeffect.cracks = 8
+dmgeffect.NONE = 0
+dmgeffect.SPARKS = 1
+dmgeffect.GAS = 2
+dmgeffect.SMOKE = 4
+dmgeffect.CRACKS = 8
 
 ENT._roomname = nil
 ENT._room = nil
@@ -67,7 +67,7 @@ function ENT:InitPostEntity()
 end
 
 function ENT:PlayEffect()
-    if self:GetType() == dmgeffect.sparks then
+    if self:GetType() == dmgeffect.SPARKS then
         local ed = EffectData()
         ed:SetOrigin(self:GetPos())
         ed:SetAngles(self:GetAngles())

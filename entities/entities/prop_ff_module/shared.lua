@@ -21,14 +21,14 @@ ENT.Type = "anim"
 ENT.Base = "base_anim"
 
 moduletype = {}
-moduletype.lifesupport = 0
-moduletype.shields = 1
-moduletype.systempower = 2
-moduletype.repair1 = 3
-moduletype.repair2 = 4
-moduletype.weapon1 = 5
-moduletype.weapon2 = 6
-moduletype.weapon3 = 7
+moduletype.LIFE_SUPPORT = 0
+moduletype.SHIELDS = 1
+moduletype.SYSTEM_POWER = 2
+moduletype.REPAIR_1 = 3
+moduletype.REPAIR_2 = 4
+moduletype.WEAPON_1 = 5
+moduletype.WEAPON_2 = 6
+moduletype.WEAPON_3 = 7
 
 ENT._grid = nil
 
@@ -250,7 +250,7 @@ if SERVER then
         if damaged then
             self:_UpdateGrid()
 
-            if self:IsInSlot() and self:GetSlotType() < moduletype.repair1 then
+            if self:IsInSlot() and self:GetSlotType() < moduletype.REPAIR_1 then
                 self:GetRoom():GetShip():SetHazardMode(true, 10)
             end
         end
@@ -312,7 +312,7 @@ if SERVER then
         end
     end
 
-    function ENT:Mirror(other, index)
+    function ENT:Transcribe(other, index)
         local x, y = self:_FindXY(index)
 
         if self._grid[x][y] > -1 and other._grid[x][y] == -1 then
@@ -322,13 +322,15 @@ if SERVER then
     end
 
     function ENT:Think()
+        if not IsValid(self) then return end
+
         if not self:IsInSlot() then
             local min, max = self:GetCollisionBounds()
             min = min + self:GetPos() - Vector(0, 0, 8)
             max = max + self:GetPos()
             local near = ents.FindInBox(min, max)
             for _, v in pairs(near) do
-                if v:GetClass() == "info_ff_moduleslot" then
+                if IsValid(v) and v:GetClass() == "info_ff_moduleslot" then
                     local type = v:GetModuleType()
                     if type == self:GetModuleType() or v:IsRepairSlot() then
                         self:InsertIntoSlot(v:GetRoom(), type, v:GetPos())
@@ -337,7 +339,7 @@ if SERVER then
                 end
             end
         else
-            if self:GetDamaged() < 2 or self:GetSlotType() >= moduletype.repair1 then return end
+            if self:GetDamaged() < 2 or self:GetSlotType() >= moduletype.REPAIR_1 then return end
             if CurTime() - self._lastEffect < 17 - ((math.random() * 0.5 + 0.5) * self:GetDamaged()) then return end
 
             local ed = EffectData()

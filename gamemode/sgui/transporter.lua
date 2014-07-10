@@ -25,6 +25,7 @@ GUI._zoomLabel = nil
 GUI._zoomSlider = nil
 GUI._selectedLabel = nil
 GUI._inspectButton = nil
+GUI._jettisonButton = nil
 GUI._chargeSlider = nil
 GUI._powerBar = nil
 GUI._grid = nil
@@ -44,6 +45,7 @@ function GUI:Inspect(obj)
         self._zoomSlider = nil
         self._selectedLabel = nil
         self._inspectButton = nil
+        self._jettisonButton = nil
         self._coordLabel = nil
         self._sectorLabel = nil
         self._grid = nil
@@ -96,11 +98,11 @@ function GUI:Inspect(obj)
 
         if SERVER then
             function self._grid.OnClickSelectedObject(grid, obj, button)
-                if obj:GetObjectType() == objtype.ship then
+                if obj:GetObjectType() == objtype.SHIP then
                     self:Inspect(obj)
                     self:GetScreen():UpdateLayout()
                     return true
-                elseif obj:GetObjectType() == objtype.module then
+                elseif obj:GetObjectType() == objtype.MODULE then
                     self:GetSystem():StartTeleport(obj)
                 end
                 return false
@@ -129,7 +131,7 @@ function GUI:Inspect(obj)
         self._selectedLabel = sgui.Create(self, "label")
         self._selectedLabel.AlignX = TEXT_ALIGN_CENTER
         self._selectedLabel.AlignY = TEXT_ALIGN_CENTER
-        self._selectedLabel:SetOrigin(self._grid:GetRight() + 16, self._zoomSlider:GetBottom() + 48)
+        self._selectedLabel:SetOrigin(self._grid:GetRight() + 16, self._zoomSlider:GetBottom() + 16)
         self._selectedLabel:SetSize(colWidth, 32)
         self._selectedLabel.Text = "This Ship"
 
@@ -141,15 +143,27 @@ function GUI:Inspect(obj)
         if SERVER then
             self._inspectButton.OnClick = function(btn, button)
                 local obj = self._grid:GetCentreObject()
-                if obj:GetObjectType() == objtype.ship then
+                if obj:GetObjectType() == objtype.SHIP then
                     self:Inspect(obj)
                     self:GetScreen():UpdateLayout()
                     return true
-                elseif obj:GetObjectType() == objtype.module then
+                elseif obj:GetObjectType() == objtype.MODULE then
                     self:GetSystem():StartTeleport(obj)
                     return true
                 end
                 return false
+            end
+        end
+
+        self._jettisonButton = sgui.Create(self, "button")
+        self._jettisonButton:SetOrigin(self._grid:GetRight() + 16, self._inspectButton:GetBottom() + 8)
+        self._jettisonButton:SetSize(colWidth, 48)
+        self._jettisonButton.Text = "Jettison"
+
+        if SERVER then
+            self._jettisonButton.OnClick = function(btn, button)
+                self:GetSystem():StartTeleport(nil)
+                return true
             end
         end
     end
@@ -173,8 +187,8 @@ function GUI:Inspect(obj)
         self._chargeSlider:SetOrigin(self._closeButton:GetRight() + 16, self._closeButton:GetTop())
         self._powerBar:SetOrigin(self._chargeSlider:GetRight() + 8, self._closeButton:GetTop())
     else
-        self._chargeSlider:SetOrigin(self._grid:GetRight() + 16, self._inspectButton:GetBottom() + 32)
-        self._powerBar:SetOrigin(self._grid:GetRight() + 16, self._chargeSlider:GetBottom() + 8)
+        self._powerBar:SetOrigin(self._grid:GetRight() + 16, self:GetHeight() - 56)
+        self._chargeSlider:SetOrigin(self._grid:GetRight() + 16, self._powerBar:GetTop() - 56)
     end
 end
 
@@ -194,7 +208,7 @@ elseif CLIENT then
     function GUI:Draw()
         if self._grid then
             local obj = self._grid:GetCentreObject()
-            if obj then
+            if IsValid(obj) then
                 self._selectedLabel.Text = obj:GetDescription()
             else
                 self._selectedLabel.Text = "Select Target"
@@ -222,7 +236,7 @@ elseif CLIENT then
         if self._grid then
             local obj = self._grid:GetCentreObject()
             self._inspectButton.CanClick = obj and (
-                obj:GetObjectType() == objtype.ship or
+                obj:GetObjectType() == objtype.SHIP or
                 self:GetSystem():IsObjectTeleportable(obj))
 
             if obj and self:GetSystem():IsObjectTeleportable(obj) then

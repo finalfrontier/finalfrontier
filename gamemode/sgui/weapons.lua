@@ -50,7 +50,7 @@ function GUI:Enter()
     for i = 1, 3 do
         local wpn = sgui.Create(self, "weaponview")
         local yof = 4 - i
-        local slot = moduletype.weapon1 + i - 1
+        local slot = moduletype.WEAPON_1 + i - 1
 
         wpn:SetOrigin(self._grid:GetRight() + 8, self:GetHeight() - yof * (wpnHeight + 8))
         wpn:SetSize(colWidth, wpnHeight)

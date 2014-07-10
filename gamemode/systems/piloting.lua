@@ -54,7 +54,7 @@ function SYS:GetAccelerationTime()
         return math.sqrt(vx * vx + vy * vy)
     end
 
-    return math.max(0, self._nwdata.duration - CurTime() + self._nwdata.inittime)
+    return math.max(0, (self._nwdata.duration - CurTime() + self._nwdata.inittime) / DURATION_MULTIPLIER)
 end
 
 function SYS:IsAccelerating()
@@ -70,7 +70,7 @@ end
 if SERVER then
     -- resource.AddFile("materials/systems/piloting.png")
 
-    local ACCELERATION_PER_POWER = 1.0 / 200.0
+    local ACCELERATION_PER_POWER = 1.0 / 800.0
 
     SYS._prevVel = Vector(0, 0, 0)
 
@@ -93,7 +93,8 @@ if SERVER then
     end
 
     function SYS:GetMaximumPower()
-        return 8
+        local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
+        return 4 + score * 4
     end
 
     function SYS:CalculatePowerNeeded()
@@ -123,13 +124,15 @@ if SERVER then
     end
 
     function SYS:SetTargetHeading(dx, dy)
+        local len = math.sqrt(dx * dx + dy * dy)
+
         self._nwdata.fullstop = false
-        self._nwdata.duration = math.sqrt(dx * dx + dy * dy) * DURATION_MULTIPLIER
+        self._nwdata.duration = len * DURATION_MULTIPLIER
         self._nwdata.inittime = CurTime()
 
         if self._nwdata.duration > 0 then
-            self._nwdata.dx = dx / self._nwdata.duration
-            self._nwdata.dy = dy / self._nwdata.duration
+            self._nwdata.dx = dx / len
+            self._nwdata.dy = dy / len
 
             self:GetShip():GetObject():SetTargetRotation(math.atan2(dy, dx) / math.pi * 180.0)
         else
@@ -142,7 +145,8 @@ if SERVER then
 
     function SYS:GetAcceleration()
         if self:GetPowerNeeded() <= 0 then return 0 end
-        return self:GetPower() * ACCELERATION_PER_POWER
+        local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
+        return self:GetPower() * ACCELERATION_PER_POWER * (1 + score * 3)
     end
 elseif CLIENT then
     -- SYS.Icon = Material("systems/piloting.png", "smooth")

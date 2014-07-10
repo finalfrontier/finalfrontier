@@ -46,7 +46,7 @@ if SERVER then
     local vertNames = {}
     for i = 1, 24 do vertNames[i] = tostring(i) end
 
-    local RESPAWN_DELAY = 300
+    local RESPAWN_DELAY = 15
 
     ENT._lastVisit = 0
 
@@ -61,7 +61,12 @@ if SERVER then
 
     function ENT:Purge()
         for _, ent in ipairs(ents.FindInBox(self:GetBoundingBox())) do
-            if ent:GetClass() == "info_ff_object" and ent:GetObjectType() ~= objtype.ship then
+            if IsValid(ent) and ent:GetClass() == "info_ff_object"
+                and ent.GetObjectType and ent:GetObjectType() ~= objtype.SHIP then
+                
+                local mdl = ent:GetModule()
+                if IsValid(mdl) then mdl:Remove() end
+
                 ent:Remove()
             end
         end
@@ -80,30 +85,29 @@ if SERVER then
         for i = 1, count do
             local obj = ents.Create("info_ff_object")
             obj:SetCoordinates(x + math.random(), y + math.random())
-            obj:SetObjectType(objtype.module)
+            obj:SetObjectType(objtype.MODULE)
             obj:Spawn()
 
             local mdl = nil
             if math.random() < 0.75 then
                 mdl = ents.Create("prop_ff_module")
                 mdl:SetModuleType(table.Random({
-                    moduletype.lifesupport,
-                    moduletype.shields,
-                    moduletype.systempower
+                    moduletype.LIFE_SUPPORT,
+                    moduletype.SHIELDS,
+                    moduletype.SYSTEM_POWER
                 }))
             else
                 mdl = ents.Create("prop_ff_weaponmodule")
                 mdl:SetWeapon(weapon.GetRandomName())
             end
 
-            mdl:SetPos(self:GetPos())
             mdl:Spawn()
 
             if mdl:GetClass() == "prop_ff_module" then
                 mdl:DamageRandomTiles(math.floor((1 - math.pow(math.random(), 2)) * 16))
             end
 
-            obj:SetNWEntity("module", mdl)
+            obj:AssignModule(mdl)
         end
     end
 
@@ -113,6 +117,13 @@ if SERVER then
         end
 
         self._lastVisit = CurTime()
+    end
+
+    function ENT:Think()
+        if self._lastVisit > 0 and CurTime() - self._lastVisit >= RESPAWN_DELAY then
+            self:Purge()
+            self._lastVisit = 0
+        end
     end
 elseif CLIENT then
     function ENT:Draw()

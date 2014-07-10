@@ -32,7 +32,7 @@ function GUI:CreateModuleView(slot)
 
     local view = sgui.Create(self, "moduleview")
     view:SetTop(8)
-    if slot == moduletype.repair1 then
+    if slot == moduletype.REPAIR_1 then
         view:SetLeft(16)
     else
         view:SetLeft(self:GetWidth() - size - 16)
@@ -45,8 +45,8 @@ end
 function GUI:Enter()
     self._grids = {}
 
-    self._grids[1] = self:CreateModuleView(moduletype.repair1)
-    self._grids[2] = self:CreateModuleView(moduletype.repair2)
+    self._grids[1] = self:CreateModuleView(moduletype.REPAIR_1)
+    self._grids[2] = self:CreateModuleView(moduletype.REPAIR_2)
 
     self._compareBtn = sgui.Create(self, "button")
     self._compareBtn:SetSize(self._grids[2]:GetLeft() - self._grids[1]:GetRight() - 32, 48)
@@ -65,15 +65,15 @@ function GUI:Enter()
 
     if SERVER then
         function self._compareBtn.OnClick(btn, x, y, button)
-            self:GetSystem():StartAction(engaction.compare)
+            self:GetSystem():StartAction(engaction.COMPARE)
         end
 
         function self._spliceBtn.OnClick(btn, x, y, button)
-            self:GetSystem():StartAction(engaction.splice)
+            self:GetSystem():StartAction(engaction.SPLICE)
         end
 
         function self._mirrorBtn.OnClick(btn, x, y, button)
-            self:GetSystem():StartAction(engaction.mirror)
+            self:GetSystem():StartAction(engaction.TRANSCRIBE)
         end
     end
 
@@ -98,20 +98,20 @@ function GUI:Enter()
                 return "INSERT RIGHT MODULE TO BEGIN"
             elseif not system:IsPerformingAction() then
                 local comp = system:GetComparisonResult()
-                if comp == compresult.equal then
+                if comp == compresult.EQUAL then
                     return "BOTH MODULES ARE EQUALLY EFFICIENT"
-                elseif comp == compresult.left then
+                elseif comp == compresult.LEFT then
                     return "LEFT MODULE IS MORE EFFICIENT"
-                elseif comp == compresult.right then
+                elseif comp == compresult.RIGHT then
                     return "RIGHT MODULE IS MORE EFFICIENT"
                 else
                     return "SELECT AN ACTION"
                 end
-            elseif act == engaction.compare then
+            elseif act == engaction.COMPARE then
                 return "COMPARISON IN PROGRESS " .. pc
-            elseif act == engaction.splice then
+            elseif act == engaction.SPLICE then
                 return "SPLICING IN PROGRESS " .. pc
-            elseif act == engaction.mirror then
+            elseif act == engaction.TRANSCRIBE then
                 return "TRANSCRIPTION IN PROGRESS " .. pc
             end
         end

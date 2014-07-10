@@ -24,10 +24,10 @@ ENT._lastLerpTime = 0
 ENT._currRotation = 0
 
 objtype = {}
-objtype.unknown = 0
-objtype.ship = 1
-objtype.missile = 2
-objtype.module = 3
+objtype.UNKNOWN = 0
+objtype.SHIP = 1
+objtype.MISSILE = 2
+objtype.MODULE = 3
 
 function ENT:SetupDataTables()
     self:NetworkVar("Float", 0, "TargetRotation")
@@ -90,6 +90,36 @@ if SERVER then
     function ENT:SetObjectName(name)
         self:SetNWString("objname", name)
     end
+
+    function ENT:AssignModule(mdl)
+        local prev = self:GetModule()
+        if IsValid(prev) then
+            prev:UnassignObject(self)
+            prev:Remove()
+        end
+
+        mdl:SetPos(self:GetPos())
+
+        mdl:SetMoveType(MOVETYPE_NONE)
+        mdl:SetSolid(SOLID_NONE)
+
+        self:SetNWEntity("module", mdl)
+    end
+
+    function ENT:UnassignModule()
+        local mdl = self:GetModule()
+
+        if not IsValid(mdl) then return end
+
+        mdl:SetMoveType(MOVETYPE_VPHYSICS)
+        mdl:SetSolid(SOLID_VPHYSICS)
+
+        self:SetNWEntity("module", nil)
+    end
+end
+
+function ENT:GetModule()
+    return self:GetNWEntity("module")
 end
 
 function ENT:GetMaxAngularVel()
@@ -136,7 +166,7 @@ function ENT:GetSpeed()
 end
 
 function ENT:GetObjectType()
-    return self:GetNWInt("objtype", objtype.unknown)
+    return self:GetNWInt("objtype", objtype.UNKNOWN)
 end
 
 function ENT:GetObjectName()
@@ -145,6 +175,8 @@ end
 
 if SERVER then
     function ENT:Think()
+        if not IsValid(self) then return end
+
         local x, y = self:GetCoordinates()
         local wx, wy = universe:WrapCoordinates(x, y)
         local phys = self:GetPhysicsObject()
@@ -165,9 +197,9 @@ if SERVER then
     end
 elseif CLIENT then
     function ENT:GetDescription()
-        if self:GetObjectType() == objtype.module then
+        if self:GetObjectType() == objtype.MODULE then
             return "Salvage"
-        elseif self:GetObjectType() == objtype.ship then
+        elseif self:GetObjectType() == objtype.SHIP then
             if LocalPlayer():GetShipName() == self:GetObjectName() then
                 return "This Ship"
             else
