@@ -21,15 +21,15 @@ SYS.SGUIName = "engineering"
 SYS.Powered = true
 
 engaction = {}
-engaction.compare = 1
-engaction.splice = 2
-engaction.mirror = 3
+engaction.COMPARE = 1
+engaction.SPLICE = 2
+engaction.TRANSCRIBE = 3
 
 compresult = {}
-compresult.none = 0
-compresult.left = 1
-compresult.right = 2
-compresult.equal = 3
+compresult.NONE = 0
+compresult.LEFT = 1
+compresult.RIGHT = 2
+compresult.EQUAL = 3
 
 function SYS:IsPerformingAction()
     return self._nwdata.progress >= 0
@@ -44,8 +44,8 @@ function SYS:GetCurrentAction()
 end
 
 function SYS:GetModules()
-    return self:GetRoom():GetModule(moduletype.repair1),
-        self:GetRoom():GetModule(moduletype.repair2)
+    return self:GetRoom():GetModule(moduletype.REPAIR_1),
+        self:GetRoom():GetModule(moduletype.REPAIR_2)
 end
 
 function SYS:GetComparisonResult()
@@ -60,10 +60,11 @@ if SERVER then
 
     function SYS:CalculatePowerNeeded(dt)
         if self:IsPerformingAction() then
-            if self._nwdata.action == engaction.compare then
-                return 0.5
+            local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
+            if self._nwdata.action == engaction.COMPARE then
+                return 0.5 + score * 0.25
             else
-                return 1
+                return 2 + score
             end
         end
         return 0
@@ -74,7 +75,7 @@ if SERVER then
         self._sounds = {}
 
         self:Reset()
-        self._nwdata.compresult = compresult.none
+        self._nwdata.compresult = compresult.NONE
     end
 
     function SYS:Reset()
@@ -94,7 +95,7 @@ if SERVER then
         if not self:IsPerformingAction() and left and right then
             self._nwdata.action = type
             self._nwdata.progress = 0
-            self._nwdata.compresult = compresult.none
+            self._nwdata.compresult = compresult.NONE
             self:_UpdateNWData()
 
             self._sounds[1] = CreateSound(left, "ambient/machines/electric_machine.wav")
@@ -108,7 +109,7 @@ if SERVER then
     end
 
     function SYS:UpdateSounds(index)
-        if self._nwdata.action == engaction.compare then return end
+        if self._nwdata.action == engaction.COMPARE then return end
 
         local left, right = self:GetModules()
         for i, v in pairs(self._sounds) do
@@ -116,7 +117,7 @@ if SERVER then
                 v:ChangePitch(50, 0.5)
                 v:ChangeVolume(0, 0.75)
             elseif left:IsDamaged(index) ~= right:IsDamaged(index)
-                and (self._nwdata.action == engaction.splice) == (((i == 1 and left:IsDamaged(index))
+                and (self._nwdata.action == engaction.SPLICE) == (((i == 1 and left:IsDamaged(index))
                 or (i == 2 and right:IsDamaged(index)))) then
                 v:ChangePitch(100, 0.5)
                 v:ChangeVolume(1, 0.75)
@@ -136,19 +137,21 @@ if SERVER then
             end
 
             local last = self:GetActionProgress()
-            local prog = dt * self:GetPower() * 2 / self:GetPowerNeeded()
+            local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
+            local prog = dt * self:GetPower() * (1 + score * 2) * 2 / self:GetPowerNeeded()
             local index = math.min(math.floor(last) + 1, 16)
-            if self._nwdata.action == engaction.compare then
+            if self._nwdata.action == engaction.COMPARE then
                 prog = prog / 2
             elseif left:IsDamaged(index) ~= right:IsDamaged(index) then
-                prog = prog / 8
+                prog = prog / 12
             end
 
             prog = math.min(1, prog)
             local next = math.min(17, last + prog)
             if math.floor(last) ~= math.floor(next) then
+                next = math.floor(next)
                 if next == 17 then
-                    if self._nwdata.action == engaction.compare then
+                    if self._nwdata.action == engaction.COMPARE then
                         local lscore = left:GetScore()
                         local rscore = right:GetScore()
 
@@ -156,35 +159,31 @@ if SERVER then
                         self._compared[2] = right
 
                         if lscore == rscore then
-                            self._nwdata.compresult = compresult.equal
+                            self._nwdata.compresult = compresult.EQUAL
                         elseif lscore > rscore then
-                            self._nwdata.compresult = compresult.left
+                            self._nwdata.compresult = compresult.LEFT
                         else
-                            self._nwdata.compresult = compresult.right
+                            self._nwdata.compresult = compresult.RIGHT
                         end
                     end
 
                     self:Reset()
                     return
-                end
-                
-                local index = math.floor(next)
+                elseif next > 0 then
+                    self:UpdateSounds(math.max(1, next + 1))
 
-                if index > 0 then
-                    self:UpdateSounds(math.max(1, index + 1))
-
-                    if self._nwdata.action == engaction.splice then
-                        left:Splice(right, index)
-                        right:Splice(left, index)
-                    elseif self._nwdata.action == engaction.mirror then
-                        left:Mirror(right, index)
-                        right:Mirror(left, index)
+                    if self._nwdata.action == engaction.SPLICE then
+                        left:Splice(right, next)
+                        right:Splice(left, next)
+                    elseif self._nwdata.action == engaction.TRANSCRIBE then
+                        left:Transcribe(right, next)
+                        right:Transcribe(left, next)
                     end
                 end
-            elseif self._nwdata.action ~= engaction.compare
+            elseif self._nwdata.action ~= engaction.COMPARE
                 and left:IsDamaged(index) ~= right:IsDamaged(index) then
                 local ed = EffectData()
-                if left:IsDamaged(index) == (self._nwdata.action == engaction.splice) then
+                if left:IsDamaged(index) == (self._nwdata.action == engaction.SPLICE) then
                     ed:SetEntity(left)
                     ed:SetOrigin(left:GetPos() + Vector(0, 0, 8))
                 else
@@ -198,11 +197,11 @@ if SERVER then
 
             self._nwdata.progress = next
             self:_UpdateNWData()
-        elseif self:GetComparisonResult() ~= compresult.none then
+        elseif self:GetComparisonResult() ~= compresult.NONE then
             local left, right = self:GetModules()
 
             if left ~= self._compared[1] or right ~= self._compared[2] then
-                self._nwdata.compresult = compresult.none
+                self._nwdata.compresult = compresult.NONE
                 self:_UpdateNWData()
             end
         end

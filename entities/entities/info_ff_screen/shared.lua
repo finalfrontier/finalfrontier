@@ -343,7 +343,13 @@ if SERVER then
         ply:Give("weapon_ff_unarmed")
         ply:SelectWeapon("weapon_ff_unarmed")
 
-        self._ui.Permission = ply:GetPermission(self._room)
+        if not self._room:HasPlayerWithSecurityPermission() then
+            self._ui.Permission = permission.SECURITY
+        else
+            self._ui.Permission = ply:GetPermission(self._room)
+        end
+
+        self._ui:UpdatePermissions()
 
         if (self._lastPage == page.SECURITY and not ply:HasPermission(self._room, permission.SECURITY))
             or (self._lastPage == page.SYSTEM and not ply:HasPermission(self._room, permission.SYSTEM)) then
@@ -426,24 +432,19 @@ elseif CLIENT then
     function ENT:UpdateLayout()
         if not self._layout and self._room and self._room:IsCurrent() and self._ship == LocalPlayer():GetShip() then
             self._layout = self:GetNWTable("layout")
-            sgui.Log("Fetch")
         elseif self._ui and self._ship and self._room and self._ship ~= LocalPlayer():GetShip() then
             self._layout = nil
             self:ForgetNWTable("layout")
-            sgui.Log("Forget")
         end
 
         if not self._ui and self._layout and self:IsNWTableCurrent("layout") then
             self._ui = sgui.Create(self, MAIN_GUI_CLASS)
-            sgui.Log("New UI")
         elseif self._ui and not self._layout then
             self._ui = nil
-            sgui.Log("Remove UI")
         end
 
         if self._layout and self._ui and table.Count(self._layout) > 0 then
             self._ui:UpdateLayout(self._layout)
-            sgui.Log("Update")
         end
     end
 
@@ -451,23 +452,14 @@ elseif CLIENT then
         if self._ship and not self._ship:IsValid() then
             self._ship = nil
             self._room = nil
-
-            sgui.Log("Invalid")
         end
 
         if not self._ship and self:GetNWString("ship") then
             self._ship = ships.GetByName(self:GetNWString("ship"))
-
-            sgui.Log("New ship " .. self:GetNWString("ship"))
         end
 
         if not self._room and self._ship and self:GetNWString("room") then
             self._room = self._ship:GetRoomByName(self:GetNWString("room"))
-
-            sgui.Log("New room " .. self:GetNWString("room"))
-            if sgui.IsDebug() then
-                PrintTable(self._ship._nwdata)
-            end
         end
         
         self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE

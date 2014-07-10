@@ -83,7 +83,7 @@ function GUI:Inspect(obj)
 
         if SERVER then
             function self._grid.OnClickSelectedObject(grid, obj, button)
-                if obj:GetObjectType() == objtype.ship then
+                if obj:GetObjectType() == objtype.SHIP then
                     self:Inspect(obj)
                     self:GetScreen():UpdateLayout()
                     return true
@@ -163,7 +163,7 @@ function GUI:Inspect(obj)
             end
 
             self._inspectButton.OnClick = function(btn, button)
-                if self._grid:GetCentreObject():GetObjectType() == objtype.ship then
+                if self._grid:GetCentreObject():GetObjectType() == objtype.SHIP then
                     self:Inspect(self._grid:GetCentreObject())
                     self:GetScreen():UpdateLayout()
                     return true
@@ -204,10 +204,10 @@ elseif CLIENT then
             local obj = self._grid:GetCentreObject()
             local x, y = obj:GetCoordinates()
 
-            if obj ~= self:GetShip():GetObject() then
-                self._selectedLabel.Text = obj:GetObjectName()
+            if IsValid(obj) then
+                self._selectedLabel.Text = obj:GetDescription()
             else
-                self._selectedLabel.Text = "This Ship"
+                self._selectedLabel.Text = "No Target"
             end
             self._coordLabel.Text = "x: " .. FormatNum(x, 1, 2) .. ", y: " .. FormatNum(y, 1, 2)
 
@@ -245,7 +245,7 @@ elseif CLIENT then
             end
 
             self._scanButton.CanClick = self:GetSystem():CanScan()
-            self._inspectButton.CanClick = self._grid:GetCentreObject():GetObjectType() == objtype.ship
+            self._inspectButton.CanClick = self._grid:GetCentreObject():GetObjectType() == objtype.SHIP
         end
 
     end

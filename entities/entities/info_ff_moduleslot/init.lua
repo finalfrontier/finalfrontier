@@ -43,13 +43,13 @@ function ENT:GetModuleType()
 end
 
 function ENT:IsRepairSlot()
-    return self._moduleType == moduletype.repair1
-        or self._moduleType == moduletype.repair2
+    return self._moduleType == moduletype.REPAIR_1
+        or self._moduleType == moduletype.REPAIR_2
 end
 
 function ENT:IsWeaponSlot()
-    return self._moduleType >= moduletype.weapon1
-        and self._moduleType <= moduletype.weapon3
+    return self._moduleType >= moduletype.WEAPON_1
+        and self._moduleType <= moduletype.WEAPON_3
 end
 
 function ENT:KeyValue(key, value)
@@ -77,6 +77,7 @@ end
 
 function ENT:Open()
     if not self._hatch then return end
+    self._open = true
     self._hatch:Fire("Unlock", "", 0)
     self._hatch:Fire("Open", "", 0)
     self._hatch:Fire("Lock", "", 0)
@@ -84,6 +85,7 @@ end
 
 function ENT:Close()
     if not self._hatch then return end
+    self._open = false
     self._hatch:Fire("Unlock", "", 0)
     self._hatch:Fire("Close", "", 0)
     self._hatch:Fire("Lock", "", 0)
@@ -107,6 +109,8 @@ function ENT:InitPostEntity()
 end
 
 function ENT:Think()
+    if not IsValid(self._room) then return end
+
     if self:IsRepairSlot() then
         local system = self._room:GetSystem()
         if self._open and system:IsPerformingAction() then
@@ -120,7 +124,7 @@ function ENT:Think()
             end
             self._open = true
             timer.Simple(0.5, function()
-                if self:GetModule() then
+                if CurTime() > 1 and self:GetModule() then
                     local sound = CreateSound(self:GetModule(), "npc/env_headcrabcanister/hiss.wav")
                     sound:PlayEx(1, 110)
                     sound:ChangeVolume(0, 1.5)

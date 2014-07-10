@@ -50,7 +50,7 @@ if SERVER then
 
     function SYS:CalculatePowerNeeded()
         local tot = 0
-        for slot = moduletype.weapon1, moduletype.weapon3 do
+        for slot = moduletype.WEAPON_1, moduletype.WEAPON_3 do
             local mdl = self:GetRoom():GetModule(slot)
             if mdl and not mdl:IsFullyCharged() then
                 local weapon = mdl:GetWeapon()
@@ -62,8 +62,8 @@ if SERVER then
 
     function SYS:CanTarget(target)
         return IsValid(target) and target:GetClass() == "info_ff_object" and (
-            target:GetObjectType() == objtype.ship or
-            target:GetObjectType() == objtype.module)
+            target:GetObjectType() == objtype.SHIP or
+            target:GetObjectType() == objtype.MODULE)
     end
 
     function SYS:SetTarget(target)
@@ -92,7 +92,7 @@ if SERVER then
         local needed = self:GetPowerNeeded()
         if needed > 0 then
             local ratio = power / needed
-            for slot = moduletype.weapon1, moduletype.weapon3 do
+            for slot = moduletype.WEAPON_1, moduletype.WEAPON_3 do
                 local mdl = self:GetRoom():GetModule(slot)
                 if mdl then mdl:AddCharge(ratio * dt) end
             end
