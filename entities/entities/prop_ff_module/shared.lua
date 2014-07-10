@@ -130,6 +130,33 @@ function ENT:GetScore()
     return score / (4 * 4 * 4)
 end
 
+function ENT:GetPlayerTargetedTile(ply)
+    if CLIENT then
+        ply = ply or LocalPlayer()
+    end
+
+    local ang = self:GetAngles()
+    ang:RotateAroundAxis(ang:Up(), -90)
+
+    local p0 = self:GetPos() + ang:Up() * 11
+    local n = ang:Up()
+    local l0 = ply:GetShootPos()
+    local l = ply:GetAimVector()
+    
+    local d = (p0 - l0):Dot(n) / l:Dot(n)
+
+    local hitpos = (l0 + l * d) - p0
+    local xvec = ang:Forward()
+    local yvec = ang:Right()
+    
+    local x = math.floor(hitpos:DotProduct(xvec) / 5) + 3
+    local y = math.floor(hitpos:DotProduct(yvec) / 5) + 3
+
+    if x < 1 or x > 4 or y < 1 or y > 4 then return nil end
+
+    return x, y
+end
+
 if SERVER then
     function ENT:SetModuleType(type)
         self:SetNWInt("type", type)
@@ -381,7 +408,7 @@ elseif CLIENT then
 
         local ang = self:GetAngles()
         ang:RotateAroundAxis(ang:Up(), -90)
-        
+
         draw.NoTexture()
         
         cam.Start3D2D(self:GetPos() + ang:Up() * 11, ang, 0.5)
@@ -395,6 +422,7 @@ elseif CLIENT then
                     for j = 1, 4 do
                         local y = (j - 2.5) * 10
                         local val = grid[i][j]
+
                         if val == 0 then
                             surface.SetDrawColor(Color(51, 172, 45, 255))
                             surface.DrawRect(x - 4, y - 4, 8, 8)
