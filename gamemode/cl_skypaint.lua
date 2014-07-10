@@ -54,9 +54,11 @@ function _mt:Render(origin, vel)
 
     if dist > 96 then
         clr.a = math.Round(math.max(0, (128 - dist) / 32) * 255)
-    elseif dist < 8 then
-        clr.a = math.Round(dist / 8 * 255)
+    elseif dist < 16 then
+        clr.a = math.Round(math.max(0, (dist - 8) / 8) * 255)
     end
+
+    if clr.a <= 0 then return end
 
     render.DrawQuadEasy(pos, -pos:GetNormalized(), self._scale, self._scale, clr, 0)
 end
