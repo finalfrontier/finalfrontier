@@ -31,6 +31,7 @@ include("cl_ships.lua")
 include("sh_teams.lua")
 include("cl_universe.lua")
 include("cl_scoreboard.lua")
+include("cl_skypaint.lua")
 
 WHITE = Material("vgui/white")
 CIRCLE = Material("circle.png", "smooth")
@@ -145,10 +146,6 @@ function GM:PlayerBindPress(ply, bind, pressed)
     end
 end
 
---[[function GM:HUDDrawTargetID()
-    return false
-end
-
 function GM:DrawDeathNotice(x, y)
     return false
-end]]
+end

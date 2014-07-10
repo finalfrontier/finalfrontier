@@ -22,5 +22,6 @@ AddCSLuaFile("cl_ship.lua")
 AddCSLuaFile("cl_ships.lua")
 AddCSLuaFile("cl_universe.lua")
 AddCSLuaFile("cl_scoreboard.lua")
+AddCSLuaFile("cl_skypaint.lua")
 
 include("sv_init.lua")
