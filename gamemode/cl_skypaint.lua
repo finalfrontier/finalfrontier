@@ -22,6 +22,14 @@ _mt._pos = Vector(0, 0, 0)
 _mt._scale = 1
 _mt._clr = Color(255, 255, 255, 255)
 
+local SPACE_SIZE = 256
+local SPACE_SIZE_HALF = SPACE_SIZE / 2
+local SPACE_CLIP_FAR = SPACE_SIZE_HALF
+local SPACE_FADE_FAR = SPACE_CLIP_FAR * 0.9
+local SPACE_CLIP_NEAR = 4
+local SPACE_FADE_NEAR = 8
+local SPACE_STAR_COUNT = 256
+
 function _mt:GetPos()
     return self._pos
 end
@@ -37,25 +45,25 @@ end
 function _mt:Render(origin, vel)
     local pos = self._pos - origin
 
-    if pos.x > 128 then
-        pos.x = pos.x - 256
-    elseif pos.x <= -128 then
-        pos.x = pos.x + 256
+    if pos.x > SPACE_SIZE_HALF then
+        pos.x = pos.x - SPACE_SIZE
+    elseif pos.x <= -SPACE_SIZE_HALF then
+        pos.x = pos.x + SPACE_SIZE
     end
 
-    if pos.y > 128 then
-        pos.y = pos.y - 256
-    elseif pos.y <= -128 then
-        pos.y = pos.y + 256
+    if pos.y > SPACE_SIZE_HALF then
+        pos.y = pos.y - SPACE_SIZE
+    elseif pos.y <= -SPACE_SIZE_HALF then
+        pos.y = pos.y + SPACE_SIZE
     end
 
     local dist = pos:Length()
     local clr = self._clr
 
-    if dist > 96 then
-        clr.a = math.Round(math.max(0, (128 - dist) / 32) * 255)
-    elseif dist < 8 then
-        clr.a = math.Round(math.max(0, (dist - 4) / 4) * 255)
+    if dist > SPACE_FADE_FAR then
+        clr.a = math.Round(math.max(0, (SPACE_CLIP_FAR - dist) / (SPACE_CLIP_FAR - SPACE_FADE_FAR)) * 255)
+    elseif dist < SPACE_FADE_NEAR then
+        clr.a = math.Round(math.max(0, (dist - SPACE_CLIP_NEAR) / (SPACE_FADE_NEAR - SPACE_CLIP_NEAR)) * 255)
     end
 
     if clr.a <= 0 then return end
@@ -73,14 +81,14 @@ local _starMat = nil
 local function _GenerateStars()
     _stars = {}
 
-    for i = 1, 256 do
+    for i = 1, SPACE_STAR_COUNT do
         local scale = math.pow(math.random(), 2) + 2
         local shift = math.random() * 2 - 1
 
         local pos = Vector(
-            math.random() * 256 - 128,
-            math.random() * 256 - 128,
-            math.random() * 128 - 64)
+            (math.random() - 0.5) * SPACE_SIZE,
+            (math.random() - 0.5) * SPACE_SIZE,
+            (math.random() - 0.5) * SPACE_SIZE_HALF)
 
         local clr = Color(
             math.floor(224 + shift * 32),
@@ -124,8 +132,10 @@ function GM:PostDraw2DSkyBox()
     local obj = LocalPlayer():GetShip():GetObject()
 
     local x, y = obj:GetCoordinates()
+    local w = universe:GetHorizontalSectors()
+    local h = universe:GetVerticalSectors()
 
-    local pos = Vector((x - 8) * 16, (8 - y) * 16, 0)
+    local pos = Vector((x - w / 2) * (SPACE_SIZE / w), (h / 2 - y) * (SPACE_SIZE / h), 0)
 
     cam.Start3D(Vector(0, 0, 0), EyeAngles())
 
