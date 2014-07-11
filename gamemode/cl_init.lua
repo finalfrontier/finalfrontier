@@ -136,7 +136,7 @@ function GM:PlayerBindPress(ply, bind, pressed)
     if ply ~= LocalPlayer() then return end
     if ply:GetNWBool("usingScreen") then
         local screen = ply:GetNWEntity("screen")
-        if screen then
+        if IsValid(screen) and screen.Click then
             if bind == "+attack" then
                 screen:Click(MOUSE1)
             elseif bind == "+attack2" then
