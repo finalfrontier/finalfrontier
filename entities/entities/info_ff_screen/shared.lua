@@ -33,9 +33,6 @@ ENT.Base = "base_anim"
 ENT._ship = nil
 ENT._room = nil
 
-ENT.Width = 0
-ENT.Height = 0
-
 ENT._ui = nil
 ENT._layout = nil
 
@@ -45,6 +42,19 @@ function ENT:SetupDataTables()
     self:NetworkVarElement("Vector", 0, "x", "AlarmCountingDown")
     self:NetworkVarElement("Vector", 0, "y", "AlarmCountStartTime")
     self:NetworkVarElement("Vector", 0, "z", "AlarmCountInitialTime")
+
+    self:NetworkVarElement("Vector", 1, "x", "Width")
+    self:NetworkVarElement("Vector", 1, "y", "Height")
+
+    self:NetworkVarElement("Vector", 2, "x", "CursorX")
+    self:NetworkVarElement("Vector", 2, "y", "CursorY")
+
+    self:NetworkVar("String", 0, "ShipName")
+    self:NetworkVar("String", 1, "RoomName")
+
+    self:NetworkVar("Bool", 0, "BeingUsed")
+
+    self:NetworkVar("Entity", 0, "UsingPlayer")
 end
 
 function ENT:GetShip()
@@ -104,11 +114,9 @@ if SERVER then
         if key == "room" then
             self._roomName = tostring(value)
         elseif key == "width" then
-            self:SetNWFloat("width", tonumber(value))
-            self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE
+            self:SetWidth(tonumber(value) * SCREEN_DRAWSCALE)
         elseif key == "height" then
-            self:SetNWFloat("height", tonumber(value))
-            self.Height = self:GetNWFloat("height") * SCREEN_DRAWSCALE
+            self:SetHeight(tonumber(value) * SCREEN_DRAWSCALE)
         end
     end
     
@@ -131,10 +139,10 @@ if SERVER then
             return
         end
 
-        self:SetNWString("ship", self._room:GetShipName())
-        self:SetNWString("room", self._roomName)
-        self:SetNWBool("used", false)
-        self:SetNWEntity("user", nil)
+        self:SetShipName(self._room:GetShipName())
+        self:SetRoomName(self._roomName)
+        self:SetBeingUsed(false)
+        self:SetUsingPlayer(nil)
 
         self:GenerateOverrideSequence()
         self:ShuffleCurrentOverrideSequence()
@@ -315,13 +323,13 @@ if SERVER then
     end
 
     function ENT:Think()
-        if self:GetNWBool("used") then
+        if self:GetBeingUsed() then
             if self:IsAlarmCountingDown() and self:GetAlarmCounter() <= 0 then
                 self:GetShip():SetHazardMode(true, 10)
                 self:StopAlarmCountdown()
             end
 
-            local ply = self:GetNWEntity("user")
+            local ply = self:GetUsingPlayer()
             if not ply:IsValid() or not ply:Alive() or self:GetPos():Distance(ply:EyePos()) > MAX_USE_DISTANCE
                 or self:GetAngles():Forward():Dot(ply:GetAimVector()) >= 0 then
                 self:StopUsing()
@@ -331,19 +339,20 @@ if SERVER then
     
     function ENT:Use(activator, caller)
         if activator:IsPlayer() then
-            if not self:GetNWBool("used") and self:GetPos():Distance(activator:EyePos()) <= MAX_USE_DISTANCE then
+            if not self:GetBeingUsed() and self:GetPos():Distance(activator:EyePos()) <= MAX_USE_DISTANCE then
                 self:StartUsing(activator)
-            elseif self:GetNWEntity("user") == activator then
+            elseif self:GetUsingPlayer() == activator then
                 self:StopUsing()
             end
         end
     end
     
     function ENT:StartUsing(ply)
-        if self:GetNWBool("used", false) then return end
+        if self:GetBeingUsed() then return end
+        if not IsValid(ply) then return end
 
-        self:SetNWBool("used", true)
-        self:SetNWEntity("user", ply)
+        self:SetBeingUsed(true)
+        self:SetUsingPlayer(ply)
 
         ply:SetNWBool("usingScreen", true)
         ply:SetNWEntity("screen", self)
@@ -383,12 +392,12 @@ if SERVER then
     end
     
     function ENT:StopUsing()
-        if not self:GetNWBool("used", false) then return end
+        if not self:GetBeingUsed() then return end
 
-        self:SetNWBool("used", false)
+        self:SetBeingUsed(false)
         
-        local ply = self:GetNWEntity("user")
-        if ply:IsValid() then
+        local ply = self:GetUsingPlayer()
+        if IsValid(ply) then
             ply:SetNWBool("usingScreen", false)
             local oldWep = ply:GetNWEntity("oldWep")
             
@@ -414,7 +423,7 @@ if SERVER then
     end
 
     function ENT:GetCursorPos()
-        return self:GetNWFloat("curx"), self:GetNWFloat("cury")
+        return self:GetCursorX(), self:GetCursorY()
     end
 
     function ENT:Click(button)
@@ -425,9 +434,9 @@ if SERVER then
 
     net.Receive("CursorPos", function(len, ply)
         local screen = net.ReadEntity()
-        if screen:GetNWEntity("user") == ply then
-            screen:SetNWFloat("curx", net.ReadFloat())
-            screen:SetNWFloat("cury", net.ReadFloat())
+        if screen:GetUsingPlayer() == ply then
+            screen:SetCursorX(net.ReadFloat())
+            screen:SetCursorY(net.ReadFloat())
         end
     end)
 elseif CLIENT then
@@ -466,22 +475,19 @@ elseif CLIENT then
             self._room = nil
         end
 
-        if not self._ship and self:GetNWString("ship") then
-            self._ship = ships.GetByName(self:GetNWString("ship"))
+        if not self._ship and self:GetShipName() and string.len(self:GetShipName()) > 0 then
+            self._ship = ships.GetByName(self:GetShipName())
         end
 
-        if not self._room and self._ship and self:GetNWString("room") then
-            self._room = self._ship:GetRoomByName(self:GetNWString("room"))
+        if not self._room and self._ship and self:GetRoomName() and string.len(self:GetRoomName()) > 0 then
+            self._room = self._ship:GetRoomByName(self:GetRoomName())
         end
-        
-        self.Width = self:GetNWFloat("width") * SCREEN_DRAWSCALE
-        self.Height = self:GetNWFloat("height") * SCREEN_DRAWSCALE
 
         self:UpdateLayout()
         
-        if not self._using and self:GetNWBool("used") and self:GetNWEntity("user") == LocalPlayer() then
+        if not self._using and self:GetBeingUsed() and self:GetUsingPlayer() == LocalPlayer() then
             self._using = true
-        elseif self._using and (not self:GetNWBool("used") or self:GetNWEntity("user") ~= LocalPlayer()) then
+        elseif self._using and (not self:GetBeingUsed() or self:GetUsingPlayer() ~= LocalPlayer()) then
             self._using = false
         end
     end
@@ -518,8 +524,7 @@ elseif CLIENT then
                 self._lastCursorUpdate = curTime
             end
         else
-            local cx = self:GetNWFloat("curx")
-            local cy = self:GetNWFloat("cury")
+            local cx, cy = self:GetCursorPos()
             
             if cx ~= self._lastCursorx or cy ~= self._lastCursory then
                 local t = (CurTime() - self._lastCursorUpdate) / CURSOR_UPDATE_FREQ
@@ -541,8 +546,8 @@ elseif CLIENT then
     end
     
     function ENT:DrawCursor()
-        local halfwidth = self.Width * 0.5
-        local halfheight = self.Height * 0.5
+        local halfwidth = self:GetWidth() * 0.5
+        local halfheight = self:GetHeight() * 0.5
         
         local boxSize = SCREEN_DRAWSCALE
         
@@ -571,7 +576,7 @@ elseif CLIENT then
         if self._ui then
             self._ui:Draw()
         end
-        if self:GetNWBool("used") then
+        if self:GetBeingUsed() then
             self:FindCursorPosition()
             self:DrawCursor()
         end

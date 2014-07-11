@@ -98,6 +98,8 @@ end
 
 
 function GM:PlayerSpawn(ply)
+    if not IsValid(ply) then return end
+
     local ship = team.GetShip(ply:Team())
     local pad = table.Random(ship:GetSystem("transporter"):GetRoom():GetTransporterPads())
 
