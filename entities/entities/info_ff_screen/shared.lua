@@ -36,8 +36,6 @@ ENT._room = nil
 ENT._ui = nil
 ENT._layout = nil
 
--- self:[GS]etNW([A-Z][a-z]+)+\(
-
 function ENT:SetupDataTables()
     self:NetworkVarElement("Vector", 0, "x", "AlarmCountingDown")
     self:NetworkVarElement("Vector", 0, "y", "AlarmCountStartTime")

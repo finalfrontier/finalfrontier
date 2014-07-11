@@ -17,22 +17,11 @@
 
 if SERVER then AddCSLuaFile("shared.lua") end
 
-ENT.Type = "anim"
-ENT.Base = "base_anim"
+local _optimalGrids = nil
 
-moduletype = {}
-moduletype.LIFE_SUPPORT = 0
-moduletype.SHIELDS = 1
-moduletype.SYSTEM_POWER = 2
-moduletype.REPAIR_1 = 3
-moduletype.REPAIR_2 = 4
-moduletype.WEAPON_1 = 5
-moduletype.WEAPON_2 = 6
-moduletype.WEAPON_3 = 7
+ENT.Base = "prop_ff_modulebase"
 
 ENT._grid = nil
-
-local optimalGrids = nil
 
 if SERVER then
     ENT._lastEffect = 0
@@ -59,38 +48,19 @@ if SERVER then
         for i = 1, 4 do
             self._grid[i] = {}
             for j = 1, 4 do
-                self._grid[i][j] = optimalGrids[self:GetModuleType()][i][j]
+                self._grid[i][j] = _optimalGrids[self:GetModuleType()][i][j]
             end
         end
         self:_UpdateGrid()
     end
 
-    optimalGrids = {}
-    for _, t in pairs(moduletype) do
-        optimalGrids[t] = ENT.GenerateGrid(nil)
+    _optimalGrids = {}
+    for t = 0, 2 do
+        _optimalGrids[t] = ENT.GenerateGrid(nil)
     end
-    SetGlobalTable("optimalGrids", optimalGrids)
+    SetGlobalTable("optimalGrids", _optimalGrids)
 elseif CLIENT then
-    optimalGrids = GetGlobalTable("optimalGrids")
-end
-
-function ENT:GetModuleType()
-    return self:GetNWInt("type", 0)
-end
-
-function ENT:IsInSlot()
-    return self:GetNWInt("room", -1) > -1
-end
-
-function ENT:GetSlotType()
-    if not self:IsInSlot() then return nil end
-    return self:GetRoom():GetSlot(self)
-end
-
-function ENT:GetRoom()
-    if not self:IsInSlot() then return nil end
-    local ship = ships.GetByName(self:GetNWString("ship"))
-    return ship:GetRoomByIndex(self:GetNWInt("room"))
+    _optimalGrids = GetGlobalTable("optimalGrids")
 end
 
 function ENT:GetDamaged()
@@ -114,7 +84,7 @@ function ENT:GetScore()
     if CLIENT and not self:IsGridLoaded() then return 0 end
 
     local grid = self:GetGrid()
-    local optimal = optimalGrids[self:GetModuleType()]
+    local optimal = _optimalGrids[self:GetModuleType()]
 
     local score = 0
     for i = 1, 4 do
@@ -158,22 +128,8 @@ function ENT:GetPlayerTargetedTile(ply)
 end
 
 if SERVER then
-    function ENT:SetModuleType(type)
-        self:SetNWInt("type", type)
-    end
-
     function ENT:Initialize()
-        self:SetUseType(SIMPLE_USE)
-
-        self:SetModel("models/props_c17/consolebox01a.mdl")
-        self:PhysicsInit(SOLID_VPHYSICS)
-        self:SetMoveType(MOVETYPE_VPHYSICS)
-        self:SetSolid(SOLID_VPHYSICS)
-
-        local phys = self:GetPhysicsObject()
-        if IsValid(phys) then
-            phys:Wake()
-        end
+        self.BaseClass.Initialize(self)
 
         if not self._grid then self:_RandomizeGrid() end
     end
@@ -201,64 +157,6 @@ if SERVER then
 
     function ENT:_UpdateGrid()
         self:SetNWTable("grid", self._grid)
-    end
-
-    function ENT:InsertIntoSlot(room, type, slot)
-        if not self:IsInSlot() and not self:IsPlayerHolding() and not room:GetModule(type) then
-            self:SetNWString("ship", room:GetShipName())
-            self:SetNWInt("room", room:GetIndex())
-
-            room:SetModule(type, self)
-
-            local phys = self:GetPhysicsObject()
-            if IsValid(phys) then
-                phys:EnableMotion(false)
-            end
-
-            self:SetPos(slot - Vector(0, 0, 4))
-
-            local yaw = self:GetAngles().y
-            yaw = math.Round(yaw / 90) * 90
-
-            self:SetAngles(Angle(0, yaw, 0))
-        end
-    end
-
-    function ENT:RemoveFromSlot(ply)
-        if self:IsInSlot() and self:GetRoom():RemoveModule(self) then
-            self:SetPos(self:GetPos() + Vector(0, 0, 12))
-
-            local phys = self:GetPhysicsObject()
-            if IsValid(phys) then
-                phys:EnableMotion(true)
-                phys:Wake()
-
-                local vel = Vector(0, 0, 128)
-                if IsValid(ply) then
-                    local diff = self:GetPos() - ply:GetPos()
-                    vel.x = vel.x + diff.x
-                    vel.y = vel.y + diff.y
-                end
-
-                phys:SetVelocity(vel)
-            end
-
-            self:SetNWString("ship", "")
-            self:SetNWInt("room", -1)
-        end
-    end
-
-    function ENT:Use(ply)
-        if not IsValid(ply) or not ply:IsPlayer() then return end
-
-        if self:IsInSlot() then
-            self:RemoveFromSlot(ply)
-        end
-
-        if not self:IsPlayerHolding() then
-            self:SetAngles(Angle(0, self:GetAngles().y, 0))
-            ply:PickupObject(self)
-        end
     end
 
     function ENT:OnTakeDamage(dmg)
@@ -348,24 +246,16 @@ if SERVER then
         end
     end
 
+    function ENT:CanInsertIntoSlot(slot)
+        return slot:GetModuleType() == self:GetModuleType() or slot:IsRepairSlot()
+    end
+
     function ENT:Think()
+        self.BaseClass.Think(self)
+
         if not IsValid(self) then return end
 
-        if not self:IsInSlot() then
-            local min, max = self:GetCollisionBounds()
-            min = min + self:GetPos() - Vector(0, 0, 8)
-            max = max + self:GetPos()
-            local near = ents.FindInBox(min, max)
-            for _, v in pairs(near) do
-                if IsValid(v) and v:GetClass() == "info_ff_moduleslot" then
-                    local type = v:GetModuleType()
-                    if type == self:GetModuleType() or v:IsRepairSlot() then
-                        self:InsertIntoSlot(v:GetRoom(), type, v:GetPos())
-                        return
-                    end
-                end
-            end
-        else
+        if self:IsInSlot() then
             if self:GetDamaged() < 2 or self:GetSlotType() >= moduletype.REPAIR_1 then return end
             if CurTime() - self._lastEffect < 17 - ((math.random() * 0.5 + 0.5) * self:GetDamaged()) then return end
 
@@ -386,10 +276,6 @@ elseif CLIENT then
         Material("systems/noicon.png", "smooth")
     }
 
-    function ENT:Initialize()
-        self:SetCustomCollisionCheck(true)
-    end
-
     function ENT:IsGridLoaded()
         local grid = self:GetGrid()
         return grid and #grid == 4
@@ -404,7 +290,7 @@ elseif CLIENT then
     end
 
     function ENT:Draw()
-        self:DrawModel()
+        self.BaseClass.Draw(self)
 
         local ang = self:GetAngles()
         ang:RotateAroundAxis(ang:Up(), -90)
