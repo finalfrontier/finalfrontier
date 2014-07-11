@@ -187,6 +187,12 @@ if SERVER then
             phys:SetVelocity(oldvel)
         end
 
+        local mdl = self:GetModule()
+
+        if IsValid(mdl) then
+            mdl:SetPos(self:GetPos())
+        end
+
         if phys:IsAsleep() then
             phys:Wake()
         end
