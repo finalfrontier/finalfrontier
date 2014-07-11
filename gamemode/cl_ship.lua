@@ -46,7 +46,11 @@ function _mt:GetName()
 end
 
 function _mt:GetObject()
-    return self._nwdata.object
+    if IsValid(self._nwdata.object) and self._nwdata.object.GetObjectType then
+        return self._nwdata.object
+    else
+        return nil
+    end
 end
 
 function _mt:GetHazardMode()
@@ -54,7 +58,7 @@ function _mt:GetHazardMode()
 end
 
 function _mt:IsObjectInRange(obj)
-    if not IsValid(obj) then return false end
+    if not IsValid(obj) or not obj.GetObjectType then return false end
     
     local ox, oy = obj:GetCoordinates()
     local sx, sy = self:GetCoordinates()
