@@ -203,15 +203,14 @@ elseif CLIENT then
             local flare = SpaceFlare(1, Color(255, 159, 64, 255))
             flare:SetPulse(0.5, 2)
             return flare
-        --elseif self:GetObjectType() == objtype.MISSILE then
-        else
+        elseif self:GetObjectType() == objtype.MISSILE then
             local flare = SpaceFlare(0.5, Color(255, 0, 0, 255))
             flare:SetPulse(0.25, 1)
             return flare
-        --else
-        --    local flare = SpaceFlare(0.5, Color(0, 255, 0, 255))
-        --    flare:SetPulse(0.5, 1)
-        --    return flare
+        else
+            local flare = SpaceFlare(0.5, Color(0, 255, 0, 255))
+            flare:SetPulse(0.5, 1)
+            return flare
         end
     end
 
