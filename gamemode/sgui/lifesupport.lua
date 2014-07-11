@@ -249,8 +249,10 @@ elseif CLIENT then
         self.Super[BASE].UpdateLayout(self, layout)
 
         for _, room in ipairs(self._shipview:GetRoomElements()) do
-            room.atmoDial:SetCurrentValue(room:GetCurrentRoom():GetAtmosphere())
-            room.tempDial:SetCurrentValue(room:GetCurrentRoom():GetTemperature() / 600)
+            if room.atmoDial and room.tempDial then
+                room.atmoDial:SetCurrentValue(room:GetCurrentRoom():GetAtmosphere())
+                room.tempDial:SetCurrentValue(room:GetCurrentRoom():GetTemperature() / 600)
+            end
         end
     end
 end

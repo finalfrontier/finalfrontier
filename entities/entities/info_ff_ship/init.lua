@@ -97,6 +97,8 @@ function ENT:GetObject()
 end
 
 function ENT:IsObjectInRange(obj)
+    if not IsValid(obj) then return false end
+
     local ox, oy = obj:GetCoordinates()
     local sx, sy = self:GetCoordinates()
 

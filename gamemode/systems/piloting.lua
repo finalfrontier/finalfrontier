@@ -21,6 +21,7 @@ SYS.SGUIName = "piloting"
 SYS.Powered = true
 
 local DURATION_MULTIPLIER = 4
+local MAXIMUM_SPEED = 0.2
 
 function SYS:GetTargetCoordinates()
     local sx, sy = self:GetShip():GetCoordinates()
@@ -50,7 +51,7 @@ end
 
 function SYS:GetAccelerationTime()
     if self:IsFullStopping() then
-        local vx, vy = self:GetShip():GetVel()
+    local vx, vy = self:GetShip():GetVel()
         return math.sqrt(vx * vx + vy * vy)
     end
 
@@ -85,10 +86,25 @@ if SERVER then
             return Vector(0, 0, 0), Vector(0, 0, 0), SIM_GLOBAL_ACCELERATION
         end
 
-        local dx, dy = self:GetTargetAcceleration()
-        local a = self:GetAcceleration()
+        local ax, ay = self:GetTargetAcceleration()
+        local a = self:GetAccelerationMagnitude()
 
-        local acc = universe:GetWorldPos(dx * a, dy * a) - universe:GetWorldPos(0, 0)
+        local vx, vy = self:GetShip():GetVel()
+        local ox, oy = vx, vy
+
+        vx = vx + ax * a
+        vy = vy + ay * a
+
+        local speed2 = vx * vx + vy * vy
+
+        if speed2 > MAXIMUM_SPEED * MAXIMUM_SPEED then
+            local speed = math.sqrt(speed2)
+            vx = vx / speed * MAXIMUM_SPEED
+            vy = vy / speed * MAXIMUM_SPEED
+        end
+
+        local acc = universe:GetWorldPos(vx, vy) - universe:GetWorldPos(ox, oy)
+
         return Vector(0, 0, 0), acc, SIM_GLOBAL_ACCELERATION
     end
 
@@ -143,7 +159,7 @@ if SERVER then
         self:_UpdateNWData()
     end
 
-    function SYS:GetAcceleration()
+    function SYS:GetAccelerationMagnitude()
         if self:GetPowerNeeded() <= 0 then return 0 end
         local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
         return self:GetPower() * ACCELERATION_PER_POWER * (1 + score * 3)

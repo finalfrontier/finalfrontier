@@ -185,6 +185,27 @@ elseif CLIENT then
         self.Super[BASE].UpdateLayout(self, layout)
     end
 
+    function GUI:DrawArrow(sx, sy, tx, ty, size)
+        local nx, ny = tx - sx, ty - sy
+        local len = math.sqrt(nx * nx + ny * ny)
+
+        if len == 0 then return end
+
+        nx = nx / len
+        ny = ny / len
+
+        local rx, ry = -ny, nx
+
+        nx, ny = nx * size * 2, ny * size * 2
+        rx, ry = rx * size, ry * size
+
+        surface.DrawLine(sx, sy, tx, ty)
+
+        surface.DrawLine(tx + nx, ty + ny, tx + rx, ty + ry)
+        surface.DrawLine(tx + rx, ty + ry, tx - rx, ty - ry)
+        surface.DrawLine(tx - rx, ty - ry, tx + nx, ty + ny)
+    end
+
     function GUI:Draw()
         local x, y = self:GetCentreObject():GetCoordinates()
 
@@ -221,7 +242,8 @@ elseif CLIENT then
         render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
      
         local ship = self:GetShip()
-        local sx, sy = self:CoordinateToScreen(ship:GetCoordinates())
+        local px, py = ship:GetCoordinates()
+        local sx, sy = self:CoordinateToScreen(px, py)
         local sensor = ship:GetSystem("sensors")
 
         local sensor = ship:GetSystem("sensors")
@@ -239,29 +261,27 @@ elseif CLIENT then
 
         local piloting = ship:GetSystem("piloting")
         if piloting and piloting:IsAccelerating() then
-            local tx, ty = self:CoordinateToScreen(piloting:GetTargetCoordinates())
-
             surface.SetDrawColor(Color(51, 172, 45, 127))
             if piloting:IsFullStopping() then
                 local size = Pulse(1) * 4 + 16
                 surface.DrawOutlinedRect(sx + ox - size, sy + oy - size, size * 2, size * 2)
             else
+                local tx, ty = self:CoordinateToScreen(piloting:GetTargetCoordinates())
                 local size = Pulse(1) * 2 + 4
 
-                local nx, ny = piloting:GetTargetAcceleration()
-                local rx, ry = -ny, nx
-
-                nx, ny = nx * size * 2, ny * size * 2
-                rx, ry = rx * size, ry * size
-
-                surface.DrawLine(tx + ox + nx, ty + oy + ny, tx + ox + rx, ty + oy + ry)
-                surface.DrawLine(tx + ox + rx, ty + oy + ry, tx + ox - rx, ty + oy - ry)
-                surface.DrawLine(tx + ox - rx, ty + oy - ry, tx + ox + nx, ty + oy + ny)
-
-                surface.SetDrawColor(Color(51, 172, 45, 32))
-                surface.DrawLine(sx + ox, sy + oy, tx + ox, ty + oy)
+                self:DrawArrow(sx + ox, sy + oy, tx + ox, ty + oy, size)
             end
         end
+
+        local vx, vy = self:GetShip():GetVel()
+        
+        vx = vx * 8 + px
+        vy = vy * 8 + py
+
+        vx, vy = self:CoordinateToScreen(vx, vy)
+
+        surface.SetDrawColor(Color(255, 255, 255, 16))
+        self:DrawArrow(sx + ox, sy + oy, vx + ox, vy + oy, 5)
         
         local closest = self:GetNearestObject(self:GetLocalCursorPos())
         local objects = ents.FindByClass("info_ff_object")

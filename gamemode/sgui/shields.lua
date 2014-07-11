@@ -181,7 +181,9 @@ elseif CLIENT then
         self.Super[BASE].UpdateLayout(self, layout)
 
         for _, room in pairs(self._shipview:GetRoomElements()) do
-            room.shieldDial:SetCurrentValue(room:GetCurrentRoom():GetUnitShields() / room:GetCurrentRoom():GetSurfaceArea())
+            if room.shieldDial then
+                room.shieldDial:SetCurrentValue(room:GetCurrentRoom():GetUnitShields() / room:GetCurrentRoom():GetSurfaceArea())
+            end
         end
     end
 end
