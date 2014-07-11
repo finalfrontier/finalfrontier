@@ -39,6 +39,14 @@ ENT.Height = 0
 ENT._ui = nil
 ENT._layout = nil
 
+-- self:[GS]etNW([A-Z][a-z]+)+\(
+
+function ENT:SetupDataTables()
+    self:NetworkVarElement("Vector", 0, "x", "AlarmCountingDown")
+    self:NetworkVarElement("Vector", 0, "y", "AlarmCountStartTime")
+    self:NetworkVarElement("Vector", 0, "z", "AlarmCountInitialTime")
+end
+
 function ENT:GetShip()
     return self._ship
 end
@@ -52,11 +60,11 @@ function ENT:GetUIRoot()
 end
 
 function ENT:IsAlarmCountingDown()
-    return self:GetNWBool("alcntactive", false)
+    return self:GetAlarmCountingDown() ~= 0
 end
 
 function ENT:GetAlarmCounter()
-    return math.max(0, self:GetNWFloat("alcntinit", 0) - CurTime() + self:GetNWFloat("alcntstart", 0))
+    return math.max(0, self:GetAlarmCountInitialTime() - CurTime() + self:GetAlarmCountStartTime())
 end
 
 function ENT:GetFormattedAlarmCounter()
@@ -262,36 +270,40 @@ if SERVER then
         end
     end
 
-    function ENT:StartAlarmCountdown()
-        if self:GetNWFloat("alcntinit", 0) > 0 then return end
+    function ENT:SetIsAlarmCountingDown(val)
+        self:SetAlarmCountingDown(val and 1 or 0)
+    end
 
-        self:SetNWBool("alcntactive", true)
-        self:SetNWFloat("alcntstart", CurTime())
-        self:SetNWFloat("alcntinit", ALARM_TIME)
+    function ENT:StartAlarmCountdown()
+        if self:GetAlarmCountInitialTime() > 0 then return end
+
+        self:SetIsAlarmCountingDown(true)
+        self:SetAlarmCountStartTime(CurTime())
+        self:SetAlarmCountInitialTime(ALARM_TIME)
     end
 
     function ENT:StopAlarmCountdown()
-        self:SetNWBool("alcntactive", false)
-        self:SetNWFloat("alcntstart", 0)
-        self:SetNWFloat("alcntinit", 0)
+        self:SetIsAlarmCountingDown(false)
+        self:SetAlarmCountStartTime(0)
+        self:SetAlarmCountInitialTime(0)
     end
 
     function ENT:PauseAlarmCountdown()
-        self:SetNWFloat("alcntinit", self:GetAlarmCounter())
-        if self:GetNWFloat("alcntinit", 0) <= 0 then 
+        self:SetAlarmCountInitialTime(self:GetAlarmCounter())
+        if self:GetAlarmCountInitialTime() <= 0 then 
             self:StopAlarmCountdown()
             return
         end
-        self:SetNWBool("alcntactive", false)
-        self:SetNWFloat("alcntstart", 0)
+        self:SetIsAlarmCountingDown(false)
+        self:SetAlarmCountStartTime(0)
     end
 
     function ENT:UnpauseAlarmCountdown()
-        if self:GetNWFloat("alcntinit", 0) <= 0 then return end
-        if self:GetNWBool("alcntactive", false) then return end
+        if self:GetAlarmCountInitialTime() <= 0 then return end
+        if self:IsAlarmCountingDown() then return end
 
-        self:SetNWBool("alcntactive", true)
-        self:SetNWFloat("alcntstart", CurTime())
+        self:SetIsAlarmCountingDown(true)
+        self:SetAlarmCountStartTime(CurTime())
     end
 
     function ENT:UpdateLayout()
