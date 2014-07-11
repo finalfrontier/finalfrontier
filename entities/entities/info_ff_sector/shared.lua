@@ -20,12 +20,16 @@ if SERVER then AddCSLuaFile("shared.lua") end
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 
+function ENT:SetupDataTables()
+	self:NetworkVar( "String", 0, "SectorName" )
+end
+
 function ENT:GetCoordinates()
     return universe:GetUniversePos(self:GetPos())
 end
 
 function ENT:GetSectorName()
-    return self:GetNWString("name")
+    return self:GetSectorName()
 end
 
 function ENT:GetBoundingBox()
@@ -56,7 +60,7 @@ if SERVER then
 
     function ENT:SetCoordinates(x, y)
         self:SetPos(universe:GetWorldPos(universe:WrapCoordinates(x + 0.5, y + 0.5)))
-        self:SetNWString("name", horzNames[x + 1] .. "-" .. vertNames[y + 1])
+        self:SetSectorName(horzNames[x + 1] .. "-" .. vertNames[y + 1])
     end
 
     function ENT:Purge()

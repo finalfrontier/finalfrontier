@@ -30,7 +30,11 @@ objtype.MISSILE = 2
 objtype.MODULE = 3
 
 function ENT:SetupDataTables()
+    self:NetworkVar("String", 0, "ObjectName")
+    self:NetworkVar("Int", 0, "ObjectType")
     self:NetworkVar("Float", 0, "TargetRotation")
+    self:NetworkVar("Float", 1, "MaxAngularVel")
+    self:NetworkVar("Entity", 0, "Module")
 end
 
 function ENT:Initialize()
@@ -79,18 +83,6 @@ if SERVER then
         end
     end
 
-    function ENT:SetMaxAngularVel(vel)
-        self:SetNWFloat("maxangvel", vel)
-    end
-
-    function ENT:SetObjectType(type)
-        self:SetNWInt("objtype", type)
-    end
-
-    function ENT:SetObjectName(name)
-        self:SetNWString("objname", name)
-    end
-
     function ENT:AssignModule(mdl)
         local prev = self:GetModule()
         if IsValid(prev) then
@@ -103,7 +95,7 @@ if SERVER then
         mdl:SetMoveType(MOVETYPE_NONE)
         mdl:SetSolid(SOLID_NONE)
 
-        self:SetNWEntity("module", mdl)
+        self:SetModule(mdl)
     end
 
     function ENT:UnassignModule()
@@ -114,16 +106,8 @@ if SERVER then
         mdl:SetMoveType(MOVETYPE_VPHYSICS)
         mdl:SetSolid(SOLID_VPHYSICS)
 
-        self:SetNWEntity("module", nil)
+        self:SetModule(nil)
     end
-end
-
-function ENT:GetModule()
-    return self:GetNWEntity("module")
-end
-
-function ENT:GetMaxAngularVel()
-    return self:GetNWFloat("maxangvel", 0)
 end
 
 function ENT:GetRotation()
@@ -163,14 +147,6 @@ end
 function ENT:GetSpeed()
     local vx, vy = self:GetVel()
     return math.sqrt(vx * vx + vy * vy)
-end
-
-function ENT:GetObjectType()
-    return self:GetNWInt("objtype", objtype.UNKNOWN)
-end
-
-function ENT:GetObjectName()
-    return self:GetNWString("objname", nil)
 end
 
 if SERVER then
