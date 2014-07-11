@@ -101,7 +101,7 @@ end
 
 function GUI:UpdateTabPositions()
     local margin = 8
-    local width = (self:GetWidth() - margin) / TAB_PAGE_MAX
+    local width = (self:GetWidth() - margin)
 
     local left = margin
 
