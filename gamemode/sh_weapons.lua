@@ -106,45 +106,73 @@ end
 if SERVER then
     local function missilePhysicsSimulate(ent, phys, delta)
         local dx, dy = 0, 0
-        if IsValid(ent._target) then
-            local mx, my = ent:GetCoordinates()
-            local tx, ty = ent._target:GetCoordinates()
-            dx, dy = universe:GetDifference(mx, my, tx, ty)
-
-            if (ent._target ~= ent._owner:GetObject() or CurTime() - ent._shootTime > 1)
-                and dx * dx + dy * dy < 1 / (128 * 128) then
-                ent._weapon:Hit(ent._target, ent:GetCoordinates())
-                ent:Remove()
-            end
-
-            local dest = math.atan2(dy, dx)
-            local curr = ent:GetRotation() * math.pi / 180
-            local diff = FindAngleDifference(curr, dest)
-            local newr = (curr + math.sign(diff) * math.min(math.abs(diff), ent._weapon:GetLateral() * delta)) / math.pi * 180
-
-            ent:SetRotation(newr)
+            
+        if not IsValid(ent._target) then
+            return Vector(0, 0, 0), Vector(0, 0, 0), SIM_GLOBAL_ACCELERATION
         end
-        local ang = ent:GetRotation() * math.pi / 180
+
         local speed = ent._weapon:GetSpeed()
-        dx = math.cos(ang) * speed
-        dy = math.sin(ang) * speed
-        local vel = universe:GetWorldPos(dx, dy) - universe:GetWorldPos(0, 0)
-        return Vector(0, 0, 0), vel - phys:GetVelocity(), SIM_GLOBAL_ACCELERATION
+        
+        local mx, my = ent:GetCoordinates()
+        local tx, ty = ent._target:GetCoordinates()
+
+        dx, dy = universe:GetDifference(mx, my, tx, ty)
+
+        if (ent._target ~= ent._owner:GetObject() or CurTime() - ent._shootTime > 1)
+            and dx * dx + dy * dy < 1 / (64 * 64) then
+            ent._weapon:Hit(ent._target, ent:GetCoordinates())
+            ent:Remove()
+
+            return Vector(0, 0, 0), Vector(0, 0, 0), SIM_NOTHING
+        end
+
+        local vx, vy = ent._target:GetVel()
+        local dist = math.sqrt(dx * dx + dy * dy)
+        local dt = dist / speed
+
+        dx = dx + (vx - ent._basedx) * dt
+        dy = dy + (vy - ent._basedy) * dt
+
+        local len = math.sqrt(dx * dx + dy * dy)
+
+        if len > 0 then
+            dx = dx / len * speed
+            dy = dy / len * speed
+        end
+
+        ent:SetRotation(math.atan2(dy, dx) / math.pi * 180)
+
+        vx, vy = ent:GetVel()
+
+        vx = vx - ent._basedx
+        vy = vy - ent._basedy
+
+        local a = ent._weapon:GetLateral()
+
+        local ax = math.sign(dx - vx) * math.max(0, math.abs(dx - vx)) * a
+        local ay = math.sign(dy - vy) * math.max(0, math.abs(dy - vy)) * a
+
+        local acc = universe:GetWorldPos(ax, ay) - universe:GetWorldPos(0, 0)
+
+        return Vector(0, 0, 0), acc, SIM_GLOBAL_ACCELERATION
     end
 
     function weapon.LaunchMissile(ship, wpn, target, rot)
+        local vx, vy = ship:GetObject():GetVel()
+
         local missile = ents.Create("info_ff_object")
         missile._owner = ship
         missile._weapon = wpn
         missile._target = target
         missile._shootTime = CurTime()
+        missile._basedx = vx
+        missile._basedy = vy
+
         missile:SetObjectType(objtype.MISSILE)
         missile:SetCoordinates(ship:GetCoordinates())
         missile.PhysicsSimulate = missilePhysicsSimulate
 
         missile:Spawn()
-
-        local vx, vy = ship:GetObject():GetVel()
 
         local rad = rot * math.pi / 180
         missile:SetRotation(rot)
