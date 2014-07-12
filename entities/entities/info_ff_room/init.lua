@@ -441,7 +441,7 @@ end
 
 function ENT:GetModuleIntegrity(type)
     local mdl = self:GetModule(type)
-    if not mdl then return 0 end
+    if not mdl then return 1 end
     return 1 - (mdl:GetDamaged() / 16)
 end
 
