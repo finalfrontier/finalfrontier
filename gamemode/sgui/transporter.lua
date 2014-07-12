@@ -206,18 +206,20 @@ if SERVER then
     end
 elseif CLIENT then
     function GUI:Draw()
-        if self._grid then
-            local obj = self._grid:GetCentreObject()
-            if IsValid(obj) then
-                self._selectedLabel.Text = obj:GetDescription()
-            else
-                self._selectedLabel.Text = "Select Target"
+        if self:GetSystem() then
+            if self._grid then
+                local obj = self._grid:GetCentreObject()
+                if IsValid(obj) then
+                    self._selectedLabel.Text = obj:GetDescription()
+                else
+                    self._selectedLabel.Text = "Select Target"
+                end
             end
-        end
 
-        local dest = self:GetSystem():GetCurrentCharge() / self:GetSystem():GetMaximumCharge()
+            local dest = self:GetSystem():GetCurrentCharge() / self:GetSystem():GetMaximumCharge()
 
-        self._chargeSlider.Value = self._chargeSlider.Value + (dest - self._chargeSlider.Value) * 0.1
+            self._chargeSlider.Value = self._chargeSlider.Value + (dest - self._chargeSlider.Value) * 0.1
+        end 
 
         self.Super[BASE].Draw(self)
     end
