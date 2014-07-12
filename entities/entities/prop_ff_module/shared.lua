@@ -26,7 +26,7 @@ ENT._grid = nil
 function ENT:SetupDataTables()
     self.BaseClass.SetupDataTables(self)
 
-    self._grid = self:NetworkTable("Grid")
+    self._grid = self:NetworkTable(0, "Grid")
 end
 
 if SERVER then

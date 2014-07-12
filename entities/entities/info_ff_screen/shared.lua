@@ -37,8 +37,6 @@ ENT._ui = nil
 ENT._layout = nil
 
 function ENT:SetupDataTables()
-    self._layout = self:NetworkTable("Layout")
-
     self:NetworkVarElement("Vector", 0, "x", "AlarmCountingDown")
     self:NetworkVarElement("Vector", 0, "y", "AlarmCountStartTime")
     self:NetworkVarElement("Vector", 0, "z", "AlarmCountInitialTime")
@@ -55,6 +53,8 @@ function ENT:SetupDataTables()
     self:NetworkVar("Bool", 0, "BeingUsed")
 
     self:NetworkVar("Entity", 0, "UsingPlayer")
+
+    self._layout = self:NetworkTable(0, "Layout")
 end
 
 function ENT:GetShip()
