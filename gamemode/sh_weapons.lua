@@ -34,6 +34,9 @@ _mt.Base = nil
 _mt.Name = nil
 _mt.MaxTier = 1
 
+_mt.CanSpawn = false
+_mt.Frequency = 100
+
 _mt.LaunchSound = "weapons/rpg/rocketfire1.wav"
 
 if CLIENT then
@@ -72,11 +75,11 @@ for i, file in ipairs(files) do
     
     include("weapons/" .. file)
 
-    weapon._dict[name] = WPN
-
-    if WPN.CanSpawn then
+    if not weapon._dict[name] and WPN.CanSpawn then
         table.insert(weapon._spawnable, WPN)
     end
+
+    weapon._dict[name] = WPN
 
     WPN = nil
 end
@@ -92,7 +95,16 @@ for _, WPN in pairs(weapon._dict) do
 end
 
 function weapon.GetRandomName()
-    return table.Random(weapon._spawnable).Name
+    local tot = 0
+    for _, wpn in ipairs(weapon._spawnable) do
+        tot = tot + wpn.Frequency
+    end
+
+    local i = math.random() * tot
+    for _, wpn in ipairs(weapon._spawnable) do
+        i = i - wpn.Frequency
+        if i <= 0 then return wpn.Name end
+    end
 end
 
 function weapon.Create(name, tier)
