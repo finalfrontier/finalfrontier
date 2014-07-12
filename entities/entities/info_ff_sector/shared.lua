@@ -80,9 +80,9 @@ if SERVER then
         self:Purge()
 
         local x, y = self:GetCoordinates()
-        local count, max = 0, math.ceil(math.random() * 16)
+        local count, max = 0, math.ceil(math.random() * 8)
 
-        while math.random() < 0.5 and count < max do
+        while math.random() < 0.25 and count < max do
             count = count + 1
         end
 
