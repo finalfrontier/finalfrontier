@@ -21,6 +21,19 @@ ENT.Base = "prop_ff_modulebase"
 
 ENT._weapon = nil
 
+if SERVER then
+    concommand.Add("ff_spawn_weapon", function(ply, cmd, args)
+        if not IsValid(ply) or not cvars.Bool("sv_cheats") then return end
+
+        local trace = ply:GetEyeTraceNoCursor()
+
+        local mdl = ents.Create("prop_ff_weaponmodule")
+        mdl:SetWeapon(args[1] or weapon.GetRandomName(), args[2] and tonumber(args[2]) or nil)
+        mdl:SetPos(trace.HitPos + trace.HitNormal * 8)
+        mdl:Spawn()
+    end, nil, "Spawn a weapon module", FCVAR_CHEAT)
+end
+
 function ENT:SetupDataTables()
     self.BaseClass.SetupDataTables(self)
 
@@ -48,9 +61,9 @@ function ENT:CanShoot()
 end
 
 if SERVER then
-    function ENT:SetWeapon(name)
+    function ENT:SetWeapon(name, tier)
         self:SetWeaponName(name)
-        self._weapon = weapon.Create(name)
+        self._weapon = weapon.Create(name, tier)
         self:SetWeaponTier(self._weapon:GetTier())
     end
 
