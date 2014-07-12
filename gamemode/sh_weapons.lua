@@ -69,6 +69,7 @@ for i, file in ipairs(files) do
     WPN.Super = {}
     WPN.Super.__index = WPN.Super
     WPN.Super[name] = WPN
+    
     include("weapons/" .. file)
 
     weapon._dict[name] = WPN
@@ -145,14 +146,12 @@ if SERVER then
         vx = vx - ent._basedx
         vy = vy - ent._basedy
 
+        ent:SetTargetRotation(math.atan2(vy, vx) / math.pi * 180)
+
         local a = ent._weapon:GetLateral()
 
         local ax = math.sign(dx - vx) * math.max(0, math.abs(dx - vx)) * a
         local ay = math.sign(dy - vy) * math.max(0, math.abs(dy - vy)) * a
-
-        if ax * ax + ay * ay > 0 then
-            ent:SetTargetRotation(math.atan2(vy, vx) / math.pi * 180)
-        end
 
         local acc = universe:GetWorldPos(ax, ay) - universe:GetWorldPos(0, 0)
 
