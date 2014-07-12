@@ -70,16 +70,20 @@ if SERVER then
 end
 
 function PLAYER:SetupDataTables()
-    self.Player:NetworkVar("String", 0, "ShipName")
+    local ply = self.Player or self
 
-    self.Player:NetworkVar("Int", 0, "RoomIndex")
+    ply:NetworkVar("String", 0, "ShipName")
 
-    self.Player:NetworkVar("Bool", 0, "UsingScreen")
+    ply:NetworkVar("Int", 0, "RoomIndex")
 
-    self.Player:NetworkVar("Entity", 0, "CurrentScreen")
-    self.Player:NetworkVar("Entity", 1, "OldWeapon")
+    ply:NetworkVar("Bool", 0, "UsingScreen")
 
-    self.Player._permissions = self.Player:NetworkTable(0, "Permissions")
+    ply:NetworkVar("Entity", 0, "CurrentScreen")
+    ply:NetworkVar("Entity", 1, "OldWeapon")
+
+    ply._permissions = ply:NetworkTable(0, "Permissions")
 end
+
+SetupPlayerDataTables = PLAYER.SetupDataTables
 
 player_manager.RegisterClass("player_ff_default", PLAYER, "player_default")

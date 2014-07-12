@@ -124,6 +124,13 @@ function GM:Initialize()
 end
 
 function GM:Think()
+    for _, ply in ipairs(player.GetAll()) do
+        if IsValid(ply) and ply ~= LocalPlayer() and not ply.dt then
+            ply:InstallDataTable()
+            SetupPlayerDataTables(ply)
+        end
+    end
+
     ships.Think()
     team.Think()
 end

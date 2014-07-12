@@ -22,9 +22,6 @@ GM.Author = "Metapyziks"
 GM.Email = "metapyziks@gmail.com"
 GM.Website = "https://github.com/finalfrontier"
 
-function GM:Initialize()
-end 
-
 -- Global Functions
 
 function table.Where(table, pred)
