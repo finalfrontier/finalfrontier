@@ -1,4 +1,4 @@
--- Copyright (c) 2014 James King [metapyziks@gmail.com]
+-- Copyright (c) 2014 Alex Wlach (nightmarex91@gmail.com)
 -- 
 -- This file is part of Final Frontier.
 -- 
