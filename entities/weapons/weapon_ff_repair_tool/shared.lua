@@ -122,8 +122,7 @@ if SERVER then
             end
         end
         
-        ent._grid[gridx][gridy] = self:GetRepairMode()
-        ent:_UpdateGrid()
+        ent:SetTile(gridx, gridy, self:GetRepairMode())
     end )
 end
 if CLIENT then

@@ -214,6 +214,11 @@ if SERVER then
         return true
     end
 
+    function ENT:SetTile(x, y, val)
+        self._grid[x][y] = val
+        self._grid:Update()
+    end
+
     function ENT:_FindXY(index)
         local y = math.floor((index - 1) / 4) + 1
         local x = index - (y - 1) * 4
