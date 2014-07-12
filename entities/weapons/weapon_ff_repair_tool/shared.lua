@@ -20,10 +20,11 @@ SWEP.Slot      = 1
 SWEP.HoldType = "pistol"
 SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
-SWEP.ViewModel = "models/weapons/v_toolgun.mdl"
+SWEP.ViewModel = "models/weapons/c_toolgun.mdl"
 SWEP.WorldModel = "models/weapons/w_toolgun.mdl"
 SWEP.ShowViewModel = true
 SWEP.ShowWorldModel = true
+SWEP.UseHands = true
 
 SWEP.Primary.ClipSize       = -1
 SWEP.Primary.DefaultClip    = -1
