@@ -210,7 +210,6 @@ local _entmt = FindMetaTable("Entity")
 local _plymt = FindMetaTable("Player")
 
 function _plymt:InstallDataTable()
-    print("Invoked InstallDataTable on " .. self:GetClass())
     _entmt.InstallDataTable(self)
 end
 
