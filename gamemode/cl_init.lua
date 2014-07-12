@@ -17,6 +17,8 @@
 
 include("gmtools/nwtable.lua")
 
+include("player_class/player_ff_default.lua")
+
 include("sh_init.lua")
 include("sh_bounds.lua")
 include("sh_matrix.lua")
@@ -121,16 +123,7 @@ function GM:Initialize()
     self.BaseClass:Initialize()
 end
 
-local _initDataTables = false
-
 function GM:Think()
-    if not _initDataTables and IsValid(LocalPlayer()) then
-        _initDataTables = true
-
-        LocalPlayer():InstallDataTable()
-        LocalPlayer():SetupDataTables()
-    end
-
     ships.Think()
     team.Think()
 end

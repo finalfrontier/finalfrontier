@@ -205,23 +205,3 @@ function IsPointInsidePolyGroup(polys, x, y)
     
     return false
 end
-
-local _entmt = FindMetaTable("Entity")
-local _plymt = FindMetaTable("Player")
-
-function _plymt:InstallDataTable()
-    _entmt.InstallDataTable(self)
-end
-
-function _plymt:SetupDataTables()
-    self:NetworkVar("String", 0, "ShipName")
-
-    self:NetworkVar("Int", 0, "RoomIndex")
-
-    self:NetworkVar("Bool", 0, "UsingScreen")
-
-    self:NetworkVar("Entity", 0, "CurrentScreen")
-    self:NetworkVar("Entity", 1, "OldWeapon")
-
-    self._permissions = self:NetworkTable(0, "Permissions")
-end
