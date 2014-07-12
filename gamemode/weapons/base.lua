@@ -118,7 +118,7 @@ if SERVER then
                 dmg:ScaleDamage(self:GetLifeSupportModuleMultiplier())
             elseif t == moduletype.SHIELDS then
                 dmg:ScaleDamage(self:GetShieldModuleMultiplier())
-            elseif t == moduletype.POWER then
+            elseif t == moduletype.SYSTEM_POWER then
                 dmg:ScaleDamage(self:GetPowerModuleMultiplier())
             end
         end
