@@ -88,7 +88,7 @@ function _mt:Render(origin, vel)
     local scale = self._scale
 
     if self._pulseFreq > 0 then
-        scale = scale + math.Round(Pulse(self._pulseFreq)) * self._pulseScale
+        scale = scale + math.Round(Pulse(self._pulseFreq, self._pulsePhase)) * self._pulseScale
     end
 
     render.DrawQuadEasy(pos, -pos:GetNormalized(), scale, scale, clr, 0)
