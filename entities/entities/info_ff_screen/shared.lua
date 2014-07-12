@@ -455,6 +455,8 @@ elseif CLIENT then
     
     function ENT:UpdateLayout()        
         if not self._layout:IsCurrent() then return end
+        if not self._ship or not self._ship:IsCurrent() then return end
+        if not self._room or not self._room:IsCurrent() then return end
 
         if not self._ui then
             self._ui = sgui.Create(self, MAIN_GUI_CLASS)

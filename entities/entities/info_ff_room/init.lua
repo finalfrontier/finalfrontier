@@ -55,6 +55,19 @@ local function ShouldSync(a, b, delta)
     return math.abs(a - b) >= delta or (a ~= b and a * 100 == math.Round(a * 100))
 end
 
+function ENT:KeyValue(key, value)
+    self._nwdata = self._nwdata or {}
+
+    if key == "ship" then
+        self:_SetShipName(tostring(value), true)
+    elseif key == "system" then
+        self:_SetSystemName(tostring(value), true)
+    elseif key == "volume" then
+        self:_SetVolume(tonumber(value), true)
+        self:_SetSurfaceArea(math.sqrt(self:GetVolume()) * 6, true)
+    end
+end
+
 function ENT:Initialize()
     self._screens = {}
     self._doorlist = {}
@@ -73,7 +86,7 @@ function ENT:Initialize()
 
     self._players = {}
 
-    self._nwdata = NetworkTable(self:GetName())
+    self._nwdata = NetworkTable(self:GetName(), self._nwdata)
 
     if not self._nwdata.corners then self._nwdata.corners = {} end
     if not self._nwdata.details then self._nwdata.details = {} end
@@ -87,19 +100,6 @@ function ENT:Initialize()
     self._nwdata:Update()
 
     self:SetIndex(0)
-end
-
-function ENT:KeyValue(key, value)
-    self._nwdata = NetworkTable(self:GetName())
-
-    if key == "ship" then
-        self:_SetShipName(tostring(value))
-    elseif key == "system" then
-        self:_SetSystemName(tostring(value))
-    elseif key == "volume" then
-        self:_SetVolume(tonumber(value))
-        self:_SetSurfaceArea(math.sqrt(self:GetVolume()) * 6)
-    end
 end
 
 function ENT:InitPostEntity()    
@@ -220,9 +220,9 @@ function ENT:GetIndex()
     return self._nwdata.index
 end
 
-function ENT:_SetShipName(name)
+function ENT:_SetShipName(name, dontUpdate)
     self._nwdata.shipname = name
-    self._nwdata:Update()
+    if not dontUpdate then self._nwdata:Update() end
 end
 
 function ENT:GetShipName()
@@ -246,9 +246,9 @@ function ENT:GetShip()
     return self._ship
 end
 
-function ENT:_SetSystemName(name)
+function ENT:_SetSystemName(name, dontUpdate)
     self._nwdata.systemname = name
-    self._nwdata:Update()
+    if not dontUpdate then self._nwdata:Update() end
 end
 
 function ENT:GetSystemName()
@@ -270,18 +270,18 @@ function ENT:GetSystem()
     return self._system
 end
 
-function ENT:_SetVolume(value)
+function ENT:_SetVolume(value, dontUpdate)
     self._nwdata.volume = value
-    self._nwdata:Update()
+    if not dontUpdate then self._nwdata:Update() end
 end
 
 function ENT:GetVolume()
     return self._nwdata.volume or 0
 end
 
-function ENT:_SetSurfaceArea(value)
+function ENT:_SetSurfaceArea(value, dontUpdate)
     self._nwdata.surfacearea = value
-    self._nwdata:Update()
+    if not dontUpdate then self._nwdata:Update() end
 end
 
 function ENT:GetSurfaceArea()

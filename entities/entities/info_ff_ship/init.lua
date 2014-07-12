@@ -43,14 +43,14 @@ ENT._warnLightBrushes = nil
 ENT._hazardEnd = 0
 
 function ENT:KeyValue(key, value)
-    self._nwdata = NetworkTable(self:GetName())
+    self._nwdata = self._nwdata or {}
 
     if key == "health" then
-        self:_SetBaseHealth(tonumber(value))
+        self:_SetBaseHealth(tonumber(value), true)
     elseif key == "name" then
-        self:_SetFullName(tostring(value))
+        self:_SetFullName(tostring(value), true)
     elseif key == "color" then
-        self:_SetUIColor(tostring(value))
+        self:_SetUIColor(tostring(value), true)
     elseif key == "mainlight" then
         self._mainLightName = tostring(value)
     elseif key == "warnlight" then
@@ -69,7 +69,7 @@ function ENT:Initialize()
     self._systems = {}
     self._players = {}
 
-    self._nwdata = NetworkTable(self:GetName())
+    self._nwdata = NetworkTable(self:GetName(), self._nwdata)
 
     self._nwdata.roomnames = {}
     self._nwdata.doornames = {}
@@ -195,25 +195,25 @@ function _mt:GetOrigin()
     return self._nwdata.x, self._nwdata.y
 end
 
-function ENT:_SetBaseHealth(health)
+function ENT:_SetBaseHealth(health, dontUpdate)
     self._nwdata.basehealth = health
-    self._nwdata:Update()
+    if not dontUpdate then self._nwdata:Update() end
 end
 
 function ENT:GetBaseHealth()
     return self._nwdata.basehealth
 end
 
-function ENT:_SetFullName(value)
+function ENT:_SetFullName(value, dontUpdate)
     self._nwdata.fullname = value
-    self._nwdata:Update()
+    if not dontUpdate then self._nwdata:Update() end
 end
 
 function ENT:GetFullName()
     return self._nwdata.fullname or "Unnamed"
 end
 
-function ENT:_SetUIColor(value)
+function ENT:_SetUIColor(value, dontUpdate)
     if type(value) == "string" then
         local split = string.Split(value, " ")
         self._nwdata.uicolor = Color(tonumber(split[1]), tonumber(split[2]), tonumber(split[3]), 255)
@@ -221,7 +221,7 @@ function ENT:_SetUIColor(value)
         self._nwdata.uicolor = value
     end
 
-    self._nwdata:Update()
+    if not dontUpdate then self._nwdata:Update() end
 end
 
 function ENT:GetUIColor()

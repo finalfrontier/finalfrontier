@@ -28,8 +28,18 @@ ENT._lastupdate = 0
 
 ENT._nwdata = nil
 
+function ENT:KeyValue(key, value)
+    self._nwdata = self._nwdata or {}
+
+    if key == "room1" then
+        self:_SetRoomName(1, tostring(value))
+    elseif key == "room2" then
+        self:_SetRoomName(2, tostring(value))
+    end
+end
+
 function ENT:Initialize()
-    self._nwdata = NetworkTable(self:GetName())
+    self._nwdata = NetworkTable(self:GetName(), self._nwdata)
 
     self._rooms = {}
 
@@ -38,16 +48,6 @@ function ENT:Initialize()
     self._nwdata:Update()
 
     self:_SetArea(4)
-end
-
-function ENT:KeyValue(key, value)
-    self._nwdata = NetworkTable(self:GetName())
-
-    if key == "room1" then
-        self:_SetRoomName(1, tostring(value))
-    elseif key == "room2" then
-        self:_SetRoomName(2, tostring(value))
-    end
 end
 
 function ENT:InitPostEntity()

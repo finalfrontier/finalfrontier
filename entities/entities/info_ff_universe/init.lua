@@ -31,7 +31,7 @@ ENT._sectors = nil
 ENT._nwdata = nil
 
 function ENT:KeyValue(key, value)
-    self._nwdata = NetworkTable("universe")
+    self._nwdata = self._nwdata or {}
 
     if key == "width" then
         self._nwdata.width = tonumber(value)
@@ -49,7 +49,7 @@ function ENT:Initialize()
     
     self._sectors = {}
 
-    self._nwdata = NetworkTable("universe")
+    self._nwdata = NetworkTable("universe", self._nwdata)
 
     self._nwdata.x = self:GetPos().x
     self._nwdata.y = self:GetPos().y
