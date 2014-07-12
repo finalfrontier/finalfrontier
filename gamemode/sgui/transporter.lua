@@ -34,6 +34,8 @@ GUI._shipView = nil
 GUI._closeButton = nil
 
 function GUI:Inspect(obj)
+    if not self:GetSystem() then return end
+
     self:RemoveAllChildren()
 
     local colWidth = self:GetWidth() * 0.4 - 16
