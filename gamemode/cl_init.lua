@@ -121,7 +121,16 @@ function GM:Initialize()
     self.BaseClass:Initialize()
 end
 
+local _initDataTables = false
+
 function GM:Think()
+    if not _initDataTables and IsValid(LocalPlayer()) then
+        _initDataTables = true
+
+        LocalPlayer():InstallDataTable()
+        LocalPlayer():SetupDataTables()
+    end
+
     ships.Think()
     team.Think()
 end
@@ -134,8 +143,8 @@ end
 
 function GM:PlayerBindPress(ply, bind, pressed)
     if ply ~= LocalPlayer() then return end
-    if ply:GetNWBool("usingScreen") then
-        local screen = ply:GetNWEntity("screen")
+    if ply:GetUsingScreen() then
+        local screen = ply:GetCurrentScreen()
         if IsValid(screen) and screen.Click then
             if bind == "+attack" then
                 screen:Click(MOUSE1)

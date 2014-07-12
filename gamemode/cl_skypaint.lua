@@ -59,8 +59,18 @@ function _mt:GetColor()
     return self._clr
 end
 
-function _mt:Render(origin, vel)
-    local pos = self._pos - origin
+function _mt:Render(origin, offset, rotation)
+    local pos = self._pos
+
+    if rotation then
+        
+    end
+
+    if offset then
+        pos = pos + offset
+    end
+
+    pos = pos - origin
 
     if pos.x > SPACE_SIZE_HALF then
         pos.x = pos.x - SPACE_SIZE
@@ -174,7 +184,7 @@ function GM:PostDraw2DSkyBox()
 
     render.SetMaterial(_starMat)
     for _, star in ipairs(_stars) do
-        star:Render(pos, nil)
+        star:Render(pos)
     end
 
     local objects = ents.FindByClass("info_ff_object")
@@ -185,7 +195,7 @@ function GM:PostDraw2DSkyBox()
             end
 
             obj._flare:SetPos(_CoordToStarPos(obj:GetCoordinates()))
-            obj._flare:Render(pos, nil)
+            obj._flare:Render(pos)
         end
     end
 

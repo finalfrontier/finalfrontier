@@ -357,9 +357,9 @@ if SERVER then
         self:SetBeingUsed(true)
         self:SetUsingPlayer(ply)
 
-        ply:SetNWBool("usingScreen", true)
-        ply:SetNWEntity("screen", self)
-        ply:SetNWEntity("oldWep", ply:GetActiveWeapon())
+        ply:SetUsingScreen(true)
+        ply:SetCurrentScreen(self)
+        ply:SetOldWeapon(ply:GetActiveWeapon())
         
         ply:SetWalkSpeed(50)
         ply:SetCanWalk(false)
@@ -401,8 +401,8 @@ if SERVER then
         
         local ply = self:GetUsingPlayer()
         if IsValid(ply) then
-            ply:SetNWBool("usingScreen", false)
-            local oldWep = ply:GetNWEntity("oldWep")
+            ply:SetUsingScreen(false)
+            local oldWep = ply:GetOldWeapon()
             
             ply:StripWeapon("weapon_ff_unarmed")
             if oldWep and oldWep:IsValid() then

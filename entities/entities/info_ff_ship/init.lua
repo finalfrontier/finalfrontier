@@ -300,7 +300,7 @@ function ply_mt:SetShip(ship)
     end
     ship:_AddPlayer(self)
     self._ship = ship
-    self:SetNWString("ship", ship:GetName())
+    self:SetShipName(ship:GetName())
 end
 
 function ply_mt:GetShip()

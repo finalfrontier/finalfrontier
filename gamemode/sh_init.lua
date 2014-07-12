@@ -19,8 +19,8 @@ if SERVER then AddCSLuaFile("sh_init.lua") end
 
 GM.Name = "Final Frontier"
 GM.Author = "Metapyziks"
-GM.Email = "N/A"
-GM.Website = "N/A"
+GM.Email = "metapyziks@gmail.com"
+GM.Website = "https://github.com/finalfrontier"
 
 function GM:Initialize()
 end 
@@ -204,4 +204,25 @@ function IsPointInsidePolyGroup(polys, x, y)
     end
     
     return false
+end
+
+local _entmt = FindMetaTable("Entity")
+local _plymt = FindMetaTable("Player")
+
+function _plymt:InstallDataTable()
+    print("Invoked InstallDataTable on " .. self:GetClass())
+    _entmt.InstallDataTable(self)
+end
+
+function _plymt:SetupDataTables()
+    self:NetworkVar("String", 0, "ShipName")
+
+    self:NetworkVar("Int", 0, "RoomIndex")
+
+    self:NetworkVar("Bool", 0, "UsingScreen")
+
+    self:NetworkVar("Entity", 0, "CurrentScreen")
+    self:NetworkVar("Entity", 1, "OldWeapon")
+
+    self._permissions = self:NetworkTable(0, "Permissions")
 end

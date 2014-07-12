@@ -78,7 +78,7 @@ function SWEP:Deploy()
 end
 
 function SWEP:Holster()
-   return not self.Owner:GetNWBool("usingScreen")
+   return not self.Owner:GetUsingScreen()
 end
 
 function SWEP:HUDShouldDraw()

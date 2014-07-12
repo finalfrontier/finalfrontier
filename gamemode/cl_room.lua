@@ -174,12 +174,12 @@ function _mt:GetPowerRatio()
 end
 
 function _mt:GetPermissionsName()
-    return "p_" .. self:GetShip():GetName() .. "_" .. self:GetIndex()
+    return self:GetShip():GetName() .. "_" .. self:GetIndex()
 end
 
 local ply_mt = FindMetaTable("Player")
 function ply_mt:GetPermission(room)
-    return self:GetNWInt(room:GetPermissionsName(), 0)
+    return self._permissions[room:GetPermissionsName()] or permission.NONE
 end
 
 function ply_mt:HasPermission(room, perm)
@@ -192,14 +192,14 @@ function ply_mt:HasDoorPermission(door)
 end
 
 function ply_mt:GetRoom()
-    if not self:GetNWInt("room") then return nil end
-    if not self:GetNWString("ship") then return nil end
-    return self:GetShip():GetRoomByIndex(self:GetNWInt("room"))
+    local shipName = self:GetShipName()
+    if not shipName or string.len(shipName) == 0 then return nil end
+    return self:GetShip():GetRoomByIndex(self:GetRoomIndex())
 end
 
 function ply_mt:IsInRoom(room)
-    return self:GetNWString("ship") == room:GetShip():GetName()
-        and self:GetNWInt("room") == room:GetIndex()
+    return self:GetShipName() == room:GetShip():GetName()
+        and self:GetRoomIndex() == room:GetIndex()
 end
 
 function _mt:Think()

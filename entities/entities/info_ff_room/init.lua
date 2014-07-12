@@ -580,7 +580,7 @@ function ENT:TransmitAir(room, delta)
 end
 
 function ENT:GetPermissionsName()
-    return "p_" .. self:GetShipName() .. "_" .. self:GetIndex()
+    return self:GetShipName() .. "_" .. self:GetIndex()
 end
 
 function ENT:HasPlayerWithSecurityPermission()
@@ -595,7 +595,7 @@ end
 
 local ply_mt = FindMetaTable("Player")
 function ply_mt:GetPermission(room)
-    return self:GetNWInt(room:GetPermissionsName(), 0)
+    return self._permissions[room:GetPermissionsName()] or permission.NONE
 end
 
 function ply_mt:HasPermission(room, perm)
@@ -603,7 +603,8 @@ function ply_mt:HasPermission(room, perm)
 end
 
 function ply_mt:SetPermission(room, perm)
-    self:SetNWInt(room:GetPermissionsName(), perm)
+    self._permissions[room:GetPermissionsName()] = perm
+    self._permissions:Update()
 end
 
 function ply_mt:HasDoorPermission(door)
@@ -618,7 +619,7 @@ function ply_mt:SetRoom(room)
     end
     room:_AddPlayer(self)
     self._room = room
-    self:SetNWInt("room", room:GetIndex())
+    self:SetRoomIndex(room:GetIndex())
 end
 
 function ply_mt:GetRoom()

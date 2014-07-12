@@ -90,6 +90,9 @@ function GM:PlayerInitialSpawn(ply)
 
     ply:SetModel(table.Random(models))
     ply:SetCanWalk(true)
+
+    ply:InstallDataTable()
+    ply:SetupDataTables()
     
     team.AutoAssign(ply)
 
