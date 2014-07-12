@@ -26,7 +26,7 @@ if SERVER then
     local TEMP_POWER_PER_METER3 = 0.25
     local TEMP_RECHARGE_RATE = 5
     local ATMO_POWER_PER_METER3 = 0.5
-    local ATMO_RECHARGE_RATE = 25
+    local ATMO_RECHARGE_RATE = 5
 
     SYS._atmo = nil
     SYS._temp = nil
