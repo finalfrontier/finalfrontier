@@ -403,11 +403,11 @@ if SERVER then
         if IsValid(ply) then
             ply:SetUsingScreen(false)
             local oldWep = ply:GetOldWeapon()
-            
-            ply:StripWeapon("weapon_ff_unarmed")
             if oldWep and oldWep:IsValid() then
                 ply:SetActiveWeapon(oldWep)
             end
+            
+            ply:StripWeapon("weapon_ff_unarmed")
             
             ply:SetWalkSpeed(175)
             ply:SetCanWalk(true)

@@ -44,7 +44,6 @@ local _models = {
 
 if SERVER then
     function PLAYER:Init()
-        print("# Init")
         team.AutoAssign(self.Player)
     end
 
@@ -71,8 +70,6 @@ if SERVER then
 end
 
 function PLAYER:SetupDataTables()
-    print("# Set up tables")
-
     self.Player:NetworkVar("String", 0, "ShipName")
 
     self.Player:NetworkVar("Int", 0, "RoomIndex")
