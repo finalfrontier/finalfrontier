@@ -73,10 +73,7 @@ function ENT:Initialize()
 
     self._players = {}
 
-    if not self._nwdata then
-        self._nwdata = {}
-        self._nwdata.corners = {}
-    end
+    self._nwdata = NetworkTable(self:GetName())
 
     if not self._nwdata.corners then self._nwdata.corners = {} end
     if not self._nwdata.details then self._nwdata.details = {} end
@@ -87,12 +84,13 @@ function ENT:Initialize()
     self._nwdata.airvolume = 0
     self._nwdata.shields = 0
     self._nwdata.name = self:GetName()
+    self._nwdata:Update()
 
     self:SetIndex(0)
 end
 
 function ENT:KeyValue(key, value)
-    if not self._nwdata then self._nwdata = {} end
+    self._nwdata = NetworkTable(self:GetName())
 
     if key == "ship" then
         self:_SetShipName(tostring(value))
@@ -215,7 +213,7 @@ end
 
 function ENT:SetIndex(index)
     self._nwdata.index = index
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetIndex()
@@ -224,7 +222,7 @@ end
 
 function ENT:_SetShipName(name)
     self._nwdata.shipname = name
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetShipName()
@@ -250,7 +248,7 @@ end
 
 function ENT:_SetSystemName(name)
     self._nwdata.systemname = name
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetSystemName()
@@ -274,7 +272,7 @@ end
 
 function ENT:_SetVolume(value)
     self._nwdata.volume = value
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetVolume()
@@ -283,7 +281,7 @@ end
 
 function ENT:_SetSurfaceArea(value)
     self._nwdata.surfacearea = value
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetSurfaceArea()
@@ -307,7 +305,7 @@ function ENT:AddCorner(index, x, y)
     self._nwdata.corners[index] = { x = x, y = y }
     self:GetBounds():AddPoint(x, y)
     self:GetShip():GetBounds():AddPoint(x, y)
-    self:_UpdateNWData()
+    self._nwdata:Update()
 
     self._polys = nil
 end
@@ -341,7 +339,7 @@ function ENT:AddDetail(name, x, y, nextnames)
         } )
     end
 
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetDetails()
@@ -461,7 +459,7 @@ end
 function ENT:SetModule(type, module)
     self._modules[type] = module
     self._nwdata.modules[type] = module:EntIndex()
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:RemoveModule(module)
@@ -473,7 +471,7 @@ function ENT:RemoveModule(module)
             end
             self._modules[i] = nil
             self._nwdata.modules[i] = nil
-            self:_UpdateNWData()
+            self._nwdata:Update()
             return true
         end
     end
@@ -503,7 +501,7 @@ function ENT:SetUnitTemperature(temp)
 
     if ShouldSync(self._temperature, self._nwdata.temperature, self:GetVolume() / 100) then
         self._nwdata.temperature = self._temperature
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 end
 
@@ -520,7 +518,7 @@ function ENT:SetAirVolume(volume)
 
     if ShouldSync(self._airvolume, self._nwdata.airvolume, self:GetVolume() / 100) then
         self._nwdata.airvolume = self._airvolume
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 end
 
@@ -541,7 +539,7 @@ function ENT:SetUnitShields(shields)
 
     if ShouldSync(self._shields, self._nwdata.shields, 1 / 100) then
         self._nwdata.shields = self._shields
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 end
 
@@ -663,8 +661,4 @@ end
 function ENT:IsPointInside(x, y)
     return self:GetBounds():IsPointInside(x, y)
         and IsPointInsidePolyGroup(self:GetPolygons(), x, y)
-end
-
-function ENT:_UpdateNWData()
-    SetGlobalTable(self:GetName(), self._nwdata)
 end

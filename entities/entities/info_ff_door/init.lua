@@ -29,20 +29,19 @@ ENT._lastupdate = 0
 ENT._nwdata = nil
 
 function ENT:Initialize()
+    self._nwdata = NetworkTable(self:GetName())
+
     self._rooms = {}
 
-    if not self._nwdata then
-        self._nwdata = {}
-        self._nwdata.roomnames = {}
-    end
-
+    self._nwdata.roomnames = self._nwdata.roomnames or {}
     self._nwdata.name = self:GetName()
+    self._nwdata:Update()
 
     self:_SetArea(4)
 end
 
 function ENT:KeyValue(key, value)
-    if not self._nwdata then self._nwdata = {} end
+    self._nwdata = NetworkTable(self:GetName())
 
     if key == "room1" then
         self:_SetRoomName(1, tostring(value))
@@ -74,7 +73,7 @@ function ENT:InitPostEntity()
         local x, y = trans:Transform(v.x, v.y)
         self._nwdata.corners[i] = { x = x, y = y }
     end
-    self:_UpdateNWData()
+    self._nwdata:Update()
 
     self:_UpdateRooms()
 
@@ -83,7 +82,7 @@ end
 
 function ENT:SetIsPowered(powered)
     self._nwdata.powered = powered
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:IsPowered()
@@ -92,7 +91,7 @@ end
 
 function ENT:_SetArea(area)
     self._nwdata.area = area
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetArea()
@@ -101,7 +100,7 @@ end
 
 function ENT:SetIndex(index)
     self._nwdata.index = index
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetIndex()
@@ -145,10 +144,10 @@ end
 function ENT:AcceptInput(name, activator, caller, data)
     if name == "Opened" then
         self._nwdata.open = true
-        self:_UpdateNWData()
+        self._nwdata:Update()
     elseif name == "Closed" then
         self._nwdata.open = false
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 end
 
@@ -171,7 +170,7 @@ end
 function ENT:Lock()
     if self:IsUnlocked() then
         self._nwdata.locked = true
-        self:_UpdateNWData()
+        self._nwdata:Update()
         self:EmitSound("doors/door_metal_large_close2.wav", SNDLVL_STATIC, 100)
     end
 end
@@ -179,7 +178,7 @@ end
 function ENT:Unlock()
     if self:IsLocked() then
         self._nwdata.locked = false
-        self:_UpdateNWData()
+        self._nwdata:Update()
         self:EmitSound("doors/door_metal_large_open1.wav", SNDLVL_STATIC, 100)
     end
 end
@@ -265,8 +264,4 @@ end
 
 function ENT:IsUnlocked()
     return not self._nwdata.locked
-end
-
-function ENT:_UpdateNWData()
-    SetGlobalTable(self:GetName(), self._nwdata)
 end

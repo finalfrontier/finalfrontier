@@ -86,7 +86,7 @@ if SERVER then
         self._nwdata.maxcharge = 0
         self._nwdata.charge = 0
         self._nwdata.maxshields = 0.1
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     SYS._oldScore = 0
@@ -117,7 +117,7 @@ if SERVER then
             changed = true
         end
         
-        if changed then self:_UpdateNWData() end
+        if changed then self._nwdata:Update() end
     end
 
     function SYS:GetChargeCost(ent)
@@ -260,7 +260,7 @@ if SERVER then
         if not self:CanTeleportEntity(ent) then return false end
 
         self._nwdata.charge = self._nwdata.charge - self:GetChargeCost(ent)
-        self:_UpdateNWData()
+        self._nwdata:Update()
 
         local oldpos = ent:GetPos()
         local newpos = ent:GetPos() - pad + (dest or Vector(0, 0, 0))

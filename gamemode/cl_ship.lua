@@ -31,7 +31,7 @@ _mt._nwdata = nil
 _mt._valid = true
 
 function _mt:IsCurrent()
-    return self._valid and self:GetName() and IsGlobalTableCurrent(self:GetName())
+    return self._valid and self:GetName() and self._nwdata:IsCurrent()
         and self:GetBounds() and self:GetRange()
         and table.Count(self:GetRooms()) >= table.Count(self:GetRoomNames())
         and table.Count(self:GetDoors()) >= table.Count(self:GetDoorNames())
@@ -243,7 +243,7 @@ end
 
 function _mt:Remove()
     self._valid = false
-    ForgetGlobalTable(self:GetName())
+    self._nwdata:Forget()
 
     for _, room in pairs(self:GetRooms()) do
         room:Remove()
@@ -273,7 +273,7 @@ function Ship(name)
 
     ship._systems = {}
 
-    ship._nwdata = GetGlobalTable(name)
+    ship._nwdata = NetworkTable(name)
     ship._nwdata.name = name
 
     return setmetatable(ship, _mt)

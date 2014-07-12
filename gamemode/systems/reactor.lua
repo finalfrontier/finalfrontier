@@ -87,7 +87,7 @@ if SERVER then
 
         self._nwdata.total = self:GetTotalPower()
 
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     function SYS:Think(dt)

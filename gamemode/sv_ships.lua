@@ -19,7 +19,7 @@ if not ships then
     ships = {}
 
     ships._dict = {}
-    ships._nwdata = {}
+    ships._nwdata = NetworkTable("ships")
 end
 
 function ships.Add(ship)
@@ -28,7 +28,7 @@ function ships.Add(ship)
     
     ships._dict[name] = ship
     table.insert(ships._nwdata, name)
-    ships._UpdateNWData()
+    ships._nwdata:Update()
 
     team.Add(ship)
 
@@ -82,8 +82,4 @@ function ships.FindCurrentShip(ply)
         if ship:IsPointInside(pos.x, pos.y) then return ship end
     end
     return nil
-end
-
-function ships._UpdateNWData()
-    SetGlobalTable("ships", ships._nwdata)
 end

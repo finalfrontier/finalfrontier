@@ -43,7 +43,7 @@ ENT._warnLightBrushes = nil
 ENT._hazardEnd = 0
 
 function ENT:KeyValue(key, value)
-    if not self._nwdata then self._nwdata = {} end
+    self._nwdata = NetworkTable(self:GetName())
 
     if key == "health" then
         self:_SetBaseHealth(tonumber(value))
@@ -67,12 +67,9 @@ function ENT:Initialize()
     self._bounds = Bounds()
 
     self._systems = {}
-
     self._players = {}
 
-    if not self._nwdata then
-        self._nwdata = {}
-    end
+    self._nwdata = NetworkTable(self:GetName())
 
     self._nwdata.roomnames = {}
     self._nwdata.doornames = {}
@@ -134,7 +131,7 @@ function ENT:InitPostEntity()
     self._nwdata.object:SetObjectName(self:GetName())
     self._nwdata.object:Spawn()
     self._nwdata.object:SetRotation(math.random() * 360)
-    self:_UpdateNWData()
+    self._nwdata:Update()
 
     self._mainLights = ents.FindByName(self._mainLightName)
     self._warnLights = ents.FindByName(self._warnLightName)
@@ -158,7 +155,7 @@ function ENT:SetHazardMode(value, duration)
 
     if self._nwdata.hazardmode ~= value then
         self._nwdata.hazardmode = value
-        self:_UpdateNWData()
+        self._nwdata:Update()
 
         for _, light in pairs(self._mainLights) do
             if value then
@@ -200,7 +197,7 @@ end
 
 function ENT:_SetBaseHealth(health)
     self._nwdata.basehealth = health
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetBaseHealth()
@@ -209,7 +206,7 @@ end
 
 function ENT:_SetFullName(value)
     self._nwdata.fullname = value
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetFullName()
@@ -224,7 +221,7 @@ function ENT:_SetUIColor(value)
         self._nwdata.uicolor = value
     end
 
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetUIColor()
@@ -241,7 +238,7 @@ function ENT:AddRoom(room)
     room:SetIndex(#self._roomlist)
 
     self._nwdata.roomnames[room:GetIndex()] = name
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetRoomNames()
@@ -279,7 +276,7 @@ function ENT:AddDoor(door)
         door:SetIndex(#self._doors)
 
         self._nwdata.doornames[door:GetIndex()] = door:GetName()
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 end
 
@@ -336,8 +333,4 @@ end
 
 function ENT:IsPointInside(x, y)
     return self:GetBounds():IsPointInside(x, y)
-end
-
-function ENT:_UpdateNWData()
-    SetGlobalTable(self:GetName(), self._nwdata)
 end

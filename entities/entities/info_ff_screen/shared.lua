@@ -37,6 +37,8 @@ ENT._ui = nil
 ENT._layout = nil
 
 function ENT:SetupDataTables()
+    self._layout = self:NetworkTable("Layout")
+
     self:NetworkVarElement("Vector", 0, "x", "AlarmCountingDown")
     self:NetworkVarElement("Vector", 0, "y", "AlarmCountStartTime")
     self:NetworkVarElement("Vector", 0, "z", "AlarmCountInitialTime")
@@ -61,6 +63,10 @@ end
 
 function ENT:GetRoom()
     return self._room
+end
+
+function ENT:GetLayout()
+    return self._layout
 end
 
 function ENT:GetUIRoot()
@@ -314,10 +320,9 @@ if SERVER then
 
     function ENT:UpdateLayout()
         if not self._ui then return end
-        if not self._layout then self._layout = {} end
 
         self._ui:UpdateLayout(self._layout)
-        self:SetNWTable("layout", self._layout)
+        self._layout:Update()
     end
 
     function ENT:Think()
@@ -448,23 +453,14 @@ elseif CLIENT then
     ENT._nextCursorx = 0
     ENT._nextCursory = 0
     
-    function ENT:UpdateLayout()
-        if not self._layout and self._room and self._room:IsCurrent() and self._ship == LocalPlayer():GetShip() then
-            self._layout = self:GetNWTable("layout")
-        elseif self._ui and self._ship and self._room and self._ship ~= LocalPlayer():GetShip() then
-            self._layout = nil
-            self:ForgetNWTable("layout")
-        end
+    function ENT:UpdateLayout()        
+        if not self._layout:IsCurrent() then return end
 
-        if not self._ui and self._layout and self:IsNWTableCurrent("layout") then
+        if not self._ui then
             self._ui = sgui.Create(self, MAIN_GUI_CLASS)
-        elseif self._ui and not self._layout then
-            self._ui = nil
         end
 
-        if self._layout and self._ui and table.Count(self._layout) > 0 then
-            self._ui:UpdateLayout(self._layout)
-        end
+        self._ui:UpdateLayout(self._layout)
     end
 
     function ENT:Think()

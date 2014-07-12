@@ -17,17 +17,24 @@
 
 if SERVER then AddCSLuaFile("shared.lua") end
 
-local _optimalGrids = nil
+local _optimalGrids = NetworkTable("optimalGrids")
 
 ENT.Base = "prop_ff_modulebase"
 
 ENT._grid = nil
 
+function ENT:SetupDataTables()
+    self.BaseClass.SetupDataTables(self)
+
+    self._grid = self:NetworkTable("Grid")
+end
+
 if SERVER then
     ENT._lastEffect = 0
 
-    function ENT:GenerateGrid()
-        local grid = {}
+    function GenerateModuleGrid(grid)
+        grid = grid or {}
+
         for i = 1, 4 do
             grid[i] = {}
             for j = 1, 4 do
@@ -38,29 +45,24 @@ if SERVER then
                 end
             end
         end
+
         return grid
     end
 
-    GenerateModuleGrid = ENT.GenerateGrid
-
     function ENT:SetToOptimal()
-        self._grid = {}
         for i = 1, 4 do
             self._grid[i] = {}
             for j = 1, 4 do
                 self._grid[i][j] = _optimalGrids[self:GetModuleType()][i][j]
             end
         end
-        self:_UpdateGrid()
+        self._grid:Update()
     end
 
-    _optimalGrids = {}
     for t = 0, 2 do
-        _optimalGrids[t] = ENT.GenerateGrid(nil)
+        _optimalGrids[t] = GenerateModuleGrid()
     end
-    SetGlobalTable("optimalGrids", _optimalGrids)
-elseif CLIENT then
-    _optimalGrids = GetGlobalTable("optimalGrids")
+    _optimalGrids:Update()
 end
 
 function ENT:GetDamaged()
@@ -131,7 +133,7 @@ if SERVER then
     function ENT:Initialize()
         self.BaseClass.Initialize(self)
 
-        if not self._grid then self:_RandomizeGrid() end
+        self:_RandomizeGrid()
     end
 
     function ENT:GetGrid()
@@ -139,24 +141,19 @@ if SERVER then
     end
 
     function ENT:_RandomizeGrid()
-        self._grid = self:GenerateGrid()
-        self:_UpdateGrid()
+        GenerateModuleGrid(self._grid)
+        self._grid:Update()
     end
 
     function ENT:SetDefaultGrid(ship)
         local default = ship:GetDefaultGrid()
-        self._grid = {}
         for i = 1, 4 do
             self._grid[i] = {}
             for j = 1, 4 do
                 self._grid[i][j] = default[i][j]
             end
         end
-        self:_UpdateGrid()
-    end
-
-    function ENT:_UpdateGrid()
-        self:SetNWTable("grid", self._grid)
+        self._grid:Update()
     end
 
     function ENT:OnTakeDamage(dmg)
@@ -173,7 +170,7 @@ if SERVER then
         end
 
         if damaged then
-            self:_UpdateGrid()
+            self._grid:Update()
 
             if self:IsInSlot() and self:GetSlotType() < moduletype.REPAIR_1 then
                 self:GetRoom():GetShip():SetHazardMode(true, 10)
@@ -185,7 +182,7 @@ if SERVER then
         for i = 1, count do
             if not self:_DamageRandomTile() then break end
         end
-        self:_UpdateGrid()
+        self._grid:Update()
     end
 
     function ENT:_DamageRandomTile()
@@ -233,7 +230,7 @@ if SERVER then
 
         if self._grid[x][y] == -1 and other._grid[x][y] > -1 then
             self._grid[x][y] = other._grid[x][y]
-            self:_UpdateGrid()
+            self._grid:Update()
         end
     end
 
@@ -242,7 +239,7 @@ if SERVER then
 
         if self._grid[x][y] > -1 and other._grid[x][y] == -1 then
             self._grid[x][y] = -1
-            self:_UpdateGrid()
+            self._grid:Update()
         end
     end
 
@@ -251,9 +248,9 @@ if SERVER then
     end
 
     function ENT:Think()
-        self.BaseClass.Think(self)
-
         if not IsValid(self) then return end
+        
+        self.BaseClass.Think(self)
 
         if self:IsInSlot() then
             if self:GetDamaged() < 2 or self:GetSlotType() >= moduletype.REPAIR_1 then return end
@@ -282,10 +279,6 @@ elseif CLIENT then
     end
 
     function ENT:GetGrid()
-        if not self._grid then
-            self._grid = self:GetNWTable("grid")
-        end
-
         return self._grid
     end
 

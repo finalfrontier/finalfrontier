@@ -124,7 +124,7 @@ function ENT:Think()
             end
             self._open = true
             timer.Simple(0.5, function()
-                if CurTime() > 1 and self:GetModule() then
+                if self:GetModule() then
                     local sound = CreateSound(self:GetModule(), "npc/env_headcrabcanister/hiss.wav")
                     sound:PlayEx(1, 110)
                     sound:ChangeVolume(0, 1.5)

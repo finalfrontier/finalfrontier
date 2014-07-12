@@ -33,7 +33,7 @@ function SYS:GetTarget()
         return self._nwdata.target
     elseif SERVER and self._nwdata.target then
         self._nwdata.target = nil
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     return nil
@@ -45,7 +45,7 @@ if SERVER then
     function SYS:Initialize()
         self._nwdata.autoshoot = {}
         self._nwdata.target = nil
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     function SYS:CalculatePowerNeeded()
@@ -69,7 +69,7 @@ if SERVER then
     function SYS:SetTarget(target)
         if not target or self:CanTarget(target) then
             self._nwdata.target = target
-            self:_UpdateNWData()
+            self._nwdata:Update()
         end
     end
 
@@ -84,7 +84,7 @@ if SERVER then
 
     function SYS:ToggleAutoShoot(slot)
         self._nwdata.autoshoot[slot] = not self:IsAutoShooting(slot)
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     function SYS:Think(dt)

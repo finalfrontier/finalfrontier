@@ -104,7 +104,7 @@ if SERVER then
 
         if ShouldUpdate(self._nwdata.power or 0, self._power, self._needed) then
             self._nwdata.power = value
-            self:_UpdateNWData()
+            self._nwdata:Update()
         end
     end
 
@@ -117,7 +117,7 @@ if SERVER then
 
         if ShouldUpdate(self._nwdata.needed or 0, self._needed, self._power) then
             self._nwdata.needed = value
-            self:_UpdateNWData()
+            self._nwdata:Update()
         end
     end
 
@@ -135,11 +135,7 @@ if SERVER then
 
     function _mt:SetNWValue(ident, value)
         self._nwdata.misc[ident] = value
-        self:_UpdateNWData()
-    end
-
-    function _mt:_UpdateNWData()
-        SetGlobalTable(self._nwtablename, self._nwdata)
+        self._nwdata:Update()
     end
 elseif CLIENT then
     function _mt:GetPower()
@@ -151,7 +147,7 @@ elseif CLIENT then
     end
 
     function _mt:Remove()
-        ForgetGlobalTable(self._nwtablename)
+        self._nwdata:Forget()
     end
 
     _mt.Icon = Material("systems/noicon.png", "smooth")
@@ -192,15 +188,18 @@ function sys.Create(name, room)
             _nwtablename = room:GetName() .. "_sys"
         }
         setmetatable(system, sys._dict[name])
+
+        system._nwdata = NetworkTable(system._nwtablename)
+
         if SERVER then
-            system._nwdata = {}
             system._nwdata.misc = {}
             system:SetPower(0)
-        elseif CLIENT then
-            system._nwdata = GetGlobalTable(system._nwtablename)
         end
+
         system:Initialize()
-        if SERVER then system:_UpdateNWData() end
+
+        if SERVER then system._nwdata:Update() end
+
         return system
     end
     return nil

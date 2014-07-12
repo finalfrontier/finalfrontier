@@ -136,7 +136,7 @@ if SERVER then
         self._nwdata.inittime = 0
         self._nwdata.dx = 0
         self._nwdata.dy = 0
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     function SYS:SetTargetHeading(dx, dy)
@@ -156,7 +156,7 @@ if SERVER then
             self._nwdata.dy = 0
         end
 
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     function SYS:GetAccelerationMagnitude()

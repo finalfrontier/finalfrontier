@@ -243,7 +243,7 @@ if CLIENT then
 
             net.Start("Click")
             net.WriteEntity(self:GetScreen())
-            net.WriteFloat(self:GetScreen():GetNWFloat("layout"))
+            net.WriteFloat(self:GetScreen():GetLayout():GetLastUpdateTime())
             self:SendIDHierarchy()
             net.WriteUInt(0, 16)
             net.WriteInt(button, 8)
@@ -322,7 +322,7 @@ if SERVER then
     net.Receive("Click", function(len, ply)
         local screen = net.ReadEntity()
         local layoutTime = net.ReadFloat()
-        if layoutTime < screen:GetNWFloat("layout") then return end
+        if layoutTime < screen:GetLayout():GetLastUpdateTime() then return end
         if screen:GetUsingPlayer() == ply then
             local element = nil
             while true do

@@ -18,7 +18,7 @@
 if not universe then
     universe = {}
 
-    universe._nwdata = GetGlobalTable("universe")
+    universe._nwdata = NetworkTable("universe")
 end
 
 function universe:GetHorizontalSectors()

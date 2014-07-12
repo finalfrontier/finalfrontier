@@ -36,8 +36,7 @@ _mt._shields = nil
 _mt._nwdata = nil
 
 function _mt:IsCurrent()
-    return self:GetShip() and self:GetShip():IsValid() and self:GetName()
-        and IsGlobalTableCurrent(self:GetName())
+    return self:GetShip() and self:GetShip():IsValid() and self:GetName() and self._nwdata:IsCurrent()
 end
 
 function _mt:GetName()
@@ -226,7 +225,7 @@ function _mt:Think()
 end
 
 function _mt:Remove()
-    ForgetGlobalTable(self:GetName())
+    self._nwdata:Forget()
 
     if self:GetSystem() then
         self:GetSystem():Remove()
@@ -240,7 +239,7 @@ function Room(name, ship, index)
     room._airvolume = { old = 0, cur = 0 }
     room._shields = { old = 0, cur = 0 }
 
-    room._nwdata = GetGlobalTable(name)
+    room._nwdata = NetworkTable(name)
     room._nwdata.name = name
     room._nwdata.index = index
 
