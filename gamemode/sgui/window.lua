@@ -66,10 +66,33 @@ function GUI:GetCurrentIndexes()
 	return _currentTabMenu, self._window[_currentTabMenu].TabMenu:GetCurrentIndex()
 end
 
-function GUI:GetCurrentTab()
+function GUI:GetCurrentTabIndex()
 	return _currentTabMenu * self._window[_currentTabMenu].TabMenu:GetCurrentIndex()	
 end
 
 function GUI:GetCurrent()
 	return self._window[_currentTabMenu].TabMenu
+end
+
+if SERVER then
+    function GUI:UpdateLayout(layout)
+        self.Super[BASE].UpdateLayout(self, layout)
+
+        self.GetCurrent():UpdateLayout(layout)
+    end
+end
+
+if CLIENT then
+    function GUI:Draw()
+        self.GetCurrent():Draw()
+
+        self.Super[BASE].Draw(self)
+    end
+
+    function GUI:UpdateLayout(layout)
+        self.Super[BASE].UpdateLayout(self, layout)
+	
+	self.GetCurrent():UpdateLayout(layout)
+        self:SetCurrentIndex(layout.current)
+    end
 end
