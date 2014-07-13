@@ -45,6 +45,10 @@ function GUI:GetWindow()
 	return self._window	
 end
 
+function GUI:GetDefaultWindow()
+	return self._window[0].TabMenu
+end
+
 function GUI:GetAllTabs()
 	local result = {}
 	for k, v ipairs(self._tpages) do
