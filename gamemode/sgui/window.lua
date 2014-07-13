@@ -61,3 +61,11 @@ function GUI:GetAllTabs()
 	end
 	return result
 end
+
+function GUI:GetCurrentIndex()
+    return _currentTabMenu, self._window[_currentTabMenu].TabMenu:GetCurrentIndex()
+end
+
+function GUI:GetCurrent()
+    return self._window[_currentTabMenu].TabMenu
+end
