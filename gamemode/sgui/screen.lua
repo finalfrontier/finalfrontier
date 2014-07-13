@@ -45,6 +45,13 @@ function GUI:Initialize()
     self:SetWidth(self:GetScreen().Width)
     self:SetHeight(self:GetScreen().Height)
     self:SetCentre(0, 0)
+    
+    local function FixWindowTabs(base)
+    	local _modby = 4
+    	local _subtract = 2
+    	base = (base - _subtract) % _modby
+    	return base
+    end
 
     self.Pages = {}
     
@@ -61,14 +68,14 @@ function GUI:Initialize()
     self.Window:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)
     self.Window:SetCentre(self:GetWidth() / 2, self.TabHeight / 2 + self.TabMargin)
     
-    self.Window:SetTab(page.ACCESS, "ACCESS")
-    if self.Pages[page.SYSTEM then
-         self.Window:SetTab(page.SYSTEM, "SYSTEM")
+    self.Window:SetTab(FixWindowTabs(page.ACCESS), "ACCESS")
+    if self.Pages[page.SYSTEM] then
+         self.Window:SetTab(FixWindowTabs(page.SYSTEM), "SYSTEM")
     end
-    self.Window:SetTab(page.SECURITY, "SECURITY")
-    self.Window:SetTab(page.OVERRIDE, "OVERRIDE")
+    self.Window:SetTab(FixWindowTabs(page.SECURITY), "SECURITY")
+    self.Window:SetTab(FixWindowTabs(page.OVERRIDE), "OVERRIDE")
     self.Window:AddMenu()
-    self.Window:SetTab(page.TEAMS, "TEAMS")
+    self.Window:SetTab(FixWindowTabs(page.TEAMS), "TEAMS")
     self.Window:AddMenu()
     
     self.Tabs = {}
