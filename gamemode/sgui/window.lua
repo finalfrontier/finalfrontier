@@ -25,8 +25,11 @@ function GUI:AddMenu()
 	self._window[_lastPage].TabMenu:SetCentre(self:GetWidth() / 2, self.TabHeight / 2 + self.TabMargin)
 	self._window[_lastPage].Tabs = {}
 	self._window[_lastPage].Tabs[page[0].number] = self._window[_lastPage].TabMenu:AddTab(page[0].name)
+	if not page[1] then return self._window[_lastPage] end
 	self._tpages[_lastPage].Tabs[page[1].number] = self._window[_lastPage].TabMenu:AddTab(page[1].name)
+	if not page[2] then return self._window[_lastPage] end
 	self._window[_lastPage].Tabs[page[2].number] = self._window[_lastPage].TabMenu:AddTab(page[2].name)
+	if not page[3] then return self._window[_lastPage] end
 	self._window[_lastPage].Tabs[page[3].number] = self._window[_lastPage].TabMenu:AddTab(page[3].name)
 	return self._window[_lastPage]
 end
