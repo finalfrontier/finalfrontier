@@ -29,6 +29,7 @@ GUI.BaseName = BASE
 GUI.Permission = 0
 
 GUI.Pages = nil
+GUI.Window = nil
 GUI.TabMenu = nil
 GUI.Tabs = nil
 
@@ -53,17 +54,22 @@ function GUI:Initialize()
     self.Pages[page.SECURITY] = sgui.Create(self:GetScreen(), "securitypage")
     self.Pages[page.OVERRIDE] = sgui.Create(self:GetScreen(), "overridepage")
 
-    self.TabMenu = sgui.Create(self:GetScreen(), "tabmenu")
-    self.TabMenu:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)
-    self.TabMenu:SetCentre(self:GetWidth() / 2, self.TabHeight / 2 + self.TabMargin)
-
-    self.Tabs = {}
-    self.Tabs[page.ACCESS] = self.TabMenu:AddTab("ACCESS")
-    if self.Pages[page.SYSTEM] then
-        self.Tabs[page.SYSTEM] = self.TabMenu:AddTab("SYSTEM")
+    self.Window = sgui.Create(self:GetScreen(), "window")
+    self.Window:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)
+    self.Window:SetCentre(self:GetWidth() / 2, self.TabHeight / 2 + self.TabMargin)
+    
+    self.Window:SetTab(page.ACCESS, "ACCESS")
+    if self.Pages[page.SYSTEM then
+         self.Window:SetTab(page.SYSTEM, "SYSTEM")
     end
-    self.Tabs[page.SECURITY] = self.TabMenu:AddTab("SECURITY")
-    self.Tabs[page.OVERRIDE] = self.TabMenu:AddTab("OVERRIDE")
+    self.Window:SetTab(page.SECURITY, "SECURITY")
+    self.Window:SetTab(page.OVERRIDE, "OVERRIDE")
+    self.Window:AddMenu()
+    
+    self.Tabs = {}
+    self.Tabs = self.Window:GetAllTabs()
+    
+    self.TabMenu = self.Window:GetDefaultTabMenu()
 
     if SERVER then
         local old = self.TabMenu.OnChangeCurrent
