@@ -55,4 +55,4 @@ end
 
 SetupPlayerDataTables = PLAYER.SetupDataTables
 
-player_manager.RegisterClass("player_ff_marine", PLAYER, "player_marine")
+player_manager.RegisterClass("player_ff_marine", PLAYER, "player_default")
