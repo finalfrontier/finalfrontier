@@ -5,7 +5,7 @@ GUI.BaseName = BASE
 GUI.Color = Color(191, 191, 191, 255)
 
 GUI._window = nil
-GUI._currentWindow = 0
+GUI._currentTabMenu = 0
 
 GUI.TabHeight = 48
 GUI.TabMargin = 8
@@ -40,8 +40,8 @@ function GUI:SetTab(num, text)
 	page[num].name = text
 end
 
-function GUI:GetCurrentWindow()
-	return self._currentWindow
+function GUI:GetCurrentTabMenu()
+	return self._currentTabMenu
 end
 
 function GUI:GetWindow()
