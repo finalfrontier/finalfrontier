@@ -28,6 +28,7 @@ function GUI:AddMenu()
 	self._tpages[_lastPage].Tabs[page[1].number] = self._tpages[_lastPage].TabMenu:AddTab(page[1].name)
 	self._tpages[_lastPage].Tabs[page[2].number] = self._tpages[_lastPage].TabMenu:AddTab(page[2].name)
 	self._tpages[_lastPage].Tabs[page[3].number] = self._tpages[_lastPage].TabMenu:AddTab(page[3].name)
+	return self._tpages[_lastPage]
 end
 
 function GUI:SetPage(num, text)
@@ -40,4 +41,16 @@ function GUI:GetCurrentTabPage()
 	return self._currenttpage
 end
 
+function GUI:GetTabPages()
+	return self._tpages	
+end
 
+function GUI:GetAllTabs()
+	local result = {}
+	for k, v ipairs(self._tpages) do
+		for kk, vv ipairs(v.Tabs) do
+			result = result + vv
+		end
+	end
+	return result
+end
