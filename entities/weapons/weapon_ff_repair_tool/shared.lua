@@ -19,6 +19,8 @@
 SWEP.PrintName = "Repair Tool"
 SWEP.Slot      = 1
 SWEP.HoldType = "pistol"
+SWEP.Author			= "Final Frontier"
+SWEP.Instructions	= "Left click to repair/Right click to switch modes"
 SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/c_toolgun.mdl"
