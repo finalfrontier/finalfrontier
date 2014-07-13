@@ -19,19 +19,19 @@ function GUI:Initialize()
 end
 
 function GUI:AddMenu()
-	_lastPage = #self._window
-	self._window[_lastPage].TabMenu = sgui.Create(self:GetScreen(), "tabmenu")
-	self._window[_lastPage].TabMenu:SetSize(self:GetSize())
-	self._window[_lastPage].TabMenu:SetCentre(self:GetCentre())
-	self._window[_lastPage].Tabs = {}
-	self._window[_lastPage].Tabs[page[0].number] = self._window[_lastPage].TabMenu:AddTab(page[0].name)
-	if not page[1] then return self._window[_lastPage] end
-	self._tpages[_lastPage].Tabs[page[1].number] = self._window[_lastPage].TabMenu:AddTab(page[1].name)
-	if not page[2] then return self._window[_lastPage] end
-	self._window[_lastPage].Tabs[page[2].number] = self._window[_lastPage].TabMenu:AddTab(page[2].name)
+	local _nextMenu = #self._window
+	self._window[_nextMenu].TabMenu = sgui.Create(self:GetScreen(), "tabmenu")
+	self._window[_nextMenu].TabMenu:SetSize(self:GetSize())
+	self._window[_nextMenu].TabMenu:SetCentre(self:GetCentre())
+	self._window[_nextMenu].Tabs = {}
+	self._window[_nextMenu].Tabs[page[0].number] = self._window[_nextMenu].TabMenu:AddTab(page[0].name)
+	if not page[1] then return self._window[_nextMenu] end
+	self._tpages[_lastPage].Tabs[page[1].number] = self._window[_nextMenu].TabMenu:AddTab(page[1].name)
+	if not page[2] then return self._window[_nextMenu] end
+	self._window[_nextMenu].Tabs[page[2].number] = self._window[_nextMenu].TabMenu:AddTab(page[2].name)
 	if not page[3] then return self._window[_lastPage] end
-	self._window[_lastPage].Tabs[page[3].number] = self._window[_lastPage].TabMenu:AddTab(page[3].name)
-	return self._window[_lastPage]
+	self._window[_nextMenu].Tabs[page[3].number] = self._window[_nextMenu].TabMenu:AddTab(page[3].name)
+	return self._window[_nextMenu]
 end
 
 function GUI:SetTab(num, text)
