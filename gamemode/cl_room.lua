@@ -177,20 +177,17 @@ function _mt:GetPermissionsName()
     return self:GetShip():GetName() .. "_" .. self:GetIndex()
 end
 
+function _mt:HasPlayerWithSecurityPermission()
+    for _, ply in ipairs(player.GetAll()) do
+        if IsValid(ply) and ply:HasPermission(self, permission.SECURITY, true) then
+            return true
+        end
+    end
+
+    return false
+end
+
 local ply_mt = FindMetaTable("Player")
-function ply_mt:GetPermission(room)
-    return self._permissions[room:GetPermissionsName()] or permission.NONE
-end
-
-function ply_mt:HasPermission(room, perm)
-    return self:GetPermission(room) >= perm
-end
-
-function ply_mt:HasDoorPermission(door)
-    return self:HasPermission(door:GetRooms()[1], permission.ACCESS)
-        or self:HasPermission(door:GetRooms()[2], permission.ACCESS)
-end
-
 function ply_mt:GetRoom()
     local shipName = self:GetShipName()
     if not shipName or string.len(shipName) == 0 then return nil end

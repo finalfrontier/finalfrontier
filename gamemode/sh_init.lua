@@ -202,3 +202,18 @@ function IsPointInsidePolyGroup(polys, x, y)
     
     return false
 end
+
+local ply_mt = FindMetaTable("Player")
+function ply_mt:GetPermission(room)
+    return self._permissions[room:GetPermissionsName()] or permission.NONE
+end
+
+function ply_mt:HasPermission(room, perm, ignoreSecurityCheck)
+    return self:GetPermission(room) >= perm
+        or (not ignoreSecurityCheck and not room:HasPlayerWithSecurityPermission())
+end
+
+function ply_mt:HasDoorPermission(door)
+    return self:HasPermission(door:GetRooms()[1], permission.ACCESS)
+        or self:HasPermission(door:GetRooms()[2], permission.ACCESS)
+end

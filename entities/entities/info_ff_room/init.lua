@@ -425,11 +425,6 @@ function ENT:AddModuleSlot(pos, type)
         mdl:SetDefaultGrid(self:GetShip())
         mdl:Spawn()
         mdl:InsertIntoSlot(self, type, pos)
---  elseif type == moduletype.WEAPON_1 then
---      local mdl = ents.Create("prop_ff_weaponmodule")
---      mdl:SetWeapon(weapon.GetRandomName())
---      mdl:Spawn()
---      mdl:InsertIntoSlot(self, type, pos)
     end
 end
 
@@ -585,7 +580,7 @@ end
 
 function ENT:HasPlayerWithSecurityPermission()
     for _, ply in ipairs(player.GetAll()) do
-        if IsValid(ply) and ply:HasPermission(self, permission.SECURITY) then
+        if IsValid(ply) and ply:HasPermission(self, permission.SECURITY, true) then
             return true
         end
     end
@@ -594,22 +589,9 @@ function ENT:HasPlayerWithSecurityPermission()
 end
 
 local ply_mt = FindMetaTable("Player")
-function ply_mt:GetPermission(room)
-    return self._permissions[room:GetPermissionsName()] or permission.NONE
-end
-
-function ply_mt:HasPermission(room, perm)
-    return self:GetPermission(room) >= perm
-end
-
 function ply_mt:SetPermission(room, perm)
     self._permissions[room:GetPermissionsName()] = perm
     self._permissions:Update()
-end
-
-function ply_mt:HasDoorPermission(door)
-    return self:HasPermission(door:GetRooms()[1], permission.ACCESS)
-        or self:HasPermission(door:GetRooms()[2], permission.ACCESS)
 end
 
 function ply_mt:SetRoom(room)
