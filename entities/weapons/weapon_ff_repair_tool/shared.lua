@@ -1,4 +1,5 @@
 -- Copyright (c) 2014 Michael Ortmann [micha.ortmann@yahoo.de]
+-- Copyright (c) 2014 Jeremey Kingrey (tiptoproleplay@gmail.com)
 -- 
 -- This file is part of Final Frontier.
 -- 
@@ -20,10 +21,11 @@ SWEP.Slot      = 1
 SWEP.HoldType = "pistol"
 SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
-SWEP.ViewModel = "models/weapons/v_toolgun.mdl"
+SWEP.ViewModel = "models/weapons/c_toolgun.mdl"
 SWEP.WorldModel = "models/weapons/w_toolgun.mdl"
 SWEP.ShowViewModel = true
 SWEP.ShowWorldModel = true
+SWEP.UseHands = true
 
 SWEP.Primary.ClipSize       = -1
 SWEP.Primary.DefaultClip    = -1
@@ -42,26 +44,36 @@ SWEP.MAX_DISTANCE = 128
 SWEP.THINK_STEP = 0.1
 SWEP.nextThinkStamp = CurTime()+SWEP.THINK_STEP
 
+function SWEP:SetupDataTables()
+
+	self:NetworkVar( "Int", 0, "RepairMode" )
+	self:NetworkVar( "Int", 1, "GreenBoxes" )
+	self:NetworkVar( "Int", 2, "BlueBoxes" )
+    self:NetworkVar( "Bool", 0, "UsingWelder" )
+end
+
 function SWEP:Initialize()
-    self.Owner:SetNWInt( "repairMode", -1 ) 
-    self.Owner:SetNWInt( "greenBoxes", 0 ) 
-    self.Owner:SetNWInt( "blueBoxes", 0 ) 
-    self.Owner:SetNWBool( "usingWelder", false ) 
+    self:SetRepairMode(-1) 
+    self:SetGreenBoxes(0) 
+    self:SetBlueBoxes(0) 
+    self:SetUsingWelder(false) 
 end
 
 function SWEP:SecondaryAttack()
-    if self.Owner:GetNWInt( "repairMode", -1 ) == 0 then
-        self.Owner:SetNWInt( "repairMode", 1 ) 
-    elseif self.Owner:GetNWInt( "repairMode", -1 ) == 1 then
-        self.Owner:SetNWInt( "repairMode", -1 ) 
-    else
-        self.Owner:SetNWInt( "repairMode", 0 ) 
+    if SERVER then
+        if self:GetRepairMode() == 0 then
+            self:SetRepairMode(1) 
+        elseif self:GetRepairMode() == 1 then
+            self:SetRepairMode(-1) 
+        else
+            self:SetRepairMode(0) 
+        end
     end
 end
 
 function SWEP:Think()
     if (CurTime()<self.nextThinkStamp) then return end
-    if (self.Owner:GetNWBool( "usingWelder", false )) then
+    if (self:GetUsingWelder()) then
         local trace = self.Owner:GetEyeTraceNoCursor()
         
         local effectData = EffectData()
@@ -77,37 +89,59 @@ if SERVER then
     util.AddNetworkString( "usingWelder" )
     util.AddNetworkString( "manipulateModule" )
     
-    net.Receive( "usingWelder", function( len, ply )
-        ply:SetNWBool( "usingWelder", net.ReadBit()==1 )
-        if (ply:GetNWBool( "usingWelder", false)) then
-            ply.weldingSound = CreateSound(ply, "ambient/machines/electric_machine.wav")
-            ply.weldingSound:PlayEx(0.5, 150)
-        else
-            ply.weldingSound:Stop()
-        end
-    end )
+    net.Receive("usingWelder", function(length, pl)
+	local wep = pl:GetWeapon("weapon_ff_repair_tool");
+	
+	if (!wep) then return; end
+	
+	wep:SetUsingWelder(net.ReadBit() == 1);
+	
+	pl.NeedWelderSound = wep:GetUsingWelder();
+end);
+
+	local function tickWeldingSounds()
+		for k, v in pairs(player.GetAll()) do
+			if (v.NeedWelderSound) then
+				if (!v.weldingSound) then
+					v.weldingSound = CreateSound(v, "ambient/machines/electric_machine.wav");
+					v.weldingSound:PlayEx(0.5, 150);
+				end
+			
+				if (!v.weldingSound:IsPlaying()) then
+					v.weldingSound:Play();
+				end
+			else
+				if (v.weldingSound and v.weldingSound:IsPlaying()) then
+					v.weldingSound:Stop();
+				end
+			end
+		end
+	end
+hook.Add("Tick", "tickWeldingSounds", tickWeldingSounds);
     
     net.Receive( "manipulateModule", function( len, ply )
+        local self = ply:GetWeapon( "weapon_ff_repair_tool" ) 
+        if (!self) then return end
+        
         local ent = net.ReadEntity()
         local gridx = net.ReadInt(4)
         local gridy = net.ReadInt(4)
         
-        if (ply:GetNWInt( "repairMode", -1 ) == -1) then
+        if (self:GetRepairMode() == -1) then
             if (ent._grid[gridx][gridy] == 0) then
-                ply:SetNWInt( "greenBoxes", ply:GetNWInt( "greenBoxes", 0 ) + 1 ) 
+                self:SetGreenBoxes(self:GetGreenBoxes() + 1 ) 
             elseif (ent._grid[gridx][gridy] == 1) then
-                ply:SetNWInt( "blueBoxes", ply:GetNWInt( "blueBoxes", 0 ) + 1 ) 
+                self:SetBlueBoxes(self:GetBlueBoxes() + 1 )
             end
         else
-            if (ply:GetNWInt( "repairMode", -1 ) == 0) then
-                ply:SetNWInt( "greenBoxes", ply:GetNWInt( "greenBoxes", 0 ) - 1 ) 
-            elseif (ply:GetNWInt( "repairMode", -1 ) == 1) then
-                ply:SetNWInt( "blueBoxes", ply:GetNWInt( "blueBoxes", 0 ) - 1 ) 
+            if (self:GetRepairMode() == 0) then 
+                self:SetGreenBoxes(self:GetGreenBoxes() - 1 ) 
+            elseif (self:GetRepairMode() == 1) then
+                self:SetBlueBoxes(self:GetBlueBoxes() - 1 ) 
             end
         end
         
-        ent._grid[gridx][gridy] = ply:GetNWInt( "repairMode", -1 )
-        ent:_UpdateGrid()
+        ent:SetTile(gridx, gridy, self:GetRepairMode())
     end )
 end
 if CLIENT then
@@ -122,7 +156,7 @@ if CLIENT then
         
         if (input.IsMouseDown( MOUSE_LEFT ) && self.Owner:GetShootPos():Distance(trace.HitPos)<self.MAX_DISTANCE) then
             local possible, gridx, gridy, ent = self:actionTrace()
-            if (!self.Owner:GetNWBool( "usingWelder", false )) then
+            if (!self:GetUsingWelder()) then
                 net.Start( "usingWelder" )
                     net.WriteBit( true )
                 net.SendToServer()
@@ -151,7 +185,7 @@ if CLIENT then
                     self.timestampCompleted = CurTime() + self.COOLDOWN
                 end
             end
-        elseif (self.Owner:GetNWBool( "usingWelder", false )) then
+        elseif (self:GetUsingWelder()) then
             net.Start( "usingWelder" )
                 net.WriteBit( false )
             net.SendToServer()
@@ -199,12 +233,12 @@ if CLIENT then
             local backgroundColor
             local text = "REPAIR"
             local textNumber = false
-            if self.Owner:GetNWInt( "repairMode", -1 ) == 0 then
+            if self:GetRepairMode() == 0 then
                 backgroundColor = Color( 51, 172, 45, 255 )
-                textNumber = self.Owner:GetNWInt( "greenBoxes", 0 ) 
-            elseif self.Owner:GetNWInt( "repairMode", -1 ) == 1 then
+                textNumber = self:GetGreenBoxes()
+            elseif self:GetRepairMode() == 1 then
                 backgroundColor = Color( 45, 51, 172, 255 ) 
-                textNumber = self.Owner:GetNWInt( "blueBoxes", 0 ) 
+                textNumber = self:GetBlueBoxes() 
             else
                 backgroundColor = Color( 172, 45, 51, 255 )
 
@@ -223,7 +257,7 @@ if CLIENT then
             local width = TEX_SIZE - 8
             local barsize = (width - 8 + barspacing) / totbars
             local bars = 10
-            if (self.Owner:GetNWBool( "usingWelder", false )) then
+            if (self:GetUsingWelder()) then
                 bars = math.Clamp(((CurTime()-self.timestampCompleted+self.COOLDOWN)/self.COOLDOWN) * totbars,0,totbars)
             end
             
@@ -257,10 +291,10 @@ if CLIENT then
             
             local grid = trace.Entity:GetGrid()
             
-            if (self.Owner:GetNWInt( "repairMode", -1 ) == -1 && grid[gridx][gridy] >= 0) then
+            if (self:GetRepairMode() == -1 && grid[gridx][gridy] >= 0) then
                 return true, gridx, gridy, trace.Entity
-            elseif ( self.Owner:GetNWInt( "repairMode", -1 ) >= 0 && grid[gridx][gridy] < 0 ) then
-                if ((self.Owner:GetNWInt( "repairMode", -1 ) == 0 && self.Owner:GetNWInt( "greenBoxes", 0 ) > 0) || (self.Owner:GetNWInt( "repairMode", -1 ) == 1 && self.Owner:GetNWInt( "blueBoxes", 0 ) > 0)) then
+            elseif ( self:GetRepairMode() >= 0 && grid[gridx][gridy] < 0 ) then
+                if ((self:GetRepairMode() == 0 && self:GetGreenBoxes() > 0) || (self:GetRepairMode() == 1 && self:GetBlueBoxes() > 0)) then
                     return true, gridx, gridy, trace.Entity
                 end
             end
