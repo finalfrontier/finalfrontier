@@ -23,6 +23,7 @@ page.ACCESS   = 2
 page.SYSTEM   = 3
 page.SECURITY = 4
 page.OVERRIDE = 5
+page.TEAMS    = 6
 
 GUI.BaseName = BASE
 
@@ -46,6 +47,7 @@ function GUI:Initialize()
     self:SetCentre(0, 0)
 
     self.Pages = {}
+    
     self.Pages[page.STATUS] = sgui.Create(self:GetScreen(), "statuspage")
     self.Pages[page.ACCESS] = sgui.Create(self:GetScreen(), "accesspage")
     if self:GetSystem() and self:GetSystem().SGUIName ~= "page" then
@@ -53,6 +55,7 @@ function GUI:Initialize()
     end
     self.Pages[page.SECURITY] = sgui.Create(self:GetScreen(), "securitypage")
     self.Pages[page.OVERRIDE] = sgui.Create(self:GetScreen(), "overridepage")
+    self.Pages[page.TEAMS] = sgui.Create(self:GetScreen(), "teampage")
 
     self.Window = sgui.Create(self:GetScreen(), "window")
     self.Window:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)
@@ -64,6 +67,8 @@ function GUI:Initialize()
     end
     self.Window:SetTab(page.SECURITY, "SECURITY")
     self.Window:SetTab(page.OVERRIDE, "OVERRIDE")
+    self.Window:AddMenu()
+    self.Window:SetTab(page.TEAMS, "TEAMS")
     self.Window:AddMenu()
     
     self.Tabs = {}
