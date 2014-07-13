@@ -107,10 +107,16 @@ function weapon.GetRandomName()
     end
 end
 
+function weapon.GetRandomTier(name)
+    local wpn = weapon._dict[name]
+    return 1 + math.floor(math.pow(math.random(), 3) * wpn.MaxTier)
+end
+
 function weapon.Create(name, tier)
+    name = name or weapon.GetRandomName()
     local wpn = weapon._dict[name]
     if wpn then
-        tier = tier or (1 + math.floor(math.pow(math.random(), 3) * wpn.MaxTier))
+        tier = tier or weapon.GetRandomTier(name)
         return setmetatable({ _tier = tier }, wpn)
     end
     return nil

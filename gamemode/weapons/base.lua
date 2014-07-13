@@ -33,8 +33,6 @@ WPN.LifeSupportModuleMult = 1
 WPN.ShieldModuleMult = 1
 WPN.PowerModuleMult = 1
 
-WPN.CanSpawn = false
-
 if CLIENT then
     WPN.FullName = "Unnamed"
     WPN.Color = Color(255, 255, 255, 255)
@@ -157,14 +155,7 @@ if SERVER then
 
             self:OnHit(closest)
         elseif obj:GetObjectType() == objtype.MODULE then
-            local mdl = obj:GetModule()
-            if IsValid(mdl) and mdl:GetClass() == "prop_ff_module" then
-                mdl:DamageRandomTiles(math.ceil(self:GetBaseDamage() / 10))
-            end
-            if not IsValid(mdl) or mdl:GetClass() == "prop_ff_weaponmodule" or mdl:GetDamaged() >= 16 then
-                if IsValid(mdl) then mdl:Remove() end
-                obj:Remove()
-            end
+            obj:Remove()
         elseif obj:GetObjectType() == objtype.MISSILE then
             obj:Remove()
         end

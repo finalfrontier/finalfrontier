@@ -111,7 +111,7 @@ end
 function ENT:Think()
     if not IsValid(self._room) then return end
 
-    if self:IsRepairSlot() then
+    if self:IsRepairSlot() and self._room:GetSystem() then
         local system = self._room:GetSystem()
         if self._open and system:IsPerformingAction() then
             if self:GetModule() then

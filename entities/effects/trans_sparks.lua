@@ -15,16 +15,15 @@
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
-function EFFECT:Init(data)
-    local target = data:GetEntity()
-    if not IsValid(target) then return end
-    
-    local offset = data:GetOrigin()
-    local low, high = target:WorldSpaceAABB()
-    low = low - target:GetPos() + offset
-    high = high - target:GetPos() + offset
+function EFFECT:Init(data)    
+    local low = data:GetOrigin()
+    local high = data:GetStart()
 
-    local count = math.Clamp(target:BoundingRadius() * 4, 32, 256)
+    local offset = (low + high) / 2
+
+    local size = high - low
+
+    local count = math.Clamp(size.x * size.y * size.z / 256, 32, 128)
         
     local emitter = ParticleEmitter(offset)
     for i = 1, count do

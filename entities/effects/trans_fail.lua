@@ -67,7 +67,7 @@ function EFFECT:Init(data)
     sound.Play(table.Random(sparkSounds), origin, 85 + (30 / 16 * mag), 100)
 end
 
-function EFFECT:Think( )
+function EFFECT:Think()
     return false
 end
 

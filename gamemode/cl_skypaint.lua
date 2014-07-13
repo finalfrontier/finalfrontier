@@ -15,6 +15,14 @@
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
+local SPACE_SIZE = 256
+local SPACE_SIZE_HALF = SPACE_SIZE / 2
+local SPACE_CLIP_FAR = SPACE_SIZE_HALF
+local SPACE_FADE_FAR = SPACE_CLIP_FAR * 0.9
+local SPACE_CLIP_NEAR = 1 / 64
+local SPACE_FADE_NEAR = 1 / 16
+local SPACE_STAR_COUNT = 256
+
 local _mt = {}
 _mt.__index = _mt
 
@@ -24,14 +32,6 @@ _mt._clr = Color(255, 255, 255, 255)
 _mt._pulseFreq = 0
 _mt._pulseScale = 0
 _mt._pulsePhase = 0
-
-local SPACE_SIZE = 256
-local SPACE_SIZE_HALF = SPACE_SIZE / 2
-local SPACE_CLIP_FAR = SPACE_SIZE_HALF
-local SPACE_FADE_FAR = SPACE_CLIP_FAR * 0.9
-local SPACE_CLIP_NEAR = 1 / 64
-local SPACE_FADE_NEAR = 1 / 16
-local SPACE_STAR_COUNT = 256
 
 function _mt:SetPos(pos)
     self._pos = pos
@@ -45,10 +45,10 @@ function _mt:SetScale(val)
     self._scale = val
 end
 
-function _mt:SetPulse(period, scale)
+function _mt:SetPulse(period, scale, phase)
     self._pulseFreq = period
     self._pulseScale = scale
-    self._pulsePhase = math.random() * period
+    self._pulsePhase = (phase or math.random()) * period
 end
 
 function _mt:GetScale()
@@ -59,15 +59,15 @@ function _mt:GetColor()
     return self._clr
 end
 
-function _mt:Render(origin, offset, rotation)
+function _mt:Render(origin, loc, mat)
     local pos = self._pos
 
-    if rotation then
-        
+    if mat then
+        pos.x, pos.y = mat:Transform(pos.x, pos.y)
     end
 
-    if offset then
-        pos = pos + offset
+    if loc then
+        pos = pos + loc
     end
 
     pos = pos - origin
@@ -189,16 +189,20 @@ function GM:PostDraw2DSkyBox()
 
     local objects = ents.FindByClass("info_ff_object")
     for _, obj in pairs(objects) do
-        if ship:IsObjectInRange(obj) then
-            if not obj._flare then
-                obj._flare = obj:GetSpaceFlare()
+        if ship:IsObjectInRange(obj) and obj ~= ship:GetObject() then
+            if not obj._flares then
+                obj._flares = obj:GetSpaceFlare()
             end
 
-            obj._flare:SetPos(_CoordToStarPos(obj:GetCoordinates()))
-            obj._flare:Render(pos)
+            local loc = _CoordToStarPos(obj:GetCoordinates())
+            local mat = Matrix2D()
+            mat:Rotate(-obj:GetRotationRadians())
+
+            for _, flare in ipairs(obj._flares) do
+                flare:Render(pos, loc, mat)
+            end
         end
     end
 
     cam.End3D()
 end
-
