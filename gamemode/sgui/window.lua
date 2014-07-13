@@ -48,7 +48,7 @@ function GUI:GetWindow()
 	return self._window	
 end
 
-function GUI:GetDefaultWindow()
+function GUI:GetDefaultTabMenu()
 	return self._window[0].TabMenu
 end
 
