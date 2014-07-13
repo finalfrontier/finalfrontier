@@ -66,8 +66,19 @@ function GUI:GetCurrentIndexes()
 	return _currentTabMenu, self._window[_currentTabMenu].TabMenu:GetCurrentIndex()
 end
 
+function GUI:SetCurrentIndex(index)
+    if index < 1 or index > #self._window then
+        index = 0
+    end
+
+    if self._currentTabMenu ~= index then
+        self._currentTabMenu = index
+        self:OnChangeCurrent(index)
+    end
+end
+
 function GUI:GetCurrentTabIndex()
-	return _currentTabMenu * self._window[_currentTabMenu].TabMenu:GetCurrentIndex()	
+	return self._currentTabMenu * self._window[self._currentTabMenu].TabMenu:GetCurrentIndex()	
 end
 
 function GUI:GetCurrent()
