@@ -19,7 +19,7 @@ function GUI:Initialize()
 end
 
 function GUI:AddMenu()
-	_lastPage = #self.tpages
+	_lastPage = #self._window
 	self._window[_lastPage].TabMenu = sgui.Create(self:GetScreen(), "tabmenu")
 	self._window[_lastPage].TabMenu:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)
 	self._window[_lastPage].TabMenu:SetCentre(self:GetWidth() / 2, self.TabHeight / 2 + self.TabMargin)
