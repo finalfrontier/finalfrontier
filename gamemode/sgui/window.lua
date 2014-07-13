@@ -10,6 +10,8 @@ GUI._currentTabMenu = 0
 GUI.TabHeight = 48
 GUI.TabMargin = 8
 
+GUI._buttons = nil
+
 page = {}
 
 function GUI:Initialize()
@@ -40,6 +42,57 @@ function GUI:SetTab(num, text)
 	page[num].name = text
 end
 
+function GUI:Enter()
+	self.Super[BASE].Enter(self)
+	
+	self:UpdateButtons()
+end
+
+function GUI:UpdateButtons()
+	if self._window.buttons then
+		for _, btn in pairs(self._window.buttons) do
+			btn:Remove()	
+		end
+		self._window.buttons = nil
+	end
+	
+	self._window.buttons[0] = sgui.Create(self, "button")
+	self._window.buttons[1] = sgui.Create(self, "button")
+	
+	if self._currentTabMenu < #self._window then
+		self._window.buttons[0].CanClick = true
+		self._window.buttons[0].OnClick = function(btn)
+			self._currentTabMenu = self._currentTabMenu - 1
+		end
+	else
+		self._window.buttons[0].CanClick = false
+	end
+	
+	if self._currentTabMenu > 0 then
+		self._window.buttons[1].CanClick = true
+		self._window.buttons[1].OnClick = function(btn)
+			self._currentTabMenu = self._currentTabMenu + 1
+		end
+	else
+		self._window.buttons[1].CanClick = false
+	end
+	
+	self._window.buttons[0].Text = ">"
+	self._window.buttons[0]:SetHeight(self:GetHeight() - 16)
+	self._window.buttons[0]:SetWidth(self:GetHeight() - 16)
+	self._window.buttons[0]:SetOrigin(self:GetLeft() + 4, self:GetTop() - 4)
+	self._window.buttons[1].Text = "<"
+	self._window.buttons[1]:SetHeight(self:GetHeight() - 16)
+	self._window.buttons[1]:SetWidth(self:GetHeight() - 16)
+	self._window.buttons[1]:SetOrigin(self:GetRight() - 4, self:GetTop() - 4)
+end
+
+function GUI:Leave()
+	self.Super[BASE].Leave(self)
+	
+	self._buttons = nil	
+end
+
 function GUI:GetCurrentTabMenu()
 	return self._currentTabMenu
 end
@@ -54,7 +107,7 @@ end
 
 function GUI:GetAllTabs()
 	local result = {}
-	for k, v ipairs(self._tpages) do
+	for k, v in ipairs(self._tpages) do
 		for kk, vv ipairs(v.Tabs) do
 			result = result + vv
 		end
