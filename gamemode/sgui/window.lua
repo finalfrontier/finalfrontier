@@ -21,8 +21,8 @@ end
 function GUI:AddMenu()
 	_lastPage = #self._window
 	self._window[_lastPage].TabMenu = sgui.Create(self:GetScreen(), "tabmenu")
-	self._window[_lastPage].TabMenu:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)
-	self._window[_lastPage].TabMenu:SetCentre(self:GetWidth() / 2, self.TabHeight / 2 + self.TabMargin)
+	self._window[_lastPage].TabMenu:SetSize(self:GetSize())
+	self._window[_lastPage].TabMenu:SetCentre(self:GetCentre())
 	self._window[_lastPage].Tabs = {}
 	self._window[_lastPage].Tabs[page[0].number] = self._window[_lastPage].TabMenu:AddTab(page[0].name)
 	if not page[1] then return self._window[_lastPage] end
