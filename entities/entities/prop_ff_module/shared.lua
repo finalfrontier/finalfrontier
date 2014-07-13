@@ -32,13 +32,21 @@ end
 if SERVER then
     ENT._lastEffect = 0
 
-    function GenerateModuleGrid(grid)
+    function GenerateModuleGrid(grid, dmg)
+        if type(grid) == "number" then
+            dmg = grid
+            grid = nil
+        end
+
         grid = grid or {}
+        dmg = dmg or 0
 
         for i = 1, 4 do
             grid[i] = {}
             for j = 1, 4 do
-                if math.random() < 0.5 then
+                if math.random() < dmg then
+                    grid[i][j] = -1
+                elseif math.random() < 0.5 then
                     grid[i][j] = 0
                 else
                     grid[i][j] = 1

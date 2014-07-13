@@ -114,7 +114,7 @@ if SERVER then
                 for y = 1, 4 do grid[x][y] = old[x][y] end
             end
         else
-            grid = GenerateModuleGrid()
+            grid = GenerateModuleGrid(0.5)
         end
 
         self._module = {}
