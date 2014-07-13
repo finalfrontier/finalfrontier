@@ -69,7 +69,7 @@ function GUI:Initialize()
     self.Tabs = {}
     self.Tabs = self.Window:GetAllTabs()
     
-    self.TabMenu = self.Window:GetDefaultWindow()
+    self.TabMenu = self.Window:GetDefaultTabMenu()
 
     if SERVER then
         local old = self.TabMenu.OnChangeCurrent
