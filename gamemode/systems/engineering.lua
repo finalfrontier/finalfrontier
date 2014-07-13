@@ -81,7 +81,7 @@ if SERVER then
     function SYS:Reset()
         self._nwdata.progress = -1
         self._nwdata.action = 0
-        self:_UpdateNWData()
+        self._nwdata:Update()
 
         for _, v in pairs(self._sounds) do
             v:Stop()
@@ -96,7 +96,7 @@ if SERVER then
             self._nwdata.action = type
             self._nwdata.progress = 0
             self._nwdata.compresult = compresult.NONE
-            self:_UpdateNWData()
+            self._nwdata:Update()
 
             self._sounds[1] = CreateSound(left, "ambient/machines/electric_machine.wav")
             self._sounds[2] = CreateSound(right, "ambient/machines/electric_machine.wav")
@@ -196,13 +196,13 @@ if SERVER then
             end
 
             self._nwdata.progress = next
-            self:_UpdateNWData()
+            self._nwdata:Update()
         elseif self:GetComparisonResult() ~= compresult.NONE then
             local left, right = self:GetModules()
 
             if left ~= self._compared[1] or right ~= self._compared[2] then
                 self._nwdata.compresult = compresult.NONE
-                self:_UpdateNWData()
+                self._nwdata:Update()
             end
         end
     end

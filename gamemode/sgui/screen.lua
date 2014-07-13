@@ -42,8 +42,8 @@ GUI._curpage = 0
 function GUI:Initialize()
     self.Super[BASE].Initialize(self)
 
-    self:SetWidth(self:GetScreen().Width)
-    self:SetHeight(self:GetScreen().Height)
+    self:SetWidth(self:GetScreen():GetWidth())
+    self:SetHeight(self:GetScreen():GetHeight())
     self:SetCentre(0, 0)
     
     local function FixWindowTabs(base)

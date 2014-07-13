@@ -36,8 +36,7 @@ _mt._shields = nil
 _mt._nwdata = nil
 
 function _mt:IsCurrent()
-    return self:GetShip() and self:GetShip():IsValid() and self:GetName()
-        and IsGlobalTableCurrent(self:GetName())
+    return self:GetShip() and self:GetShip():IsValid() and self:GetName() and self._nwdata:IsCurrent()
 end
 
 function _mt:GetName()
@@ -175,32 +174,29 @@ function _mt:GetPowerRatio()
 end
 
 function _mt:GetPermissionsName()
-    return "p_" .. self:GetShip():GetName() .. "_" .. self:GetIndex()
+    return self:GetShip():GetName() .. "_" .. self:GetIndex()
+end
+
+function _mt:HasPlayerWithSecurityPermission()
+    for _, ply in ipairs(player.GetAll()) do
+        if IsValid(ply) and ply:HasPermission(self, permission.SECURITY, true) then
+            return true
+        end
+    end
+
+    return false
 end
 
 local ply_mt = FindMetaTable("Player")
-function ply_mt:GetPermission(room)
-    return self:GetNWInt(room:GetPermissionsName(), 0)
-end
-
-function ply_mt:HasPermission(room, perm)
-    return self:GetPermission(room) >= perm
-end
-
-function ply_mt:HasDoorPermission(door)
-    return self:HasPermission(door:GetRooms()[1], permission.ACCESS)
-        or self:HasPermission(door:GetRooms()[2], permission.ACCESS)
-end
-
 function ply_mt:GetRoom()
-    if not self:GetNWInt("room") then return nil end
-    if not self:GetNWString("ship") then return nil end
-    return self:GetShip():GetRoomByIndex(self:GetNWInt("room"))
+    local shipName = self:GetShipName()
+    if not shipName or string.len(shipName) == 0 then return nil end
+    return self:GetShip():GetRoomByIndex(self:GetRoomIndex())
 end
 
 function ply_mt:IsInRoom(room)
-    return self:GetNWString("ship") == room:GetShip():GetName()
-        and self:GetNWInt("room") == room:GetIndex()
+    return self:GetShipName() == room:GetShip():GetName()
+        and self:GetRoomIndex() == room:GetIndex()
 end
 
 function _mt:Think()
@@ -226,7 +222,7 @@ function _mt:Think()
 end
 
 function _mt:Remove()
-    ForgetGlobalTable(self:GetName())
+    self._nwdata:Forget()
 
     if self:GetSystem() then
         self:GetSystem():Remove()
@@ -240,7 +236,7 @@ function Room(name, ship, index)
     room._airvolume = { old = 0, cur = 0 }
     room._shields = { old = 0, cur = 0 }
 
-    room._nwdata = GetGlobalTable(name)
+    room._nwdata = NetworkTable(name)
     room._nwdata.name = name
     room._nwdata.index = index
 

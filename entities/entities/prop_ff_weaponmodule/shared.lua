@@ -17,44 +17,35 @@
 
 if SERVER then AddCSLuaFile("shared.lua") end
 
-ENT.Type = "anim"
-ENT.Base = "base_anim"
+ENT.Base = "prop_ff_modulebase"
 
 ENT._weapon = nil
 
-function ENT:GetModuleType()
-    return 5
+if SERVER then
+    concommand.Add("ff_spawn_weapon", function(ply, cmd, args)
+        if not IsValid(ply) or not cvars.Bool("sv_cheats") then return end
+
+        local trace = ply:GetEyeTraceNoCursor()
+
+        local mdl = ents.Create("prop_ff_weaponmodule")
+        mdl:SetWeapon(args[1] or weapon.GetRandomName(), args[2] and tonumber(args[2]) or nil)
+        mdl:SetPos(trace.HitPos + trace.HitNormal * 8)
+        mdl:Spawn()
+    end, nil, "Spawn a weapon module", FCVAR_CHEAT)
 end
 
-function ENT:IsInSlot()
-    return self:GetNWInt("room", -1) > -1
-end
+function ENT:SetupDataTables()
+    self.BaseClass.SetupDataTables(self)
 
-function ENT:GetSlotType()
-    if not self:IsInSlot() then return nil end
-    return self:GetRoom():GetSlot(self)
-end
+    self:NetworkVar("Int", 2, "WeaponTier")
 
-function ENT:GetRoom()
-    if not self:IsInSlot() then return nil end
-    local ship = ships.GetByName(self:GetNWString("ship"))
-    return ship:GetRoomByIndex(self:GetNWInt("room"))
-end
+    self:NetworkVar("String", 1, "WeaponName")
 
-function ENT:GetWeaponName()
-    return self:GetNWString("weapon")
-end
-
-function ENT:GetWeaponTier()
-    return self:GetNWInt("tier", 0)
+    self:NetworkVar("Float", 0, "Charge")
 end
 
 function ENT:GetWeapon()
     return self._weapon
-end
-
-function ENT:GetCharge()
-    return self:GetNWFloat("charge", 0)
 end
 
 function ENT:GetMaxCharge()
@@ -70,124 +61,46 @@ function ENT:CanShoot()
 end
 
 if SERVER then
-    function ENT:SetWeapon(name)
-        self:SetNWString("weapon", name)
-        self._weapon = weapon.Create(name)
-        self:SetNWInt("tier", self._weapon:GetTier())
+    function ENT:SetWeapon(name, tier)
+        self:SetWeaponName(name)
+        self._weapon = weapon.Create(name, tier)
+        self:SetWeaponTier(self._weapon:GetTier())
     end
 
     function ENT:AddCharge(amount)
         if self:GetCharge() < self:GetMaxCharge() then
             local charge = math.min(self:GetCharge() + amount, self:GetMaxCharge())
-            self:SetNWFloat("charge", charge)
+            self:SetCharge(charge)
         end
     end
 
     function ENT:RemoveCharge(amount)
         if self:GetCharge() > 0 then
             local charge = math.max(self:GetCharge() - amount, 0)
-            self:SetNWFloat("charge", charge)
+            self:SetCharge(charge)
         end
     end
 
     function ENT:ClearCharge()
-        self:SetNWFloat("charge", 0)
+        self:SetCharge(0)
+    end
+
+    function ENT:RemoveFromSlot(ply)
+        self.BaseClass.RemoveFromSlot(self, ply)
+
+        self:ClearCharge()
     end
 
     function ENT:Initialize()
-        self:SetUseType(SIMPLE_USE)
+        self.BaseClass.Initialize(self)
 
-        self:SetModel("models/props_c17/consolebox01a.mdl")
-        self:PhysicsInit(SOLID_VPHYSICS)
-        self:SetMoveType(MOVETYPE_VPHYSICS)
-        self:SetSolid(SOLID_VPHYSICS)
-
-        local phys = self:GetPhysicsObject()
-        if IsValid(phys) then
-            phys:Wake()
-        end
+        self:SetModuleType(5)
 
         if not self._weapon then self:SetWeapon("base") end
     end
 
-    function ENT:InsertIntoSlot(room, type, slot)
-        if not self:IsInSlot() and not self:IsPlayerHolding() and not room:GetModule(type) then
-            self:SetNWString("ship", room:GetShipName())
-            self:SetNWInt("room", room:GetIndex())
-
-            room:SetModule(type, self)
-
-            local phys = self:GetPhysicsObject()
-            if IsValid(phys) then
-                phys:EnableMotion(false)
-            end
-
-            self:SetPos(slot - Vector(0, 0, 4))
-
-            local yaw = self:GetAngles().y
-            yaw = math.Round(yaw / 90) * 90
-
-            self:SetAngles(Angle(0, yaw, 0))
-        end
-    end
-
-    function ENT:RemoveFromSlot(ply)
-        if self:IsInSlot() and self:GetRoom():RemoveModule(self) then
-            self:SetPos(self:GetPos() + Vector(0, 0, 12))
-
-            local phys = self:GetPhysicsObject()
-            if IsValid(phys) then
-                phys:EnableMotion(true)
-                phys:Wake()
-
-                local vel = Vector(0, 0, 128)
-                if IsValid(ply) then
-                    local diff = self:GetPos() - ply:GetPos()
-                    vel.x = vel.x + diff.x
-                    vel.y = vel.y + diff.y
-                end
-
-                phys:SetVelocity(vel)
-            end
-
-            self:SetNWString("ship", "")
-            self:SetNWInt("room", -1)
-
-            self:ClearCharge()
-        end
-    end
-
-    function ENT:Use(ply)
-        if not IsValid(ply) or not ply:IsPlayer() then return end
-
-        if self:IsInSlot() then
-            self:RemoveFromSlot(ply)
-        end
-
-        if not self:IsPlayerHolding() then
-            self:SetAngles(Angle(0, self:GetAngles().y, 0))
-            ply:PickupObject(self)
-        end
-    end
-
-    function ENT:Think()
-        if not self:IsInSlot() then
-            if self:GetCharge() > 0 then self:SetCharge(0) end
-
-            local min, max = self:GetCollisionBounds()
-            min = min + self:GetPos() - Vector(0, 0, 8)
-            max = max + self:GetPos()
-            local near = ents.FindInBox(min, max)
-            for _, v in pairs(near) do
-                if IsValid(v) and v:GetClass() == "info_ff_moduleslot" then
-                    local type = v:GetModuleType()
-                    if v:IsWeaponSlot() then
-                        self:InsertIntoSlot(v:GetRoom(), type, v:GetPos())
-                        return
-                    end
-                end
-            end
-        end
+    function ENT:CanInsertIntoSlot(slot)
+        return slot:IsWeaponSlot()
     end
 elseif CLIENT then
     function ENT:Think()
@@ -201,7 +114,7 @@ elseif CLIENT then
     end
 
     function ENT:Draw()
-        self:DrawModel()
+        self.BaseClass.Draw(self)
 
         local ang = self:GetAngles()
         ang:RotateAroundAxis(ang:Up(), -90)

@@ -17,17 +17,21 @@
 
 WPN.MaxTier = 1
 
-WPN.MaxPower = { 1, 1 }
-WPN.MaxCharge = { 1, 1 }
-WPN.ShotCharge = { 1, 1 }
+WPN.MaxPower = 1
+WPN.MaxCharge = 1
+WPN.ShotCharge = 1
 
 WPN.Projectile = false
 
-WPN.BaseDamage = { 0, 0 }
-WPN.PierceRatio = { 0, 0 }
-WPN.ShieldMult = { 0, 0 }
+WPN.BaseDamage = 0
+WPN.PierceRatio = 0
+WPN.ShieldMult = 0
 
-WPN.CanSpawn = false
+WPN.PersonnelMult = 1
+
+WPN.LifeSupportModuleMult = 1
+WPN.ShieldModuleMult = 1
+WPN.PowerModuleMult = 1
 
 if CLIENT then
     WPN.FullName = "Unnamed"
@@ -36,8 +40,14 @@ end
 
 function WPN:_FindValue(values)
     if type(values) == "number" then return values end
+    if #values == 1 then return values[1] end
     if self.MaxTier == 1 then return (values[1] + values[2]) * 0.5 end
     local t = (self:GetTier() - 1) / (self.MaxTier - 1)
+
+    if #values == 3 then
+        t = math.pow(t, values[3])
+    end
+
     return values[1] + t * (values[2] - values[1])
 end
 
@@ -69,6 +79,22 @@ function WPN:GetShieldMultiplier()
     return self:_FindValue(self.ShieldMult)
 end
 
+function WPN:GetPersonnelMultiplier()
+    return self:_FindValue(self.PersonnelMult)
+end
+
+function WPN:GetLifeSupportModuleMultiplier()
+    return self:_FindValue(self.LifeSupportModuleMult)
+end
+
+function WPN:GetShieldModuleMultiplier()
+    return self:_FindValue(self.ShieldModuleMult)
+end
+
+function WPN:GetPowerModuleMultiplier()
+    return self:_FindValue(self.PowerModuleMult)
+end
+
 if SERVER then
     local shieldedSounds = {
         "weapons/physcannon/energy_disintegrate4.wav",
@@ -81,6 +107,19 @@ if SERVER then
         local dmg = DamageInfo()
         dmg:SetDamageType(DMG_BLAST)
         dmg:SetDamage(damage)
+
+        if target:IsPlayer() then
+            dmg:ScaleDamage(self:GetPersonnelMultiplier())
+        elseif target:GetClass() == "prop_ff_module" then
+            local t = target:GetModuleType()
+            if t == moduletype.LIFE_SUPPORT then
+                dmg:ScaleDamage(self:GetLifeSupportModuleMultiplier())
+            elseif t == moduletype.SHIELDS then
+                dmg:ScaleDamage(self:GetShieldModuleMultiplier())
+            elseif t == moduletype.SYSTEM_POWER then
+                dmg:ScaleDamage(self:GetPowerModuleMultiplier())
+            end
+        end
 
         return dmg
     end
@@ -116,14 +155,7 @@ if SERVER then
 
             self:OnHit(closest)
         elseif obj:GetObjectType() == objtype.MODULE then
-            local mdl = obj:GetModule()
-            if IsValid(mdl) and mdl:GetClass() == "prop_ff_module" then
-                mdl:DamageRandomTiles(math.ceil(self:GetBaseDamage() / 10))
-            end
-            if not IsValid(mdl) or mdl:GetClass() == "prop_ff_weaponmodule" or mdl:GetDamaged() >= 16 then
-                if IsValid(mdl) then mdl:Remove() end
-                obj:Remove()
-            end
+            obj:Remove()
         elseif obj:GetObjectType() == objtype.MISSILE then
             obj:Remove()
         end

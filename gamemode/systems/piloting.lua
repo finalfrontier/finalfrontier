@@ -51,7 +51,7 @@ end
 
 function SYS:GetAccelerationTime()
     if self:IsFullStopping() then
-    local vx, vy = self:GetShip():GetVel()
+        local vx, vy = self:GetShip():GetVel()
         return math.sqrt(vx * vx + vy * vy)
     end
 
@@ -136,7 +136,7 @@ if SERVER then
         self._nwdata.inittime = 0
         self._nwdata.dx = 0
         self._nwdata.dy = 0
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     function SYS:SetTargetHeading(dx, dy)
@@ -156,7 +156,7 @@ if SERVER then
             self._nwdata.dy = 0
         end
 
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     function SYS:GetAccelerationMagnitude()
@@ -166,4 +166,12 @@ if SERVER then
     end
 elseif CLIENT then
     -- SYS.Icon = Material("systems/piloting.png", "smooth")
+
+    function SYS:Initialize()
+        self._nwdata.fullstop = true
+        self._nwdata.duration = 0
+        self._nwdata.inittime = 0
+        self._nwdata.dx = 0
+        self._nwdata.dy = 0
+    end
 end

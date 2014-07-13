@@ -52,7 +52,7 @@ if SERVER then
                 local needed = room:GetSystem():CalculatePowerNeeded(dt)
                 room:GetSystem():SetPowerNeeded(needed)
                 local powerModule = room:GetModule(moduletype.SYSTEM_POWER)
-                if powerModule then
+                if IsValid(powerModule) and powerModule.GetDamaged then
                     needed = needed * (1 - powerModule:GetDamaged() / 16)
                 else
                     needed = 0
@@ -87,7 +87,7 @@ if SERVER then
 
         self._nwdata.total = self:GetTotalPower()
 
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     function SYS:Think(dt)

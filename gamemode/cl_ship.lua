@@ -31,7 +31,7 @@ _mt._nwdata = nil
 _mt._valid = true
 
 function _mt:IsCurrent()
-    return self._valid and self:GetName() and IsGlobalTableCurrent(self:GetName())
+    return self._valid and self:GetName() and self._nwdata:IsCurrent()
         and self:GetBounds() and self:GetRange()
         and table.Count(self:GetRooms()) >= table.Count(self:GetRoomNames())
         and table.Count(self:GetDoors()) >= table.Count(self:GetDoorNames())
@@ -243,7 +243,7 @@ end
 
 function _mt:Remove()
     self._valid = false
-    ForgetGlobalTable(self:GetName())
+    self._nwdata:Forget()
 
     for _, room in pairs(self:GetRooms()) do
         room:Remove()
@@ -255,13 +255,10 @@ function _mt:Remove()
 end
 
 local ply_mt = FindMetaTable("Player")
-function ply_mt:GetShipName()
-    return self:GetNWString("ship")
-end
-
 function ply_mt:GetShip()
-    if not self:GetNWString("ship") then return nil end
-    return ships.GetByName(self:GetNWString("ship"))
+    local shipname = self:GetShipName()
+    if not shipname or string.len(shipname) == 0 then return nil end
+    return ships.GetByName(shipname)
 end
 
 function Ship(name)
@@ -273,7 +270,7 @@ function Ship(name)
 
     ship._systems = {}
 
-    ship._nwdata = GetGlobalTable(name)
+    ship._nwdata = NetworkTable(name)
     ship._nwdata.name = name
 
     return setmetatable(ship, _mt)

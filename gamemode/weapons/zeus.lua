@@ -1,4 +1,4 @@
--- Copyright (c) 2014 James King [metapyziks@gmail.com]
+-- Copyright (c) 2014 Alex Wlach (nightmarex91@gmail.com)
 -- 
 -- This file is part of Final Frontier.
 -- 
@@ -15,27 +15,33 @@
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
-local BASE = "container"
+local BASE = "empbase"
 
-GUI.BaseName = BASE
+WPN.BaseName = BASE
+WPN.CanSpawn = true
 
-function GUI:Initialize()
-    self.Super[BASE].Initialize(self)
+WPN.MaxTier = 10
 
-    self:SetWidth(self:GetScreen():GetWidth())
-    self:SetHeight(self:GetScreen():GetHeight())
-end
+WPN.MaxPower = { 1, 4 }
+WPN.MaxCharge = { 8, 16 }
+WPN.ShotCharge = { 8, 16 }
 
-function GUI:Enter()
-    sgui.Log(self, "Enter")
-end
+WPN.Homing = true
+WPN.Speed = { 1 / 10, 1 / 4 }
+WPN.Lateral = { 0.4, 1 }
+WPN.LifeTime = { 12, 24 }
 
-function GUI:Leave()
-    sgui.Log(self, "Leave")
-    self:RemoveAllChildren()
-end
+WPN.BaseDamage = { 1, 10 }
+WPN.PierceRatio = { 1, 4 }
+WPN.ShieldMult = { 4, 4 }
 
-function GUI:IsCurrentPage()
-    local parent = self:GetParent()
-    return parent and parent:GetCurrentPage() == self
+WPN.PersonnelMult = { 0, 0 }
+
+WPN.LifeSupportModuleMult = { 0, 0 }
+WPN.ShieldModuleMult = { 0, 0 }
+WPN.PowerModuleMult = { 12, 48 }
+
+if CLIENT then
+    WPN.FullName = "Zeus EMP"
+    WPN.Color = Color(52, 152, 219, 255)
 end

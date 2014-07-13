@@ -55,6 +55,19 @@ local function ShouldSync(a, b, delta)
     return math.abs(a - b) >= delta or (a ~= b and a * 100 == math.Round(a * 100))
 end
 
+function ENT:KeyValue(key, value)
+    self._nwdata = self._nwdata or {}
+
+    if key == "ship" then
+        self:_SetShipName(tostring(value), true)
+    elseif key == "system" then
+        self:_SetSystemName(tostring(value), true)
+    elseif key == "volume" then
+        self:_SetVolume(tonumber(value), true)
+        self:_SetSurfaceArea(math.sqrt(self:GetVolume()) * 6, true)
+    end
+end
+
 function ENT:Initialize()
     self._screens = {}
     self._doorlist = {}
@@ -73,10 +86,7 @@ function ENT:Initialize()
 
     self._players = {}
 
-    if not self._nwdata then
-        self._nwdata = {}
-        self._nwdata.corners = {}
-    end
+    self._nwdata = NetworkTable(self:GetName(), self._nwdata)
 
     if not self._nwdata.corners then self._nwdata.corners = {} end
     if not self._nwdata.details then self._nwdata.details = {} end
@@ -87,21 +97,9 @@ function ENT:Initialize()
     self._nwdata.airvolume = 0
     self._nwdata.shields = 0
     self._nwdata.name = self:GetName()
+    self._nwdata:Update()
 
     self:SetIndex(0)
-end
-
-function ENT:KeyValue(key, value)
-    if not self._nwdata then self._nwdata = {} end
-
-    if key == "ship" then
-        self:_SetShipName(tostring(value))
-    elseif key == "system" then
-        self:_SetSystemName(tostring(value))
-    elseif key == "volume" then
-        self:_SetVolume(tonumber(value))
-        self:_SetSurfaceArea(math.sqrt(self:GetVolume()) * 6)
-    end
 end
 
 function ENT:InitPostEntity()    
@@ -215,16 +213,16 @@ end
 
 function ENT:SetIndex(index)
     self._nwdata.index = index
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetIndex()
     return self._nwdata.index
 end
 
-function ENT:_SetShipName(name)
+function ENT:_SetShipName(name, dontUpdate)
     self._nwdata.shipname = name
-    self:_UpdateNWData()
+    if not dontUpdate then self._nwdata:Update() end
 end
 
 function ENT:GetShipName()
@@ -248,9 +246,9 @@ function ENT:GetShip()
     return self._ship
 end
 
-function ENT:_SetSystemName(name)
+function ENT:_SetSystemName(name, dontUpdate)
     self._nwdata.systemname = name
-    self:_UpdateNWData()
+    if not dontUpdate then self._nwdata:Update() end
 end
 
 function ENT:GetSystemName()
@@ -272,18 +270,18 @@ function ENT:GetSystem()
     return self._system
 end
 
-function ENT:_SetVolume(value)
+function ENT:_SetVolume(value, dontUpdate)
     self._nwdata.volume = value
-    self:_UpdateNWData()
+    if not dontUpdate then self._nwdata:Update() end
 end
 
 function ENT:GetVolume()
     return self._nwdata.volume or 0
 end
 
-function ENT:_SetSurfaceArea(value)
+function ENT:_SetSurfaceArea(value, dontUpdate)
     self._nwdata.surfacearea = value
-    self:_UpdateNWData()
+    if not dontUpdate then self._nwdata:Update() end
 end
 
 function ENT:GetSurfaceArea()
@@ -307,7 +305,7 @@ function ENT:AddCorner(index, x, y)
     self._nwdata.corners[index] = { x = x, y = y }
     self:GetBounds():AddPoint(x, y)
     self:GetShip():GetBounds():AddPoint(x, y)
-    self:_UpdateNWData()
+    self._nwdata:Update()
 
     self._polys = nil
 end
@@ -341,7 +339,7 @@ function ENT:AddDetail(name, x, y, nextnames)
         } )
     end
 
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetDetails()
@@ -427,11 +425,6 @@ function ENT:AddModuleSlot(pos, type)
         mdl:SetDefaultGrid(self:GetShip())
         mdl:Spawn()
         mdl:InsertIntoSlot(self, type, pos)
-    elseif type == moduletype.WEAPON_1 then
-        local mdl = ents.Create("prop_ff_weaponmodule")
-        mdl:SetWeapon(weapon.GetRandomName())
-        mdl:Spawn()
-        mdl:InsertIntoSlot(self, type, pos)
     end
 end
 
@@ -443,7 +436,7 @@ end
 
 function ENT:GetModuleIntegrity(type)
     local mdl = self:GetModule(type)
-    if not mdl then return 0 end
+    if not mdl then return 1 end
     return 1 - (mdl:GetDamaged() / 16)
 end
 
@@ -461,7 +454,7 @@ end
 function ENT:SetModule(type, module)
     self._modules[type] = module
     self._nwdata.modules[type] = module:EntIndex()
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:RemoveModule(module)
@@ -473,7 +466,7 @@ function ENT:RemoveModule(module)
             end
             self._modules[i] = nil
             self._nwdata.modules[i] = nil
-            self:_UpdateNWData()
+            self._nwdata:Update()
             return true
         end
     end
@@ -503,7 +496,7 @@ function ENT:SetUnitTemperature(temp)
 
     if ShouldSync(self._temperature, self._nwdata.temperature, self:GetVolume() / 100) then
         self._nwdata.temperature = self._temperature
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 end
 
@@ -520,7 +513,7 @@ function ENT:SetAirVolume(volume)
 
     if ShouldSync(self._airvolume, self._nwdata.airvolume, self:GetVolume() / 100) then
         self._nwdata.airvolume = self._airvolume
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 end
 
@@ -541,7 +534,7 @@ function ENT:SetUnitShields(shields)
 
     if ShouldSync(self._shields, self._nwdata.shields, 1 / 100) then
         self._nwdata.shields = self._shields
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 end
 
@@ -582,12 +575,12 @@ function ENT:TransmitAir(room, delta)
 end
 
 function ENT:GetPermissionsName()
-    return "p_" .. self:GetShipName() .. "_" .. self:GetIndex()
+    return self:GetShipName() .. "_" .. self:GetIndex()
 end
 
 function ENT:HasPlayerWithSecurityPermission()
     for _, ply in ipairs(player.GetAll()) do
-        if IsValid(ply) and ply:HasPermission(self, permission.SECURITY) then
+        if IsValid(ply) and ply:HasPermission(self, permission.SECURITY, true) then
             return true
         end
     end
@@ -596,21 +589,9 @@ function ENT:HasPlayerWithSecurityPermission()
 end
 
 local ply_mt = FindMetaTable("Player")
-function ply_mt:GetPermission(room)
-    return self:GetNWInt(room:GetPermissionsName(), 0)
-end
-
-function ply_mt:HasPermission(room, perm)
-    return self:GetPermission(room) >= perm
-end
-
 function ply_mt:SetPermission(room, perm)
-    self:SetNWInt(room:GetPermissionsName(), perm)
-end
-
-function ply_mt:HasDoorPermission(door)
-    return self:HasPermission(door:GetRooms()[1], permission.ACCESS)
-        or self:HasPermission(door:GetRooms()[2], permission.ACCESS)
+    self._permissions[room:GetPermissionsName()] = perm
+    self._permissions:Update()
 end
 
 function ply_mt:SetRoom(room)
@@ -620,7 +601,7 @@ function ply_mt:SetRoom(room)
     end
     room:_AddPlayer(self)
     self._room = room
-    self:SetNWInt("room", room:GetIndex())
+    self:SetRoomIndex(room:GetIndex())
 end
 
 function ply_mt:GetRoom()
@@ -663,8 +644,4 @@ end
 function ENT:IsPointInside(x, y)
     return self:GetBounds():IsPointInside(x, y)
         and IsPointInsidePolyGroup(self:GetPolygons(), x, y)
-end
-
-function ENT:_UpdateNWData()
-    SetGlobalTable(self:GetName(), self._nwdata)
 end

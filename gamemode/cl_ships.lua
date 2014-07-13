@@ -19,10 +19,12 @@ if not ships then
     ships = {}
 
     ships._dict = {}
-    ships._nwdata = GetGlobalTable("ships")
 end
 
+ships._nwdata = NetworkTable("ships")
+
 function ships.Add(ship)
+    print("Loading new ship " .. ship:GetName())
     ships._dict[ship:GetName()] = ship
 end
 
@@ -38,7 +40,6 @@ end
 function ships.GetByName(name)
     local ship = ships._dict[name]
     if not ship and name and string.len(name) > 0 then
-        print("Loading new ship " .. name)
         ships.Add(Ship(name))
     end
     return ship

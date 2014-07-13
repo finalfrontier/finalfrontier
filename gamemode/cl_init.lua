@@ -17,6 +17,8 @@
 
 include("gmtools/nwtable.lua")
 
+include("player_class/player_ff_default.lua")
+
 include("sh_init.lua")
 include("sh_bounds.lua")
 include("sh_matrix.lua")
@@ -122,6 +124,13 @@ function GM:Initialize()
 end
 
 function GM:Think()
+    for _, ply in ipairs(player.GetAll()) do
+        if IsValid(ply) and ply ~= LocalPlayer() and not ply.dt then
+            ply:InstallDataTable()
+            SetupPlayerDataTables(ply)
+        end
+    end
+
     ships.Think()
     team.Think()
 end
@@ -134,9 +143,9 @@ end
 
 function GM:PlayerBindPress(ply, bind, pressed)
     if ply ~= LocalPlayer() then return end
-    if ply:GetNWBool("usingScreen") then
-        local screen = ply:GetNWEntity("screen")
-        if screen then
+    if ply:GetUsingScreen() then
+        local screen = ply:GetCurrentScreen()
+        if IsValid(screen) and screen.Click then
             if bind == "+attack" then
                 screen:Click(MOUSE1)
             elseif bind == "+attack2" then

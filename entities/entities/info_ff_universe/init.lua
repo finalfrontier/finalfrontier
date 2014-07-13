@@ -31,7 +31,8 @@ ENT._sectors = nil
 ENT._nwdata = nil
 
 function ENT:KeyValue(key, value)
-    if not self._nwdata then self._nwdata = {} end
+    self._nwdata = self._nwdata or {}
+
     if key == "width" then
         self._nwdata.width = tonumber(value)
     elseif key == "height" then
@@ -48,12 +49,12 @@ function ENT:Initialize()
     
     self._sectors = {}
 
-    if not self._nwdata then self._nwdata = {} end
+    self._nwdata = NetworkTable("universe", self._nwdata)
 
     self._nwdata.x = self:GetPos().x
     self._nwdata.y = self:GetPos().y
     self._nwdata.z = self:GetPos().z
-    self:_UpdateNWData()
+    self._nwdata:Update()
 end
 
 function ENT:GetHorizontalSectors()
@@ -139,8 +140,4 @@ function ENT:InitPostEntity()
             self._sectors[index] = sector
         end
     end
-end
-
-function ENT:_UpdateNWData()
-    SetGlobalTable("universe", self._nwdata)
 end

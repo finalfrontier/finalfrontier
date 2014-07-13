@@ -94,7 +94,7 @@ if SERVER then
         self._nwdata.scandelay = 5
         self._nwdata.scanstart = -1000
         self._nwdata.autoscan = false
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     function SYS:Think(dt)
@@ -128,13 +128,13 @@ if SERVER then
         end
 
         if needsUpdate then
-            self:_UpdateNWData()
+            self._nwdata:Update()
         end
     end
 
     function SYS:SetAutoScan(val)
         self._nwdata.autoscan = val ~= false
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     function SYS:StartScan()
@@ -142,7 +142,7 @@ if SERVER then
 
         self._nwdata.scanstart = CurTime()
         self._nwdata.charge = 0
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     function SYS:CalculatePowerNeeded()

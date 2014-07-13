@@ -1,4 +1,4 @@
--- Copyright (c) 2014 James King [metapyziks@gmail.com]
+-- Copyright (c) 2014 Alex Wlach (nightmarex91@gmail.com)
 -- 
 -- This file is part of Final Frontier.
 -- 
@@ -15,27 +15,35 @@
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
-local BASE = "container"
+local BASE = "base"
 
-GUI.BaseName = BASE
+WPN.BaseName = BASE
 
-function GUI:Initialize()
-    self.Super[BASE].Initialize(self)
+WPN.Projectile = true
 
-    self:SetWidth(self:GetScreen():GetWidth())
-    self:SetHeight(self:GetScreen():GetHeight())
+WPN.Homing = true
+WPN.Speed = { 1 / 2, 1 / 2 }
+WPN.Lateral = { 1, 1 }
+WPN.LifeTime = { 64, 64 }
+
+function WPN:IsHoming()
+    return self.Homing
 end
 
-function GUI:Enter()
-    sgui.Log(self, "Enter")
+function WPN:GetSpeed()
+    return self:_FindValue(self.Speed)
 end
 
-function GUI:Leave()
-    sgui.Log(self, "Leave")
-    self:RemoveAllChildren()
+function WPN:GetLateral()
+    return self:_FindValue(self.Lateral)
 end
 
-function GUI:IsCurrentPage()
-    local parent = self:GetParent()
-    return parent and parent:GetCurrentPage() == self
+function WPN:GetLifeTime()
+    return self:_FindValue(self.LifeTime)
+end
+
+if SERVER then
+    function WPN:OnShoot(ship, target, rot)
+        weapon.LaunchMissile(ship, self, target, rot)
+    end
 end

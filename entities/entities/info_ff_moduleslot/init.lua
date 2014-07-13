@@ -111,7 +111,7 @@ end
 function ENT:Think()
     if not IsValid(self._room) then return end
 
-    if self:IsRepairSlot() then
+    if self:IsRepairSlot() and self._room:GetSystem() then
         local system = self._room:GetSystem()
         if self._open and system:IsPerformingAction() then
             if self:GetModule() then
@@ -124,7 +124,7 @@ function ENT:Think()
             end
             self._open = true
             timer.Simple(0.5, function()
-                if CurTime() > 1 and self:GetModule() then
+                if IsValid(self:GetModule()) then
                     local sound = CreateSound(self:GetModule(), "npc/env_headcrabcanister/hiss.wav")
                     sound:PlayEx(1, 110)
                     sound:ChangeVolume(0, 1.5)

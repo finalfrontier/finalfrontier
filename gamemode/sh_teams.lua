@@ -17,12 +17,11 @@
 
 if SERVER then AddCSLuaFile("sh_teams.lua") end
 
-if SERVER and not team._nwdata then
-    team._nwdata = {}
-elseif CLIENT and not team._nwdata then
-    team._nwdata = GetGlobalTable("teams")
+if CLIENT and not team._nwdata then
     team._count = 0
 end
+
+team._nwdata = NetworkTable("teams")
 
 function team.GetDeadColor(t)
     local clr = team.GetColor(t)
@@ -41,7 +40,7 @@ if SERVER then
         t.color = ship:GetUIColor()
 
         table.insert(team._nwdata, t)
-        team._UpdateNWData()
+        team._nwdata:Update()
 
         local i = #team._nwdata
 
@@ -65,10 +64,6 @@ if SERVER then
 
     function team.AutoAssign(ply)
         ply:SetTeam(team.GetLeastPopulated())
-    end
-
-    function team._UpdateNWData()
-        SetGlobalTable("teams", team._nwdata)
     end
 elseif CLIENT then
     function team.Think()

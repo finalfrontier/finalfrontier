@@ -19,6 +19,8 @@
 
 include("gmtools/nwtable.lua")
 
+include("player_class/player_ff_default.lua")
+
 include("sh_init.lua")
 include("sh_bounds.lua")
 include("sh_matrix.lua")
@@ -67,47 +69,8 @@ function GM:PlayerNoClip(ply)
     return ply:GetMoveType() == MOVETYPE_NOCLIP
 end
 
-function GM:PlayerInitialSpawn(ply)
-    local num = math.random(1, 9)
-
-    local models = {
-        "models/player/group03/male_01.mdl",
-        "models/player/group03/male_02.mdl",
-        "models/player/group03/male_03.mdl",
-        "models/player/group03/male_04.mdl",
-        "models/player/group03/male_05.mdl",
-        "models/player/group03/male_06.mdl",
-        "models/player/group03/male_07.mdl",
-        "models/player/group03/male_08.mdl",
-        "models/player/group03/male_09.mdl",
-        "models/player/group03/female_01.mdl",
-        "models/player/group03/female_02.mdl",
-        "models/player/group03/female_03.mdl",
-        "models/player/group03/female_04.mdl",
-        "models/player/group03/female_05.mdl",
-        "models/player/group03/female_06.mdl"
-    }
-
-    ply:SetModel(table.Random(models))
-    ply:SetCanWalk(true)
-    
-    team.AutoAssign(ply)
-
-    GAMEMODE:SetPlayerSpeed(ply, 175, 250)
-end
-
-
-function GM:PlayerSpawn(ply)
-    local ship = team.GetShip(ply:Team())
-    local pad = table.Random(ship:GetSystem("transporter"):GetRoom():GetTransporterPads())
-
-    ply:SetPos(pad)
-    ply:SetShip(ship)
-
-    ply:Give("weapon_crowbar")
-    ply:Give("weapon_ff_repair_tool")
-    
-    TeleportArriveEffect(ply, ply:GetPos())
+function GM:PlayerInitialSpawn(ply)   
+    player_manager.SetPlayerClass(ply, "player_ff_default")
 end
 
 function GM:Think()

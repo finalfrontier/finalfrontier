@@ -115,14 +115,14 @@ function _mt:Think()
 end
 
 function _mt:Remove()
-    ForgetGlobalTable(self:GetName())
+    self._nwdata:Forget()
 end
 
 function Door(name, ship, index)
     door = {}
     door._ship = ship
 
-    door._nwdata = GetGlobalTable(name)
+    door._nwdata = NetworkTable(name)
     door._nwdata.name = name
     door._nwdata.index = index
 

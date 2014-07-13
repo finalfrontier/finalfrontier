@@ -34,6 +34,9 @@ _mt.Base = nil
 _mt.Name = nil
 _mt.MaxTier = 1
 
+_mt.CanSpawn = false
+_mt.Frequency = 100
+
 _mt.LaunchSound = "weapons/rpg/rocketfire1.wav"
 
 if CLIENT then
@@ -69,13 +72,14 @@ for i, file in ipairs(files) do
     WPN.Super = {}
     WPN.Super.__index = WPN.Super
     WPN.Super[name] = WPN
+    
     include("weapons/" .. file)
 
-    weapon._dict[name] = WPN
-
-    if WPN.CanSpawn then
+    if not weapon._dict[name] and WPN.CanSpawn then
         table.insert(weapon._spawnable, WPN)
     end
+
+    weapon._dict[name] = WPN
 
     WPN = nil
 end
@@ -91,13 +95,28 @@ for _, WPN in pairs(weapon._dict) do
 end
 
 function weapon.GetRandomName()
-    return table.Random(weapon._spawnable).Name
+    local tot = 0
+    for _, wpn in ipairs(weapon._spawnable) do
+        tot = tot + wpn.Frequency
+    end
+
+    local i = math.random() * tot
+    for _, wpn in ipairs(weapon._spawnable) do
+        i = i - wpn.Frequency
+        if i <= 0 then return wpn.Name end
+    end
+end
+
+function weapon.GetRandomTier(name)
+    local wpn = weapon._dict[name]
+    return 1 + math.floor(math.pow(math.random(), 3) * wpn.MaxTier)
 end
 
 function weapon.Create(name, tier)
+    name = name or weapon.GetRandomName()
     local wpn = weapon._dict[name]
     if wpn then
-        tier = tier or (1 + math.floor(math.pow(math.random(), 3) * wpn.MaxTier))
+        tier = tier or weapon.GetRandomTier(name)
         return setmetatable({ _tier = tier }, wpn)
     end
     return nil
@@ -140,12 +159,12 @@ if SERVER then
             dy = dy / len * speed
         end
 
-        ent:SetRotation(math.atan2(dy, dx) / math.pi * 180)
-
         vx, vy = ent:GetVel()
 
         vx = vx - ent._basedx
         vy = vy - ent._basedy
+
+        ent:SetTargetRotation(math.atan2(vy, vx) / math.pi * 180)
 
         local a = ent._weapon:GetLateral()
 

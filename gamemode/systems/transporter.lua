@@ -42,7 +42,7 @@ end
 function SYS:IsObjectTeleportable(obj)
     return IsValid(obj) and obj:GetClass() == "info_ff_object"
         and self:GetShip():IsObjectInRange(obj)
-        and self:IsEntityTeleportable(obj:GetModule())
+        and (CLIENT or obj._module)
 end
 
 if SERVER then
@@ -86,7 +86,7 @@ if SERVER then
         self._nwdata.maxcharge = 0
         self._nwdata.charge = 0
         self._nwdata.maxshields = 0.1
-        self:_UpdateNWData()
+        self._nwdata:Update()
     end
 
     SYS._oldScore = 0
@@ -117,7 +117,7 @@ if SERVER then
             changed = true
         end
         
-        if changed then self:_UpdateNWData() end
+        if changed then self._nwdata:Update() end
     end
 
     function SYS:GetChargeCost(ent)
@@ -204,13 +204,10 @@ if SERVER then
 
             if not self:IsObjectTeleportable(obj) then self:TeleportFailEffect() return end
             
-            local mdl = obj:GetModule()
-
-            if not self:IsEntityTeleportable(mdl) then self:TeleportFailEffect() return end
-
-            obj:UnassignModule()
+            local mdl = obj:RetrieveModule()
 
             if not self:TeleportEntity(mdl, mdl:GetPos(), table.Random(pads)) then
+                mdl:Remove()
                 self:TeleportFailEffect()
             else
                 obj:Remove()
@@ -236,18 +233,22 @@ if SERVER then
     function TeleportDepartEffect(ent, pos)
         sound.Play(table.Random(receiveSounds), pos, 85, 100 + math.random() * 20)
 
+        local low, high = ent:WorldSpaceAABB()
+
         local ed = EffectData()
-        ed:SetEntity(ent)
-        ed:SetOrigin(pos)
+        ed:SetOrigin(low)
+        ed:SetStart(high)
         util.Effect("trans_sparks", ed, true, true)
     end
 
     function TeleportArriveEffect(ent, pos)
         sound.Play(table.Random(receiveSounds), pos, 85, 100 + math.random() * 20)
 
+        local low, high = ent:WorldSpaceAABB()
+
         local ed = EffectData()
-        ed:SetEntity(ent)
-        ed:SetOrigin(pos)
+        ed:SetOrigin(low)
+        ed:SetStart(high)
         util.Effect("trans_sparks", ed, true, true)
 
         ed = EffectData()
@@ -258,56 +259,52 @@ if SERVER then
 
     function SYS:TeleportEntity(ent, pad, dest)
         if not self:CanTeleportEntity(ent) then return false end
+        if not IsValid(ent) then return false end
 
         self._nwdata.charge = self._nwdata.charge - self:GetChargeCost(ent)
-        self:_UpdateNWData()
+        self._nwdata:Update()
 
         local oldpos = ent:GetPos()
         local newpos = ent:GetPos() - pad + (dest or Vector(0, 0, 0))
 
-        if dest then
-            ent:SetPos(newpos)
-        else
-            if ent:IsPlayer() then
-                ent:Kill()
-            else
-                if ent:GetClass() == "prop_ff_module" or ent:GetClass() == "prop_ff_weaponmodule" then
-                    local obj = ents.Create("info_ff_object")
-                    obj:SetCoordinates(self:GetShip():GetCoordinates())
-                    obj:SetObjectType(objtype.MODULE)
-                    obj:Spawn()
-
-                    local vx, vy = self:GetShip():GetVel()
-                    local dir = (math.random() * 2 - 1) * math.pi
-
-                    if vx * vx + vy * vy >= 1 / (64 * 64) then
-                        dir = dir / 8 + math.atan2(-vy, -vx)
-                    end
-
-                    obj:SetVel(vx + math.cos(dir) / 64, vy + math.sin(dir) / 64)
-                    obj:AssignModule(ent)
-                else
-                    timer.Simple(0.5, function()
-                        if IsValid(ent) then ent:Remove() end
-                    end)
-                end
-            end
-        end
-
-        if ent:IsPlayer() then
-            local ship = ships.FindCurrentShip(ent)
-            if ship then ent:SetShip(ship) end
-        elseif IsValid(ent) then
-            local phys = ent:GetPhysicsObject()
-            if phys and IsValid(phys) then
-                phys:Wake()
-            end
-        end
-
         TeleportDepartEffect(ent, oldpos)
 
         if dest then
+            ent:SetPos(newpos)
             TeleportArriveEffect(ent, newpos)
+
+            if ent:IsPlayer() then
+                local ship = ships.FindCurrentShip(ent)
+                if ship then ent:SetShip(ship) end
+            elseif IsValid(ent) then
+                local phys = ent:GetPhysicsObject()
+                if phys and IsValid(phys) then phys:Wake() end
+            end
+        else
+            if ent:IsPlayer() then
+                return false
+            else
+                timer.Simple(1 / 30, function()
+                    if not IsValid(ent) then return end
+                    if ent:GetClass() == "prop_ff_module" or ent:GetClass() == "prop_ff_weaponmodule" then
+                        local obj = ents.Create("info_ff_object")
+                        obj:SetCoordinates(self:GetShip():GetCoordinates())
+                        obj:AssignModule(ent)
+                        obj:Spawn()
+
+                        local vx, vy = self:GetShip():GetVel()
+                        local dir = (math.random() * 2 - 1) * math.pi
+
+                        if vx * vx + vy * vy >= 1 / (64 * 64) then
+                            dir = dir / 8 + math.atan2(-vy, -vx)
+                        end
+
+                        obj:SetVel(vx + math.cos(dir) / 64, vy + math.sin(dir) / 64)
+                    else
+                        ent:Remove()
+                    end
+                end)
+            end
         end
 
         return true

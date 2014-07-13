@@ -20,12 +20,16 @@ if SERVER then AddCSLuaFile("shared.lua") end
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 
+function ENT:SetupDataTables()
+	self:NetworkVar( "String", 0, "SectorName" )
+end
+
 function ENT:GetCoordinates()
     return universe:GetUniversePos(self:GetPos())
 end
 
 function ENT:GetSectorName()
-    return self:GetNWString("name")
+    return self:GetSectorName()
 end
 
 function ENT:GetBoundingBox()
@@ -56,17 +60,13 @@ if SERVER then
 
     function ENT:SetCoordinates(x, y)
         self:SetPos(universe:GetWorldPos(universe:WrapCoordinates(x + 0.5, y + 0.5)))
-        self:SetNWString("name", horzNames[x + 1] .. "-" .. vertNames[y + 1])
+        self:SetSectorName(horzNames[x + 1] .. "-" .. vertNames[y + 1])
     end
 
     function ENT:Purge()
         for _, ent in ipairs(ents.FindInBox(self:GetBoundingBox())) do
             if IsValid(ent) and ent:GetClass() == "info_ff_object"
-                and ent.GetObjectType and ent:GetObjectType() ~= objtype.SHIP then
-                
-                local mdl = ent:GetModule()
-                if IsValid(mdl) then mdl:Remove() end
-
+                and (not ent.GetObjectType or ent:GetObjectType() ~= objtype.SHIP) then
                 ent:Remove()
             end
         end
@@ -76,38 +76,26 @@ if SERVER then
         self:Purge()
 
         local x, y = self:GetCoordinates()
-        local count, max = 0, math.ceil(math.random() * 16)
+        local count, max = 0, math.ceil(math.random() * 8)
 
-        while math.random() < 0.5 and count < max do
+        while math.random() < 0.25 and count < max do
             count = count + 1
         end
 
         for i = 1, count do
             local obj = ents.Create("info_ff_object")
             obj:SetCoordinates(x + math.random(), y + math.random())
-            obj:SetObjectType(objtype.MODULE)
             obj:Spawn()
 
-            local mdl = nil
             if math.random() < 0.75 then
-                mdl = ents.Create("prop_ff_module")
-                mdl:SetModuleType(table.Random({
+                obj:AssignRoomModule(table.Random({
                     moduletype.LIFE_SUPPORT,
                     moduletype.SHIELDS,
                     moduletype.SYSTEM_POWER
-                }))
+                }), nil)
             else
-                mdl = ents.Create("prop_ff_weaponmodule")
-                mdl:SetWeapon(weapon.GetRandomName())
+                obj:AssignWeaponModule()
             end
-
-            mdl:Spawn()
-
-            if mdl:GetClass() == "prop_ff_module" then
-                mdl:DamageRandomTiles(math.floor((1 - math.pow(math.random(), 2)) * 16))
-            end
-
-            obj:AssignModule(mdl)
         end
     end
 

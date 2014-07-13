@@ -59,8 +59,8 @@ function GUI:GetSystemIcon()
 end
 
 function GUI:GetUsingPlayer()
-    if not self:GetScreen():GetNWBool("used") then return nil end
-    return self:GetScreen():GetNWEntity("user")
+    if not self:GetScreen():GetBeingUsed() then return nil end
+    return self:GetScreen():GetUsingPlayer()
 end
 
 function GUI:GetBounds() return self._bounds end
@@ -243,7 +243,7 @@ if CLIENT then
 
             net.Start("Click")
             net.WriteEntity(self:GetScreen())
-            net.WriteFloat(self:GetScreen():GetNWFloat("layout"))
+            net.WriteFloat(self:GetScreen():GetLayout():GetLastUpdateTime())
             self:SendIDHierarchy()
             net.WriteUInt(0, 16)
             net.WriteInt(button, 8)
@@ -261,7 +261,7 @@ if CLIENT then
         if not sgui.IsDebug() then return end
         
         local color = Color(255, 0, 0, 255)
-        if self:GetScreen():GetNWBool("used") and self:IsPointInside(self:GetCursorPos()) then
+        if self:GetScreen():GetBeingUsed() and self:IsPointInside(self:GetCursorPos()) then
             color = Color(0, 255, 0, 255)
         end
 
@@ -322,8 +322,8 @@ if SERVER then
     net.Receive("Click", function(len, ply)
         local screen = net.ReadEntity()
         local layoutTime = net.ReadFloat()
-        if layoutTime < screen:GetNWFloat("layout") then return end
-        if screen:GetNWEntity("user") == ply then
+        if layoutTime < screen:GetLayout():GetLastUpdateTime() then return end
+        if screen:GetUsingPlayer() == ply then
             local element = nil
             while true do
                 local id = net.ReadUInt(16)

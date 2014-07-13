@@ -15,15 +15,40 @@
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
+local SPACE_SIZE = 256
+local SPACE_SIZE_HALF = SPACE_SIZE / 2
+local SPACE_CLIP_FAR = SPACE_SIZE_HALF
+local SPACE_FADE_FAR = SPACE_CLIP_FAR * 0.9
+local SPACE_CLIP_NEAR = 1 / 64
+local SPACE_FADE_NEAR = 1 / 16
+local SPACE_STAR_COUNT = 256
+
 local _mt = {}
 _mt.__index = _mt
 
 _mt._pos = Vector(0, 0, 0)
 _mt._scale = 1
 _mt._clr = Color(255, 255, 255, 255)
+_mt._pulseFreq = 0
+_mt._pulseScale = 0
+_mt._pulsePhase = 0
+
+function _mt:SetPos(pos)
+    self._pos = pos
+end
 
 function _mt:GetPos()
     return self._pos
+end
+
+function _mt:SetScale(val)
+    self._scale = val
+end
+
+function _mt:SetPulse(period, scale, phase)
+    self._pulseFreq = period
+    self._pulseScale = scale
+    self._pulsePhase = (phase or math.random()) * period
 end
 
 function _mt:GetScale()
@@ -34,37 +59,57 @@ function _mt:GetColor()
     return self._clr
 end
 
-function _mt:Render(origin, vel)
-    local pos = self._pos - origin
+function _mt:Render(origin, loc, mat)
+    local pos = self._pos
 
-    if pos.x > 128 then
-        pos.x = pos.x - 256
-    elseif pos.x <= -128 then
-        pos.x = pos.x + 256
+    if mat then
+        pos.x, pos.y = mat:Transform(pos.x, pos.y)
     end
 
-    if pos.y > 128 then
-        pos.y = pos.y - 256
-    elseif pos.y <= -128 then
-        pos.y = pos.y + 256
+    if loc then
+        pos = pos + loc
+    end
+
+    pos = pos - origin
+
+    if pos.x > SPACE_SIZE_HALF then
+        pos.x = pos.x - SPACE_SIZE
+    elseif pos.x <= -SPACE_SIZE_HALF then
+        pos.x = pos.x + SPACE_SIZE
+    end
+
+    if pos.y > SPACE_SIZE_HALF then
+        pos.y = pos.y - SPACE_SIZE
+    elseif pos.y <= -SPACE_SIZE_HALF then
+        pos.y = pos.y + SPACE_SIZE
     end
 
     local dist = pos:Length()
     local clr = self._clr
 
-    if dist > 96 then
-        clr.a = math.Round(math.max(0, (128 - dist) / 32) * 255)
-    elseif dist < 8 then
-        clr.a = math.Round(math.max(0, (dist - 4) / 4) * 255)
+    if dist > SPACE_FADE_FAR then
+        clr.a = math.Round(math.max(0, (SPACE_CLIP_FAR - dist) / (SPACE_CLIP_FAR - SPACE_FADE_FAR)) * 255)
+    elseif dist < SPACE_FADE_NEAR then
+        clr.a = math.Round(math.max(0, (dist - SPACE_CLIP_NEAR) / (SPACE_FADE_NEAR - SPACE_CLIP_NEAR)) * 255)
     end
 
     if clr.a <= 0 then return end
 
-    render.DrawQuadEasy(pos, -pos:GetNormalized(), self._scale, self._scale, clr, 0)
+    local scale = self._scale
+
+    if self._pulseFreq > 0 then
+        scale = scale + math.Round(Pulse(self._pulseFreq, self._pulsePhase)) * self._pulseScale
+    end
+
+    render.DrawQuadEasy(pos, -pos:GetNormalized(), scale, scale, clr, 0)
 end
 
-function Star(pos, scale, clr)
-    return setmetatable({ _pos = pos, _scale = scale, _clr = clr }, _mt)
+function SpaceFlare(pos, scale, clr)
+    if clr then
+        return setmetatable({ _pos = pos, _scale = scale, _clr = clr }, _mt)
+    else
+        return setmetatable({ _pos = Vector(0, 0, 0), _scale = pos, _clr = scale }, _mt)
+    end
 end
 
 local _stars = nil
@@ -73,14 +118,14 @@ local _starMat = nil
 local function _GenerateStars()
     _stars = {}
 
-    for i = 1, 256 do
+    for i = 1, SPACE_STAR_COUNT do
         local scale = math.pow(math.random(), 2) + 2
         local shift = math.random() * 2 - 1
 
         local pos = Vector(
-            math.random() * 256 - 128,
-            math.random() * 256 - 128,
-            math.random() * 128 - 64)
+            (math.random() - 0.5) * SPACE_SIZE,
+            (math.random() - 0.5) * SPACE_SIZE,
+            (math.random() - 0.5) * SPACE_SIZE_HALF)
 
         local clr = Color(
             math.floor(224 + shift * 32),
@@ -88,8 +133,14 @@ local function _GenerateStars()
             math.floor(224 - shift * 32),
             255)
 
-        table.insert(_stars, Star(pos, scale, clr))
+        table.insert(_stars, SpaceFlare(pos, scale, clr))
     end
+end
+
+local function _CoordToStarPos(x, y)
+    local w = universe:GetHorizontalSectors()
+    local h = universe:GetVerticalSectors()
+    return Vector((x - w / 2) * (SPACE_SIZE / w), (h / 2 - y) * (SPACE_SIZE / h), 0)
 end
 
 local _pushedMat = nil
@@ -121,19 +172,37 @@ function GM:PostDraw2DSkyBox()
     if not _stars then _GenerateStars() end
     if not _starMat then _starMat = Material("star.png", "smooth unlitgeneric") end
 
-    local obj = LocalPlayer():GetShip():GetObject()
+    local ship = LocalPlayer():GetShip()
 
-    local x, y = obj:GetCoordinates()
+    local x, y = ship:GetCoordinates()
+    local w = universe:GetHorizontalSectors()
+    local h = universe:GetVerticalSectors()
 
-    local pos = Vector((x - 8) * 16, (8 - y) * 16, 0)
+    local pos = _CoordToStarPos(x, y)
 
-    cam.Start3D(Vector(0, 0, 0), EyeAngles())
+    cam.Start3D(Vector(0, 0, 0), EyeAngles(), nil, nil, nil, nil, nil, SPACE_CLIP_NEAR, SPACE_CLIP_FAR)
 
     render.SetMaterial(_starMat)
     for _, star in ipairs(_stars) do
-        star:Render(pos, nil)
+        star:Render(pos)
+    end
+
+    local objects = ents.FindByClass("info_ff_object")
+    for _, obj in pairs(objects) do
+        if ship:IsObjectInRange(obj) and obj ~= ship:GetObject() then
+            if not obj._flares then
+                obj._flares = obj:GetSpaceFlare()
+            end
+
+            local loc = _CoordToStarPos(obj:GetCoordinates())
+            local mat = Matrix2D()
+            mat:Rotate(-obj:GetRotationRadians())
+
+            for _, flare in ipairs(obj._flares) do
+                flare:Render(pos, loc, mat)
+            end
+        end
     end
 
     cam.End3D()
 end
-

@@ -30,7 +30,11 @@ objtype.MISSILE = 2
 objtype.MODULE = 3
 
 function ENT:SetupDataTables()
+    self:NetworkVar("String", 0, "ObjectName")
+    self:NetworkVar("Int", 0, "ObjectType")
     self:NetworkVar("Float", 0, "TargetRotation")
+    self:NetworkVar("Float", 1, "MaxAngularVel")
+    self:NetworkVar("Entity", 0, "Module")
 end
 
 function ENT:Initialize()
@@ -79,51 +83,68 @@ if SERVER then
         end
     end
 
-    function ENT:SetMaxAngularVel(vel)
-        self:SetNWFloat("maxangvel", vel)
-    end
-
-    function ENT:SetObjectType(type)
-        self:SetNWInt("objtype", type)
-    end
-
-    function ENT:SetObjectName(name)
-        self:SetNWString("objname", name)
-    end
-
     function ENT:AssignModule(mdl)
-        local prev = self:GetModule()
-        if IsValid(prev) then
-            prev:UnassignObject(self)
-            prev:Remove()
+        if mdl:GetClass() == "prop_ff_weaponmodule" then
+            self:AssignWeaponModule(mdl:GetWeaponName(), mdl:GetWeaponTier())
+        elseif mdl:GetClass() == "prop_ff_module" then 
+            self:AssignRoomModule(mdl:GetModuleType(), mdl:GetGrid())
         end
 
-        mdl:SetPos(self:GetPos())
-
-        mdl:SetMoveType(MOVETYPE_NONE)
-        mdl:SetSolid(SOLID_NONE)
-
-        self:SetNWEntity("module", mdl)
+        mdl:Remove()
     end
 
-    function ENT:UnassignModule()
-        local mdl = self:GetModule()
+    function ENT:AssignWeaponModule(name, tier)
+        self:SetObjectType(objtype.MODULE)
 
-        if not IsValid(mdl) then return end
-
-        mdl:SetMoveType(MOVETYPE_VPHYSICS)
-        mdl:SetSolid(SOLID_VPHYSICS)
-
-        self:SetNWEntity("module", nil)
+        self._module = {}
+        self._module.type = moduletype.WEAPON_1
+        self._module.name = name or weapon.GetRandomName()
+        self._module.tier = tier or weapon.GetRandomTier(self._module.name)
     end
-end
 
-function ENT:GetModule()
-    return self:GetNWEntity("module")
-end
+    function ENT:AssignRoomModule(type, grid)
+        self:SetObjectType(objtype.MODULE)
 
-function ENT:GetMaxAngularVel()
-    return self:GetNWFloat("maxangvel", 0)
+        if grid then
+            local old = grid
+            grid = {}
+
+            for x = 1, 4 do
+                grid[x] = {}
+                for y = 1, 4 do grid[x][y] = old[x][y] end
+            end
+        else
+            grid = GenerateModuleGrid(0.5)
+        end
+
+        self._module = {}
+        self._module.type = type
+        self._module.grid = grid
+    end
+
+    function ENT:RetrieveModule()
+        if not self._module then return nil end
+
+        local mdl = nil
+
+        if self._module.type == moduletype.WEAPON_1 then
+            mdl = ents.Create("prop_ff_weaponmodule")
+            mdl:SetWeapon(self._module.name, self._module.tier)
+        else
+            mdl = ents.Create("prop_ff_module")
+            mdl:SetModuleType(self._module.type)
+        end
+
+        mdl:Spawn()
+
+        if mdl:GetClass() == "prop_ff_module" then
+            for x = 1, 4 do for y = 1, 4 do
+                mdl:SetTile(x, y, self._module.grid[x][y])
+            end end 
+        end
+
+        return mdl
+    end
 end
 
 function ENT:GetRotation()
@@ -165,14 +186,6 @@ function ENT:GetSpeed()
     return math.sqrt(vx * vx + vy * vy)
 end
 
-function ENT:GetObjectType()
-    return self:GetNWInt("objtype", objtype.UNKNOWN)
-end
-
-function ENT:GetObjectName()
-    return self:GetNWString("objname", nil)
-end
-
 if SERVER then
     function ENT:Think()
         if not IsValid(self) then return end
@@ -185,12 +198,6 @@ if SERVER then
             local oldvel = phys:GetVelocity()
             self:SetCoordinates(wx, wy)
             phys:SetVelocity(oldvel)
-        end
-
-        local mdl = self:GetModule()
-
-        if IsValid(mdl) then
-            mdl:SetPos(self:GetPos())
         end
 
         if phys:IsAsleep() then
@@ -211,8 +218,41 @@ elseif CLIENT then
             else
                 return "Enemy Ship"
             end
+        elseif self:GetObjectType() == objtype.MISSILE then
+            return "Missile"
         else
             return "Unknown"
+        end
+    end
+
+    local function appendFlare(tbl, x, y, z, scale, r, g, b, pPeriod, pScale, pPhase)
+        local flare = SpaceFlare(Vector(x / 8, y / 8, z / 8), scale, Color(r, g, b))
+        flare:SetPulse(pPeriod, pScale, pPhase)
+
+        table.insert(tbl, flare)
+    end
+
+    function ENT:GetSpaceFlare()
+        if self:GetObjectType() == objtype.MODULE then
+            local flare = SpaceFlare(0.125, Color(127, 255, 255, 255))
+            flare:SetPulse(1, 0.25)
+            return { flare }
+        elseif self:GetObjectType() == objtype.MISSILE then
+            local flare = SpaceFlare(0.125, Color(255, 0, 0, 255))
+            flare:SetPulse(0.25, 0.25)
+            return { flare }
+        elseif self:GetObjectType() == objtype.SHIP then
+            local flares = {}
+
+            appendFlare(flares, 0, 1, 0, 0.125, 158, 204, 255, 1, 0.25, 0)
+            appendFlare(flares, -0.25, -1, 0, 0.125, 158, 204, 255, 1, 0.25, 0.5)
+            appendFlare(flares, 0.25, -1, 0, 0.125, 158, 204, 255, 1, 0.25, 0.5)
+
+            return flares
+        else
+            local flare = SpaceFlare(0.125, Color(0, 255, 0, 255))
+            flare:SetPulse(0.5, 0.25)
+            return { flare }
         end
     end
 
