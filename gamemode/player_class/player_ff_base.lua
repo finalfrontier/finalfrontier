@@ -21,7 +21,7 @@ function Class_Manager.AddClass(classname, displayname, walkspeed, runspeed, mod
     self.Class[_currentClass].WalkSpeed = walkspeed
     self.Class[_currentClass].RunSpeed = runspeed
     
-    _classname = classname
+    self.Class[_currentClass]._classname = classname
     
     local _models = models
     
@@ -75,4 +75,6 @@ function Class_Manager.AddClass(classname, displayname, walkspeed, runspeed, mod
     SetupPlayerDataTables = self.Class[_currentClass].SetupDataTables
 end
 
-player_manager.RegisterClass("player_ff_".._classname, self.Class[_currentClass], "player_default")
+for k,v in pairs(self.Class)
+    player_manager.RegisterClass("player_ff_"..v._classname, v, "player_default")
+end
