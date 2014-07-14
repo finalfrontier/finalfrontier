@@ -8,8 +8,6 @@ Class_Manager.HeldItems = {}
 
 local _currentClass = #self.Class
 
-local _classname = ""
-
 --Use Before AddClass
 function Class_Manager.SetItems(items)
     self.HeldItems = items
