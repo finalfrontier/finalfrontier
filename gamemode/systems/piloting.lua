@@ -69,7 +69,7 @@ function SYS:IsFullStopping()
 end
 
 if SERVER then
-    -- resource.AddFile("materials/systems/piloting.png")
+    resource.AddFile("materials/systems/piloting.png")
 
     local ACCELERATION_PER_POWER = 1.0 / 800.0
 
@@ -165,7 +165,7 @@ if SERVER then
         return self:GetPower() * ACCELERATION_PER_POWER * (1 + score * 3)
     end
 elseif CLIENT then
-    -- SYS.Icon = Material("systems/piloting.png", "smooth")
+    SYS.Icon = Material("systems/piloting.png", "smooth")
 
     function SYS:Initialize()
         self._nwdata.fullstop = true
