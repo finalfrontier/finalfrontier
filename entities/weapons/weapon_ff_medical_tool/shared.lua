@@ -11,13 +11,13 @@ SWEP.UseHands = true
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = 1
 SWEP.Primary.Automatic = true
-SWEP.Primary.Delay = 0.4
+SWEP.Primary.Delay = 1.7
 SWEP.Primary.Ammo = "none"
 SWEP.Primary.MaxRange = 85
 SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = 1
 SWEP.Secondary.Automatic = true
-SWEP.Secondary.Delay = 0.7
+SWEP.Secondary.Delay = 1.6
 SWEP.Secondary.Ammo = "none"
 
 function SWEP:PrimaryAttack()
