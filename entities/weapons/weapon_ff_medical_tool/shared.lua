@@ -23,6 +23,7 @@ SWEP.Secondary.Ammo = "none"
 function SWEP:PrimaryAttack()
 	if self.Primary.ClipSize <= 0 then
 		self.Primary.ClipSize = 0
+		self.Owner:EmitSound("hl1/fvox/boop.wav", 150, 1)
 		return 
 	end
 	
@@ -58,6 +59,7 @@ end
 function SWEP:SecondaryAttack()
 	if self.Primary.ClipSize <= 0 then
 		self.Primary.ClipSize = 0
+		self.Owner:EmitSound("hl1/fvox/boop.wav", 150, 2)
 		return 
 	end
 	
