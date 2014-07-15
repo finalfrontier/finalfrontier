@@ -8,7 +8,7 @@ SWEP.ShowViewModel = true
 SWEP.ShowWorldModel = true
 SWEP.UseHands = true
 
-SWEP.Primary.ClipSize = -1
+SWEP.Primary.ClipSize = 100
 SWEP.Primary.DefaultClip = 1
 SWEP.Primary.Automatic = true
 SWEP.Primary.Delay = 1.7
@@ -21,13 +21,18 @@ SWEP.Secondary.Delay = 1.6
 SWEP.Secondary.Ammo = "none"
 
 function SWEP:PrimaryAttack()
-		self.Weapon:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
-		
-		if not SERVER then return end
-		
-		local found
-		local lastDot = -1
-		local aimVec = self.Owner:GetAimVector()
+	if self.Primary.ClipSize <= 0 then
+		self.Primary.ClipSize = 0
+		return 
+	end
+	
+	self.Weapon:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
+	
+	if not SERVER then return end
+	
+	local found
+	local lastDot = -1
+	local aimVec = self.Owner:GetAimVector()
 		
 	for k,v in pairs(player.GetAll()) do
 		local maxhealth = v:GetMaxHealth() or 100
@@ -45,11 +50,18 @@ function SWEP:PrimaryAttack()
 		if found then
 			found:SetHealth(found:Health() + 1)
 			self.Owner:EmitSound("hl1/fvox/boop.wav", 150, found:Health())
+			self.Primary.ClipSize = self.Primary.ClipSize - 1
 		end
 	end
 end
 
 function SWEP:SecondaryAttack()
+	if self.Primary.ClipSize <= 0 then
+		self.Primary.ClipSize = 0
+		return 
+	end
+	
+	
 	self.Weapon:SetNextSecondaryFire(CurTime() + self.Secondary.Delay)
 	if not SERVER then return end
 	
@@ -57,5 +69,16 @@ function SWEP:SecondaryAttack()
 	if self.Owner:Health() < maxhealth then
 		self.Owner:SetHealth(self.Owner:Health() + 1)
 		self.Owner:EmitSound("hl1/fvox/boop.wav", 150, self.Owner:Health())
+		self.Primary.ClipSize = self.Primary.ClipSize - 1
+	end
+end
+
+function SWEP:Think()
+	local room = self.Owner:GetRoom()
+	if room.GetName() == "medical" then
+		timer.Simple( 2, function() 
+			SWEP.Primary.ClipSize = SWEP.Primary.ClipSize + math.random(10, 1)
+			self.Owner:EmitSound("hl1/fvox/boop.wav", 150, SWEP.Primary.ClipSize)
+		end)
 	end
 end
