@@ -107,12 +107,21 @@ function ENT:InitPostEntity()
 
     if not self:GetShip() then return end
 
+    self:Reset()
+end
+
+function ENT:Reset()
     self:_UpdateSystem()
 
     self:SetAirVolume(self:GetVolume())
     self:SetUnitTemperature(self:GetVolume() / 2)
 
     self:SetUnitShields(self:GetSurfaceArea())
+
+    for type, slot in pairs(self._moduleslots) do
+        self:_SpawnDefaultModule(type)
+        slot:Reset()
+    end
 
     self:_NextUpdate()
 end
@@ -416,8 +425,21 @@ function ENT:GetTransporterTarget()
     return table.Random(self:GetAvailableTransporterTargets()) or nil
 end
 
-function ENT:AddModuleSlot(pos, type)
-    self._moduleslots[type] = pos
+function ENT:AddModuleSlot(slot)
+    local type = slot:GetModuleType()
+
+    self._moduleslots[type] = slot
+    self:_SpawnDefaultModule(type)
+end
+
+function ENT:_SpawnDefaultModule(type)
+    local pos = self._moduleslots[type]:GetPos()
+    local cur = self:GetModule(type)
+
+    if cur ~= nil then
+        self:RemoveModule(cur)
+        cur:Remove()
+    end
 
     if type < moduletype.REPAIR_1 then
         local mdl = ents.Create("prop_ff_module")

@@ -142,6 +142,21 @@ function ENT:InitPostEntity()
     self:SetHazardMode(false)
 end
 
+function ENT:Reset()
+    for _, room in ipairs(self._roomlist) do
+        room:Reset()
+    end
+
+    for _, door in ipairs(self._doors) do
+        door:Reset()
+    end
+    
+    self._nwdata.object:SetCoordinates(5 + math.random() * 0.2 - 0.1, 9 + math.random() * 0.2 - 0.1)
+    self._nwdata.object:SetRotation(math.random() * 360)
+
+    self:SetHazardMode(false)
+end
+
 function ENT:Think()
     if self:GetHazardMode() and CurTime() > self._hazardEnd then
         self:SetHazardMode(false)

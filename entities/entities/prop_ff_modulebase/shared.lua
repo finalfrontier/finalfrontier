@@ -149,6 +149,10 @@ if SERVER then
             end
         end
     end
+
+    function ENT:OnRemove()
+        if self:IsInSlot() then self:RemoveFromSlot(nil) end
+    end
 elseif CLIENT then
     function ENT:Initialize()
         self:SetCustomCollisionCheck(true)

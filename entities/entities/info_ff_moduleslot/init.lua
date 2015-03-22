@@ -96,7 +96,7 @@ function ENT:InitPostEntity()
         local rooms = ents.FindByName(self._roomName)
         if #rooms > 0 then
             self._room = rooms[1]
-            self._room:AddModuleSlot(self:GetPos(), self._moduleType)
+            self._room:AddModuleSlot(self)
         end
     end
 
@@ -106,6 +106,10 @@ function ENT:InitPostEntity()
             self._hatch = hatches[1]
         end
     end
+end
+
+function ENT:Reset()
+    self:Close()
 end
 
 function ENT:Think()

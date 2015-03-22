@@ -110,3 +110,18 @@ function GM:ScalePlayerDamage(ply, hitgroup, dmginfo)
         dmginfo:ScaleDamage(0)
     end
 end
+
+concommand.Add("ff_reset", function()
+    for _, mdl in ipairs(ents.FindByClass("prop_ff_module")) do mdl:Remove() end
+    for _, mdl in ipairs(ents.FindByClass("prop_ff_weaponmodule")) do mdl:Remove() end
+
+    for _, obj in ipairs(ents.FindByClass("info_ff_object")) do
+        if obj:GetObjectType() ~= objtype.SHIP then
+            obj:Remove()
+        end
+    end
+
+    for _, ship in pairs(ships._dict) do
+        ship:Reset()
+    end
+end)

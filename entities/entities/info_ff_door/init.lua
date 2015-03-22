@@ -80,6 +80,10 @@ function ENT:InitPostEntity()
     self:_NextUpdate()
 end
 
+function ENT:Reset()
+    self:Unlock()
+end
+
 function ENT:SetIsPowered(powered)
     self._nwdata.powered = powered
     self._nwdata:Update()
