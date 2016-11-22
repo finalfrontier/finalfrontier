@@ -1,4 +1,4 @@
--- Copyright (c) 2014 James King [metapyziks@gmail.com]
+-- Copyright (c) 2014 James King [metapyziks@gmail.com] and George Albany[spartan322@live.com]
 -- 
 -- This file is part of Final Frontier.
 -- 
@@ -23,12 +23,14 @@ page.ACCESS   = 2
 page.SYSTEM   = 3
 page.SECURITY = 4
 page.OVERRIDE = 5
+page.TEAMS    = 6
 
 GUI.BaseName = BASE
 
 GUI.Permission = 0
 
 GUI.Pages = nil
+GUI.Window = nil
 GUI.TabMenu = nil
 GUI.Tabs = nil
 
@@ -43,8 +45,16 @@ function GUI:Initialize()
     self:SetWidth(self:GetScreen():GetWidth())
     self:SetHeight(self:GetScreen():GetHeight())
     self:SetCentre(0, 0)
+    
+    local function FixWindowTabs(base)
+    	local _modby = 4
+    	local _subtract = 2
+    	base = (base - _subtract) % _modby
+    	return base
+    end
 
     self.Pages = {}
+    
     self.Pages[page.STATUS] = sgui.Create(self:GetScreen(), "statuspage")
     self.Pages[page.ACCESS] = sgui.Create(self:GetScreen(), "accesspage")
     if self:GetSystem() and self:GetSystem().SGUIName ~= "page" then
@@ -52,18 +62,26 @@ function GUI:Initialize()
     end
     self.Pages[page.SECURITY] = sgui.Create(self:GetScreen(), "securitypage")
     self.Pages[page.OVERRIDE] = sgui.Create(self:GetScreen(), "overridepage")
+    self.Pages[page.TEAMS] = sgui.Create(self:GetScreen(), "teampage")
 
-    self.TabMenu = sgui.Create(self:GetScreen(), "tabmenu")
-    self.TabMenu:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)
-    self.TabMenu:SetCentre(self:GetWidth() / 2, self.TabHeight / 2 + self.TabMargin)
-
-    self.Tabs = {}
-    self.Tabs[page.ACCESS] = self.TabMenu:AddTab("ACCESS")
+    self.Window = sgui.Create(self:GetScreen(), "window")
+    self.Window:SetSize(self:GetWidth() - self.TabMargin * 2, self.TabHeight)
+    self.Window:SetCentre(self:GetWidth() / 2, self.TabHeight / 2 + self.TabMargin)
+    
+    self.Window:SetTab(FixWindowTabs(page.ACCESS), "ACCESS")
     if self.Pages[page.SYSTEM] then
-        self.Tabs[page.SYSTEM] = self.TabMenu:AddTab("SYSTEM")
+         self.Window:SetTab(FixWindowTabs(page.SYSTEM), "SYSTEM")
     end
-    self.Tabs[page.SECURITY] = self.TabMenu:AddTab("SECURITY")
-    self.Tabs[page.OVERRIDE] = self.TabMenu:AddTab("OVERRIDE")
+    self.Window:SetTab(FixWindowTabs(page.SECURITY), "SECURITY")
+    self.Window:SetTab(FixWindowTabs(page.OVERRIDE), "OVERRIDE")
+    self.Window:AddMenu()
+    self.Window:SetTab(FixWindowTabs(page.TEAMS), "TEAMS")
+    self.Window:AddMenu()
+    
+    self.Tabs = {}
+    self.Tabs = self.Window:GetAllTabs()
+    
+    self.TabMenu = self.Window:GetDefaultTabMenu()
 
     if SERVER then
         local old = self.TabMenu.OnChangeCurrent

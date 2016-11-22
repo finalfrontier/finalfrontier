@@ -1,4 +1,4 @@
--- Copyright (c) 2014 James King [metapyziks@gmail.com]
+-- Copyright (c) 2014 James King [metapyziks@gmail.com] and George Albany [spartan322@live.com]
 -- 
 -- This file is part of Final Frontier.
 -- 
@@ -24,6 +24,8 @@ GUI.Color = Color(191, 191, 191, 255)
 
 GUI._tabs = nil
 GUI._current = 0
+GUI._pages = nil
+GUI._currentPage = 0
 
 function GUI:Initialize()
     self.Super[BASE].Initialize(self)
