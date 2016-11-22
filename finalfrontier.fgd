@@ -113,3 +113,8 @@
 		8 : "Cracks"
 	]
 ]
+
+@PointClass base(Origin) = info_ff_map_edits : "map variables"
+[
+	teamlimit(integer) : "Team Limit" : 20 : "The limit of how many teams this map can handle, defaults at 20"
+]
