@@ -19,7 +19,7 @@
 
 include("gmtools/nwtable.lua")
 
-include("player_class/player_ff_default.lua")
+include("player_class/*.lua")
 
 include("sh_init.lua")
 include("sh_bounds.lua")
