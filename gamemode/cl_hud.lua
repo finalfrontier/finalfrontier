@@ -20,6 +20,9 @@ local delay=CurTime()
 local barheight=30
 local blinktick=CurTime()
 
+local prevarmor=100
+local armblink=255
+local armhide=255
 
 function GM:HUDPaint()
 local ply = LocalPlayer()
@@ -44,7 +47,9 @@ if delay < CurTime() then
     
     delay = CurTime() + 0.01
 end
-if hp>0 and ply:Alive() then
+hev = ply:GetNWInt("HEV")
+if hp > 0 and ply:Alive() then
+    --HP
     surface.SetDrawColor( 40, 0, 0, 150 )
     surface.DrawRect( 5, (ScrH()-5)-barheight, 400, barheight )
     if hp<30 then
@@ -54,8 +59,24 @@ if hp>0 and ply:Alive() then
     end
     surface.DrawRect( 5, (ScrH()-5)-barheight, (barhp/400)*400, barheight )
     if blinktick<CurTime() then blinktick=CurTime()+0.5 end
-end
-end
+	
+    --HEV
+    if prevarmor > ply:Armor() then
+    armblink=0
+    prevarmor=ply:Armor()
+    elseif ply:Armor() > 0 then
+    armblink=armblink+5
+    end
+    if ply:Armor() >= 100 then
+    armhide= armhide-5
+    else
+    armhide= 255
+    end
+    draw.SimpleText( "HEV: " .. ply:Armor(), "CTextMedium", 20, 5, Color( 255, armblink, armblink, armhide ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+	
+	--NameTags
+	
+end end
 
 function hidehud(name) -- Removing the default HUD
 	for k, v in pairs({"CHudHealth", "CHudBattery", "CHudAmmo", "CHudSecondaryAmmo", })do
@@ -63,3 +84,17 @@ function hidehud(name) -- Removing the default HUD
 	end
 end
 hook.Add("HUDShouldDraw", "HideOurHud:D", hidehud)
+
+local teamcol=Color( 0, 0, 0 )
+
+function GM:PostDrawOpaqueRenderables()
+local ply=LocalPlayer()
+local tr=ply:GetEyeTraceNoCursor().Entity
+if tr:IsValid() and tr:IsPlayer() then
+teamcol=team.GetColor(tr:Team())
+
+	cam.Start3D2D(tr:GetPos() + Vector(0,0,80), ply:EyeAngles():Right():Angle() + Angle(0,0,90), 0.1)
+		draw.SimpleText( tr:Nick(), "CTextMedium", 0, 0, teamcol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+	cam.End3D2D()
+end
+end

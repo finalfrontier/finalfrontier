@@ -70,11 +70,18 @@ if SERVER then
 		
 		if self._nwdata.charge >= 5 then
 			for _, ply in ipairs(player.GetAll()) do
-				if ply:GetRoom() == self:GetRoom() and (ply:Health() < ply:GetMaxHealth()) then
+				if ply:GetRoom() == self:GetRoom() then
+                if (ply:Health() < ply:GetMaxHealth()) then
 					ply:SetHealth(math.min(ply:Health() + 1, ply:GetMaxHealth()))
 					self._nwdata.charge = self._nwdata.charge - 5
 					needsUpdate = true
-				end
+                end
+                if ply:Armor() < 100 then
+                    ply:SetArmor(ply:Armor() + 1)
+                    self._nwdata.charge = self._nwdata.charge - 5
+                    needsUpdate = true
+                end end
+                
 			end
 		end
 		
