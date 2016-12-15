@@ -30,6 +30,7 @@ include("sh_sgui.lua")
 include("sh_systems.lua")
 include("sv_ships.lua")
 include("sh_teams.lua")
+include("sv_cleanup.lua")
 
 -- Resources
 

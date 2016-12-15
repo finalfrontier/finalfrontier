@@ -45,15 +45,18 @@ local _models = {
 if SERVER then
     function PLAYER:Init()
         team.AutoAssign(self.Player)
+        self.Player:SetArmor(100)
     end
 
     function PLAYER:Spawn()
         local ship = team.GetShip(self.Player:Team())
         local pad = table.Random(ship:GetSystem("transporter"):GetRoom():GetTransporterPads())
-
+		local teamcol=team.GetColor(self.Player:Team())
         self.Player:SetPos(pad)
         self.Player:SetShip(ship)
+		self.Player:SetPlayerColor(Vector(teamcol.r/255, teamcol.g/255, teamcol.b/255))
 
+        self.Player:SetArmor(100)
         self.Player:SetCanWalk(true)
 
         TeleportArriveEffect(self.Player, self.Player:GetPos())

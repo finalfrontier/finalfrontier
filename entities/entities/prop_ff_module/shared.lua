@@ -23,6 +23,23 @@ ENT.Base = "prop_ff_modulebase"
 
 ENT._grid = nil
 
+if SERVER then
+    concommand.Add("ff_spawn_module", function(ply, cmd, args)
+        if not IsValid(ply) or not cvars.Bool("sv_cheats") then return end
+
+        local trace = ply:GetEyeTraceNoCursor()
+
+        local mdl = ents.Create("prop_ff_module")
+        mdl:SetModuleType(args[1] or math.random(0,2))
+        mdl:SetPos(trace.HitPos + trace.HitNormal * 8)
+        mdl:Spawn()
+        mdl:SetToOptimal()
+        print("Spawned module with score: " .. tostring(mdl:GetScore()))
+    end, nil, "Spawn a utility module", FCVAR_CHEAT)
+end
+
+
+
 function ENT:SetupDataTables()
     self.BaseClass.SetupDataTables(self)
 
