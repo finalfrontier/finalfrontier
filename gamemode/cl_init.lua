@@ -34,6 +34,7 @@ include("sh_teams.lua")
 include("cl_universe.lua")
 include("cl_scoreboard.lua")
 include("cl_skypaint.lua")
+include("cl_hud.lua")
 
 WHITE = Material("vgui/white")
 CIRCLE = Material("circle.png", "smooth")

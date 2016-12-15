@@ -209,9 +209,13 @@ function ENT:Think()
             dmg:SetInflictor(self)
             for _, ply in pairs(self._players) do
                 if ply and ply:IsValid() and ply:Alive() then
+                    if ply:Armor() > 0 then
+                        ply:SetArmor(math.Clamp(ply:Armor()- math.min(math.ceil((0.5 - self:GetAtmosphere()) * 10), 10), 0, 100))
+                    else
                     ply:TakeDamageInfo(dmg)
                     if sounds then
                         ply:EmitSound(table.Random(sounds), SNDLVL_IDLE, 100)
+                    end
                     end
                 end
             end
